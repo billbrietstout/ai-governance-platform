@@ -1,1 +1,1 @@
-# ai-governance-platform
+# AI Governance Platform
