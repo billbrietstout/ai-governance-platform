@@ -10,6 +10,7 @@ import { withAuth } from "next-auth/middleware";
 
 const PROTECTED_PATHS = [
   "/",
+  "/audit",
   "/onboarding",
   "/layer1-business",
   "/layer2-information",
