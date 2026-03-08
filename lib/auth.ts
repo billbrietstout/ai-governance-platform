@@ -1,9 +1,7 @@
 /**
- * NextAuth v5 – Auth0 provider, SAML 2.0 / OIDC enterprise SSO.
- * MFA enforced for ADMIN and CAIO roles.
- * Session: 8h active max, 30 min idle timeout (warn at 25 min client-side).
+ * NextAuth v4 – Auth0 provider, signIn callback with Prisma, tenant.
  */
-import NextAuth from "next-auth";
+import NextAuth, { getServerSession } from "next-auth";
 import Auth0 from "next-auth/providers/auth0";
 
 import { env } from "@/env";
@@ -14,7 +12,8 @@ import { setTenantContext } from "@/lib/tenant";
 const EIGHT_HOURS = 8 * 60 * 60;
 const THIRTY_MINUTES = 30 * 60;
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions = {
+  trustHost: true,
   providers: [
     Auth0({
       clientId: env.AUTH0_CLIENT_ID,
@@ -26,21 +25,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           prompt: "login"
         }
       }
-      // Auth0 supports SAML 2.0 and OIDC via Enterprise connections in the Auth0 dashboard
     })
   ],
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: EIGHT_HOURS,
     updateAge: THIRTY_MINUTES
   },
   callbacks: {
-    async jwt({ token, user, trigger, session }) {
+    jwt({ token, user, trigger, session }: { token: Record<string, unknown>; user?: { id?: string; orgId?: string; role?: string; mfaEnabled?: boolean }; trigger?: string; session?: Record<string, unknown> }) {
       if (user) {
         token.id = user.id;
-        token.orgId = (user as { orgId?: string }).orgId;
-        token.role = (user as { role?: string }).role;
-        token.mfaEnabled = (user as { mfaEnabled?: boolean }).mfaEnabled;
+        token.orgId = user.orgId;
+        token.role = user.role;
+        token.mfaEnabled = user.mfaEnabled;
       }
       if (trigger === "update" && session) {
         token.orgId = (session as { orgId?: string }).orgId;
@@ -49,16 +47,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
-      if (session.user) {
-        (session.user as { id: string }).id = token.id as string;
-        (session.user as { orgId: string }).orgId = token.orgId as string;
-        (session.user as { role: string }).role = token.role as string;
-        (session.user as { mfaEnabled: boolean }).mfaEnabled = token.mfaEnabled as boolean;
+    session({ session, token }: { session: { user?: Record<string, unknown> }; token: Record<string, unknown> }) {
+      if (session?.user) {
+        session.user.id = token.id as string;
+        session.user.orgId = token.orgId as string;
+        session.user.role = token.role as string;
+        session.user.mfaEnabled = token.mfaEnabled as boolean;
       }
       return session;
     },
-    async signIn({ user, account }) {
+    async signIn({ user }: { user: { email?: string | null } }) {
       const email = user.email;
       if (!email) return false;
 
@@ -99,4 +97,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
     error: "/login"
   }
-});
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handler = NextAuth(authOptions as any);
+
+export const handlers = { GET: handler, POST: handler };
+export const auth = () => getServerSession(authOptions) as Promise<import("next-auth").Session | null>;

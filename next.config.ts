@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: [
-          // CSP is set in middleware with per-request nonce (no unsafe-inline)
+          // CSP is set in proxy with per-request nonce (no unsafe-inline)
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload"
