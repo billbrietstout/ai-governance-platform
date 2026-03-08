@@ -26,10 +26,11 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@prisma/client": "latest",
     "@opentelemetry/api": "latest",
     "@opentelemetry/auto-instrumentations-node": "latest",
     "@opentelemetry/sdk-node": "latest",
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^6.19.2",
     "@sentry/nextjs": "latest",
     "@t3-oss/env-nextjs": "latest",
     "@tanstack/react-query": "latest",
@@ -38,12 +39,14 @@
     "@trpc/server": "latest",
     "next": "latest",
     "next-auth": "latest",
+    "pg": "^8.20.0",
     "react": "latest",
     "react-dom": "latest",
     "zod": "latest"
   },
   "devDependencies": {
     "@types/node": "latest",
+    "@types/pg": "^8.18.0",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
@@ -52,11 +55,11 @@
     "eslint-config-prettier": "latest",
     "husky": "latest",
     "lint-staged": "latest",
+    "playwright": "latest",
     "postcss": "latest",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "latest",
-    "prisma": "latest",
-    "playwright": "latest",
+    "prisma": "^6.19.2",
     "tailwindcss": "latest",
     "tsx": "latest",
     "typescript": "latest",
@@ -66,8 +69,5 @@
     "*.{ts,tsx,js,jsx,json,css,md,yml,yaml}": [
       "prettier --write"
     ]
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed/index.ts"
   }
 }
