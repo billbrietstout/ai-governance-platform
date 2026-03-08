@@ -157,10 +157,14 @@ enum CardSource {
 
 enum ScanType {
   SBOM
+  SBOM_DEPENDENCY
   VULN
   SECRETS
   POLICY
   LICENSE
+  MODEL_SCAN
+  DATASET_PII
+  RED_TEAM
 }
 
 enum SyncStatus {
@@ -218,6 +222,7 @@ model Organization {
   aiAssets            AIAsset[]
   complianceFrameworks ComplianceFramework[]
   riskRegisters       RiskRegister[]
+  assessments        Assessment[]
   artifactCards       ArtifactCard[]
   vendorAssurances    VendorAssurance[]
   scanRecords        ScanRecord[]
@@ -306,6 +311,7 @@ model AIAsset {
   accountabilityAssignments AccountabilityAssignment[]
   controlAttestations ControlAttestation[]
   riskRegisters  RiskRegister[]
+  assessments   Assessment[]
   artifactCards  ArtifactCard[]
   scanRecords    ScanRecord[]
 
@@ -423,6 +429,33 @@ model RiskRegister {
   @@index([orgId])
   @@index([orgId, status])
   @@index([assetId])
+}
+
+enum AssessmentStatus {
+  DRAFT
+  IN_PROGRESS
+  PENDING_REVIEW
+  APPROVED
+}
+
+model Assessment {
+  id             String           @id @default(cuid())
+  orgId          String
+  name           String
+  assetId        String
+  status         AssessmentStatus @default(DRAFT)
+  frameworkIds   Json             // array of framework IDs
+  layersInScope  Json             // array of CosaiLayer
+  reviewers      Json?            // { [cosaiLayer]: userId }
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  asset        AIAsset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([assetId])
+  @@index([status])
 }
 
 model ArtifactCard {

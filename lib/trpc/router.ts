@@ -4,6 +4,9 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "./trpc";
 import { complianceRouter } from "./routers/compliance.router";
 import { riskRouter } from "./routers/risk.router";
 import { accountabilityRouter } from "./routers/accountability.router";
+import { supplyChainRouter } from "./routers/supply-chain.router";
+import { assetsRouter } from "./routers/assets.router";
+import { assessmentRouter } from "./routers/assessment.router";
 
 export const appRouter = createTRPCRouter({
   healthcheck: publicProcedure
@@ -12,7 +15,10 @@ export const appRouter = createTRPCRouter({
 
   compliance: complianceRouter,
   risk: riskRouter,
-  accountability: accountabilityRouter
+  accountability: accountabilityRouter,
+  supplyChain: supplyChainRouter,
+  assets: assetsRouter,
+  assessment: assessmentRouter
 });
 
 export type AppRouter = typeof appRouter;

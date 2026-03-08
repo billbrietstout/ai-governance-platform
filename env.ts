@@ -15,7 +15,9 @@ export const env = createEnv({
     SENTRY_DSN: z.string().url().optional(),
     SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
 
-    OTEL_SERVICE_NAME: z.string().min(1).default("ai-governance-platform")
+    OTEL_SERVICE_NAME: z.string().min(1).default("ai-governance-platform"),
+
+    SCAN_WEBHOOK_API_KEY: z.string().min(1).optional()
   },
   client: {
     NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional()
@@ -30,7 +32,8 @@ export const env = createEnv({
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     OTEL_SERVICE_NAME: process.env.OTEL_SERVICE_NAME,
-    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN
+    NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    SCAN_WEBHOOK_API_KEY: process.env.SCAN_WEBHOOK_API_KEY
   },
   emptyStringAsUndefined: true
 });

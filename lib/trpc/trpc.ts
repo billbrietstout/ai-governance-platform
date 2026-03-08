@@ -16,3 +16,4 @@ const enforceAuth = t.middleware(({ ctx, next }) => {
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(enforceAuth);
+export const createCallerFactory = t.createCallerFactory;

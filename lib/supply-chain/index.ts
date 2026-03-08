@@ -1,4 +1,5 @@
 /**
- * Supply chain – supply chain governance and tracking.
+ * Supply chain – vendor assurance and supply chain governance.
  */
-export {};
+export { assessVendorPosture, checkEvidenceCurrency } from "./assurance";
+export type { AssuranceScore, ExpiredEvidence } from "./assurance";

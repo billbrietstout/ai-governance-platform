@@ -15,6 +15,42 @@ const COSAI_LAYERS = [
 ] as const;
 
 export const accountabilityRouter = createTRPCRouter({
+  getCrossAssetMatrix: protectedProcedure
+    .input(z.object({ cosaiLayer: z.string().optional() }))
+    .query(async ({ ctx, input }) => {
+      const assets = await prisma.aIAsset.findMany({
+        where: { orgId: ctx.orgId, deletedAt: null },
+        select: { id: true, name: true }
+      });
+
+      const assignments = await prisma.accountabilityAssignment.findMany({
+        where: { assetId: { in: assets.map((a) => a.id) }, ...(input.cosaiLayer ? { cosaiLayer: input.cosaiLayer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" } : {}) },
+        orderBy: [{ cosaiLayer: "asc" }, { componentName: "asc" }]
+      });
+
+      const byAsset = new Map<string, typeof assignments>();
+      for (const a of assignments) {
+        const list = byAsset.get(a.assetId) ?? [];
+        list.push(a);
+        byAsset.set(a.assetId, list);
+      }
+
+      const gaps = assets.filter((a) => {
+        const list = byAsset.get(a.id) ?? [];
+        return list.length === 0;
+      });
+
+      return {
+        data: {
+          assets,
+          assignments,
+          byAsset: Object.fromEntries(byAsset),
+          gaps: gaps.map((g) => ({ assetId: g.id, assetName: g.name }))
+        },
+        meta: {}
+      };
+    }),
+
   getAccountabilityMatrix: protectedProcedure
     .input(z.object({ assetId: z.string() }))
     .query(async ({ ctx, input }) => {
