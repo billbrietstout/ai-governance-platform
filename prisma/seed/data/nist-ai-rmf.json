@@ -1,0 +1,52 @@
+{
+  "framework": {
+    "code": "NIST_AI_RMF",
+    "version": "1.0",
+    "name": "NIST AI Risk Management Framework",
+    "description": "Framework for managing risks in the design, development, and use of AI systems."
+  },
+  "controls": [
+    {
+      "controlId": "GOV-1",
+      "title": "Governance Structures",
+      "description": "Establish governance structures for AI system oversight.",
+      "category": "Governance",
+      "cosaiLayer": "LAYER_1_BUSINESS",
+      "personaAccountable": "Executive Leadership",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Define roles and responsibilities for AI governance.",
+      "evidenceGuidance": "Document governance charter and RACI matrix.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "MAP-1",
+      "title": "Context Establishment",
+      "description": "Establish the context for AI system risk management.",
+      "category": "Mapping",
+      "cosaiLayer": "LAYER_2_INFORMATION",
+      "personaAccountable": "Data Steward",
+      "operatingModelApplicability": ["IN_HOUSE", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Document data flows and system boundaries.",
+      "evidenceGuidance": "Provide data flow diagrams and context documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "MANAGE-1",
+      "title": "Risk Response",
+      "description": "Develop and implement risk response strategies.",
+      "category": "Managing",
+      "cosaiLayer": "LAYER_3_APPLICATION",
+      "personaAccountable": "AI System Owner",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Define risk acceptance and mitigation procedures.",
+      "evidenceGuidance": "Risk register and response documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    }
+  ]
+}

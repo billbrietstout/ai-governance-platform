@@ -1,0 +1,52 @@
+{
+  "framework": {
+    "code": "NIST_CSF",
+    "version": "2.0",
+    "name": "NIST Cybersecurity Framework",
+    "description": "Framework for improving critical infrastructure cybersecurity."
+  },
+  "controls": [
+    {
+      "controlId": "ID.AM-1",
+      "title": "Asset Management",
+      "description": "Identify and manage physical and software assets.",
+      "category": "Identify",
+      "cosaiLayer": "LAYER_2_INFORMATION",
+      "personaAccountable": "Asset Owner",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Maintain inventory of AI assets and dependencies.",
+      "evidenceGuidance": "Asset inventory and classification documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "PR.AC-1",
+      "title": "Identity Management",
+      "description": "Manage identities and credentials for authorized access.",
+      "category": "Protect",
+      "cosaiLayer": "LAYER_4_PLATFORM",
+      "personaAccountable": "Security Officer",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Implement IAM for AI system access control.",
+      "evidenceGuidance": "IAM policy and access review documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "DE.CM-1",
+      "title": "Network Monitoring",
+      "description": "Monitor network for malicious activity.",
+      "category": "Detect",
+      "cosaiLayer": "LAYER_4_PLATFORM",
+      "personaAccountable": "SOC",
+      "operatingModelApplicability": ["IN_HOUSE", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Deploy monitoring for AI system infrastructure.",
+      "evidenceGuidance": "Monitoring configuration and alert documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    }
+  ]
+}

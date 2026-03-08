@@ -1,0 +1,52 @@
+{
+  "framework": {
+    "code": "COSAI_SRF",
+    "version": "1.0",
+    "name": "CoSAI Security Reference Framework",
+    "description": "Security reference framework aligned with CoSAI layers."
+  },
+  "controls": [
+    {
+      "controlId": "SRF-B1",
+      "title": "Business Layer Security",
+      "description": "Ensure security controls at the business process layer.",
+      "category": "Security",
+      "cosaiLayer": "LAYER_1_BUSINESS",
+      "personaAccountable": "Business Owner",
+      "operatingModelApplicability": ["IN_HOUSE", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Define business-level security policies.",
+      "evidenceGuidance": "Business security policy documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "SRF-I1",
+      "title": "Information Asset Protection",
+      "description": "Protect information assets used by AI systems.",
+      "category": "Security",
+      "cosaiLayer": "LAYER_2_INFORMATION",
+      "personaAccountable": "Data Owner",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Implement data classification and protection controls.",
+      "evidenceGuidance": "Data classification scheme and protection documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "SRF-SC1",
+      "title": "Supply Chain Security",
+      "description": "Assess and manage supply chain security for AI components.",
+      "category": "Security",
+      "cosaiLayer": "LAYER_5_SUPPLY_CHAIN",
+      "personaAccountable": "Procurement",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Establish vendor assurance and SBOM requirements.",
+      "evidenceGuidance": "Vendor assessments and SBOM documentation.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    }
+  ]
+}

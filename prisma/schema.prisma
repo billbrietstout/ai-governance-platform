@@ -16,6 +16,8 @@ datasource db {
 
 enum UserRole {
   ADMIN
+  CAIO
+  ANALYST
   MEMBER
   VIEWER
   AUDITOR
@@ -118,6 +120,8 @@ enum AssetStatus {
 enum FrameworkCode {
   NIST_AI_RMF
   EU_AI_ACT
+  COSAI_SRF
+  NIST_CSF
   ISO_42001
   CUSTOM
 }
@@ -219,6 +223,9 @@ model Organization {
   scanRecords        ScanRecord[]
   auditLogs           AuditLog[]
   featureFlags        FeatureFlag[]
+  sessions           Session[]
+  securityEvents     SecurityEvent[]
+  accessReviews      AccessReview[]
 }
 
 model User {
@@ -235,6 +242,7 @@ model User {
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
   ownedAssets  AIAsset[]    @relation("AIAssetOwner")
   attestations ControlAttestation[]
+  sessions    Session[]
 
   @@unique([orgId, email])
   @@index([orgId])
@@ -341,6 +349,7 @@ model ComplianceFramework {
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
   controls     Control[]
 
+  @@unique([orgId, code])
   @@index([orgId])
 }
 
@@ -350,11 +359,14 @@ model Control {
   controlId                    String   // external id within framework (e.g. AC-1)
   title                        String
   description                  String?
+  category                     String?
   cosaiLayer                   CosaiLayer?
   personaAccountable           String?
   operatingModelApplicability  Json?
   verticalApplicability        Json?
+  implementationGuidance       String?
   evidenceGuidance             String?
+  crossFrameworkIds            Json?    // array of external control IDs
   createdAt                    DateTime @default(now())
   updatedAt                    DateTime @updatedAt
 
@@ -479,4 +491,63 @@ model ScanRecord {
   @@index([orgId])
   @@index([assetId])
   @@index([assetId, scanType, completedAt])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  orgId        String
+  sessionToken String   @unique
+  expiresAt    DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([orgId])
+}
+
+model SecurityEvent {
+  id        String   @id @default(cuid())
+  orgId     String
+  userId    String?
+  email     String?
+  eventType String   // e.g. LOGIN_FAILED, BRUTE_FORCE_DETECTED
+  ipAddress String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([orgId, createdAt])
+  @@index([email])
+}
+
+enum AccessReviewStatus {
+  PENDING
+  APPROVED
+  REVOKED
+}
+
+model AccessReview {
+  id         String            @id @default(cuid())
+  orgId      String
+  userId     String
+  role       UserRole
+  reviewDueAt DateTime
+  status     AccessReviewStatus @default(PENDING)
+  reviewedAt DateTime?
+  reviewedBy String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([orgId, status])
+  @@index([reviewDueAt])
 }

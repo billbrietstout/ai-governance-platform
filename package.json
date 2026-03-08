@@ -61,7 +61,7 @@
     "prettier-plugin-tailwindcss": "latest",
     "prisma": "^6.19.2",
     "tailwindcss": "latest",
-    "tsx": "latest",
+    "tsx": "^4.21.0",
     "typescript": "latest",
     "vitest": "latest"
   },
@@ -69,5 +69,8 @@
     "*.{ts,tsx,js,jsx,json,css,md,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed/index.ts"
   }
 }

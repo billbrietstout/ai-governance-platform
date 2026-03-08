@@ -1,0 +1,52 @@
+{
+  "framework": {
+    "code": "EU_AI_ACT",
+    "version": "1.0",
+    "name": "EU AI Act",
+    "description": "European Union regulation on artificial intelligence."
+  },
+  "controls": [
+    {
+      "controlId": "ART-9",
+      "title": "Transparency for Generative AI",
+      "description": "Ensure transparency obligations for generative AI systems.",
+      "category": "Transparency",
+      "cosaiLayer": "LAYER_3_APPLICATION",
+      "personaAccountable": "AI Provider",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Implement content disclosure and provenance mechanisms.",
+      "evidenceGuidance": "Document transparency measures and user disclosures.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "ANNEX-III-1",
+      "title": "High-Risk AI System Requirements",
+      "description": "Comply with requirements for high-risk AI systems.",
+      "category": "Compliance",
+      "cosaiLayer": "LAYER_4_PLATFORM",
+      "personaAccountable": "Compliance Officer",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL", "HEALTHCARE", "FINANCIAL"],
+      "implementationGuidance": "Establish risk management system per Annex IX.",
+      "evidenceGuidance": "Risk management documentation and conformity assessment.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    },
+    {
+      "controlId": "ART-13",
+      "title": "Transparency for Emotion Recognition",
+      "description": "Inform users when emotion recognition or biometric categorization is used.",
+      "category": "Transparency",
+      "cosaiLayer": "LAYER_5_SUPPLY_CHAIN",
+      "personaAccountable": "Deployer",
+      "operatingModelApplicability": ["IN_HOUSE", "VENDOR", "HYBRID"],
+      "verticalApplicability": ["GENERAL"],
+      "implementationGuidance": "Implement user notification and consent mechanisms.",
+      "evidenceGuidance": "User disclosure documentation and consent records.",
+      "crossFrameworkIds": [],
+      "status": "PLACEHOLDER_REQUIRES_SME_VALIDATION"
+    }
+  ]
+}
