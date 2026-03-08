@@ -1,0 +1,4 @@
+/**
+ * Vulnerabilities – vulnerability management.
+ */
+export {};
