@@ -7,6 +7,7 @@ import { EURiskBadge } from "@/components/assets/EURiskBadge";
 import { AutonomyBadge } from "@/components/assets/AutonomyBadge";
 import { OperatingModelBadge } from "@/components/assets/OperatingModelBadge";
 import { ComplianceRing } from "@/components/assets/ComplianceRing";
+import { EmptyState } from "@/components/EmptyState";
 import { AssetFilters } from "./AssetFilters";
 
 export default async function AssetsPage({
@@ -98,8 +99,15 @@ export default async function AssetsPage({
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-slatePro-500">
-                  No assets. <Link href="/layer3-application/assets/new" className="text-navy-400 hover:underline">Create one</Link>.
+                <td colSpan={8} className="p-0">
+                  <div className="p-6">
+                    <EmptyState
+                      title="No assets yet"
+                      description="Add your first AI asset to start tracking compliance and risk."
+                      ctaLabel="New Asset"
+                      ctaHref="/layer3-application/assets/new"
+                    />
+                  </div>
                 </td>
               </tr>
             ) : (

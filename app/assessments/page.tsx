@@ -3,6 +3,7 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { EmptyState } from "@/components/EmptyState";
 
 export default async function AssessmentsPage() {
   const caller = await createServerCaller();
@@ -36,8 +37,15 @@ export default async function AssessmentsPage() {
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-slatePro-500">
-                  No assessments. <Link href="/assessments/new" className="text-navy-400 hover:underline">Create one</Link>.
+                <td colSpan={4} className="p-0">
+                  <div className="p-6">
+                    <EmptyState
+                      title="No assessments yet"
+                      description="Run compliance assessments against your AI assets to track framework coverage."
+                      ctaLabel="New Assessment"
+                      ctaHref="/assessments/new"
+                    />
+                  </div>
                 </td>
               </tr>
             ) : (

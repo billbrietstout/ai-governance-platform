@@ -3,6 +3,7 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { EmptyState } from "@/components/EmptyState";
 import { VendorAssuranceScore } from "@/components/supply-chain/VendorAssuranceScore";
 
 export default async function VendorsPage() {
@@ -32,8 +33,15 @@ export default async function VendorsPage() {
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slatePro-400">
-                  No vendors registered.
+                <td colSpan={5} className="p-0">
+                  <div className="p-6">
+                    <EmptyState
+                      title="No vendors registered"
+                      description="Vendors are added via Supply Chain setup. Configure vendor assurance in Layer 5."
+                      ctaLabel="View Supply Chain"
+                      ctaHref="/layer5-supply-chain"
+                    />
+                  </div>
                 </td>
               </tr>
             ) : (

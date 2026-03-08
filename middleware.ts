@@ -14,6 +14,7 @@ type AuthMiddlewareReq = NextRequest & {
 
 const PROTECTED_PATHS = [
   "/",
+  "/onboarding",
   "/layer1-business",
   "/layer2-information",
   "/layer3-application",

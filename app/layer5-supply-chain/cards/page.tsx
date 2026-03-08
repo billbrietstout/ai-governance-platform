@@ -9,6 +9,7 @@ import { CardSyncStatus } from "@/components/supply-chain/CardSyncStatus";
 import { EUCoverageBadge } from "@/components/supply-chain/EUCoverageBadge";
 import { mapCardToEURequirements } from "@/lib/cards/eu-ai-act-mapper";
 import type { NormalizedCard } from "@/lib/cards/normalizer";
+import { EmptyState } from "@/components/EmptyState";
 import { importCard } from "./actions";
 import { CardImportForm } from "./CardImportForm";
 
@@ -45,8 +46,15 @@ export default async function CardsPage() {
           <tbody>
             {cards.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-slatePro-400">
-                  No cards yet. Import from HuggingFace or GitHub.
+                <td colSpan={5} className="p-0">
+                  <div className="p-6">
+                    <EmptyState
+                      title="No cards yet"
+                      description="Import model, data, or app cards from HuggingFace or GitHub to track supply chain coverage."
+                      ctaLabel="Import Card"
+                      ctaHref="/layer5-supply-chain/cards"
+                    />
+                  </div>
                 </td>
               </tr>
             ) : (

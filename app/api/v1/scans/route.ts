@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/env";
 import { prisma } from "@/lib/prisma";
+import { sanitizeObject, withCors } from "@/lib/security";
 
 const ScanPayload = z.object({
   orgId: z.string().min(1),
@@ -44,38 +45,59 @@ function authApiKey(req: NextRequest): boolean {
 
 export async function POST(req: NextRequest) {
   if (!authApiKey(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const res = NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return withCors(res, req.headers.get("origin"));
   }
 
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    const res = NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return withCors(res, req.headers.get("origin"));
   }
 
   const parsed = ScanPayload.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json(
+    const res = NextResponse.json(
       { error: "Validation failed", details: parsed.error.flatten() },
       { status: 400 }
     );
+    return withCors(res, req.headers.get("origin"));
   }
 
-  const data = parsed.data;
+  const raw = parsed.data;
+  const sanitized = sanitizeObject({
+    orgId: raw.orgId,
+    assetId: raw.assetId,
+    scannerName: raw.scannerName,
+    scannerVersion: raw.scannerVersion ?? "",
+    triggeredBy: raw.triggeredBy ?? ""
+  });
+  if (sanitized.threats.length > 0) {
+    const res = NextResponse.json(
+      { error: "Input rejected", threats: sanitized.threats },
+      { status: 400 }
+    );
+    return withCors(res, req.headers.get("origin"));
+  }
+
+  const data = { ...raw };
 
   const org = await prisma.organization.findFirst({
     where: { id: data.orgId }
   });
   if (!org) {
-    return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    const res = NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    return withCors(res, req.headers.get("origin"));
   }
 
   const asset = await prisma.aIAsset.findFirst({
     where: { id: data.assetId, orgId: data.orgId, deletedAt: null }
   });
   if (!asset) {
-    return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+    const res = NextResponse.json({ error: "Asset not found" }, { status: 404 });
+    return withCors(res, req.headers.get("origin"));
   }
 
   const record = await prisma.scanRecord.create({
@@ -96,5 +118,6 @@ export async function POST(req: NextRequest) {
     }
   });
 
-  return NextResponse.json({ id: record.id, status: "created" }, { status: 201 });
+  const res = NextResponse.json({ id: record.id, status: "created" }, { status: 201 });
+  return withCors(res, req.headers.get("origin"));
 }
