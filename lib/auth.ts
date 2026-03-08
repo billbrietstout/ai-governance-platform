@@ -60,37 +60,183 @@ export const authOptions = {
       const email = user.email;
       if (!email) return false;
 
-      const dbUser = await prisma.user.findFirst({
+      let dbUser = await prisma.user.findFirst({
         where: { email },
         select: { id: true, orgId: true, role: true, mfaEnabled: true, lockedUntil: true }
       });
 
-      if (!dbUser) return false;
-      if (dbUser.lockedUntil && dbUser.lockedUntil > new Date()) return "/login?error=locked";
+      if (dbUser) {
+        if (dbUser.lockedUntil && dbUser.lockedUntil > new Date()) return "/login?error=locked";
 
-      (user as unknown as { id: string }).id = dbUser.id;
-      (user as unknown as { orgId: string }).orgId = dbUser.orgId;
-      (user as unknown as { role: string }).role = dbUser.role;
-      (user as unknown as { mfaEnabled: boolean }).mfaEnabled = dbUser.mfaEnabled;
+        (user as unknown as { id: string }).id = dbUser.id;
+        (user as unknown as { orgId: string }).orgId = dbUser.orgId;
+        (user as unknown as { role: string }).role = dbUser.role;
+        (user as unknown as { mfaEnabled: boolean }).mfaEnabled = dbUser.mfaEnabled;
 
-      if (dbUser.role === "ADMIN" || dbUser.role === "CAIO") {
-        if (!dbUser.mfaEnabled) {
-          return "/auth/mfa-required";
+        if (dbUser.role === "ADMIN" || dbUser.role === "CAIO") {
+          if (!dbUser.mfaEnabled) {
+            return "/auth/mfa-required";
+          }
+        }
+
+        await clearFailedAttempts(dbUser.id);
+        setTenantContext(dbUser.orgId);
+        await prisma.auditLog.create({
+          data: {
+            orgId: dbUser.orgId,
+            userId: dbUser.id,
+            action: "LOGIN",
+            resourceType: "User",
+            resourceId: dbUser.id
+          }
+        });
+        return true;
+      }
+
+      // No User record – check for domain claim (before PendingInvite)
+      const domain = email.split("@")[1]?.toLowerCase();
+      if (domain) {
+        const orgByDomain = await prisma.organization.findUnique({
+          where: { claimedDomain: domain }
+        });
+        if (orgByDomain) {
+          const newUser = await prisma.$transaction(async (tx) => {
+            const u = await tx.user.create({
+              data: {
+                orgId: orgByDomain.id,
+                email,
+                role: orgByDomain.autoJoinRole
+              }
+            });
+            await tx.auditLog.create({
+              data: {
+                orgId: orgByDomain.id,
+                userId: u.id,
+                action: "CREATE",
+                resourceType: "User",
+                resourceId: u.id,
+                nextState: { email, role: orgByDomain.autoJoinRole, source: "domain_claim" }
+              }
+            });
+            return u;
+          });
+
+          (user as unknown as { id: string }).id = newUser.id;
+          (user as unknown as { orgId: string }).orgId = newUser.orgId;
+          (user as unknown as { role: string }).role = newUser.role;
+          (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+
+          setTenantContext(newUser.orgId);
+          await prisma.auditLog.create({
+            data: {
+              orgId: newUser.orgId,
+              userId: newUser.id,
+              action: "LOGIN",
+              resourceType: "User",
+              resourceId: newUser.id
+            }
+          });
+          return true;
         }
       }
 
-      await clearFailedAttempts(dbUser.id);
-      setTenantContext(dbUser.orgId);
-      await prisma.auditLog.create({
-        data: {
-          orgId: dbUser.orgId,
-          userId: dbUser.id,
-          action: "LOGIN",
-          resourceType: "User",
-          resourceId: dbUser.id
-        }
+      // No domain claim – check for valid PendingInvite
+      const invite = await prisma.pendingInvite.findFirst({
+        where: { email, expiresAt: { gt: new Date() } },
+        orderBy: { createdAt: "desc" }
       });
-      return true;
+
+      if (invite) {
+        const newUser = await prisma.$transaction(async (tx) => {
+          const u = await tx.user.create({
+            data: {
+              orgId: invite.orgId,
+              email,
+              role: invite.role
+            }
+          });
+          await tx.pendingInvite.delete({ where: { id: invite.id } });
+          await tx.auditLog.create({
+            data: {
+              orgId: invite.orgId,
+              userId: u.id,
+              action: "CREATE",
+              resourceType: "User",
+              resourceId: u.id,
+              nextState: { email, role: invite.role }
+            }
+          });
+          return u;
+        });
+
+        dbUser = newUser;
+        (user as unknown as { id: string }).id = newUser.id;
+        (user as unknown as { orgId: string }).orgId = newUser.orgId;
+        (user as unknown as { role: string }).role = newUser.role;
+        (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+
+        setTenantContext(newUser.orgId);
+        await prisma.auditLog.create({
+          data: {
+            orgId: newUser.orgId,
+            userId: newUser.id,
+            action: "LOGIN",
+            resourceType: "User",
+            resourceId: newUser.id
+          }
+        });
+        return true;
+      }
+
+      // No invite – check for fresh install
+      const orgCount = await prisma.organization.count();
+      if (orgCount === 0) {
+        const { org, newUser } = await prisma.$transaction(async (tx) => {
+          const o = await tx.organization.create({
+            data: {
+              name: "My Organization",
+              slug: "my-organization"
+            }
+          });
+          const u = await tx.user.create({
+            data: {
+              orgId: o.id,
+              email,
+              role: "ADMIN"
+            }
+          });
+          await tx.auditLog.create({
+            data: {
+              orgId: o.id,
+              userId: u.id,
+              action: "CREATE",
+              resourceType: "User",
+              resourceId: u.id,
+              nextState: { email, role: "ADMIN" }
+            }
+          });
+          return { org: o, newUser: u };
+        });
+
+        (user as unknown as { id: string }).id = newUser.id;
+        (user as unknown as { orgId: string }).orgId = newUser.orgId;
+        (user as unknown as { role: string }).role = newUser.role;
+        (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+
+        setTenantContext(org.id);
+        await prisma.auditLog.create({
+          data: {
+            orgId: org.id,
+            userId: newUser.id,
+            action: "LOGIN",
+            resourceType: "User",
+            resourceId: newUser.id
+          }
+        });
+        return true;
+      }
+
+      return "/login?error=NotInvited";
     }
   },
   pages: {
