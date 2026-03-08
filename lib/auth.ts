@@ -70,10 +70,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!dbUser) return false;
       if (dbUser.lockedUntil && dbUser.lockedUntil > new Date()) return "/login?error=locked";
 
-      (user as { id: string }).id = dbUser.id;
-      (user as { orgId: string }).orgId = dbUser.orgId;
-      (user as { role: string }).role = dbUser.role;
-      (user as { mfaEnabled: boolean }).mfaEnabled = dbUser.mfaEnabled;
+      (user as unknown as { id: string }).id = dbUser.id;
+      (user as unknown as { orgId: string }).orgId = dbUser.orgId;
+      (user as unknown as { role: string }).role = dbUser.role;
+      (user as unknown as { mfaEnabled: boolean }).mfaEnabled = dbUser.mfaEnabled;
 
       if (dbUser.role === "ADMIN" || dbUser.role === "CAIO") {
         if (!dbUser.mfaEnabled) {
@@ -98,6 +98,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/login",
     error: "/login"
-  },
-  trustHost: true
+  }
 });

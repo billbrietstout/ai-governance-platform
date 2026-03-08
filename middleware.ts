@@ -8,6 +8,10 @@ import type { NextRequest } from "next/server";
 
 import { auth } from "@/auth";
 
+type AuthMiddlewareReq = NextRequest & {
+  auth?: { user?: { orgId?: string; id?: string; role?: string } } | null;
+};
+
 const PROTECTED_PATHS = [
   "/",
   "/layer1-business",
@@ -36,7 +40,7 @@ function generateNonce(): string {
   return btoa(String.fromCharCode(...bytes));
 }
 
-export default auth((req) => {
+export default auth((req: AuthMiddlewareReq) => {
   const pathname = req.nextUrl.pathname;
 
   if (pathname.startsWith("/api/auth")) {

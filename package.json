@@ -45,6 +45,7 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/node": "latest",
     "@types/pg": "^8.18.0",
     "@types/react": "latest",

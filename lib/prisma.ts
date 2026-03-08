@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 
-import { createTenantMiddleware } from "@/lib/tenant";
-
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 const client =
@@ -9,8 +7,6 @@ const client =
   new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"]
   });
-
-client.$use(createTenantMiddleware());
 
 export const prisma = client;
 

@@ -4,7 +4,6 @@
  */
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { Session } from "next-auth";
-import type { Prisma } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 
@@ -70,8 +69,9 @@ export async function getCurrentTenant(session: Session | null): Promise<{
 /**
  * Prisma middleware: inject orgId filter into all queries when tenant context is set.
  * Organization is scoped by id (current org only). All other models by orgId.
+ * Note: $use was removed in Prisma 5; tenant filtering must be applied at query level.
  */
-export function createTenantMiddleware(): Prisma.Middleware {
+export function createTenantMiddleware(): (params: { model?: string; action: string; args: Record<string, unknown> }, next: (params: { model?: string; action: string; args: Record<string, unknown> }) => Promise<unknown>) => Promise<unknown> {
   const orgIdModels = new Set([
     "User",
     "AIAsset",

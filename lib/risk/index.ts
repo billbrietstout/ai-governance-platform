@@ -1,4 +1,4 @@
 /**
  * Risk – risk assessment and management utilities.
  */
-export {};
+export * from "./scorer";

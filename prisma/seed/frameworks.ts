@@ -95,11 +95,11 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           category: c.category ?? null,
           cosaiLayer: mapCosaiLayer(c.cosaiLayer) as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" | null,
           personaAccountable: c.personaAccountable ?? null,
-          operatingModelApplicability: c.operatingModelApplicability ?? null,
-          verticalApplicability: c.verticalApplicability ?? null,
+          operatingModelApplicability: c.operatingModelApplicability ?? undefined,
+          verticalApplicability: c.verticalApplicability ?? undefined,
           implementationGuidance: c.implementationGuidance ?? null,
           evidenceGuidance: c.evidenceGuidance ?? null,
-          crossFrameworkIds: c.crossFrameworkIds ?? null
+          crossFrameworkIds: c.crossFrameworkIds ?? undefined
         },
         update: {
           title: c.title,
@@ -107,11 +107,11 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           category: c.category ?? null,
           cosaiLayer: mapCosaiLayer(c.cosaiLayer) as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" | null,
           personaAccountable: c.personaAccountable ?? null,
-          operatingModelApplicability: c.operatingModelApplicability ?? null,
-          verticalApplicability: c.verticalApplicability ?? null,
+          operatingModelApplicability: c.operatingModelApplicability ?? undefined,
+          verticalApplicability: c.verticalApplicability ?? undefined,
           implementationGuidance: c.implementationGuidance ?? null,
           evidenceGuidance: c.evidenceGuidance ?? null,
-          crossFrameworkIds: c.crossFrameworkIds ?? null
+          crossFrameworkIds: c.crossFrameworkIds ?? undefined
         }
       });
     }
