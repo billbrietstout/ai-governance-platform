@@ -22,7 +22,7 @@ export function Tooltip({ content, children, side = "top" }: Props) {
 
   return (
     <div
-      className="relative inline-flex"
+      className="relative inline-flex cursor-help"
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
     >

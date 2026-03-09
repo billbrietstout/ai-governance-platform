@@ -81,7 +81,7 @@ export default async function CommandCenterPage() {
         </span>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+      <div className="grid gap-3 overflow-visible sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         <KpiCard
           label="Total AI Assets"
           value={kpis.totalAssets}
@@ -145,12 +145,13 @@ export default async function CommandCenterPage() {
       </div>
 
       {showFinancial && penaltyRes && (
-        <div className="overflow-hidden rounded-lg border border-slate-200 border-l-4 border-l-red-600 bg-white shadow-sm">
+        <div className="overflow-visible rounded-lg border border-slate-200 border-l-4 border-l-red-600 bg-white shadow-sm">
           <div className="bg-red-50/50 p-4">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-medium text-red-700">EU AI Act Penalty Exposure (CAIO view)</h3>
             <Tooltip
               content="Range based on high-risk asset count and Article 99 penalty tiers. Min/max reflect potential fines for non-compliance with risk management, data governance, transparency, and human oversight obligations."
+              side="bottom"
             >
               <Info className="h-4 w-4 text-red-600" />
             </Tooltip>
