@@ -6,6 +6,7 @@ import { PrismaClient } from "@prisma/client";
 import { seedDemo } from "./demo";
 import { seedDemoEnterprise } from "./demo-enterprise";
 import { seedDemoEnterpriseP2 } from "./demo-enterprise-p2";
+import { seedDemoEnterpriseP3 } from "./demo-enterprise-p3";
 import { seedFrameworks } from "./frameworks";
 
 const prisma = new PrismaClient();
@@ -15,6 +16,7 @@ async function main() {
   await seedFrameworks(prisma, demoOrgId);
   await seedDemoEnterprise(prisma);
   await seedDemoEnterpriseP2(prisma);
+  await seedDemoEnterpriseP3(prisma);
 }
 
 main()
