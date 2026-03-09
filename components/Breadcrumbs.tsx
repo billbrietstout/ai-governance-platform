@@ -54,8 +54,8 @@ export function Breadcrumbs() {
 
   if (segments.length === 0) {
     return (
-      <nav aria-label="Breadcrumb" className="text-sm text-slatePro-400">
-        <span className="text-slatePro-200">Command Center</span>
+      <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
+        <span className="text-gray-900 font-medium">Command Center</span>
       </nav>
     );
   }
@@ -73,22 +73,20 @@ export function Breadcrumbs() {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="text-sm text-slatePro-400">
+    <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
       <ol className="flex flex-wrap items-center gap-1">
         <li>
-          <Link href="/" className="text-navy-400 hover:underline">
+          <Link href="/" className="text-navy-600 hover:text-navy-700 hover:underline">
             Command Center
           </Link>
         </li>
         {crumbs.map((crumb, i) => (
           <li key={crumb.href} className="flex items-center gap-1">
-            <span aria-hidden className="text-slatePro-600">
-              /
-            </span>
+            <span aria-hidden className="text-gray-400">/</span>
             {i === crumbs.length - 1 ? (
-              <span className="text-slatePro-200">{crumb.label}</span>
+              <span className="text-gray-900 font-medium">{crumb.label}</span>
             ) : (
-              <Link href={crumb.href} className="text-navy-400 hover:underline">
+              <Link href={crumb.href} className="text-navy-600 hover:text-navy-700 hover:underline">
                 {crumb.label}
               </Link>
             )}

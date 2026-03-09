@@ -60,10 +60,12 @@ enum VerticalMarket {
   GENERAL
   HEALTHCARE
   FINANCIAL
+  INSURANCE
   AUTOMOTIVE
   RETAIL
   MANUFACTURING
   PUBLIC_SECTOR
+  ENERGY
 }
 
 enum DataResidency {

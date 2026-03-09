@@ -16,27 +16,27 @@ export default async function AuditLogPage() {
   return (
     <main className="flex flex-col gap-6">
       <div>
-        <Link href="/" className="text-sm text-navy-400 hover:underline">
+        <Link href="/" className="text-sm text-navy-600 hover:underline">
           ← Command Center
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Audit Log</h1>
-        <p className="mt-1 text-slatePro-300">Organization audit trail.</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Audit Log</h1>
+        <p className="mt-1 text-gray-600">Organization audit trail.</p>
       </div>
 
-      <div className="rounded-lg border border-slatePro-700 bg-slatePro-900/50 p-4">
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <ul className="space-y-2">
           {auditRes.data.length === 0 ? (
-            <li className="text-sm text-slatePro-500">No audit entries yet.</li>
+            <li className="text-sm text-gray-500">No audit entries yet.</li>
           ) : (
             auditRes.data.map((e) => (
               <li
                 key={e.id}
-                className="flex items-center gap-4 rounded border border-slatePro-800 bg-slatePro-950/50 px-3 py-2 text-sm"
+                className="flex items-center gap-4 rounded border border-gray-200 bg-white px-3 py-2 text-sm hover:bg-gray-50"
               >
-                <span className="shrink-0 font-medium text-slatePro-400">{e.action}</span>
-                <span className="text-slatePro-300">{e.resourceType}</span>
-                <span className="text-slatePro-500">{e.resourceId.slice(0, 8)}…</span>
-                <span className="ml-auto text-slatePro-500">
+                <span className="shrink-0 font-medium text-gray-600">{e.action}</span>
+                <span className="text-gray-900">{e.resourceType}</span>
+                <span className="text-gray-500">{e.resourceId.slice(0, 8)}…</span>
+                <span className="ml-auto text-gray-500">
                   {new Date(e.createdAt).toLocaleString()}
                 </span>
               </li>

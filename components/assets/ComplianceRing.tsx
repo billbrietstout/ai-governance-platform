@@ -30,7 +30,7 @@ export function ComplianceRing({
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-slatePro-700"
+          className="text-gray-200"
         />
         <circle
           cx={size / 2}
@@ -45,9 +45,9 @@ export function ComplianceRing({
         />
       </svg>
       {label !== undefined ? (
-        <span className="absolute text-xs font-medium text-slatePro-200">{label}</span>
+        <span className="absolute text-xs font-medium text-gray-900">{label}</span>
       ) : (
-        <span className="absolute text-xs font-medium text-slatePro-200">{percentage}%</span>
+        <span className="absolute text-xs font-medium text-gray-900">{percentage}%</span>
       )}
     </div>
   );

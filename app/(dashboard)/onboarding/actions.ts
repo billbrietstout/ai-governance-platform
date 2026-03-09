@@ -12,7 +12,7 @@ export const onboardingActions = {
     const caller = await createServerCaller();
     await caller.onboarding.updateOrgProfile({
       name: name.trim(),
-      verticalMarket: verticalMarket as "GENERAL" | "HEALTHCARE" | "FINANCIAL" | "AUTOMOTIVE" | "RETAIL" | "MANUFACTURING" | "PUBLIC_SECTOR",
+      verticalMarket: verticalMarket as "GENERAL" | "HEALTHCARE" | "FINANCIAL" | "INSURANCE" | "AUTOMOTIVE" | "RETAIL" | "MANUFACTURING" | "PUBLIC_SECTOR" | "ENERGY",
       plan: plan as "FREE" | "TEAM" | "ENTERPRISE"
     });
     return null;

@@ -16,5 +16,5 @@ type Props = { type: string };
 
 export function AssetTypeIcon({ type }: Props) {
   const Icon = ASSET_ICONS[type] ?? Bot;
-  return <Icon className="h-4 w-4 text-slatePro-400" />;
+  return <Icon className="h-4 w-4 text-gray-500" />;
 }

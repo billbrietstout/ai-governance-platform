@@ -28,7 +28,7 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
   }
 
   if (invites.length === 0) {
-    return <p className="mt-3 text-sm text-slatePro-500">No pending invites.</p>;
+    return <p className="mt-3 text-sm text-gray-500">No pending invites.</p>;
   }
 
   return (
@@ -39,15 +39,15 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
         return (
           <li
             key={inv.id}
-            className="flex items-center justify-between rounded border border-slatePro-800 bg-slatePro-950/50 px-3 py-2"
+            className="flex items-center justify-between rounded border border-gray-200 bg-white px-3 py-2 hover:bg-gray-50"
           >
             <div>
-              <span className="text-slatePro-200">{inv.email}</span>
-              <span className="ml-2 rounded bg-slatePro-700 px-2 py-0.5 text-xs font-medium text-slatePro-300">
+              <span className="text-gray-900">{inv.email}</span>
+              <span className="ml-2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                 {inv.role}
               </span>
               {expired && (
-                <span className="ml-2 text-xs text-amber-400">(expired)</span>
+                <span className="ml-2 text-xs text-amber-600">(expired)</span>
               )}
             </div>
             {!expired && (
@@ -55,7 +55,7 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
                 type="button"
                 onClick={() => revoke(inv.id)}
                 disabled={revoking === inv.id}
-                className="text-sm text-red-400 hover:text-red-300 disabled:opacity-50"
+                className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
               >
                 {revoking === inv.id ? "Revoking…" : "Revoke"}
               </button>

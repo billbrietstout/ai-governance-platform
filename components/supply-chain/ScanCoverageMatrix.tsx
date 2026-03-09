@@ -38,13 +38,13 @@ export function ScanCoverageMatrix({
   const colors = { red: "bg-red-500/30", yellow: "bg-amber-500/30", green: "bg-emerald-500/30" };
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slatePro-700">
+    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="border-b border-slatePro-700 bg-slatePro-900/50">
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Asset</th>
+          <tr className="border-b border-gray-200 bg-gray-50">
+            <th className="px-4 py-2 text-left font-medium text-gray-600">Asset</th>
             {scanTypes.map((st) => (
-              <th key={st} className="px-3 py-2 text-center font-medium text-slatePro-300">
+              <th key={st} className="px-3 py-2 text-center font-medium text-gray-600">
                 {st.replace(/_/g, " ")}
               </th>
             ))}
@@ -52,8 +52,8 @@ export function ScanCoverageMatrix({
         </thead>
         <tbody>
           {assets.map((row) => (
-            <tr key={row.assetId} className="border-b border-slatePro-800 last:border-0">
-              <td className="px-4 py-2 font-medium text-slatePro-100">{row.assetName}</td>
+            <tr key={row.assetId} className="border-b border-gray-200 last:border-0 hover:bg-gray-50">
+              <td className="px-4 py-2 font-medium text-gray-900">{row.assetName}</td>
               {row.scans.map((cell) => {
                 const status = getStatus(cell);
                 return (

@@ -51,14 +51,14 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-dvh bg-slatePro-950">
+    <div className="flex min-h-dvh">
       <Sidebar
         userEmail={user?.email ?? null}
         orgName={orgName}
         featureFlags={featureFlags}
         frameworks={frameworks}
       />
-      <main className="flex-1 overflow-auto">
+      <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
         <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">
           <div className="mb-4">
             <Breadcrumbs />

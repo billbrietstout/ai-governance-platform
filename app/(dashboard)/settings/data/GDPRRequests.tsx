@@ -21,9 +21,9 @@ export function GDPRRequests() {
   }
 
   return (
-    <div className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
-      <h2 className="text-sm font-medium text-slatePro-300">GDPR requests</h2>
-      <p className="mt-2 text-sm text-slatePro-500">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <h2 className="text-sm font-medium text-gray-900">GDPR requests</h2>
+      <p className="mt-2 text-sm text-gray-600">
         Export your data (right to data portability). Erasure requests: contact support.
       </p>
       <button
@@ -35,7 +35,7 @@ export function GDPRRequests() {
         {loading ? "Exporting…" : "Export my data"}
       </button>
       {exported && (
-        <pre className="mt-3 max-h-64 overflow-auto rounded bg-slatePro-900 p-3 text-xs text-slatePro-300">
+        <pre className="mt-3 max-h-64 overflow-auto rounded border border-gray-200 bg-gray-50 p-3 text-xs text-gray-800">
           {exported}
         </pre>
       )}

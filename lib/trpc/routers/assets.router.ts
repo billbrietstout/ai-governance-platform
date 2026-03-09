@@ -14,7 +14,7 @@ const operatingModelSchema = z.enum(["IN_HOUSE", "VENDOR", "HYBRID"]).nullable()
 const cosaiLayerSchema = z.enum(["LAYER_1_BUSINESS", "LAYER_2_INFORMATION", "LAYER_3_APPLICATION", "LAYER_4_PLATFORM", "LAYER_5_SUPPLY_CHAIN"]).nullable();
 const autonomySchema = z.enum(["HUMAN_ONLY", "ASSISTED", "SEMI_AUTONOMOUS", "AUTONOMOUS"]).nullable();
 const statusSchema = z.enum(["DRAFT", "ACTIVE", "DEPRECATED", "ARCHIVED"]);
-const verticalSchema = z.enum(["GENERAL", "HEALTHCARE", "FINANCIAL", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR"]).nullable();
+const verticalSchema = z.enum(["GENERAL", "HEALTHCARE", "FINANCIAL", "INSURANCE", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR", "ENERGY"]).nullable();
 
 export const assetsRouter = createTRPCRouter({
   list: protectedProcedure

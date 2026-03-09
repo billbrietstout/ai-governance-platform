@@ -98,12 +98,12 @@ export default async function RegulatoryCascadePage({
     return (
       <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
         <div>
-          <Link href="/layer1-business" className="text-sm text-navy-400 hover:underline">
+          <Link href="/layer1-business" className="text-sm text-navy-600 hover:underline">
             ← Layer 1: Business
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">Regulatory Cascade</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Regulatory Cascade</h1>
         </div>
-        <p className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4 text-slatePro-400">
+        <p className="rounded-lg border border-gray-200 bg-white p-4 text-gray-600 shadow-sm">
           {regName} framework not configured for this organization. Seed compliance frameworks to enable this view.
         </p>
       </main>
@@ -113,11 +113,11 @@ export default async function RegulatoryCascadePage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer1-business" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer1-business" className="text-sm text-navy-600 hover:underline">
           ← Layer 1: Business
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Regulatory Cascade</h1>
-        <p className="mt-1 text-slatePro-300">
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Regulatory Cascade</h1>
+        <p className="mt-1 text-gray-600">
           How {regName} flows through CoSAI layers. Controls at each layer. Unmet requirements with owner and remediation.
         </p>
       </div>
@@ -128,7 +128,7 @@ export default async function RegulatoryCascadePage({
             key={r.id}
             href={`/layer1-business/regulatory-cascade?regulation=${r.code}`}
             className={`rounded px-3 py-1.5 text-sm font-medium ${
-              regulation === r.code ? "bg-navy-600 text-white" : "bg-slatePro-800 text-slatePro-300 hover:bg-slatePro-700"
+              regulation === r.code ? "bg-navy-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
             {r.name}

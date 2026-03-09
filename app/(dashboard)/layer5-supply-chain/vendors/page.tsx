@@ -14,32 +14,32 @@ function daysUntil(date: Date | null): number | null {
 }
 
 function Soc2Badge({ status, expiresAt }: { status: string | null; expiresAt: Date | null }) {
-  if (!status || status === "NOT_APPLICABLE") return <span className="text-slatePro-500">—</span>;
+  if (!status || status === "NOT_APPLICABLE") return <span className="text-gray-500">—</span>;
   const expired = expiresAt && expiresAt < new Date();
   if (status === "CERTIFIED")
     return (
-      <span className={`rounded px-2 py-0.5 text-xs font-medium ${expired ? "bg-red-500/20 text-red-400" : "bg-emerald-500/20 text-emerald-400"}`}>
+      <span className={`rounded px-2 py-0.5 text-xs font-medium ${expired ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
         {expired ? "EXPIRED" : "CERTIFIED"}
       </span>
     );
   if (status === "IN_PROGRESS")
     return (
-      <span className="rounded bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">
+      <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
         IN PROGRESS
       </span>
     );
-  return <span className="text-slatePro-500">{status}</span>;
+  return <span className="text-gray-500">{status}</span>;
 }
 
 function SlsaDots({ level }: { level: string | null }) {
-  if (!level) return <span className="text-slatePro-500">—</span>;
+  if (!level) return <span className="text-gray-500">—</span>;
   const l = parseInt(String(level).replace("L", ""), 10) || 0;
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4].map((i) => (
         <div
           key={i}
-          className={`h-1.5 w-1.5 rounded-full ${i <= l ? "bg-navy-400" : "bg-slatePro-600"}`}
+          className={`h-1.5 w-1.5 rounded-full ${i <= l ? "bg-navy-500" : "bg-gray-300"}`}
         />
       ))}
     </div>
@@ -53,8 +53,8 @@ export default async function VendorsPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Vendor Registry</h1>
-        <p className="mt-1 text-slatePro-300">
+        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Vendor Registry</h1>
+        <p className="mt-1 text-gray-600">
           Vendor assurance scores, evidence expiry, and contract alignment.
         </p>
       </div>
@@ -79,15 +79,15 @@ export default async function VendorsPage() {
               <Link
                 key={v.id}
                 href={`/layer5-supply-chain/vendors/${v.id}`}
-                className="rounded-lg border border-slatePro-700 bg-slatePro-900/50 p-4 transition hover:border-slatePro-600 hover:bg-slatePro-900/70"
+                className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-navy-500/20 text-lg font-semibold text-navy-300">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-navy-100 text-lg font-semibold text-navy-700">
                     {initial}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-medium text-slatePro-200">{v.vendorName}</h3>
-                    <p className="text-xs text-slatePro-500">{v.vendorType ?? "—"}</p>
+                    <h3 className="font-medium text-gray-900">{v.vendorName}</h3>
+                    <p className="text-xs text-gray-500">{v.vendorType ?? "—"}</p>
                   </div>
                 </div>
 
@@ -96,37 +96,37 @@ export default async function VendorsPage() {
                   <span
                     className={`rounded px-2 py-0.5 text-xs ${
                       v.iso27001Status === "CERTIFIED"
-                        ? "bg-emerald-500/20 text-emerald-400"
+                        ? "bg-emerald-100 text-emerald-700"
                         : v.iso27001Status === "IN_PROGRESS"
-                          ? "bg-amber-500/20 text-amber-400"
-                          : "bg-slatePro-700/50 text-slatePro-500"
+                          ? "bg-amber-100 text-amber-700"
+                          : "bg-gray-100 text-gray-500"
                     }`}
                   >
                     ISO {v.iso27001Status ?? "—"}
                   </span>
                   <div className="flex items-center gap-1">
                     <SlsaDots level={v.slsaLevel} />
-                    <span className="text-[10px] text-slatePro-500">SLSA</span>
+                    <span className="text-[10px] text-gray-500">SLSA</span>
                   </div>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between">
-                  <span className={v.contractAligned ? "text-emerald-400" : "text-amber-400"}>
+                  <span className={v.contractAligned ? "text-emerald-600" : "text-amber-600"}>
                     {v.contractAligned ? "Contract aligned" : "Contract gap"}
                   </span>
                   {daysToExpiry !== null && (
-                    <span className={`text-xs ${expiryWarning ? "text-amber-400" : "text-slatePro-500"}`}>
+                    <span className={`text-xs ${expiryWarning ? "text-amber-600" : "text-gray-500"}`}>
                       {daysToExpiry > 0 ? `${daysToExpiry}d to expiry` : "Expired"}
                     </span>
                   )}
                 </div>
 
                 {v.expiredEvidence.length > 0 && (
-                  <p className="mt-2 text-xs text-amber-400">{v.expiredEvidence.length} expired evidence</p>
+                  <p className="mt-2 text-xs text-amber-600">{v.expiredEvidence.length} expired evidence</p>
                 )}
 
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-xs text-slatePro-500">Assurance</span>
+                  <span className="text-xs text-gray-500">Assurance</span>
                   <div className="relative h-8 w-8">
                     <svg className="h-8 w-8 -rotate-90" viewBox="0 0 32 32">
                       <circle
@@ -136,7 +136,7 @@ export default async function VendorsPage() {
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="3"
-                        className="text-slatePro-700"
+                        className="text-gray-200"
                       />
                       <circle
                         cx="16"
@@ -149,7 +149,7 @@ export default async function VendorsPage() {
                         className={scorePct >= 70 ? "text-emerald-500" : scorePct >= 40 ? "text-amber-500" : "text-red-500"}
                       />
                     </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-slatePro-200">
+                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-gray-900">
                       {scorePct}%
                     </span>
                   </div>

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useActionState } from "react";
 import { onboardingActions } from "./actions";
+import { VERTICAL_OPTIONS, getVerticalLabel, getVerticalRegulations } from "./VERTICAL_OPTIONS";
 
-const VERTICALS = ["GENERAL", "HEALTHCARE", "FINANCIAL", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR"];
 const PLANS = ["FREE", "TEAM", "ENTERPRISE"];
 const ROLES = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"];
 
@@ -30,6 +30,8 @@ export function OnboardingWizard() {
     null as { error?: string } | null
   );
 
+  const regulations = getVerticalRegulations(vertical);
+
   return (
     <div className="space-y-6">
       <div className="flex gap-2">
@@ -49,7 +51,9 @@ export function OnboardingWizard() {
         <form action={formAction} className="space-y-4">
           <input type="hidden" name="_action" value="step1" />
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slatePro-300">Organization name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-slatePro-300">
+              Organization name
+            </label>
             <input
               id="name"
               name="name"
@@ -60,7 +64,9 @@ export function OnboardingWizard() {
             />
           </div>
           <div>
-            <label htmlFor="vertical" className="block text-sm font-medium text-slatePro-300">Vertical</label>
+            <label htmlFor="vertical" className="block text-sm font-medium text-slatePro-300">
+              Industry
+            </label>
             <select
               id="vertical"
               name="verticalMarket"
@@ -68,13 +74,17 @@ export function OnboardingWizard() {
               onChange={(e) => setVertical(e.target.value)}
               className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
             >
-              {VERTICALS.map((v) => (
-                <option key={v} value={v}>{v}</option>
+              {VERTICAL_OPTIONS.map((v) => (
+                <option key={v.value} value={v.value}>
+                  {v.label}
+                </option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="plan" className="block text-sm font-medium text-slatePro-300">Plan</label>
+            <label htmlFor="plan" className="block text-sm font-medium text-slatePro-300">
+              Plan
+            </label>
             <select
               id="plan"
               name="plan"
@@ -83,20 +93,43 @@ export function OnboardingWizard() {
               className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
             >
               {PLANS.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>
+                  {p}
+                </option>
               ))}
             </select>
           </div>
           {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
-          <button type="submit" className="rounded bg-navy-600 px-4 py-2 text-sm text-white">Next</button>
+          <button type="submit" className="rounded bg-navy-600 px-4 py-2 text-sm text-white">
+            Next
+          </button>
         </form>
       )}
 
       {step === 2 && (
         <div className="space-y-4">
-          <p className="text-slatePro-300">Regulatory profile suggested by vertical: {vertical}</p>
-          <p className="text-sm text-slatePro-500">EU AI Act, NIST AI RMF, CoSAI SRF recommended.</p>
-          <button type="button" onClick={() => setStep(3)} className="rounded bg-navy-600 px-4 py-2 text-sm text-white">
+          <p className="text-slatePro-300">
+            Based on your industry, we&apos;ll automatically surface these compliance requirements:
+          </p>
+          <div className="rounded-lg border border-slatePro-700 bg-slatePro-900/50 p-4">
+            <h3 className="text-sm font-medium text-slatePro-200">{getVerticalLabel(vertical)}</h3>
+            <ul className="mt-2 space-y-1 text-sm text-slatePro-400">
+              {regulations.length > 0 ? (
+                regulations.map((r) => (
+                  <li key={r.code}>
+                    {r.code}: {r.name}
+                  </li>
+                ))
+              ) : (
+                <li>EU AI Act, NIST AI RMF, CoSAI SRF recommended.</li>
+              )}
+            </ul>
+          </div>
+          <button
+            type="button"
+            onClick={() => setStep(3)}
+            className="rounded bg-navy-600 px-4 py-2 text-sm text-white"
+          >
             Next
           </button>
         </div>
@@ -115,7 +148,11 @@ export function OnboardingWizard() {
       {step === 4 && (
         <div className="space-y-4">
           <p className="text-slatePro-300">First integration – skip for now.</p>
-          <button type="button" onClick={() => setStep(5)} className="rounded bg-navy-600 px-4 py-2 text-sm text-white">
+          <button
+            type="button"
+            onClick={() => setStep(5)}
+            className="rounded bg-navy-600 px-4 py-2 text-sm text-white"
+          >
             Skip
           </button>
         </div>
@@ -150,7 +187,9 @@ export function OnboardingWizard() {
                 className="rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
               >
                 {ROLES.map((r) => (
-                  <option key={r} value={r}>{r}</option>
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
                 ))}
               </select>
             </div>

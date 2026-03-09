@@ -8,6 +8,8 @@ const VERTICAL_FRAMEWORKS: Record<string, string[]> = {
   GENERAL: ["NIST_AI_RMF", "EU_AI_ACT", "COSAI_SRF"],
   HEALTHCARE: ["NIST_AI_RMF", "EU_AI_ACT", "COSAI_SRF"],
   FINANCIAL: ["NIST_AI_RMF", "EU_AI_ACT", "NIST_CSF"],
+  INSURANCE: ["NIST_AI_RMF", "EU_AI_ACT", "NIST_CSF"],
+  ENERGY: ["NIST_AI_RMF", "EU_AI_ACT", "NIST_CSF"],
   AUTOMOTIVE: ["NIST_AI_RMF", "EU_AI_ACT"],
   RETAIL: ["NIST_AI_RMF", "EU_AI_ACT"],
   MANUFACTURING: ["NIST_AI_RMF", "COSAI_SRF"],
@@ -35,7 +37,7 @@ export const onboardingRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1),
-        verticalMarket: z.enum(["GENERAL", "HEALTHCARE", "FINANCIAL", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR"]),
+        verticalMarket: z.enum(["GENERAL", "HEALTHCARE", "FINANCIAL", "INSURANCE", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR", "ENERGY"]),
         plan: z.enum(["FREE", "TEAM", "ENTERPRISE"])
       })
     )

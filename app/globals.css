@@ -55,7 +55,7 @@ body {
   animation: page-fade-in 0.2s ease-out;
 }
 
-/* Table row hover – enterprise polish */
-tbody tr:hover {
-  background-color: rgb(49 55 71 / 0.3);
+/* Table row hover – light content area */
+.dashboard-content tbody tr:hover {
+  background-color: rgb(243 244 246); /* gray-100 */
 }

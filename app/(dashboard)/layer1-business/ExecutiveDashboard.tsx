@@ -1,0 +1,320 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
+const TABS = [
+  { id: "ceo", label: "CEO View" },
+  { id: "cfo", label: "CFO View" },
+  { id: "coo", label: "COO View" },
+  { id: "ciso", label: "CISO View" },
+  { id: "legal", label: "Legal/CLO View" }
+] as const;
+
+type CEOData = {
+  aiRiskExposure: number;
+  reputationalRisk: number;
+  regulatoryExposure: string;
+  aiIncidents: number;
+  governanceCoverage: number;
+  posture: "red" | "amber" | "green";
+  summary: string;
+};
+
+type CFOData = {
+  complianceCostExposure: { range: string } | null;
+  assetsByAutonomy: Record<string, number>;
+  auditRisk: number;
+  aiSpendGovernance: number;
+  failedScanCount: number;
+};
+
+type COOData = {
+  businessProcessCoverage: Record<string, { total: number; governed: number; autonomous: number }>;
+  shadowAiRisk: number;
+  autonomyDistribution: Record<string, number>;
+  humanOversightGaps: number;
+};
+
+type CISOData = {
+  failedScanPolicies: Record<string, number>;
+  vendorSecurityPosture: { vendorName: string; soc2: boolean; iso: boolean }[];
+  highRiskNoScan90d: number;
+  promptInjectionFindings: number;
+  attackSurface: number;
+};
+
+type LegalData = {
+  annexIIIAssets: { id: string; name: string; assetType: string; articles: string[] }[];
+  accountabilityCompleteness: { total: number; complete: number; pct: number };
+  noAppealsProcess: number;
+  verticalRegulations: { code: string; name: string; jurisdiction: string; mandatory: boolean }[];
+  verticalLabel: string;
+  contractAlignmentGaps: number;
+};
+
+type Props = {
+  ceo: CEOData;
+  cfo: CFOData;
+  coo: COOData;
+  ciso: CISOData;
+  legal: LegalData;
+};
+
+export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal }: Props) {
+  const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("ceo");
+
+  return (
+    <div className="space-y-6">
+      <div className="flex gap-2 border-b border-slate-200">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTab(t.id)}
+            className={`border-b-2 px-4 py-2 text-sm font-medium transition ${
+              tab === t.id
+                ? "border-navy-600 text-navy-600"
+                : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "ceo" && <CEOView data={ceo} />}
+      {tab === "cfo" && <CFOView data={cfo} />}
+      {tab === "coo" && <COOView data={coo} />}
+      {tab === "ciso" && <CISOView data={ciso} />}
+      {tab === "legal" && <LegalCLOView data={legal} />}
+    </div>
+  );
+}
+
+function CEOView({ data: d }: { data: CEOData }) {
+  const postureColor =
+    d.posture === "green" ? "bg-emerald-500" : d.posture === "amber" ? "bg-amber-500" : "bg-red-500";
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <div className={`h-4 w-4 shrink-0 rounded-full ${postureColor}`} title={d.posture} />
+        <p className="text-slate-700">{d.summary}</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <MetricCard label="Ungoverned High-Risk AI" value={d.aiRiskExposure} />
+        <MetricCard label="Reputational Risk" value={d.reputationalRisk} sub="autonomous without oversight" />
+        <MetricCard label="Regulatory Exposure" value={d.regulatoryExposure} />
+        <MetricCard label="AI Incidents (90d)" value={d.aiIncidents} />
+        <MetricCard label="Governance Coverage" value={`${d.governanceCoverage}%`} />
+      </div>
+    </div>
+  );
+}
+
+function CFOView({ data: d }: { data: CFOData }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {d.complianceCostExposure && (
+          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <h4 className="text-sm font-medium text-slate-600">Compliance Cost Exposure</h4>
+            <p className="mt-1 text-2xl font-bold text-slate-900">{d.complianceCostExposure.range}</p>
+          </div>
+        )}
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h4 className="text-sm font-medium text-slate-600">Assets by Autonomy</h4>
+          <div className="mt-2 space-y-1 text-sm text-slate-700">
+            {Object.entries(d.assetsByAutonomy).map(([k, v]) => (
+              <div key={k}>{k === "UNSET" ? "—" : k}: {v}</div>
+            ))}
+          </div>
+        </div>
+        <MetricCard label="Audit Risk" value={d.auditRisk} sub="HIGH risk, no attestation" />
+        <MetricCard label="AI Spend Governance" value={`${d.aiSpendGovernance}%`} sub="contracts aligned" />
+        <MetricCard label="Failed Scan Policies" value={d.failedScanCount} />
+      </div>
+    </div>
+  );
+}
+
+function COOView({ data: d }: { data: COOData }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MetricCard label="Shadow AI Risk" value={d.shadowAiRisk} sub="DRAFT, no accountability" />
+        <MetricCard label="Human Oversight Gaps" value={d.humanOversightGaps} sub="autonomous without review" />
+      </div>
+
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h4 className="mb-3 text-sm font-medium text-slate-700">Business Process Coverage</h4>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="py-2 text-left font-medium text-slate-600">Function</th>
+                <th className="py-2 text-right font-medium text-slate-600">Total</th>
+                <th className="py-2 text-right font-medium text-slate-600">Governed</th>
+                <th className="py-2 text-right font-medium text-slate-600">Autonomous</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(d.businessProcessCoverage).map(([fn, v]) => (
+                <tr key={fn} className="border-b border-slate-100 last:border-0">
+                  <td className="py-2 font-medium text-slate-900">{fn.replace("_", " ")}</td>
+                  <td className="py-2 text-right text-slate-700">{v.total}</td>
+                  <td className="py-2 text-right text-slate-700">{v.governed}</td>
+                  <td className="py-2 text-right text-slate-700">{v.autonomous}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h4 className="mb-2 text-sm font-medium text-slate-700">Autonomy Distribution</h4>
+        <div className="flex flex-wrap gap-4 text-sm text-slate-700">
+          {Object.entries(d.autonomyDistribution).map(([k, v]) => (
+            <span key={k}>{k === "UNSET" ? "—" : k}: {v}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CISOView({ data: d }: { data: CISOData }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <MetricCard label="Failed Scan Policies" value={Object.keys(d.failedScanPolicies).length} />
+        <MetricCard label="Vendors Expired Certs" value={d.vendorSecurityPosture.length} />
+        <MetricCard label="HIGH Risk, No Scan 90d" value={d.highRiskNoScan90d} />
+        <MetricCard label="Prompt Injection Findings" value={d.promptInjectionFindings} />
+        <MetricCard label="Attack Surface" value={d.attackSurface} sub="external-facing AI" />
+      </div>
+
+      {Object.keys(d.failedScanPolicies).length > 0 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h4 className="mb-2 text-sm font-medium text-slate-700">Failed Scans by Type</h4>
+          <div className="flex flex-wrap gap-4 text-sm">
+            {Object.entries(d.failedScanPolicies).map(([k, v]) => (
+              <span key={k} className="rounded bg-red-100 px-2 py-0.5 text-red-700">
+                {k}: {v}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {d.vendorSecurityPosture.length > 0 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h4 className="mb-2 text-sm font-medium text-slate-700">Vendors with Expired Evidence</h4>
+          <ul className="space-y-1 text-sm text-slate-700">
+            {d.vendorSecurityPosture.map((v, i) => (
+              <li key={i}>
+                {v.vendorName} {v.soc2 && "(SOC2 expired)"} {v.iso && "(ISO expired)"}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LegalCLOView({ data: d }: { data: LegalData }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MetricCard
+          label="Accountability Completeness"
+          value={`${d.accountabilityCompleteness.pct}%`}
+          sub={`${d.accountabilityCompleteness.complete}/${d.accountabilityCompleteness.total} HIGH risk`}
+        />
+        <MetricCard label="No Appeals Process" value={d.noAppealsProcess} sub="HIGH risk assets" />
+        <MetricCard label="Contract Alignment Gaps" value={d.contractAlignmentGaps} />
+      </div>
+
+      {d.annexIIIAssets.length > 0 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h4 className="mb-3 text-sm font-medium text-slate-700">EU AI Act Annex III Assets</h4>
+          <ul className="space-y-2">
+            {d.annexIIIAssets.map((a) => (
+              <li key={a.id} className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
+                <div>
+                  <Link
+                    href={`/layer3-application/assets/${a.id}`}
+                    className="font-medium text-navy-600 hover:underline"
+                  >
+                    {a.name}
+                  </Link>
+                  <span className="ml-2 text-xs text-slate-500">{a.assetType}</span>
+                </div>
+                <div className="flex gap-2 text-xs text-slate-600">
+                  {a.articles.map((art) => (
+                    <span key={art} className="rounded bg-amber-100 px-2 py-0.5 text-amber-800">
+                      {art}
+                    </span>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h4 className="mb-3 text-sm font-medium text-slate-700">
+          Vertical Compliance Requirements ({d.verticalLabel})
+        </h4>
+        <p className="mb-3 text-xs text-slate-500">
+          Regulations applicable to your industry. Status: compliant / gap / unknown.
+        </p>
+        <ul className="space-y-2">
+          {d.verticalRegulations.map((r) => (
+            <li
+              key={r.code}
+              className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2"
+            >
+              <div>
+                <span className="font-medium text-slate-900">{r.name}</span>
+                <span className="ml-2 text-xs text-slate-500">
+                  {r.code} · {r.jurisdiction}
+                </span>
+              </div>
+              <span
+                className={`rounded px-2 py-0.5 text-xs ${
+                  r.mandatory ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"
+                }`}
+              >
+                {r.mandatory ? "Mandatory" : "Recommended"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  sub
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <h4 className="text-sm font-medium text-slate-600">{label}</h4>
+      <p className="mt-1 text-2xl font-bold text-slate-900">{value}</p>
+      {sub && <p className="mt-0.5 text-xs text-slate-500">{sub}</p>}
+    </div>
+  );
+}

@@ -7,11 +7,11 @@ import * as engine from "@/lib/compliance/engine";
 import { prisma } from "@/lib/prisma";
 
 const FRAMEWORK_COLORS: Record<string, string> = {
-  NIST_AI_RMF: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-  EU_AI_ACT: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-  COSAI_SRF: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-  NIST_CSF: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  ISO_42001: "bg-slatePro-500/20 text-slatePro-300 border-slatePro-500/30"
+  NIST_AI_RMF: "bg-blue-100 text-blue-700 border-blue-200",
+  EU_AI_ACT: "bg-amber-100 text-amber-700 border-amber-200",
+  COSAI_SRF: "bg-purple-100 text-purple-700 border-purple-200",
+  NIST_CSF: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  ISO_42001: "bg-gray-100 text-gray-700 border-gray-200"
 };
 
 export default async function GapsPage() {
@@ -44,59 +44,59 @@ export default async function GapsPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Gap Analysis</h1>
-        <p className="mt-1 text-slatePro-300">
+        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Gap Analysis</h1>
+        <p className="mt-1 text-gray-600">
           Compliance gaps per asset, grouped by CoSAI layer and framework.
         </p>
       </div>
 
       {/* Summary panel */}
-      <div className="flex flex-wrap gap-4 rounded-lg border border-slatePro-700 bg-slatePro-900/30 px-4 py-3">
+      <div className="flex flex-wrap gap-4 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
         <span className="flex items-center gap-2">
-          <span className="rounded bg-red-500/20 px-2.5 py-0.5 text-sm font-medium text-red-400">
+          <span className="rounded bg-red-100 px-2.5 py-0.5 text-sm font-medium text-red-700">
             {bySeverity.critical} critical
           </span>
         </span>
         <span className="flex items-center gap-2">
-          <span className="rounded bg-amber-500/20 px-2.5 py-0.5 text-sm font-medium text-amber-400">
+          <span className="rounded bg-amber-100 px-2.5 py-0.5 text-sm font-medium text-amber-700">
             {bySeverity.high} high
           </span>
         </span>
         <span className="flex items-center gap-2">
-          <span className="rounded bg-yellow-500/20 px-2.5 py-0.5 text-sm font-medium text-yellow-400">
+          <span className="rounded bg-yellow-100 px-2.5 py-0.5 text-sm font-medium text-yellow-700">
             {bySeverity.medium} medium
           </span>
         </span>
         <span className="flex items-center gap-2">
-          <span className="rounded bg-slatePro-600/30 px-2.5 py-0.5 text-sm font-medium text-slatePro-400">
+          <span className="rounded bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-600">
             {bySeverity.low} low
           </span>
         </span>
-        <span className="border-l border-slatePro-700 pl-4 text-sm text-slatePro-400">
+        <span className="border-l border-gray-200 pl-4 text-sm text-gray-600">
           {withGaps.length} assets with gaps
         </span>
       </div>
 
       <div className="space-y-6">
         {gapReports.map(({ asset, report }) => (
-          <div key={asset.id} className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
-            <h2 className="mb-3 font-medium text-slatePro-200">
-              <Link href={`/layer3-application/assets/${asset.id}`} className="text-navy-400 hover:underline">
+          <div key={asset.id} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <h2 className="mb-3 font-medium text-gray-900">
+              <Link href={`/layer3-application/assets/${asset.id}`} className="text-navy-600 hover:underline">
                 {asset.name}
               </Link>
             </h2>
 
             {report.criticalGaps.length === 0 ? (
-              <p className="text-sm text-emerald-400">No critical gaps</p>
+              <p className="text-sm text-emerald-600">No critical gaps</p>
             ) : (
               <>
-                <div className="mb-2 text-sm text-slatePro-400">By framework</div>
+                <div className="mb-2 text-sm text-gray-600">By framework</div>
                 <div className="space-y-3">
                   {Object.entries(report.byFramework).map(([code, v]) => {
                     if (v.gaps.length === 0) return null;
-                    const fwColor = FRAMEWORK_COLORS[code] ?? "bg-slatePro-700/50 text-slatePro-400 border-slatePro-600";
+                    const fwColor = FRAMEWORK_COLORS[code] ?? "bg-gray-100 text-gray-700 border-gray-200";
                     return (
-                      <div key={code} className="rounded border border-slatePro-700 bg-slatePro-900/50 p-3">
+                      <div key={code} className="rounded border border-gray-200 bg-gray-50 p-3">
                         <span className={`inline-block rounded border px-2 py-0.5 text-xs font-medium ${fwColor}`}>
                           {code.replace(/_/g, " ")}
                         </span>
@@ -104,20 +104,20 @@ export default async function GapsPage() {
                           {v.gaps.map((g) => (
                             <li
                               key={g.controlId}
-                              className="flex items-center justify-between gap-4 rounded bg-slatePro-800/50 px-3 py-2"
+                              className="flex items-center justify-between gap-4 rounded border border-gray-200 bg-white px-3 py-2"
                             >
                               <div>
-                                <span className="font-medium text-slatePro-200">{g.controlId}</span>
-                                <span className="ml-2 text-slatePro-500">— {g.title}</span>
-                                <span className="ml-2 text-xs text-slatePro-500">({g.cosaiLayer ?? "—"})</span>
+                                <span className="font-medium text-gray-900">{g.controlId}</span>
+                                <span className="ml-2 text-gray-500">— {g.title}</span>
+                                <span className="ml-2 text-xs text-gray-500">({g.cosaiLayer ?? "—"})</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="rounded bg-red-500/20 px-2 py-0.5 text-xs text-red-400">
+                                <span className="rounded bg-red-100 px-2 py-0.5 text-xs text-red-700">
                                   Critical
                                 </span>
                                 <Link
                                   href={`/layer3-application/assets/${asset.id}`}
-                                  className="text-xs text-navy-400 hover:underline"
+                                  className="text-xs text-navy-600 hover:underline"
                                 >
                                   View →
                                 </Link>
@@ -130,8 +130,8 @@ export default async function GapsPage() {
                   })}
                 </div>
 
-                <div className="mt-3 text-sm text-slatePro-400">Recommendations</div>
-                <ul className="mt-1 space-y-1 text-sm text-slatePro-300">
+                <div className="mt-3 text-sm text-gray-600">Recommendations</div>
+                <ul className="mt-1 space-y-1 text-sm text-gray-700">
                   {report.recommendations.map((r, i) => (
                     <li key={i}>{r}</li>
                   ))}

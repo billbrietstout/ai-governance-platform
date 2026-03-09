@@ -11,19 +11,19 @@ type Entry = {
 type Props = { entries: Entry[] };
 
 const ACTION_COLORS: Record<string, string> = {
-  LOGIN: "bg-blue-500/20 text-blue-300",
-  LOGOUT: "bg-slatePro-600/30 text-slatePro-400",
-  CREATE: "bg-emerald-500/20 text-emerald-400",
-  UPDATE: "bg-amber-500/20 text-amber-400",
-  DELETE: "bg-red-500/20 text-red-400",
-  ATTEST: "bg-purple-500/20 text-purple-400",
-  APPROVE: "bg-emerald-500/20 text-emerald-400",
-  REJECT: "bg-red-500/20 text-red-400"
+  LOGIN: "bg-blue-100 text-blue-700",
+  LOGOUT: "bg-gray-100 text-gray-600",
+  CREATE: "bg-emerald-100 text-emerald-700",
+  UPDATE: "bg-amber-100 text-amber-700",
+  DELETE: "bg-red-100 text-red-700",
+  ATTEST: "bg-purple-100 text-purple-700",
+  APPROVE: "bg-emerald-100 text-emerald-700",
+  REJECT: "bg-red-100 text-red-700"
 };
 
 function getActionColor(action: string): string {
   const key = Object.keys(ACTION_COLORS).find((k) => action.toUpperCase().includes(k));
-  return key ? ACTION_COLORS[key] : "bg-slatePro-600/30 text-slatePro-400";
+  return key ? ACTION_COLORS[key] : "bg-gray-100 text-gray-600";
 }
 
 function getInitials(str: string): string {
@@ -37,7 +37,7 @@ function getInitials(str: string): string {
 
 export function AuditFeed({ entries }: Props) {
   if (entries.length === 0) {
-    return <p className="text-sm text-slatePro-500">No recent activity</p>;
+    return <p className="text-sm text-gray-500">No recent activity</p>;
   }
 
   return (
@@ -53,10 +53,10 @@ export function AuditFeed({ entries }: Props) {
               {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <span className="font-medium text-slatePro-200">{e.action}</span>{" "}
-              <span className="text-slatePro-500">{e.resourceType}</span>
+              <span className="font-medium text-gray-900">{e.action}</span>{" "}
+              <span className="text-gray-500">{e.resourceType}</span>
             </div>
-            <span className="shrink-0 text-xs text-slatePro-500">
+            <span className="shrink-0 text-xs text-gray-500">
               {new Date(e.createdAt).toLocaleString()}
             </span>
           </li>

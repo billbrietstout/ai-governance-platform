@@ -1,29 +1,45 @@
 /**
- * Layer 1 – Business – regulatory cascade and governance overview.
+ * Layer 1 – Business – Executive Dashboard with role-based views.
  */
 import Link from "next/link";
+import { createServerCaller } from "@/lib/trpc/server-caller";
+import { ExecutiveDashboard } from "./ExecutiveDashboard";
 
-export default function Layer1BusinessPage() {
+export default async function Layer1BusinessPage() {
+  const caller = await createServerCaller();
+
+  const [ceoRes, cfoRes, cooRes, cisoRes, legalRes] = await Promise.all([
+    caller.executiveDashboard.getCEOView(),
+    caller.executiveDashboard.getCFOView(),
+    caller.executiveDashboard.getCOOView(),
+    caller.executiveDashboard.getCISOView(),
+    caller.executiveDashboard.getLegalCLOView()
+  ]);
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Layer 1: Business</h1>
-        <p className="mt-1 text-slatePro-300">
-          Regulatory cascade, governance, and executive oversight.
-        </p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 1: Business</h1>
+          <p className="mt-1 text-slate-600">
+            Executive dashboard, regulatory cascade, and governance oversight.
+          </p>
+        </div>
         <Link
           href="/layer1-business/regulatory-cascade"
-          className="rounded-lg border border-slatePro-700 bg-slatePro-900/50 p-4 transition hover:border-slatePro-600"
+          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
         >
-          <div className="text-sm font-medium text-slatePro-400">Regulatory Cascade</div>
-          <div className="mt-1 text-slatePro-200">
-            See how regulations flow through CoSAI layers and which requirements are met.
-          </div>
+          Regulatory Cascade →
         </Link>
       </div>
+
+      <ExecutiveDashboard
+        ceo={ceoRes.data}
+        cfo={cfoRes.data}
+        coo={cooRes.data}
+        ciso={cisoRes.data}
+        legal={legalRes.data}
+      />
     </main>
   );
 }

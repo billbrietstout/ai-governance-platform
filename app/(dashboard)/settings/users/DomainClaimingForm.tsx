@@ -45,11 +45,11 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
 
   return (
     <form action={formAction} className="mt-4 space-y-4">
-      <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4">
-        <p className="text-sm font-medium text-amber-400">
+      <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
+        <p className="text-sm font-medium text-amber-800">
           Anyone with this email domain can join your organization
         </p>
-        <p className="mt-1 text-sm text-slatePro-400">
+        <p className="mt-1 text-sm text-gray-600">
           {claimedDomain
             ? `Users signing in with an @${claimedDomain} address will be automatically added with the selected role.`
             : "Set a domain below to allow anyone with that email domain to auto-join. Leave blank to disable."}
@@ -57,7 +57,7 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
       </div>
 
       <div>
-        <label htmlFor="domain-claimedDomain" className="block text-sm font-medium text-slatePro-400">
+        <label htmlFor="domain-claimedDomain" className="block text-sm font-medium text-gray-700">
           Claimed domain
         </label>
         <input
@@ -66,29 +66,29 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
           type="text"
           placeholder="example.com"
           defaultValue={claimedDomain ?? ""}
-          className="mt-1 w-full rounded border border-slatePro-700 bg-slatePro-950 px-3 py-2 text-slatePro-200 placeholder-slatePro-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
         />
-        <p className="mt-1 text-xs text-slatePro-500">Letters, dots, hyphens only. No @ symbol.</p>
+        <p className="mt-1 text-xs text-gray-500">Letters, dots, hyphens only. No @ symbol.</p>
       </div>
 
       <div>
-        <label htmlFor="domain-autoJoinRole" className="block text-sm font-medium text-slatePro-400">
+        <label htmlFor="domain-autoJoinRole" className="block text-sm font-medium text-gray-700">
           Auto-join role
         </label>
         <select
           id="domain-autoJoinRole"
           name="autoJoinRole"
           defaultValue={autoJoinRole}
-          className="mt-1 w-full rounded border border-slatePro-700 bg-slatePro-950 px-3 py-2 text-slatePro-200 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
         >
           <option value="VIEWER">VIEWER</option>
           <option value="ANALYST">ANALYST</option>
         </select>
-        <p className="mt-1 text-xs text-slatePro-500">ADMIN and CAIO cannot be auto-assigned.</p>
+        <p className="mt-1 text-xs text-gray-500">ADMIN and CAIO cannot be auto-assigned.</p>
       </div>
 
-      {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
-      {state?.success && <p className="text-sm text-emerald-400">Domain settings saved.</p>}
+      {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
+      {state?.success && <p className="text-sm text-emerald-600">Domain settings saved.</p>}
 
       <button
         type="submit"

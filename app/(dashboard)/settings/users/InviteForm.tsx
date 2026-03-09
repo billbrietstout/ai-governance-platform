@@ -35,7 +35,7 @@ export function InviteForm() {
   return (
     <form action={formAction} className="mt-4 space-y-4">
       <div>
-        <label htmlFor="invite-email" className="block text-sm font-medium text-slatePro-400">
+        <label htmlFor="invite-email" className="block text-sm font-medium text-gray-700">
           Email
         </label>
         <input
@@ -44,17 +44,17 @@ export function InviteForm() {
           type="email"
           required
           placeholder="colleague@example.com"
-          className="mt-1 w-full rounded border border-slatePro-700 bg-slatePro-950 px-3 py-2 text-slatePro-200 placeholder-slatePro-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
         />
       </div>
       <div>
-        <label htmlFor="invite-role" className="block text-sm font-medium text-slatePro-400">
+        <label htmlFor="invite-role" className="block text-sm font-medium text-gray-700">
           Role
         </label>
         <select
           id="invite-role"
           name="role"
-          className="mt-1 w-full rounded border border-slatePro-700 bg-slatePro-950 px-3 py-2 text-slatePro-200 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
         >
           {ROLES.map((r) => (
             <option key={r} value={r}>
@@ -64,10 +64,10 @@ export function InviteForm() {
         </select>
       </div>
       {state?.error && (
-        <p className="text-sm text-red-400">{state.error}</p>
+        <p className="text-sm text-red-600">{state.error}</p>
       )}
       {state?.success && (
-        <p className="text-sm text-emerald-400">Invite sent. Expires in 7 days.</p>
+        <p className="text-sm text-emerald-600">Invite sent. Expires in 7 days.</p>
       )}
       <button
         type="submit"

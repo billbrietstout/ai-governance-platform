@@ -24,12 +24,12 @@ export function AssetFilters() {
   const statusVal = params.get("status") ?? "";
 
   const pill = "rounded-full px-3 py-1 text-xs font-medium transition";
-  const inactive = "bg-slatePro-800 text-slatePro-400 hover:bg-slatePro-700 hover:text-slatePro-200";
+  const inactive = "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800";
   const active = "bg-navy-600 text-white";
 
   return (
     <div className="flex flex-wrap gap-2">
-      <span className="text-xs font-medium text-slatePro-500">Type:</span>
+      <span className="text-xs font-medium text-gray-500">Type:</span>
       {TYPES.map((t) => (
         <button
           key={t}
@@ -40,7 +40,7 @@ export function AssetFilters() {
           {t}
         </button>
       ))}
-      <span className="ml-2 text-xs font-medium text-slatePro-500">EU Risk:</span>
+      <span className="ml-2 text-xs font-medium text-gray-500">EU Risk:</span>
       {EU_RISKS.map((r) => (
         <button
           key={r}
@@ -51,7 +51,7 @@ export function AssetFilters() {
           {r}
         </button>
       ))}
-      <span className="ml-2 text-xs font-medium text-slatePro-500">Layer:</span>
+      <span className="ml-2 text-xs font-medium text-gray-500">Layer:</span>
       {LAYERS.map((l) => (
         <button
           key={l}
@@ -62,7 +62,7 @@ export function AssetFilters() {
           {l.replace("LAYER_", "L")}
         </button>
       ))}
-      <span className="ml-2 text-xs font-medium text-slatePro-500">Status:</span>
+      <span className="ml-2 text-xs font-medium text-gray-500">Status:</span>
       {STATUSES.map((s) => (
         <button
           key={s}
