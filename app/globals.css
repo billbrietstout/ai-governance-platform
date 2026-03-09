@@ -33,3 +33,29 @@ body {
 body {
   @apply bg-slatePro-950 text-slatePro-50 antialiased;
 }
+
+/* NProgress – thin blue bar (matches navy theme) */
+#nprogress .bar {
+  background: var(--color-navy-500) !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px var(--color-navy-500), 0 0 5px var(--color-navy-500) !important;
+}
+
+/* Page transition fade-in */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.page-fade-in {
+  animation: page-fade-in 0.2s ease-out;
+}
+
+/* Table row hover – enterprise polish */
+tbody tr:hover {
+  background-color: rgb(49 55 71 / 0.3);
+}

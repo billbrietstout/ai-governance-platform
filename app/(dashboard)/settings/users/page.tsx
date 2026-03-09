@@ -84,7 +84,7 @@ export default async function UsersSettingsPage() {
           <h2 className="text-lg font-medium text-slatePro-200">Domain claiming</h2>
           <DomainClaimingForm
             claimedDomain={org?.claimedDomain ?? null}
-            autoJoinRole={org?.autoJoinRole ?? "VIEWER"}
+            autoJoinRole={(org?.autoJoinRole ?? "VIEWER") as "ANALYST" | "VIEWER"}
           />
         </section>
       )}

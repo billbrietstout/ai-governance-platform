@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 const ROLES = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"] as const;
 
-async function createInvite(_prev: { error?: string; success?: boolean }, formData: FormData) {
+async function createInvite(_prev: { error?: string; success?: boolean } | undefined, formData: FormData) {
   const email = formData.get("email") as string;
   const role = formData.get("role") as string;
   if (!email?.trim()) return { error: "Email is required" };
@@ -26,7 +26,7 @@ async function createInvite(_prev: { error?: string; success?: boolean }, formDa
 
 export function InviteForm() {
   const router = useRouter();
-  const [state, formAction] = useActionState(createInvite, undefined);
+  const [state, formAction] = useActionState(createInvite, {} as { error?: string; success?: boolean });
 
   useEffect(() => {
     if (state?.success) router.refresh();

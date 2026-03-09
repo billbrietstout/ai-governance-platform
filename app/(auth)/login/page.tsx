@@ -1,9 +1,10 @@
 "use client";
 
+import { Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
@@ -24,5 +25,21 @@ export default function LoginPage() {
         </button>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-dvh items-center justify-center bg-slatePro-950 px-4">
+        <div className="w-full max-w-sm rounded-lg border border-slatePro-700 bg-slatePro-900/50 p-8">
+          <div className="h-8 w-48 animate-pulse rounded bg-slatePro-700/60" />
+          <div className="mt-2 h-4 w-32 animate-pulse rounded bg-slatePro-700/40" />
+          <div className="mt-8 h-12 w-full animate-pulse rounded-lg bg-slatePro-700/60" />
+        </div>
+      </main>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

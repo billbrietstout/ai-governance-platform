@@ -57,6 +57,37 @@ export const dashboardRouter = createTRPCRouter({
     };
   }),
 
+  getKPIDeltas: protectedProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+
+    const [assetsThisMonth, risksThisMonth, vendorsExpiringNow] = await Promise.all([
+      prisma.aIAsset.count({
+        where: { orgId: ctx.orgId, deletedAt: null, createdAt: { gte: monthStart } }
+      }),
+      prisma.riskRegister.count({
+        where: {
+          orgId: ctx.orgId,
+          deletedAt: null,
+          createdAt: { gte: weekAgo },
+          OR: [{ riskScore: { gte: 15 } }, { residualScore: { gte: 15 } }]
+        }
+      }),
+      prisma.vendorAssurance.count({ where: { orgId: ctx.orgId } })
+    ]);
+
+    return {
+      data: {
+        totalAssetsDelta: assetsThisMonth > 0 ? `+${assetsThisMonth} this month` : null,
+        criticalRisksDelta: risksThisMonth > 0 ? `↑${risksThisMonth} since last week` : null,
+        vendorsExpiringDelta: vendorsExpiringNow > 0 ? `${vendorsExpiringNow} need review` : null
+      },
+      meta: {}
+    };
+  }),
+
   getLayerPosture: protectedProcedure.query(async ({ ctx }) => {
     const assets = await prisma.aIAsset.findMany({
       where: { orgId: ctx.orgId, deletedAt: null },

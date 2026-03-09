@@ -14,7 +14,9 @@ import { withCors } from "@/lib/security";
 const ROLES: UserRole[] = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"];
 const INVITE_EXPIRY_DAYS = 7;
 
-function requireAdmin(session: { user?: { orgId?: string; id?: string; role?: string } } | null) {
+function requireAdmin(session: { user?: { orgId?: string; id?: string; role?: string } } | null):
+  | { ok: false; status: 401 | 403; body: { error: string } }
+  | { ok: true; orgId: string; userId: string } {
   if (!session?.user) {
     return { ok: false, status: 401, body: { error: "Unauthorized" } };
   }
@@ -22,7 +24,12 @@ function requireAdmin(session: { user?: { orgId?: string; id?: string; role?: st
   if (role !== "ADMIN") {
     return { ok: false, status: 403, body: { error: "Forbidden: ADMIN role required" } };
   }
-  return { ok: true, orgId: session.user.orgId as string, userId: session.user.id as string };
+  const orgId = session.user.orgId;
+  const userId = session.user.id;
+  if (!orgId || !userId) {
+    return { ok: false, status: 401, body: { error: "Unauthorized" } };
+  }
+  return { ok: true, orgId, userId };
 }
 
 export async function GET(req: NextRequest) {

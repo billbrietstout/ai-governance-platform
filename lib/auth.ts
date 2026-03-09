@@ -74,7 +74,7 @@ export const authOptions = {
         (user as unknown as { mfaEnabled: boolean }).mfaEnabled = dbUser.mfaEnabled;
 
         if (dbUser.role === "ADMIN" || dbUser.role === "CAIO") {
-          if (!dbUser.mfaEnabled) {
+          if (dbUser.mfaEnabled && !(user as any).mfaVerified) {
             return "/auth/mfa-required";
           }
         }

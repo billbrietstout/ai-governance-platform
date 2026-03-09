@@ -23,8 +23,9 @@ export default async function DashboardLayout({
   let orgName: string | null = null;
   let featureFlags: Record<string, boolean> = {};
 
+  let frameworks: { code: string }[] = [];
   if (orgId) {
-    const [org, flags] = await Promise.all([
+    const [org, flags, fws] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
         select: { name: true }
@@ -32,6 +33,10 @@ export default async function DashboardLayout({
       prisma.featureFlag.findMany({
         where: { orgId },
         select: { name: true, enabled: true }
+      }),
+      prisma.complianceFramework.findMany({
+        where: { orgId, isActive: true },
+        select: { code: true }
       })
     ]);
     orgName = org?.name ?? null;
@@ -42,6 +47,7 @@ export default async function DashboardLayout({
       },
       {} as Record<string, boolean>
     );
+    frameworks = fws;
   }
 
   return (
@@ -50,13 +56,14 @@ export default async function DashboardLayout({
         userEmail={user?.email ?? null}
         orgName={orgName}
         featureFlags={featureFlags}
+        frameworks={frameworks}
       />
       <main className="flex-1 overflow-auto">
         <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">
           <div className="mb-4">
             <Breadcrumbs />
           </div>
-          {children}
+          <div className="page-fade-in">{children}</div>
         </div>
       </main>
     </div>

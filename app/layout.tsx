@@ -1,6 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 
+import { NProgressProvider } from "@/components/NProgressProvider";
+
 export const metadata: Metadata = {
   title: "AI Governance Platform",
   description: "AI governance platform scaffold"
@@ -13,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NProgressProvider>{children}</NProgressProvider>
+      </body>
     </html>
   );
 }

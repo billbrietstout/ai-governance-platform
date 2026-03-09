@@ -147,7 +147,7 @@ export async function seedDemoEnterpriseP3(prisma: PrismaClient): Promise<void> 
               "NON_COMPLIANT",
               "PENDING"
             ];
-            status = pickStatus(statuses, hash + control.id.slice(-4));
+            status = pickStatus(statuses, hash + parseInt(control.id.slice(-4), 16) || 0);
             if (status === "COMPLIANT") {
               evidenceRef = `SharePoint/AI-Governance/Evidence/${assetName.replace(/\s+/g, "-")}`;
               attestedAt = new Date();
