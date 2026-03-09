@@ -58,23 +58,23 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
         <section>
           <h2 className="mb-2 text-lg font-medium">Normalized Card</h2>
           <div className="space-y-3 rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
-            <Field label="Model" value={normalized.modelName} />
-            <Field label="Version" value={normalized.version} />
-            <Field label="Organization" value={normalized.organization} />
-            <Field label="Intended Use" value={normalized.intendedUse} />
-            <Field label="Out of Scope" value={normalized.outOfScopeUse} />
-            <Field label="Training Data" value={normalized.trainingData} />
-            <Field label="Ethics" value={normalized.ethicsConsiderations} />
-            <Field label="Bias" value={normalized.biasAnalysis} />
-            <Field label="License" value={normalized.license} />
-            {normalized.limitations.length > 0 && (
-              <Field label="Limitations" value={normalized.limitations.join(", ")} />
+            <Field label="Model" value={normalized.modelName ?? ""} />
+            <Field label="Version" value={normalized.version ?? ""} />
+            <Field label="Organization" value={normalized.organization ?? ""} />
+            <Field label="Intended Use" value={normalized.intendedUse ?? ""} />
+            <Field label="Out of Scope" value={normalized.outOfScopeUse ?? ""} />
+            <Field label="Training Data" value={normalized.trainingData ?? ""} />
+            <Field label="Ethics" value={normalized.ethicsConsiderations ?? ""} />
+            <Field label="Bias" value={normalized.biasAnalysis ?? ""} />
+            <Field label="License" value={normalized.license ?? ""} />
+            {(normalized.limitations?.length ?? 0) > 0 && (
+              <Field label="Limitations" value={(normalized.limitations ?? []).join(", ")} />
             )}
-            {normalized.knownVulnerabilities.length > 0 && (
-              <Field label="Known Vulnerabilities" value={normalized.knownVulnerabilities.join(", ")} />
+            {(normalized.knownVulnerabilities?.length ?? 0) > 0 && (
+              <Field label="Known Vulnerabilities" value={(normalized.knownVulnerabilities ?? []).join(", ")} />
             )}
-            <Field label="Contact" value={normalized.contactInfo} />
-            <Field label="Last Updated" value={normalized.lastUpdated} />
+            <Field label="Contact" value={normalized.contactInfo ?? ""} />
+            <Field label="Last Updated" value={normalized.lastUpdated ?? ""} />
           </div>
         </section>
       )}
