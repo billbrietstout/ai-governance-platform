@@ -228,7 +228,6 @@ const SCANS: Array<{
   { assetName: "Quality Inspection Vision System", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: false, findingsCount: 3, criticalFindings: 3, completedAt: new Date("2026-02-15") },
   { assetName: "CV Screening Assistant", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-20") },
   { assetName: "CV Screening Assistant", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: false, findingsCount: 5, criticalFindings: 5, completedAt: new Date("2026-02-20") },
-  { assetName: "CV Screening Assistant", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-20") },
   { assetName: "Fraud Detection System", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-18") },
   { assetName: "Fraud Detection System", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-18") },
   { assetName: "Log Analysis Agent", scanType: "SECRETS", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-03-01") },
@@ -258,6 +257,7 @@ export async function seedDemoEnterpriseP2(prisma: PrismaClient): Promise<void> 
   });
   const assetIdsByName = new Map(assets.map((a) => [a.name, a.id]));
 
+  let artifactCardCount = 0;
   for (const card of ARTIFACT_CARDS) {
     for (const assetName of card.linkedAssets) {
       const assetId = assetIdsByName.get(assetName);
@@ -278,80 +278,41 @@ export async function seedDemoEnterpriseP2(prisma: PrismaClient): Promise<void> 
             syncStatus: "SYNCED"
           }
         });
+        artifactCardCount++;
       }
     }
   }
 
   for (const v of VENDORS) {
-    await prisma.vendorAssurance.upsert({
-      where: {
-        orgId_vendorName: { orgId: org.id, vendorName: v.vendorName }
-      },
-      create: {
-        orgId: org.id,
-        vendorName: v.vendorName,
-        vendorType: v.vendorType,
-        cosaiLayer: v.cosaiLayer,
-        soc2Status: v.soc2Status,
-        soc2ExpiresAt: v.soc2ExpiresAt,
-        iso27001Status: v.iso27001Status,
-        slsaLevel: v.slsaLevel,
-        modelCardAvailable: v.modelCardAvailable,
-        contractAligned: v.contractAligned,
-        lastReviewedAt: v.lastReviewedAt,
-        evidenceLinks: v.evidenceLinks as object | undefined
-      },
-      update: {
-        vendorType: v.vendorType,
-        cosaiLayer: v.cosaiLayer,
-        soc2Status: v.soc2Status,
-        soc2ExpiresAt: v.soc2ExpiresAt,
-        iso27001Status: v.iso27001Status,
-        slsaLevel: v.slsaLevel,
-        modelCardAvailable: v.modelCardAvailable,
-        contractAligned: v.contractAligned,
-        lastReviewedAt: v.lastReviewedAt,
-        evidenceLinks: v.evidenceLinks as object | undefined
-      }
-    }).catch(async () => {
-      const existing = await prisma.vendorAssurance.findFirst({
-        where: { orgId: org.id, vendorName: v.vendorName }
-      });
-      if (existing) {
-        await prisma.vendorAssurance.update({
-          where: { id: existing.id },
-          data: {
-            vendorType: v.vendorType,
-            cosaiLayer: v.cosaiLayer,
-            soc2Status: v.soc2Status,
-            soc2ExpiresAt: v.soc2ExpiresAt,
-            iso27001Status: v.iso27001Status,
-            slsaLevel: v.slsaLevel,
-            modelCardAvailable: v.modelCardAvailable,
-            contractAligned: v.contractAligned,
-            lastReviewedAt: v.lastReviewedAt,
-            evidenceLinks: v.evidenceLinks as object | undefined
-          }
-        });
-      } else {
-        await prisma.vendorAssurance.create({
-          data: {
-            orgId: org.id,
-            vendorName: v.vendorName,
-            vendorType: v.vendorType,
-            cosaiLayer: v.cosaiLayer,
-            soc2Status: v.soc2Status,
-            soc2ExpiresAt: v.soc2ExpiresAt,
-            iso27001Status: v.iso27001Status,
-            slsaLevel: v.slsaLevel,
-            modelCardAvailable: v.modelCardAvailable,
-            contractAligned: v.contractAligned,
-            lastReviewedAt: v.lastReviewedAt,
-            evidenceLinks: v.evidenceLinks as object | undefined
-          }
-        });
-      }
+    const existing = await prisma.vendorAssurance.findFirst({
+      where: { orgId: org.id, vendorName: v.vendorName }
     });
+    const data = {
+      vendorType: v.vendorType,
+      cosaiLayer: v.cosaiLayer,
+      soc2Status: v.soc2Status,
+      soc2ExpiresAt: v.soc2ExpiresAt,
+      iso27001Status: v.iso27001Status,
+      slsaLevel: v.slsaLevel,
+      modelCardAvailable: v.modelCardAvailable,
+      contractAligned: v.contractAligned,
+      lastReviewedAt: v.lastReviewedAt,
+      evidenceLinks: v.evidenceLinks as object | undefined
+    };
+    if (existing) {
+      await prisma.vendorAssurance.update({
+        where: { id: existing.id },
+        data
+      });
+    } else {
+      await prisma.vendorAssurance.create({
+        data: {
+          orgId: org.id,
+          vendorName: v.vendorName,
+          ...data
+        }
+      });
+    }
   }
 
   for (const s of SCANS) {
@@ -387,6 +348,6 @@ export async function seedDemoEnterpriseP2(prisma: PrismaClient): Promise<void> 
 
   // eslint-disable-next-line no-console
   console.log(
-    `Meridian P2 seeded: ${ARTIFACT_CARDS.length} model cards, ${VENDORS.length} vendors, ${SCANS.length} scan records.`
+    `Meridian P2 seeded: ${artifactCardCount} artifact cards, ${VENDORS.length} vendors, ${SCANS.length} scan records.`
   );
 }
