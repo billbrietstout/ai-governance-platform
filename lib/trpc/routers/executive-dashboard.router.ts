@@ -199,8 +199,9 @@ export const executiveDashboardRouter = createTRPCRouter({
     const clientVerticals = (org?.clientVerticals as string[] | null) ?? [];
     const verticals: VerticalKey[] =
       clientVerticals.length > 0
-        ? (clientVerticals.filter((v) => v in VERTICAL_REGULATIONS) as VerticalKey[])
-        : [orgVerticalToKey(org?.verticalMarket ?? null)];
+/**        ? (clientVerticals.filter((v) => v in VERTICAL_REGULATIONS) as VerticalKey[]) */
+      ? (clientVerticals.filter((v) => Object.keys(VERTICAL_REGULATIONS).includes(v)) as VerticalKey[])
+      : [orgVerticalToKey(org?.verticalMarket ?? null)];
 
     const assets = await prisma.aIAsset.findMany({
       where: { orgId: ctx.orgId, deletedAt: null, assetType: { not: "DATASET" } },

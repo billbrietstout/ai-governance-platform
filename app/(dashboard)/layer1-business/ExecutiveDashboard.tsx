@@ -100,21 +100,23 @@ export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal, portfolio }: Pr
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2 border-b border-slate-200">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setTab(t.id)}
-            className={`border-b-2 px-4 py-2 text-sm font-medium transition ${
-              tab === t.id
-                ? "border-navy-600 text-navy-600"
-                : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="overflow-x-auto border-b border-slate-200">
+        <div className="flex min-w-max gap-2">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={`shrink-0 border-b-2 px-4 py-2 text-sm font-medium whitespace-nowrap transition ${
+                tab === t.id
+                  ? "border-navy-600 text-navy-600"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {tab === "ceo" && <CEOView data={ceo} />}
@@ -337,6 +339,19 @@ function LegalCLOView({ data: d }: { data: LegalData }) {
 }
 
 function VerticalPortfolioView({ data }: { data: PortfolioData }) {
+  if (!data.verticals?.length) {
+    return (
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+        <p className="text-sm text-slate-600">
+          No client verticals configured. Add verticals in{" "}
+          <Link href="/settings/organization" className="font-medium text-navy-600 hover:underline">
+            Settings → Organization
+          </Link>{" "}
+          to see compliance by vertical.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
