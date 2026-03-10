@@ -8,12 +8,13 @@ import { ExecutiveDashboard } from "./ExecutiveDashboard";
 export default async function Layer1BusinessPage() {
   const caller = await createServerCaller();
 
-  const [ceoRes, cfoRes, cooRes, cisoRes, legalRes] = await Promise.all([
+  const [ceoRes, cfoRes, cooRes, cisoRes, legalRes, portfolioRes] = await Promise.all([
     caller.executiveDashboard.getCEOView(),
     caller.executiveDashboard.getCFOView(),
     caller.executiveDashboard.getCOOView(),
     caller.executiveDashboard.getCISOView(),
-    caller.executiveDashboard.getLegalCLOView()
+    caller.executiveDashboard.getLegalCLOView(),
+    caller.executiveDashboard.getVerticalPortfolio()
   ]);
 
   return (
@@ -39,6 +40,7 @@ export default async function Layer1BusinessPage() {
         coo={cooRes.data}
         ciso={cisoRes.data}
         legal={legalRes.data}
+        portfolio={portfolioRes.data}
       />
     </main>
   );

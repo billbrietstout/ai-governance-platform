@@ -381,7 +381,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
           name: ORG.name,
           verticalMarket: ORG.verticalMarket,
           plan: ORG.plan,
-          claimedDomain: ORG.claimedDomain
+          claimedDomain: ORG.claimedDomain,
+          clientVerticals: ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR"] as object
         }
       })
     : await prisma.organization.create({
@@ -390,7 +391,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
           slug: ORG.slug,
           verticalMarket: ORG.verticalMarket,
           plan: ORG.plan,
-          claimedDomain: ORG.claimedDomain
+          claimedDomain: ORG.claimedDomain,
+          clientVerticals: ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR"] as object
         }
       });
 
@@ -411,12 +413,22 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
 
   const nameToOwnerId = (email: string) => userMap.get(email) ?? null;
 
+  const ASSET_CLIENT_VERTICALS: Record<string, string> = {
+    "CV Screening Assistant": "HR_SERVICES",
+    "Fraud Detection System": "FINANCIAL_SERVICES",
+    "Audit Risk Scorer": "FINANCIAL_SERVICES",
+    "Dynamic Pricing Model": "GENERAL",
+    "Customer Churn Predictor": "FINANCIAL_SERVICES",
+    "Network Anomaly Detector": "PUBLIC_SECTOR"
+  };
+
   const assetIdsByName = new Map<string, string>();
   for (const a of ASSETS) {
     const ownerId = nameToOwnerId(a.ownerEmail);
     const existing = await prisma.aIAsset.findFirst({
       where: { orgId: org.id, name: a.name, deletedAt: null }
     });
+    const clientVertical = ASSET_CLIENT_VERTICALS[a.name] ?? null;
     const asset = existing
       ? await prisma.aIAsset.update({
           where: { id: existing.id },
@@ -425,7 +437,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
             euRiskLevel: a.euRiskLevel,
             cosaiLayer: a.cosaiLayer,
             autonomyLevel: a.autonomyLevel,
-            ownerId
+            ownerId,
+            clientVertical
           }
         })
       : await prisma.aIAsset.create({
@@ -439,7 +452,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
             autonomyLevel: a.autonomyLevel,
             verticalMarket: "GENERAL",
             status: "ACTIVE",
-            ownerId
+            ownerId,
+            clientVertical
           }
         });
     assetIdsByName.set(a.name, asset.id);

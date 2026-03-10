@@ -2,13 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {
+  Landmark,
+  HeartPulse,
+  Shield,
+  Factory,
+  Building2,
+  Zap,
+  Users
+} from "lucide-react";
+import { ComplianceRing } from "@/components/assets/ComplianceRing";
 
 const TABS = [
   { id: "ceo", label: "CEO View" },
   { id: "cfo", label: "CFO View" },
   { id: "coo", label: "COO View" },
   { id: "ciso", label: "CISO View" },
-  { id: "legal", label: "Legal/CLO View" }
+  { id: "legal", label: "Legal/CLO View" },
+  { id: "portfolio", label: "Vertical Portfolio" }
 ] as const;
 
 type CEOData = {
@@ -53,15 +64,38 @@ type LegalData = {
   contractAlignmentGaps: number;
 };
 
+type PortfolioVertical = {
+  verticalKey: string;
+  label: string;
+  regulations: { regulation: { code: string; name: string; jurisdiction: string }; status: string }[];
+  assetCount: number;
+  complianceScore: number;
+};
+
+type PortfolioData = {
+  verticals: PortfolioVertical[];
+};
+
 type Props = {
   ceo: CEOData;
   cfo: CFOData;
   coo: COOData;
   ciso: CISOData;
   legal: LegalData;
+  portfolio: PortfolioData;
 };
 
-export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal }: Props) {
+const VERTICAL_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
+  FINANCIAL_SERVICES: { icon: <Landmark className="h-5 w-5" />, color: "text-blue-600" },
+  HEALTHCARE: { icon: <HeartPulse className="h-5 w-5" />, color: "text-red-600" },
+  INSURANCE: { icon: <Shield className="h-5 w-5" />, color: "text-purple-600" },
+  GENERAL: { icon: <Factory className="h-5 w-5" />, color: "text-gray-600" },
+  PUBLIC_SECTOR: { icon: <Building2 className="h-5 w-5" />, color: "text-amber-600" },
+  ENERGY: { icon: <Zap className="h-5 w-5" />, color: "text-yellow-600" },
+  HR_SERVICES: { icon: <Users className="h-5 w-5" />, color: "text-green-600" }
+};
+
+export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal, portfolio }: Props) {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("ceo");
 
   return (
@@ -88,6 +122,7 @@ export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal }: Props) {
       {tab === "coo" && <COOView data={coo} />}
       {tab === "ciso" && <CISOView data={ciso} />}
       {tab === "legal" && <LegalCLOView data={legal} />}
+      {tab === "portfolio" && <VerticalPortfolioView data={portfolio} />}
     </div>
   );
 }
@@ -296,6 +331,67 @@ function LegalCLOView({ data: d }: { data: LegalData }) {
             </li>
           ))}
         </ul>
+      </div>
+    </div>
+  );
+}
+
+function VerticalPortfolioView({ data }: { data: PortfolioData }) {
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {data.verticals.map((v) => {
+          const meta = VERTICAL_ICONS[v.verticalKey] ?? {
+            icon: <Factory className="h-5 w-5" />,
+            color: "text-gray-600"
+          };
+          return (
+            <div
+              key={v.verticalKey}
+              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
+            >
+              <div className="flex items-center gap-2">
+                <span className={meta.color}>{meta.icon}</span>
+                <h4 className="font-medium text-slate-900">{v.label}</h4>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">
+                {v.assetCount} asset{v.assetCount !== 1 ? "s" : ""} in scope
+              </p>
+              <div className="mt-2">
+                <ComplianceRing percentage={v.complianceScore} size={32} strokeWidth={3} />
+              </div>
+              <ul className="mt-3 space-y-1">
+                {v.regulations.slice(0, 3).map((r) => (
+                  <li
+                    key={r.regulation.code}
+                    className="flex items-center justify-between text-xs"
+                  >
+                    <span className="text-slate-600">{r.regulation.code}</span>
+                    <span
+                      className={`rounded px-1.5 py-0.5 ${
+                        r.status === "COMPLIANT"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : r.status === "GAP"
+                            ? "bg-amber-100 text-amber-700"
+                            : r.status === "NOT_APPLICABLE"
+                              ? "bg-slate-100 text-slate-500"
+                              : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {r.status}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={`/layer1-business/verticals/${v.verticalKey.toLowerCase().replace(/_/g, "-")}`}
+                className="mt-3 block text-sm font-medium text-navy-600 hover:underline"
+              >
+                View Details →
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

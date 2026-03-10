@@ -9,7 +9,8 @@ export type VerticalKey =
   | "INSURANCE"
   | "GENERAL"
   | "PUBLIC_SECTOR"
-  | "ENERGY";
+  | "ENERGY"
+  | "HR_SERVICES";
 
 export type Regulation = {
   code: string;
@@ -212,6 +213,36 @@ export const VERTICAL_REGULATIONS: Record<VerticalKey, VerticalProfile> = {
         euAiActAnnexIII: true
       }
     ]
+  },
+  HR_SERVICES: {
+    label: "HR Services",
+    description: "Employment, recruitment, and workforce management",
+    regulations: [
+      {
+        code: "NYC_LL144",
+        name: "NYC Local Law 144 - Automated Employment",
+        jurisdiction: "US_LOCAL",
+        mandatory: true,
+        applies_to: ["MODEL"],
+        condition: "asset name contains 'recruit' or 'screening' or 'hiring'"
+      },
+      {
+        code: "IL_AEIA",
+        name: "Illinois Artificial Intelligence Video Interview Act",
+        jurisdiction: "US_STATE",
+        mandatory: true,
+        applies_to: ["MODEL"],
+        condition: "HR assets using video/interview analysis"
+      },
+      {
+        code: "EU_AI_ACT_EMPLOYMENT",
+        name: "EU AI Act - Employment (Annex III)",
+        jurisdiction: "EU",
+        mandatory: true,
+        applies_to: ["MODEL", "AGENT"],
+        euAiActAnnexIII: true
+      }
+    ]
   }
 };
 
@@ -238,6 +269,17 @@ export function orgVerticalToKey(
       return "GENERAL";
   }
 }
+
+/** All vertical keys for multi-select */
+export const ALL_VERTICAL_KEYS: VerticalKey[] = [
+  "GENERAL",
+  "FINANCIAL_SERVICES",
+  "HEALTHCARE",
+  "INSURANCE",
+  "PUBLIC_SECTOR",
+  "ENERGY",
+  "HR_SERVICES"
+];
 
 /** Check if an asset applies to a regulation (including conditions) */
 export function assetAppliesToRegulation(

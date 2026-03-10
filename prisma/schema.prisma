@@ -213,16 +213,17 @@ enum SlsaLevel {
 // =============================================================================
 
 model Organization {
-  id             String   @id @default(cuid())
-  name           String
-  slug           String   @unique
-  plan           Plan     @default(FREE)
-  verticalMarket VerticalMarket @default(GENERAL)
-  dataResidency  DataResidency? @default(GLOBAL)
-  claimedDomain  String?  @unique
-  autoJoinRole   UserRole @default(VIEWER)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  plan             Plan     @default(FREE)
+  verticalMarket   VerticalMarket @default(GENERAL)
+  clientVerticals  Json?    // array of vertical codes the org serves
+  dataResidency    DataResidency? @default(GLOBAL)
+  claimedDomain    String?  @unique
+  autoJoinRole     UserRole @default(VIEWER)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   users              User[]
   pendingInvites     PendingInvite[]
@@ -324,6 +325,7 @@ model AIAsset {
   cosaiLayer      CosaiLayer?
   autonomyLevel   AutonomyLevel?
   verticalMarket  VerticalMarket?
+  clientVertical  String?        // vertical this asset serves (e.g. FINANCIAL_SERVICES, HR_SERVICES)
   status          AssetStatus    @default(DRAFT)
   ownerId         String?
   deletedAt       DateTime?      // soft delete – middleware filters to deletedAt = null

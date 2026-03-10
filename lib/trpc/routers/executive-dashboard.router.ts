@@ -8,7 +8,12 @@ import { calculateEUPenaltyExposure } from "@/lib/value/kpi-engine";
 import * as engine from "@/lib/compliance/engine";
 import { checkScanCompliance } from "@/lib/scanning/coverage";
 import { checkEvidenceCurrency } from "@/lib/supply-chain/assurance";
-import { VERTICAL_REGULATIONS, orgVerticalToKey } from "@/lib/vertical-regulations";
+import {
+  VERTICAL_REGULATIONS,
+  orgVerticalToKey,
+  assetAppliesToRegulation,
+  type VerticalKey
+} from "@/lib/vertical-regulations";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const NINETY_DAYS_AGO = (() => {
@@ -182,6 +187,85 @@ export const executiveDashboardRouter = createTRPCRouter({
         })),
         attackSurface: externalFacing
       },
+      meta: {}
+    };
+  }),
+
+  getVerticalPortfolio: protectedProcedure.query(async ({ ctx }) => {
+    const org = await prisma.organization.findFirst({
+      where: { id: ctx.orgId },
+      select: { clientVerticals: true, verticalMarket: true }
+    });
+    const clientVerticals = (org?.clientVerticals as string[] | null) ?? [];
+    const verticals: VerticalKey[] =
+      clientVerticals.length > 0
+        ? (clientVerticals.filter((v) => v in VERTICAL_REGULATIONS) as VerticalKey[])
+        : [orgVerticalToKey(org?.verticalMarket ?? null)];
+
+    const assets = await prisma.aIAsset.findMany({
+      where: { orgId: ctx.orgId, deletedAt: null, assetType: { not: "DATASET" } },
+      select: {
+        id: true,
+        name: true,
+        assetType: true,
+        description: true,
+        clientVertical: true
+      }
+    });
+
+    const attestationCounts = await Promise.all(
+      assets.map(async (a) => {
+        const compliant = await prisma.controlAttestation.count({
+          where: { assetId: a.id, status: "COMPLIANT" }
+        });
+        return { assetId: a.id, compliant };
+      })
+    );
+    const assetHasCompliant = new Map(attestationCounts.map((c, i) => [assets[i].id, c.compliant > 0]));
+
+    const portfolio = verticals.map((vk) => {
+      const profile = VERTICAL_REGULATIONS[vk];
+      if (!profile) return null;
+
+      const assetsInScope = assets.filter(
+        (a) =>
+          a.clientVertical === vk ||
+          (a.clientVertical == null &&
+            profile.regulations.some((r) => assetAppliesToRegulation(a, r)))
+      );
+
+      const regStatuses = profile.regulations.map((r) => {
+        const inScope = assets.filter((a) =>
+          (a.clientVertical === vk || a.clientVertical == null) && assetAppliesToRegulation(a, r)
+        );
+        if (inScope.length === 0) {
+          return { regulation: r, status: "NOT_APPLICABLE" as const };
+        }
+        const allCompliant = inScope.every((a) => assetHasCompliant.get(a.id));
+        const anyCompliant = inScope.some((a) => assetHasCompliant.get(a.id));
+        let status: "COMPLIANT" | "GAP" | "UNKNOWN" | "NOT_APPLICABLE" = "UNKNOWN";
+        if (allCompliant) status = "COMPLIANT";
+        else if (!anyCompliant) status = "GAP";
+        else status = "GAP";
+        return { regulation: r, status };
+      });
+
+      const compliantRegs = regStatuses.filter((s) => s.status === "COMPLIANT").length;
+      const applicableRegs = regStatuses.filter((s) => s.status !== "NOT_APPLICABLE").length;
+      const score =
+        applicableRegs > 0 ? Math.round((compliantRegs / applicableRegs) * 100) : 100;
+
+      return {
+        verticalKey: vk,
+        label: profile.label,
+        regulations: regStatuses,
+        assetCount: assetsInScope.length,
+        complianceScore: score
+      };
+    });
+
+    return {
+      data: { verticals: portfolio.filter(Boolean) },
       meta: {}
     };
   }),

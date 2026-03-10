@@ -16,6 +16,13 @@ export default function SettingsPage() {
           <p className="mt-1 text-sm text-gray-600">Manage members and pending invites</p>
         </Link>
         <Link
+          href="/settings/organization"
+          className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50"
+        >
+          <span className="font-medium text-gray-900">Organization</span>
+          <p className="mt-1 text-sm text-gray-600">Client verticals and regulatory scope</p>
+        </Link>
+        <Link
           href="/settings/regulatory-profile"
           className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:bg-gray-50"
         >

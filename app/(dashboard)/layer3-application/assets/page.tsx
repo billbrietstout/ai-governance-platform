@@ -133,6 +133,11 @@ export default async function AssetsPage({
                             {a.name}
                           </Link>
                           <div className="text-xs text-gray-500">{a.assetType} · {a.status}</div>
+                          {a.clientVertical && (
+                            <span className="mt-1 inline-block rounded bg-navy-100 px-1.5 py-0.5 text-[10px] font-medium text-navy-700">
+                              {a.clientVertical.replace(/_/g, " ")}
+                            </span>
+                          )}
                           <VerticalRegulationBadge
                             asset={{ name: a.name, assetType: a.assetType, description: a.description }}
                             verticalKey={verticalKey}
