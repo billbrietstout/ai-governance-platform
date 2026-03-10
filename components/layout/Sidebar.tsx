@@ -96,7 +96,10 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   },
   {
     title: "LAYER 1: BUSINESS",
-    items: [{ href: "/layer1-business/regulatory-cascade", label: "Regulatory Cascade", icon: GitBranch }]
+    items: [
+      { href: "/layer1-business", label: "Executive Dashboard", icon: Building2 },
+      { href: "/layer1-business/regulatory-cascade", label: "Regulatory Cascade", icon: GitBranch }
+    ]
   },
   ...GATED_SECTIONS,
   {
