@@ -35,7 +35,9 @@ import {
   Lock,
   LockKeyhole,
   Search,
-  TrendingUp
+  TrendingUp,
+  Camera,
+  Bell
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { getPersonaConfig } from "@/lib/personas/config";
@@ -101,6 +103,10 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
       { href: "/", label: "Command Center", icon: LayoutDashboard },
       { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
       { href: "/reports", label: "Reports", icon: FileBarChart },
+      { href: "/compliance/snapshots", label: "Snapshots", icon: Camera },
+      { href: "/compliance/regulation-feed", label: "Regulation Watch", icon: Bell },
+      { href: "/audit-package", label: "Audit Package", icon: Package },
+      { href: "/audit-package/evidence-workbook", label: "Evidence Workbook", icon: BookOpen },
       { href: "/audit", label: "Audit Log", icon: ScrollText }
     ]
   },

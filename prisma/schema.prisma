@@ -274,6 +274,7 @@ model Organization {
   dataLineageRecords   DataLineageRecord[]
   dataGovernancePolicies DataGovernancePolicy[]
   regulationDiscoveries  RegulationDiscovery[]
+  complianceSnapshots   ComplianceSnapshot[]
 }
 
 model MasterDataEntity {
@@ -404,9 +405,33 @@ model User {
   sessions            Session[]
   maturityAssessments MaturityAssessment[]
   regulationDiscoveries RegulationDiscovery[]
+  complianceSnapshots  ComplianceSnapshot[]
 
   @@unique([orgId, email])
   @@index([orgId])
+}
+
+model ComplianceSnapshot {
+  id                   String   @id @default(cuid())
+  orgId                String
+  createdAt            DateTime @default(now())
+  createdBy            String?
+  snapshotType         String   // MANUAL, SCHEDULED, PRE_AUDIT
+  frameworkCode        String? // EU_AI_ACT, NIST_AI_RMF, ISO_42001, etc.
+  overallScore         Float
+  layerScores          Json    // { L1, L2, L3, L4, L5 } scores
+  assetCount           Int
+  controlsCompliant    Int
+  controlsTotal        Int
+  gapCount             Int
+  evidenceCompleteness Float
+  notes                String?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  creator       User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@index([orgId, createdAt])
 }
 
 model PendingInvite {
