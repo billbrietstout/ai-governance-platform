@@ -5,11 +5,6 @@ import Link from "next/link";
 import { ChevronRight, Play, Plus } from "lucide-react";
 import type { UseCase } from "@/lib/use-cases/catalog";
 
-const VERTICAL_OPTIONS = ["ALL", "MANUFACTURING", "FINANCIAL", "HEALTHCARE", "HR", "RETAIL", "CUSTOMER_SERVICE"];
-const RISK_OPTIONS = ["ALL", "MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"];
-const ASSET_OPTIONS = ["ALL", "MODEL", "AGENT", "APPLICATION", "PIPELINE"];
-const AUTONOMY_OPTIONS = ["ALL", "L0", "L1", "L2", "L3", "L4", "L5"];
-
 const VERTICAL_COLORS: Record<string, string> = {
   MANUFACTURING: "bg-slate-100 text-slate-700",
   FINANCIAL: "bg-emerald-100 text-emerald-700",
@@ -68,44 +63,85 @@ export function UseCaseLibraryClient({ useCases }: Props) {
       {/* Main content */}
       <div className="flex-1">
         {/* Filter bar */}
-        <div className="mb-4 flex flex-wrap gap-3 rounded-lg border border-slate-200 bg-white p-3">
-          <select
-            value={vertical}
-            onChange={(e) => setVertical(e.target.value)}
-            className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-          >
-            {VERTICAL_OPTIONS.map((v) => (
-              <option key={v} value={v}>{v === "ALL" ? "All verticals" : v.replace(/_/g, " ")}</option>
-            ))}
-          </select>
-          <select
-            value={riskLevel}
-            onChange={(e) => setRiskLevel(e.target.value)}
-            className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-          >
-            {RISK_OPTIONS.map((r) => (
-              <option key={r} value={r}>{r === "ALL" ? "All risk levels" : r}</option>
-            ))}
-          </select>
-          <select
-            value={assetType}
-            onChange={(e) => setAssetType(e.target.value)}
-            className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-          >
-            {ASSET_OPTIONS.map((a) => (
-              <option key={a} value={a}>{a === "ALL" ? "All asset types" : a}</option>
-            ))}
-          </select>
-          <select
-            value={autonomy}
-            onChange={(e) => setAutonomy(e.target.value)}
-            className="rounded border border-slate-300 px-2 py-1.5 text-sm"
-          >
-            {AUTONOMY_OPTIONS.map((a) => (
-              <option key={a} value={a}>{a === "ALL" ? "All autonomy" : a}</option>
-            ))}
-          </select>
+        <div className="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 text-slate-900">
+          <div className="flex items-center gap-2">
+            <label htmlFor="filter-vertical" className="text-sm font-medium text-slate-600">
+              Vertical
+            </label>
+            <select
+              id="filter-vertical"
+              value={vertical}
+              onChange={(e) => setVertical(e.target.value)}
+              className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+            >
+              <option value="ALL">All Verticals</option>
+              <option value="MANUFACTURING">Manufacturing</option>
+              <option value="FINANCIAL">Financial</option>
+              <option value="HEALTHCARE">Healthcare</option>
+              <option value="HR">HR</option>
+              <option value="RETAIL">Retail</option>
+              <option value="CUSTOMER_SERVICE">Customer Service</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="filter-risk" className="text-sm font-medium text-slate-600">
+              Risk Level
+            </label>
+            <select
+              id="filter-risk"
+              value={riskLevel}
+              onChange={(e) => setRiskLevel(e.target.value)}
+              className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+            >
+              <option value="ALL">All Risk Levels</option>
+              <option value="MINIMAL">MINIMAL</option>
+              <option value="LIMITED">LIMITED</option>
+              <option value="HIGH">HIGH</option>
+              <option value="UNACCEPTABLE">UNACCEPTABLE</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="filter-asset" className="text-sm font-medium text-slate-600">
+              Asset Type
+            </label>
+            <select
+              id="filter-asset"
+              value={assetType}
+              onChange={(e) => setAssetType(e.target.value)}
+              className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+            >
+              <option value="ALL">All Types</option>
+              <option value="MODEL">MODEL</option>
+              <option value="AGENT">AGENT</option>
+              <option value="APPLICATION">APPLICATION</option>
+              <option value="PIPELINE">PIPELINE</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="filter-autonomy" className="text-sm font-medium text-slate-600">
+              Autonomy Level
+            </label>
+            <select
+              id="filter-autonomy"
+              value={autonomy}
+              onChange={(e) => setAutonomy(e.target.value)}
+              className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+            >
+              <option value="ALL">All Levels</option>
+              <option value="L0">L0</option>
+              <option value="L1">L1</option>
+              <option value="L2">L2</option>
+              <option value="L3">L3</option>
+              <option value="L4">L4</option>
+              <option value="L5">L5</option>
+            </select>
+          </div>
         </div>
+
+        {/* Result count */}
+        <p className="mb-3 text-sm text-slate-600">
+          Showing {filtered.length} of {useCases.length} use cases
+        </p>
 
         {/* Use case cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

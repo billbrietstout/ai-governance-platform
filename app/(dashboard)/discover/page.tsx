@@ -8,13 +8,19 @@ import { DiscoverClient } from "./DiscoverClient";
 
 export default async function DiscoverPage() {
   const caller = await createServerCaller();
-  const [discoveriesRes, assetsRes] = await Promise.all([
-    caller.discovery.getDiscoveries({ limit: 3 }),
-    caller.discovery.getAssetsForReview()
-  ]);
+  let discoveries: Awaited<ReturnType<typeof caller.discovery.getDiscoveries>>["data"] = [];
+  let assets: Awaited<ReturnType<typeof caller.discovery.getAssetsForReview>>["data"] = [];
 
-  const discoveries = discoveriesRes.data;
-  const assets = assetsRes.data;
+  try {
+    const [discoveriesRes, assetsRes] = await Promise.all([
+      caller.discovery.getDiscoveries({ limit: 3 }),
+      caller.discovery.getAssetsForReview()
+    ]);
+    discoveries = discoveriesRes.data;
+    assets = assetsRes.data;
+  } catch (err) {
+    console.error("Discover page data fetch failed:", err);
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-8 px-6 py-10">

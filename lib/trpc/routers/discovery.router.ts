@@ -64,6 +64,12 @@ export const discoveryRouter = createTRPCRouter({
   }),
 
   getAssetsForReview: protectedProcedure.query(async ({ ctx }) => {
+    if (!prisma?.aIAsset) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Database client not ready. Run 'npx prisma generate' and restart the dev server."
+      });
+    }
     const assets = await prisma.aIAsset.findMany({
       where: { orgId: ctx.orgId, deletedAt: null },
       select: { id: true, name: true, assetType: true, description: true },
@@ -150,6 +156,12 @@ export const discoveryRouter = createTRPCRouter({
   getDiscoveries: protectedProcedure
     .input(z.object({ limit: z.number().min(1).max(50).default(10) }).optional())
     .query(async ({ ctx, input }) => {
+      if (!prisma?.regulationDiscovery) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Database client not ready. Run 'npx prisma generate' and restart the dev server."
+        });
+      }
       const limit = input?.limit ?? 10;
       const list = await prisma.regulationDiscovery.findMany({
         where: { orgId: ctx.orgId },
