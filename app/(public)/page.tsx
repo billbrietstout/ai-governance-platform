@@ -221,7 +221,7 @@ export default async function PublicLandingPage() {
           </div>
           <div className="mt-8 flex justify-center">
             <a
-              href="https://cosai.org"
+              href="https://coalitionforsecureai.org"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-navy-600 hover:underline"

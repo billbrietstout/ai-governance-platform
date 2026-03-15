@@ -35,7 +35,7 @@ export default async function PublicLayout({
             <p className="text-sm text-slate-600">
               Built on the{" "}
               <a
-                href="https://cosai.org"
+                href="https://coalitionforsecureai.org"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-navy-600 hover:underline"
