@@ -52,6 +52,11 @@ function getConnectedIds(edges: TopologyEdge[], nodeId: string): Set<string> {
   return ids;
 }
 
+function truncate(str: string, maxLen: number): string {
+  if (str.length <= maxLen) return str;
+  return str.slice(0, maxLen - 1) + "…";
+}
+
 function drawNodeShape(
   sel: d3.Selection<SVGGElement, SimNode, d3.BaseType, unknown>,
   node: TopologyNode
@@ -77,6 +82,15 @@ function drawNodeShape(
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
+    sel
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "central")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("font-size", 10)
+      .attr("fill", "#fff")
+      .text(truncate(node.label, 12));
   } else if (node.layer === "L2") {
     sel
       .append("ellipse")
@@ -85,6 +99,15 @@ function drawNodeShape(
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
+    sel
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "central")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("font-size", 10)
+      .attr("fill", "#fff")
+      .text(truncate(node.label, 14));
   } else if (node.layer === "L3") {
     const r = getNodeRadius(node);
     sel
@@ -93,6 +116,15 @@ function drawNodeShape(
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
+    sel
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "central")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("font-size", 9)
+      .attr("fill", "#fff")
+      .text(truncate(node.label, 10));
   } else if (node.layer === "L4" || node.layer === "L5") {
     sel
       .append("rect")
@@ -104,6 +136,15 @@ function drawNodeShape(
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
+    sel
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "central")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("font-size", 10)
+      .attr("fill", "#fff")
+      .text(truncate(node.label, 12));
   } else {
     sel
       .append("circle")
@@ -111,6 +152,15 @@ function drawNodeShape(
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
+    sel
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "central")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("font-size", 9)
+      .attr("fill", "#fff")
+      .text(truncate(node.label, 10));
   }
 }
 
@@ -246,7 +296,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
       .force("collide", d3.forceCollide().radius(35))
       .force(
         "y",
-        d3.forceY<SimNodeExt>((d) => layerY(LAYER_INDEX[d.layer] ?? 0)).strength(0.3)
+        d3.forceY<SimNodeExt>((d) => layerY(LAYER_INDEX[d.layer] ?? 0)).strength(0.8)
       )
       .force("x", d3.forceX(w / 2).strength(0.05))
       .alphaDecay(0.05)
