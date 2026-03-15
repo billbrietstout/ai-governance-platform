@@ -63,11 +63,26 @@ export function RiskScoreClient({ scores, overall }: Props) {
     cosaiLayer: s.cosaiLayer ?? null
   }));
 
+  const atRisk = scores.filter((s) => s.overallScore < 40).length;
+  const needsAttention = scores.filter((s) => s.overallScore >= 40 && s.overallScore <= 70).length;
+  const healthy = scores.filter((s) => s.overallScore > 70).length;
+
   return (
     <div className="space-y-6">
       {scores.length > 0 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Vendor risk overview</h3>
+          <h3 className="mb-3 text-sm font-medium text-slate-700">Vendor risk overview</h3>
+          <div className="mb-3 flex flex-wrap items-center gap-3">
+            <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+              {atRisk} vendor{atRisk !== 1 ? "s" : ""} at risk (&lt;40)
+            </span>
+            <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+              {needsAttention} need attention (40–70)
+            </span>
+            <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+              {healthy} healthy (&gt;70)
+            </span>
+          </div>
           <RiskTreemap vendors={treemapVendors} onVendorClick={handleVendorClick} />
         </div>
       )}

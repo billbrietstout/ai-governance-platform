@@ -65,15 +65,18 @@ export function LayerSankeyDiagram({
     svg.selectAll("*").remove();
 
     const width = 680;
-    const height = 280;
+    const height = 200;
     const nodeWidth = 24;
-    const gap = 80;
-    const totalNodeWidth = layerData.length * nodeWidth + (layerData.length - 1) * gap;
-    const marginLeft = (width - totalNodeWidth) / 2;
+    const nodeHeight = 52;
+    const xStart = 60;
+    const xEnd = 620;
+    const totalNodeWidth = layerData.length * nodeWidth;
+    const totalGap = xEnd - xStart - totalNodeWidth;
+    const gap = layerData.length > 1 ? totalGap / (layerData.length - 1) : 0;
 
     const normalizedLinks = links.map((l) => ({
       ...l,
-      value: Math.max(5, l.value)
+      value: Math.max(10, l.value)
     }));
 
     const maxLinkValue = Math.max(...normalizedLinks.map((l) => l.value), 1);
@@ -85,9 +88,8 @@ export function LayerSankeyDiagram({
     };
 
     const layoutNodes: LayoutNode[] = layerData.map((d, i) => {
-      const nodeHeight = Math.max(40, Math.log(d.assetCount + 1) * 30);
-      const x = marginLeft + i * (nodeWidth + gap);
-      const y = (height - nodeHeight) / 2;
+      const x = xStart + i * (nodeWidth + gap);
+      const y = height / 2 - nodeHeight / 2;
       const color = d.color || LAYER_COLORS[d.id] || "#64748b";
       return {
         ...d,
@@ -120,10 +122,11 @@ export function LayerSankeyDiagram({
       })
       .filter((l): l is { source: LayoutNode; target: LayoutNode; value: number } => l !== null);
 
-    const linkScale = d3.scaleLinear().domain([0, maxLinkValue]).range([4, 24]);
+    const maxLinkHeight = nodeHeight - 8;
+    const linkScale = d3.scaleLinear().domain([0, maxLinkValue]).range([4, maxLinkHeight]);
 
     layoutLinks.forEach((link) => {
-      const strokeWidth = linkScale(link.value);
+      const strokeWidth = Math.min(maxLinkHeight, linkScale(link.value));
       const path = g
         .append("path")
         .attr("d", linkPath(link.source, link.target))
@@ -177,7 +180,7 @@ export function LayerSankeyDiagram({
       .attr("x", 0)
       .attr("y", 0)
       .attr("width", nodeWidth)
-      .attr("height", (d) => d.nodeHeight)
+      .attr("height", nodeHeight)
       .attr("fill", (d) => d.color)
       .attr("rx", 2);
 
@@ -185,13 +188,13 @@ export function LayerSankeyDiagram({
       .append("rect")
       .attr("x", 2)
       .attr("y", 2)
-      .attr("width", nodeWidth - 4)
-      .attr("height", (d) => Math.max(0, (d.nodeHeight - 4) * (d.complianceScore / 100)))
+      .attr("width", (d) => Math.max(0, (nodeWidth - 4) * (d.complianceScore / 100)))
+      .attr("height", nodeHeight - 4)
       .attr("fill", (d) => lightenColor(d.color, 0.6))
       .attr("rx", 1);
 
     const labelAboveY = -12;
-    const labelBelowY = (d: LayoutNode) => d.nodeHeight + 18;
+    const labelBelowY = nodeHeight + 18;
 
     node
       .append("text")
@@ -201,7 +204,7 @@ export function LayerSankeyDiagram({
       .attr("dominant-baseline", "central")
       .attr("font-size", 11)
       .attr("fill", "#475569")
-      .text((d) => `${d.label} (${d.assetCount})`);
+      .text((d) => d.label);
 
     node
       .append("text")
@@ -213,7 +216,7 @@ export function LayerSankeyDiagram({
       .attr("fill", "#64748b")
       .text((d) => {
         const risk = d.riskCount > 0 ? ` • ${d.riskCount} risks` : "";
-        return `${d.complianceScore}%${risk}`;
+        return `${d.assetCount} assets • ${d.complianceScore}%${risk}`;
       });
   }, [layerData, links, layerLinks]);
 
@@ -222,7 +225,8 @@ export function LayerSankeyDiagram({
       <svg
         ref={svgRef}
         width="100%"
-        viewBox="0 0 680 280"
+        height="200"
+        viewBox="0 0 680 200"
         preserveAspectRatio="xMidYMid meet"
         overflow="visible"
       />

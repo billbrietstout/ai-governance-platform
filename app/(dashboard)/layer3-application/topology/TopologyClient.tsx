@@ -9,25 +9,25 @@ type TopologyData = {
 };
 
 export function TopologyClient({ initialData }: { initialData: TopologyData }) {
-  const hasData = (initialData?.nodes?.length ?? 0) > 0;
+  const nodeCount = initialData?.nodes?.length ?? 0;
+  const hasEnoughData = nodeCount >= 3;
 
-  if (!hasData) {
+  if (!hasEnoughData) {
     return (
       <div
         className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 p-12"
-        style={{ minHeight: "calc(100vh - 200px)" }}
+        style={{ minHeight: 400 }}
       >
-        <p className="text-center text-slate-600">No topology data yet.</p>
+        <p className="text-center text-slate-600">Not enough topology data yet.</p>
         <p className="mt-2 text-center text-sm text-slate-500">
-          Add data lineage records and AI assets to see the integration topology.
+          Add at least 3 entities (organization, data entities, AI assets, or vendors) to see the
+          integration topology.
         </p>
       </div>
     );
   }
 
   return (
-    <div style={{ height: "calc(100vh - 200px)" }}>
-      <ForceTopologyGraph nodes={initialData.nodes} edges={initialData.edges} height={600} />
-    </div>
+    <ForceTopologyGraph nodes={initialData.nodes} edges={initialData.edges} height={500} />
   );
 }

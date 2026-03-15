@@ -304,15 +304,15 @@ export const supplyChainRouter = createTRPCRouter({
 
     const l4Vendors = vendors.filter(
       (v) =>
+        v.cosaiLayer === "LAYER_4_PLATFORM" ||
         v.vendorType === "INFRASTRUCTURE" ||
-        v.vendorType === "TOOLING" ||
-        v.cosaiLayer === "LAYER_4_PLATFORM"
+        v.vendorType === "TOOLING"
     );
     const l5Vendors = vendors.filter(
       (v) =>
+        v.cosaiLayer === "LAYER_5_SUPPLY_CHAIN" ||
         v.vendorType === "MODEL_PROVIDER" ||
-        v.vendorType === "DATA_PROVIDER" ||
-        v.cosaiLayer === "LAYER_5_SUPPLY_CHAIN"
+        v.vendorType === "DATA_PROVIDER"
     );
     const otherVendors = vendors.filter(
       (v) =>
