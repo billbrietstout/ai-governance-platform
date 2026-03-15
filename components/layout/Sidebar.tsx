@@ -9,7 +9,9 @@ import {
   FileBarChart,
   ScrollText,
   Building2,
+  Sparkles,
   GitBranch,
+  Layers,
   Database,
   FileText,
   Shield,
@@ -100,6 +102,14 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
       { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
       { href: "/reports", label: "Reports", icon: FileBarChart },
       { href: "/audit", label: "Audit Log", icon: ScrollText }
+    ]
+  },
+  {
+    title: "PLANNING TOOLS",
+    items: [
+      { href: "/discover", label: "Regulation Discovery", icon: Sparkles },
+      { href: "/discover/operating-model", label: "Operating Model", icon: Layers },
+      { href: "/discover/use-cases", label: "Use Case Library", icon: BookOpen }
     ]
   },
   {

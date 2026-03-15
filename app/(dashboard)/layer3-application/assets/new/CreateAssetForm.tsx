@@ -6,13 +6,23 @@ import { DataSourcesSection } from "./DataSourcesSection";
 
 type MasterDataEntity = { id: string; name: string; classification: string };
 
+type Defaults = {
+  name?: string;
+  description?: string;
+  assetType?: string;
+  euRiskLevel?: string;
+  verticalMarket?: string;
+  autonomyLevel?: string;
+};
+
 type Props = {
   euRequiredArticles: string[];
   users: { id: string; email: string }[];
   masterDataEntities?: MasterDataEntity[];
+  defaults?: Defaults;
 };
 
-export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities = [] }: Props) {
+export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities = [], defaults }: Props) {
   const [state, formAction] = useActionState(
     async (_prev: { error?: string } | null, formData: FormData) => {
       const result = await createAsset(formData);
@@ -29,6 +39,7 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
           id="name"
           name="name"
           required
+          defaultValue={defaults?.name}
           className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
         />
       </div>
@@ -38,6 +49,7 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
           id="description"
           name="description"
           rows={3}
+          defaultValue={defaults?.description}
           className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
         />
       </div>
@@ -47,6 +59,7 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
           id="assetType"
           name="assetType"
           required
+          defaultValue={defaults?.assetType}
           className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
         >
           <option value="MODEL">Model</option>
@@ -63,6 +76,7 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         <select
           id="euRiskLevel"
           name="euRiskLevel"
+          defaultValue={defaults?.euRiskLevel}
           className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
         >
           <option value="">—</option>
@@ -108,6 +122,7 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         <select
           id="autonomyLevel"
           name="autonomyLevel"
+          defaultValue={defaults?.autonomyLevel}
           className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
         >
           <option value="">—</option>
@@ -122,6 +137,7 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         <select
           id="verticalMarket"
           name="verticalMarket"
+          defaultValue={defaults?.verticalMarket}
           className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
         >
           <option value="">—</option>

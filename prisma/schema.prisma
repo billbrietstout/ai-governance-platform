@@ -273,6 +273,7 @@ model Organization {
   masterDataEntities   MasterDataEntity[]
   dataLineageRecords   DataLineageRecord[]
   dataGovernancePolicies DataGovernancePolicy[]
+  regulationDiscoveries  RegulationDiscovery[]
 }
 
 model MasterDataEntity {
@@ -346,6 +347,23 @@ model DataGovernancePolicy {
   @@index([orgId])
 }
 
+model RegulationDiscovery {
+  id        String   @id @default(cuid())
+  orgId     String
+  assetId   String?  // optional: linked asset when reviewing existing
+  inputs    Json     // wizard inputs
+  results   Json     // RegulationDiscoveryResult
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  asset        AIAsset?     @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  user         User?        @relation(fields: [createdBy], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@index([orgId, createdAt])
+}
+
 model MaturityAssessment {
   id             String   @id @default(cuid())
   orgId          String
@@ -385,6 +403,7 @@ model User {
   attestations        ControlAttestation[]
   sessions            Session[]
   maturityAssessments MaturityAssessment[]
+  regulationDiscoveries RegulationDiscovery[]
 
   @@unique([orgId, email])
   @@index([orgId])
@@ -470,6 +489,7 @@ model AIAsset {
   artifactCards  ArtifactCard[]
   scanRecords    ScanRecord[]
   lineageRecords DataLineageRecord[]
+  regulationDiscoveries RegulationDiscovery[]
 
   @@index([orgId])
   @@index([orgId, status])

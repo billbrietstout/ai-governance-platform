@@ -14,6 +14,7 @@ import { layer2Router } from "./routers/layer2.router";
 import { layer4Router } from "./routers/layer4.router";
 import { maturityRouter } from "./routers/maturity.router";
 import { userRouter } from "./routers/user.router";
+import { discoveryRouter } from "./routers/discovery.router";
 
 export const appRouter = createTRPCRouter({
   healthcheck: publicProcedure
@@ -32,7 +33,8 @@ export const appRouter = createTRPCRouter({
   layer2: layer2Router,
   layer4: layer4Router,
   maturity: maturityRouter,
-  user: userRouter
+  user: userRouter,
+  discovery: discoveryRouter
 });
 
 export type AppRouter = typeof appRouter;
