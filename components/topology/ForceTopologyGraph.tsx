@@ -292,7 +292,11 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   const runSimulation = useCallback(() => {
     if (!svgRef.current || !containerRef.current || displayedNodes.length === 0) return;
 
-    const w = containerRef.current.clientWidth ?? 800;
+    const rect = containerRef.current.getBoundingClientRect();
+    const w = rect.width || 800;
+    const h = rect.height || height;
+    if (w === 0 || h === 0) return;
+
     setWidth(w);
 
     const svg = d3.select(svgRef.current);
@@ -438,8 +442,30 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   }, [displayedNodes, displayedEdges, height, onNodeClick]);
 
   useEffect(() => {
-    runSimulation();
+    const initSimulation = () => {
+      if (!containerRef.current) return;
+      const { width: w, height: h } = containerRef.current.getBoundingClientRect();
+      if (w === 0 || h === 0) return;
+      runSimulation();
+    };
+
+    initSimulation();
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const ro = new ResizeObserver(() => {
+      initSimulation();
+    });
+    ro.observe(container);
+
+    const rafId = requestAnimationFrame(() => {
+      initSimulation();
+    });
+
     return () => {
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
       simulationRef.current?.stop();
     };
   }, [runSimulation]);
@@ -454,7 +480,11 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   for (const n of displayedNodes) byLayer[n.layer] = (byLayer[n.layer] ?? 0) + 1;
 
   return (
-    <div ref={containerRef} className="flex flex-col" style={{ height: height + 60 }}>
+    <div
+      ref={containerRef}
+      className="flex flex-col"
+      style={{ width: "100%", minHeight: 500, height: height + 60 }}
+    >
       <div className="mb-2 flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white px-4 py-2">
         <div className="flex gap-2">
           {LAYER_ORDER.map((l) => (

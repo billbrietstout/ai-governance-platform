@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
+const WIDTH = 800;
+const HEIGHT = 300;
+
 export type VendorTreemapNode = {
   id: string;
   vendorName: string;
@@ -38,7 +41,6 @@ export function RiskTreemap({
   onVendorClick
 }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -64,24 +66,8 @@ export function RiskTreemap({
     }))
   } as { name: string; value: number; children: (VendorTreemapNode & { value: number })[] };
 
-  const minHeight = 280;
-  const [dimensions, setDimensions] = useState({
-    width: 600,
-    height: Math.max(compact ? 200 : minHeight, minHeight)
-  });
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver((entries) => {
-      const { width } = entries[0]?.contentRect ?? { width: 600 };
-      setDimensions({ width, height: Math.max(compact ? 200 : minHeight, minHeight) });
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [compact]);
-
-  const { width, height } = dimensions;
+  const width = WIDTH;
+  const height = HEIGHT;
 
   useEffect(() => {
     if (!svgRef.current || displayVendors.length === 0) return;
@@ -91,7 +77,7 @@ export function RiskTreemap({
 
     const treemap = d3
       .treemap<{ value?: number; name?: string; children?: unknown[] }>()
-      .size([width, height])
+      .size([Math.max(1, width), Math.max(1, height)])
       .padding(3)
       .round(true);
 
@@ -111,8 +97,13 @@ export function RiskTreemap({
 
       const color = getRiskColor(v.overallScore);
       const { x0, y0, x1, y1 } = node;
-      const w = x1 - x0;
-      const h = y1 - y0;
+      let w = x1 - x0;
+      let h = y1 - y0;
+      if (w < 1 || h < 1) {
+        console.warn("[RiskTreemap] Zero-size rect for vendor", v.vendorName, { w, h });
+        w = Math.max(10, w);
+        h = Math.max(10, h);
+      }
       const showLabels = h >= 40;
 
       const cell = g
@@ -174,17 +165,20 @@ export function RiskTreemap({
     return () => {
       svg.selectAll("*").remove();
     };
-  }, [displayVendors, width, height, compact, onVendorClick]);
+  }, [displayVendors, onVendorClick]);
 
+  const minHeight = 280;
   return (
-    <div ref={containerRef} className="space-y-3">
-      <div className="relative w-full" style={{ minHeight }}>
+    <div className="space-y-3">
+      <div className="relative w-full overflow-auto" style={{ minHeight }}>
         <svg
           ref={svgRef}
-          width={width}
-          height={height}
+          width={WIDTH}
+          height={HEIGHT}
+          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          preserveAspectRatio="xMidYMid meet"
           className="w-full"
-          style={{ minHeight: height }}
+          style={{ minHeight: HEIGHT }}
         />
       </div>
 
