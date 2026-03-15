@@ -388,29 +388,81 @@ export const supplyChainRouter = createTRPCRouter({
     }),
 
   getSupplyChainRiskScores: protectedProcedure.query(async ({ ctx }) => {
+    const orgId = ctx.orgId;
     const vendors = await prisma.vendorAssurance.findMany({
-      where: { orgId: ctx.orgId }
+      where: { orgId }
     });
+
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+    const cards = await prisma.artifactCard.findMany({
+      where: { orgId },
+      select: { assetId: true }
+    });
+    const assetIdsWithCards = [...new Set(cards.map((c) => c.assetId))];
+    const existingAssets = await prisma.aIAsset.findMany({
+      where: { id: { in: assetIdsWithCards }, orgId, deletedAt: null },
+      select: { id: true }
+    });
+    const modelAssetIds = existingAssets.map((a) => a.id);
+
+    const scannedIn90Days = new Set<string>();
+    if (modelAssetIds.length > 0) {
+      const recentScans = await prisma.scanRecord.findMany({
+        where: {
+          orgId,
+          assetId: { in: modelAssetIds },
+          OR: [
+            { completedAt: { gte: ninetyDaysAgo } },
+            { completedAt: null, startedAt: { gte: ninetyDaysAgo } }
+          ]
+        },
+        select: { assetId: true }
+      });
+      for (const r of recentScans) scannedIn90Days.add(r.assetId);
+    }
+    const orgScanCoveragePct =
+      modelAssetIds.length > 0
+        ? Math.round((scannedIn90Days.size / modelAssetIds.length) * 100)
+        : 0;
+
     const scores = await Promise.all(
       vendors.map(async (v) => {
-        const [assurance, expired, scanCoverage] = await Promise.all([
-          assessVendorPosture(prisma, ctx.orgId, v.id),
-          checkEvidenceCurrency(prisma, ctx.orgId, v.id),
-          (async () => {
-            const cards = await prisma.artifactCard.count({
-              where: { orgId: ctx.orgId }
-            });
-            const scans = await prisma.scanRecord.count({
-              where: { orgId: ctx.orgId }
-            });
-            return cards > 0 ? Math.min(100, Math.round((scans / Math.max(1, cards)) * 100)) : 0;
-          })()
+        const [assurance, expired] = await Promise.all([
+          assessVendorPosture(prisma, orgId, v.id),
+          checkEvidenceCurrency(prisma, orgId, v.id)
         ]);
-        const evidenceCurrency = expired.length > 0 ? Math.max(0, 100 - expired.length * 20) : 100;
+
+        const evidenceRecords: { current: boolean }[] = [];
+        if (v.soc2Status === "CERTIFIED") {
+          evidenceRecords.push({
+            current: !v.soc2ExpiresAt || v.soc2ExpiresAt > new Date()
+          });
+        }
+        if (v.lastReviewedAt) {
+          evidenceRecords.push({
+            current: v.lastReviewedAt >= twelveMonthsAgo
+          });
+        }
+        const evidenceCurrency =
+          evidenceRecords.length > 0
+            ? Math.round(
+                (evidenceRecords.filter((r) => r.current).length / evidenceRecords.length) * 100
+              )
+            : 0;
+
+        const scanCoverage = orgScanCoveragePct;
+
         const contractAlignment = v.contractAligned ? 100 : 0;
         const overall =
           Math.round(
-            (assurance.total * 30 + evidenceCurrency * 0.25 + contractAlignment * 0.2 + scanCoverage * 0.25) / 1
+            assurance.total * 30 +
+              evidenceCurrency * 0.25 +
+              contractAlignment * 0.2 +
+              scanCoverage * 0.25
           ) || 0;
         return {
           vendorId: v.id,
@@ -419,7 +471,7 @@ export const supplyChainRouter = createTRPCRouter({
           contractAligned: v.contractAligned,
           scanCoverage,
           disclosureHistory: 70,
-          overallScore: Math.min(100, overall),
+          overallScore: Math.min(100, Math.max(0, overall)),
           breakdown: assurance.breakdown,
           expiredEvidence: expired
         };

@@ -29,6 +29,12 @@ function scoreColor(score: number): string {
   return "bg-emerald-100 text-emerald-700";
 }
 
+function pctColor(pct: number): string {
+  if (pct > 70) return "text-emerald-700 font-medium";
+  if (pct >= 40) return "text-amber-700 font-medium";
+  return "text-red-700 font-medium";
+}
+
 export function RiskScoreClient({ scores, overall }: Props) {
   const [tooltipVendor, setTooltipVendor] = useState<string | null>(null);
 
@@ -63,7 +69,9 @@ export function RiskScoreClient({ scores, overall }: Props) {
             {scores.map((row) => (
               <tr key={row.vendorId} className="border-b border-slate-100 hover:bg-slate-50">
                 <td className="px-4 py-3 font-medium text-slate-900">{row.vendorName}</td>
-                <td className="px-4 py-3 text-right">{row.evidenceCurrency}%</td>
+                <td className="px-4 py-3 text-right">
+                  <span className={pctColor(row.evidenceCurrency)}>{row.evidenceCurrency}%</span>
+                </td>
                 <td className="px-4 py-3 text-center">
                   {row.contractAligned ? (
                     <span className="text-emerald-600">Yes</span>
@@ -71,7 +79,9 @@ export function RiskScoreClient({ scores, overall }: Props) {
                     <span className="text-red-600">No</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-right">{row.scanCoverage}%</td>
+                <td className="px-4 py-3 text-right">
+                  <span className={pctColor(row.scanCoverage)}>{row.scanCoverage}%</span>
+                </td>
                 <td className="px-4 py-3 text-right">{row.disclosureHistory}%</td>
                 <td className="px-4 py-3 text-right">
                   <div className="relative inline-block">

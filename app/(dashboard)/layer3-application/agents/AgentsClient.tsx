@@ -21,6 +21,7 @@ type Asset = {
   humanOversightRequired: boolean;
   toolAuthorizations: string[];
   lifecycleStage: string;
+  status?: string;
   oversightPolicy?: string | null;
   euRiskLevel: string | null;
   owner: { id: string; email: string } | null;
@@ -74,9 +75,18 @@ export function AgentsClient({ initialAssets }: Props) {
   const [saving, setSaving] = useState(false);
 
   const filtered = assets.filter((a) => {
-    if (autonomyFilter && a.autonomyLevel !== autonomyFilter) return false;
-    if (overrideFilter && a.overrideTier !== overrideFilter) return false;
-    if (statusFilter && a.lifecycleStage !== statusFilter) return false;
+    if (autonomyFilter) {
+      const l = AUTONOMY_TO_L[a.autonomyLevel ?? ""] ?? "L0";
+      if (l !== autonomyFilter) return false;
+    }
+    if (overrideFilter) {
+      if (overrideFilter === "__none__") {
+        if (a.overrideTier) return false;
+      } else if (a.overrideTier !== overrideFilter) {
+        return false;
+      }
+    }
+    if (statusFilter && a.status !== statusFilter) return false;
     return true;
   });
 
@@ -177,42 +187,61 @@ export function AgentsClient({ initialAssets }: Props) {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <select
-          value={autonomyFilter}
-          onChange={(e) => setAutonomyFilter(e.target.value)}
-          className="rounded border border-slate-300 px-3 py-1.5 text-sm"
-        >
-          <option value="">All autonomy levels</option>
-          <option value="HUMAN_ONLY">L0 - Human only</option>
-          <option value="ASSISTED">L1 - Assisted</option>
-          <option value="SEMI_AUTONOMOUS">L2 - Semi-autonomous</option>
-          <option value="AUTONOMOUS">L3 - Autonomous</option>
-        </select>
-        <select
-          value={overrideFilter}
-          onChange={(e) => setOverrideFilter(e.target.value)}
-          className="rounded border border-slate-300 px-3 py-1.5 text-sm"
-        >
-          <option value="">All override tiers</option>
-          {["T1", "T2", "T3", "T4", "T5"].map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded border border-slate-300 px-3 py-1.5 text-sm"
-        >
-          <option value="">All stages</option>
-          {["DEVELOPMENT", "TESTING", "STAGING", "PRODUCTION", "DEPRECATED", "RETIRED"].map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
+          <label htmlFor="autonomy-filter" className="text-sm font-medium text-slate-700">
+            Autonomy Level
+          </label>
+          <select
+            id="autonomy-filter"
+            value={autonomyFilter}
+            onChange={(e) => setAutonomyFilter(e.target.value)}
+            className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900"
+          >
+            <option value="">All Levels</option>
+            <option value="L0">L0</option>
+            <option value="L1">L1</option>
+            <option value="L2">L2</option>
+            <option value="L3">L3</option>
+            <option value="L4">L4</option>
+            <option value="L5">L5</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="override-filter" className="text-sm font-medium text-slate-700">
+            Override Tier
+          </label>
+          <select
+            id="override-filter"
+            value={overrideFilter}
+            onChange={(e) => setOverrideFilter(e.target.value)}
+            className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900"
+          >
+            <option value="">All Tiers</option>
+            <option value="T1">T1</option>
+            <option value="T2">T2</option>
+            <option value="T3">T3</option>
+            <option value="T4">T4</option>
+            <option value="T5">T5</option>
+            <option value="__none__">No override</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="status-filter" className="text-sm font-medium text-slate-700">
+            Status
+          </label>
+          <select
+            id="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900"
+          >
+            <option value="">All</option>
+            <option value="ACTIVE">Active</option>
+            <option value="DRAFT">Draft</option>
+            <option value="DEPRECATED">Deprecated</option>
+          </select>
+        </div>
       </div>
 
       {/* Agent cards */}
@@ -265,18 +294,18 @@ export function AgentsClient({ initialAssets }: Props) {
                 <button
                   type="button"
                   onClick={() => openConfig(a)}
-                  className="flex items-center gap-1 rounded border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50"
+                  className="flex items-center gap-1.5 rounded bg-navy-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-navy-500"
                 >
-                  <Settings2 className="h-3 w-3" />
+                  <Settings2 className="h-3.5 w-3.5" />
                   Configure Override
                 </button>
                 <button
                   type="button"
                   onClick={() => openTools(a)}
-                  className="flex items-center gap-1 rounded border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50"
+                  className="flex items-center gap-1.5 rounded border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                 >
-                  <Wrench className="h-3 w-3" />
-                  Manage Tools
+                  <Wrench className="h-3.5 w-3.5" />
+                  Tool Auth
                 </button>
               </div>
             </div>
