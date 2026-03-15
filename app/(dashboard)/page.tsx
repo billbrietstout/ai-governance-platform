@@ -36,7 +36,13 @@ const LAYER_LINKS: Record<string, string> = {
   LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
 };
 
-export default async function CommandCenterPage() {
+export default async function CommandCenterPage({
+  searchParams
+}: {
+  searchParams: Promise<{ welcome?: string }>;
+}) {
+  const params = await searchParams;
+  const showWelcome = params.welcome === "1";
   const session = await auth();
   const role = (session?.user as { role?: string })?.role ?? "MEMBER";
   const caller = await createServerCaller();
@@ -79,8 +85,39 @@ export default async function CommandCenterPage() {
   const showFinancial = role === "CAIO" || role === "ADMIN";
   const systemOk = kpis.criticalRisks === 0;
 
+  const nextSteps = maturityRes.data.nextSteps as { layer: string; action: string; priority: string }[];
+  const topNextSteps = nextSteps.slice(0, 3);
+
   return (
     <main className="flex flex-col gap-6">
+      {showWelcome && (
+        <div className="rounded-lg border border-navy-200 bg-navy-50 p-4">
+          <h3 className="text-lg font-semibold text-navy-900">
+            Welcome to AI Governance Platform
+          </h3>
+          <p className="mt-1 text-navy-700">
+            Your baseline maturity score is{" "}
+            <span className="font-bold">M{maturityRes.data.maturityLevel}</span>.
+            Here&apos;s what to do next:
+          </p>
+          <ul className="mt-3 space-y-2">
+            {topNextSteps.map((s, i) => (
+              <li key={`${s.layer}-${s.action}`} className="flex items-center gap-2 text-sm text-navy-700">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy-200 text-xs font-medium text-navy-800">
+                  {i + 1}
+                </span>
+                {s.action}
+              </li>
+            ))}
+          </ul>
+          {topNextSteps.length === 0 && (
+            <p className="mt-2 text-sm text-navy-600">
+              You&apos;re at maximum maturity. Keep up the great work!
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="flex items-start justify-between">
         <h2 className="text-2xl font-semibold tracking-tight text-gray-900">Command Center</h2>
         <span

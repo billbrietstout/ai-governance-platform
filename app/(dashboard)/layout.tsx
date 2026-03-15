@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { prisma } from "@/lib/prisma";
@@ -22,13 +23,14 @@ export default async function DashboardLayout({
 
   let orgName: string | null = null;
   let featureFlags: Record<string, boolean> = {};
+  let onboardingComplete = true;
 
   let frameworks: { code: string }[] = [];
   if (orgId) {
     const [org, flags, fws] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
-        select: { name: true }
+        select: { name: true, onboardingComplete: true }
       }),
       prisma.featureFlag.findMany({
         where: { orgId },
@@ -40,6 +42,7 @@ export default async function DashboardLayout({
       })
     ]);
     orgName = org?.name ?? null;
+    onboardingComplete = org?.onboardingComplete ?? true;
     featureFlags = MODULE_FLAGS.reduce(
       (acc, name) => {
         acc[name] = flags.find((f) => f.name === name)?.enabled ?? false;
@@ -48,6 +51,10 @@ export default async function DashboardLayout({
       {} as Record<string, boolean>
     );
     frameworks = fws;
+  }
+
+  if (orgId && !onboardingComplete) {
+    redirect("/onboarding");
   }
 
   return (

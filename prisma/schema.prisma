@@ -224,6 +224,10 @@ model Organization {
   autoJoinRole       UserRole @default(VIEWER)
   maturityLevel      Int      @default(1)
   onboardingComplete Boolean  @default(false)
+  onboardingStep     Int      @default(0)  // 0=not started, 1-5=in progress, 6=complete
+  operatingModel     String?  // IAAS | PAAS | AGENT_PAAS | SAAS | MIXED
+  orgSize            String?  // SMALL | MEDIUM | LARGE | ENTERPRISE
+  primaryUseCase     String?  // free text, e.g. "Customer service chatbot"
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 

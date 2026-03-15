@@ -11,6 +11,7 @@ import {
   type VerticalKey
 } from "@/lib/vertical-regulations";
 import { ClientVerticalsForm } from "./ClientVerticalsForm";
+import { ResetOnboardingForm } from "./ResetOnboardingForm";
 
 export default async function OrganizationSettingsPage() {
   const session = await auth();
@@ -49,6 +50,8 @@ export default async function OrganizationSettingsPage() {
         currentVerticals={clientVerticals as VerticalKey[]}
         verticalOptions={verticalOptions}
       />
+
+      <ResetOnboardingForm />
     </main>
   );
 }
