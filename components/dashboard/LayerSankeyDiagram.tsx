@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { sankey, sankeyLeft, sankeyLinkHorizontal } from "d3-sankey";
 
 export type LayerNode = {
   id: string;
@@ -25,6 +24,14 @@ type Props = {
   layerLinks?: Record<string, string>;
 };
 
+const LAYER_COLORS: Record<string, string> = {
+  L1: "#1D9E75",
+  L2: "#534AB7",
+  L3: "#D85A30",
+  L4: "#185FA5",
+  L5: "#5F5E5A"
+};
+
 const DEFAULT_LAYER_LINKS: Record<string, string> = {
   L1: "/layer1-business",
   L2: "/layer2-information",
@@ -42,6 +49,7 @@ function lightenColor(hex: string, factor: number): string {
   return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
 }
 
+
 export function LayerSankeyDiagram({
   layerData,
   links,
@@ -57,137 +65,152 @@ export function LayerSankeyDiagram({
     svg.selectAll("*").remove();
 
     const width = 680;
-    const height = 320;
-    const margin = { top: 20, right: 120, bottom: 20, left: 120 };
+    const height = 280;
+    const nodeWidth = 24;
+    const gap = 80;
+    const totalNodeWidth = layerData.length * nodeWidth + (layerData.length - 1) * gap;
+    const marginLeft = (width - totalNodeWidth) / 2;
 
-    const nodes = layerData.map((d) => ({
-      ...d,
-      fixedValue: Math.max(1, d.assetCount)
+    const normalizedLinks = links.map((l) => ({
+      ...l,
+      value: Math.max(5, l.value)
     }));
 
-    const sankeyLinks = links.map((l) => ({ source: l.source, target: l.target, value: l.value }));
+    const maxLinkValue = Math.max(...normalizedLinks.map((l) => l.value), 1);
 
-    const graph = sankey()
-      .nodeWidth(20)
-      .nodePadding(12)
-      .nodeAlign(sankeyLeft)
-      .nodeId((d) => (d as LayerNode).id)
-      .extent([
-        [margin.left, margin.top],
-        [width - margin.right, height - margin.bottom]
-      ])({ nodes, links: sankeyLinks });
+    type LayoutNode = LayerNode & {
+      x: number;
+      y: number;
+      nodeHeight: number;
+    };
 
-    type LayoutNode = LayerNode & { x0: number; x1: number; y0: number; y1: number };
-    type LayoutLink = { source: LayoutNode; target: LayoutNode; value: number };
+    const layoutNodes: LayoutNode[] = layerData.map((d, i) => {
+      const nodeHeight = Math.max(40, Math.log(d.assetCount + 1) * 30);
+      const x = marginLeft + i * (nodeWidth + gap);
+      const y = (height - nodeHeight) / 2;
+      const color = d.color || LAYER_COLORS[d.id] || "#64748b";
+      return {
+        ...d,
+        color,
+        x,
+        y,
+        nodeHeight
+      };
+    });
 
-    const layoutNodes = graph.nodes as LayoutNode[];
-    const layoutLinks = graph.links as LayoutLink[];
+    const nodeById = new Map(layoutNodes.map((n) => [n.id, n]));
 
     const g = svg.append("g");
 
-    // Defs for gradients
-    const defs = g.append("defs");
-    layoutLinks.forEach((link, i) => {
-      const grad = defs
-        .append("linearGradient")
-        .attr("id", `sankey-grad-${i}`)
-        .attr("gradientUnits", "userSpaceOnUse")
-        .attr("x1", link.source.x1)
-        .attr("x2", link.target.x0);
-      grad.append("stop").attr("offset", "0%").attr("stop-color", link.source.color);
-      grad.append("stop").attr("offset", "100%").attr("stop-color", link.target.color);
+    const linkPath = (source: LayoutNode, target: LayoutNode) => {
+      const x1 = source.x + nodeWidth;
+      const x2 = target.x;
+      const y1 = source.y + source.nodeHeight / 2;
+      const y2 = target.y + target.nodeHeight / 2;
+      const cx = (x1 + x2) / 2;
+      return `M ${x1},${y1} C ${cx},${y1} ${cx},${y2} ${x2},${y2}`;
+    };
+
+    const layoutLinks = normalizedLinks
+      .map((l) => {
+        const source = nodeById.get(l.source);
+        const target = nodeById.get(l.target);
+        if (!source || !target) return null;
+        return { source, target, value: l.value };
+      })
+      .filter((l): l is { source: LayoutNode; target: LayoutNode; value: number } => l !== null);
+
+    const linkScale = d3.scaleLinear().domain([0, maxLinkValue]).range([4, 24]);
+
+    layoutLinks.forEach((link) => {
+      const strokeWidth = linkScale(link.value);
+      const path = g
+        .append("path")
+        .attr("d", linkPath(link.source, link.target))
+        .attr("fill", "none")
+        .attr("stroke", link.source.color)
+        .attr("stroke-opacity", 0.3)
+        .attr("stroke-width", strokeWidth)
+        .attr("stroke-linecap", "round")
+        .attr("cursor", "pointer")
+        .style("transition", "stroke-opacity 0.2s")
+        .on("mouseenter", function (event) {
+          setTooltip({
+            x: event.clientX,
+            y: event.clientY,
+            text: `${link.value} dependencies flow from ${link.source.label} to ${link.target.label}`
+          });
+          d3.select(this).attr("stroke-opacity", 0.6);
+        })
+        .on("mousemove", function (event) {
+          setTooltip((t) => (t ? { ...t, x: event.clientX, y: event.clientY } : null));
+        })
+        .on("mouseleave", function () {
+          setTooltip(null);
+          d3.select(this).attr("stroke-opacity", 0.3);
+        });
     });
 
-    // Links
-    const link = g
-      .append("g")
-      .selectAll("path")
-      .data(layoutLinks)
-      .join("path")
-      .attr("d", sankeyLinkHorizontal())
-      .attr("fill", (_, i) => `url(#sankey-grad-${i})`)
-      .attr("fill-opacity", 0.3)
-      .attr("cursor", "pointer")
-      .style("transition", "fill-opacity 0.2s")
-      .on("mouseenter", function (event, d) {
-        setTooltip({
-          x: event.clientX,
-          y: event.clientY,
-          text: `${d.value} dependencies flow from ${d.source.label} to ${d.target.label}`
-        });
-        d3.select(this).attr("fill-opacity", 0.6);
-      })
-      .on("mousemove", function (event) {
-        setTooltip((t) => (t ? { ...t, x: event.clientX, y: event.clientY } : null));
-      })
-      .on("mouseleave", function () {
-        setTooltip(null);
-        d3.select(this).attr("fill-opacity", 0.3);
-      });
-
-    // Nodes
     const node = g
       .append("g")
       .selectAll("g")
       .data(layoutNodes)
       .join("g")
-      .attr("transform", (d) => `translate(${d.x0},${d.y0})`)
+      .attr("transform", (d) => `translate(${d.x},${d.y})`)
       .attr("cursor", "pointer")
       .on("mouseenter", function (_, d) {
-        link.attr("fill-opacity", (l) => {
-          const s = l.source.id;
-          const t = l.target.id;
-          return s === d.id || t === d.id ? 0.6 : 0.3;
+        g.selectAll("path").attr("stroke-opacity", (_, i) => {
+          const l = layoutLinks[i];
+          return l && (l.source.id === d.id || l.target.id === d.id) ? 0.6 : 0.3;
         });
       })
       .on("mouseleave", function () {
-        link.attr("fill-opacity", 0.3);
+        g.selectAll("path").attr("stroke-opacity", 0.3);
       })
       .on("click", (_, d) => {
         const href = layerLinks[d.id];
         if (href) window.location.href = href;
       });
 
-    // Node rect (background)
     node
       .append("rect")
       .attr("x", 0)
       .attr("y", 0)
-      .attr("width", 20)
-      .attr("height", (d) => d.y1 - d.y0)
+      .attr("width", nodeWidth)
+      .attr("height", (d) => d.nodeHeight)
       .attr("fill", (d) => d.color)
       .attr("rx", 2);
 
-    // Compliance overlay (inner rect)
     node
       .append("rect")
       .attr("x", 2)
       .attr("y", 2)
-      .attr("width", 16)
-      .attr("height", (d) => Math.max(0, (d.y1 - d.y0 - 4) * (d.complianceScore / 100)))
+      .attr("width", nodeWidth - 4)
+      .attr("height", (d) => Math.max(0, (d.nodeHeight - 4) * (d.complianceScore / 100)))
       .attr("fill", (d) => lightenColor(d.color, 0.6))
       .attr("rx", 1);
 
-    // Labels left
+    const labelAboveY = -12;
+    const labelBelowY = (d: LayoutNode) => d.nodeHeight + 18;
+
     node
       .append("text")
-      .attr("x", -8)
-      .attr("y", (d) => (d.y1 - d.y0) / 2)
-      .attr("text-anchor", "end")
+      .attr("x", nodeWidth / 2)
+      .attr("y", labelAboveY)
+      .attr("text-anchor", "middle")
       .attr("dominant-baseline", "central")
       .attr("font-size", 11)
-      .attr("fill", "var(--color-text-secondary)")
+      .attr("fill", "#475569")
       .text((d) => `${d.label} (${d.assetCount})`);
 
-    // Labels right
     node
       .append("text")
-      .attr("x", 28)
-      .attr("y", (d) => (d.y1 - d.y0) / 2)
-      .attr("text-anchor", "start")
+      .attr("x", nodeWidth / 2)
+      .attr("y", labelBelowY)
+      .attr("text-anchor", "middle")
       .attr("dominant-baseline", "central")
       .attr("font-size", 10)
-      .attr("fill", "var(--color-text-secondary)")
+      .attr("fill", "#64748b")
       .text((d) => {
         const risk = d.riskCount > 0 ? ` • ${d.riskCount} risks` : "";
         return `${d.complianceScore}%${risk}`;
@@ -199,7 +222,7 @@ export function LayerSankeyDiagram({
       <svg
         ref={svgRef}
         width="100%"
-        viewBox="0 0 680 320"
+        viewBox="0 0 680 280"
         preserveAspectRatio="xMidYMid meet"
         overflow="visible"
       />
