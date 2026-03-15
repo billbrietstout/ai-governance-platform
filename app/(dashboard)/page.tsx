@@ -11,7 +11,8 @@ import {
   Clock,
   XCircle,
   Building,
-  Info
+  Info,
+  TrendingUp
 } from "lucide-react";
 import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
@@ -20,6 +21,14 @@ import { RiskMatrix } from "./RiskMatrix";
 import { LayerPosturePanel } from "./LayerPosturePanel";
 import { AuditFeed } from "./AuditFeed";
 import { Tooltip } from "@/components/ui/Tooltip";
+
+const MATURITY_COLORS: Record<number, string> = {
+  1: "#fbbf24",
+  2: "#f97316",
+  3: "#3b82f6",
+  4: "#8b5cf6",
+  5: "#10b981"
+};
 
 const LAYER_LINKS: Record<string, string> = {
   LAYER_1_BUSINESS: "/layer1-business",
@@ -41,7 +50,8 @@ export default async function CommandCenterPage() {
     cascadeRes,
     gapsRes,
     vendorRes,
-    auditRes
+    auditRes,
+    maturityRes
   ] = await Promise.all([
     caller.dashboard.getKPIs(),
     caller.dashboard.getKPIDeltas(),
@@ -51,7 +61,8 @@ export default async function CommandCenterPage() {
     caller.dashboard.getRegulatoryCascadeStatus(),
     caller.dashboard.getTopGaps({ limit: 5 }),
     caller.dashboard.getVendorAssuranceSummary(),
-    caller.dashboard.getAuditFeed({ limit: 20 })
+    caller.dashboard.getAuditFeed({ limit: 20 }),
+    caller.maturity.getMaturityScore()
   ]);
 
   let penaltyRes: { data: { totalMin: number; totalMax: number; byArticle?: unknown[] } } | null = null;
@@ -142,6 +153,12 @@ export default async function CommandCenterPage() {
           icon={<Building className="h-4 w-4 text-amber-600" />}
           delta={deltas.vendorsExpiringDelta}
         />
+        <KpiCard
+          label="Maturity Score"
+          value={`M${maturityRes.data.maturityLevel}`}
+          href="/maturity"
+          icon={<TrendingUp className="h-4 w-4" style={{ color: MATURITY_COLORS[maturityRes.data.maturityLevel] ?? "#fbbf24" }} />}
+        />
       </div>
 
       {showFinancial && penaltyRes && (
@@ -170,6 +187,60 @@ export default async function CommandCenterPage() {
       )}
 
       <LayerPosturePanel layers={layerRes.data} layerLinks={LAYER_LINKS} />
+
+      {/* Maturity Progress */}
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="mb-3 text-sm font-medium text-slate-700">Maturity Progress</h3>
+        {!maturityRes.data.lastAssessedAt ? (
+          <div className="flex items-center justify-between rounded border border-amber-200 bg-amber-50/50 px-4 py-3">
+            <p className="text-sm text-slate-700">No maturity assessment yet.</p>
+            <Link
+              href="/maturity"
+              className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+            >
+              Complete Assessment
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-sm text-slate-600">
+                Last assessed{" "}
+                {Math.floor(
+                  (Date.now() - new Date(maturityRes.data.lastAssessedAt).getTime()) /
+                    (24 * 60 * 60 * 1000)
+                )}{" "}
+                days ago
+              </p>
+              <Link href="/maturity" className="text-sm font-medium text-navy-600 hover:underline">
+                Retake →
+              </Link>
+            </div>
+            <div className="space-y-2">
+              {(["L1", "L2", "L3", "L4", "L5"] as const).map((layer) => {
+                const score = maturityRes.data.scores[layer] ?? 1;
+                const pct = (score / 5) * 100;
+                const level = Math.floor(score);
+                const color = MATURITY_COLORS[level] ?? MATURITY_COLORS[1];
+                return (
+                  <div key={layer} className="flex items-center gap-3">
+                    <span className="w-20 shrink-0 text-xs font-medium text-slate-600">{layer}</span>
+                    <div className="flex-1 h-5 overflow-hidden rounded-full bg-slate-200">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${pct}%`, backgroundColor: color }}
+                      />
+                    </div>
+                    <span className="w-8 shrink-0 text-right text-xs font-medium text-slate-700">
+                      {score.toFixed(1)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">

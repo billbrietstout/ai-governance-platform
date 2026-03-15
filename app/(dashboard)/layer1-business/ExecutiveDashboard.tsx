@@ -29,6 +29,8 @@ type CEOData = {
   aiIncidents: number;
   governanceCoverage: number;
   posture: "red" | "amber" | "green";
+  maturityLevel?: number;
+  maturitySummary?: string | null;
   summary: string;
 };
 
@@ -129,6 +131,14 @@ export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal, portfolio }: Pr
   );
 }
 
+const MATURITY_COLORS: Record<number, string> = {
+  1: "#fbbf24",
+  2: "#f97316",
+  3: "#3b82f6",
+  4: "#8b5cf6",
+  5: "#10b981"
+};
+
 function CEOView({ data: d }: { data: CEOData }) {
   const postureColor =
     d.posture === "green" ? "bg-emerald-500" : d.posture === "amber" ? "bg-amber-500" : "bg-red-500";
@@ -139,6 +149,27 @@ function CEOView({ data: d }: { data: CEOData }) {
         <div className={`h-4 w-4 shrink-0 rounded-full ${postureColor}`} title={d.posture} />
         <p className="text-slate-700">{d.summary}</p>
       </div>
+
+      {(d.maturityLevel != null || d.maturitySummary) && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            {d.maturityLevel != null && (
+              <span
+                className="rounded-lg px-3 py-1.5 text-sm font-semibold text-white"
+                style={{ backgroundColor: MATURITY_COLORS[d.maturityLevel] ?? "#fbbf24" }}
+              >
+                M{d.maturityLevel}
+              </span>
+            )}
+            {d.maturitySummary && (
+              <p className="text-sm text-slate-600">{d.maturitySummary}</p>
+            )}
+          </div>
+          <Link href="/maturity" className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline">
+            View maturity assessment →
+          </Link>
+        </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MetricCard label="Ungoverned High-Risk AI" value={d.aiRiskExposure} />

@@ -30,7 +30,8 @@ import {
   Briefcase,
   Lock,
   LockKeyhole,
-  Search
+  Search,
+  TrendingUp
 } from "lucide-react";
 
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
@@ -90,6 +91,7 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
     title: "GOVERNANCE OVERVIEW",
     items: [
       { href: "/", label: "Command Center", icon: LayoutDashboard },
+      { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
       { href: "/reports", label: "Reports", icon: FileBarChart },
       { href: "/audit", label: "Audit Log", icon: ScrollText }
     ]

@@ -213,32 +213,53 @@ enum SlsaLevel {
 // =============================================================================
 
 model Organization {
-  id               String   @id @default(cuid())
-  name             String
-  slug             String   @unique
-  plan             Plan     @default(FREE)
-  verticalMarket   VerticalMarket @default(GENERAL)
-  clientVerticals  Json?    // array of vertical codes the org serves
-  dataResidency    DataResidency? @default(GLOBAL)
-  claimedDomain    String?  @unique
-  autoJoinRole     UserRole @default(VIEWER)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  name               String
+  slug               String   @unique
+  plan               Plan     @default(FREE)
+  verticalMarket     VerticalMarket @default(GENERAL)
+  clientVerticals    Json?    // array of vertical codes the org serves
+  dataResidency      DataResidency? @default(GLOBAL)
+  claimedDomain      String?  @unique
+  autoJoinRole       UserRole @default(VIEWER)
+  maturityLevel      Int      @default(1)
+  onboardingComplete Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  users              User[]
-  pendingInvites     PendingInvite[]
-  aiAssets            AIAsset[]
+  users                User[]
+  pendingInvites       PendingInvite[]
+  aiAssets             AIAsset[]
   complianceFrameworks ComplianceFramework[]
-  riskRegisters       RiskRegister[]
-  assessments        Assessment[]
-  artifactCards       ArtifactCard[]
-  vendorAssurances    VendorAssurance[]
-  scanRecords        ScanRecord[]
-  auditLogs           AuditLog[]
-  featureFlags        FeatureFlag[]
-  sessions           Session[]
-  securityEvents     SecurityEvent[]
-  accessReviews      AccessReview[]
+  riskRegisters        RiskRegister[]
+  assessments          Assessment[]
+  artifactCards        ArtifactCard[]
+  vendorAssurances     VendorAssurance[]
+  scanRecords          ScanRecord[]
+  auditLogs            AuditLog[]
+  featureFlags         FeatureFlag[]
+  sessions             Session[]
+  securityEvents       SecurityEvent[]
+  accessReviews        AccessReview[]
+  maturityAssessments  MaturityAssessment[]
+}
+
+model MaturityAssessment {
+  id             String   @id @default(cuid())
+  orgId          String
+  assessedBy     String
+  scores         Json     // { L1, L2, L3, L4, L5, overall } each 1-5
+  answers        Json     // array of { questionId, answer, score }
+  maturityLevel  Int      // 1-5 overall
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [assessedBy], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([orgId, createdAt])
 }
 
 model User {
@@ -252,10 +273,11 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  ownedAssets  AIAsset[]    @relation("AIAssetOwner")
-  attestations ControlAttestation[]
-  sessions    Session[]
+  organization        Organization        @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  ownedAssets         AIAsset[]           @relation("AIAssetOwner")
+  attestations        ControlAttestation[]
+  sessions            Session[]
+  maturityAssessments MaturityAssessment[]
 
   @@unique([orgId, email])
   @@index([orgId])

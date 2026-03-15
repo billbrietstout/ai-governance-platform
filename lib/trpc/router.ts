@@ -12,7 +12,7 @@ import { onboardingRouter } from "./routers/onboarding.router";
 import { executiveDashboardRouter } from "./routers/executive-dashboard.router";
 import { layer2Router } from "./routers/layer2.router";
 import { layer4Router } from "./routers/layer4.router";
-
+import { maturityRouter } from "./routers/maturity.router";
 
 export const appRouter = createTRPCRouter({
   healthcheck: publicProcedure
@@ -29,7 +29,8 @@ export const appRouter = createTRPCRouter({
   onboarding: onboardingRouter,
   executiveDashboard: executiveDashboardRouter,
   layer2: layer2Router,
-  layer4: layer4Router
+  layer4: layer4Router,
+  maturity: maturityRouter
 });
 
 export type AppRouter = typeof appRouter;

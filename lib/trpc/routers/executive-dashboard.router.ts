@@ -24,7 +24,7 @@ const NINETY_DAYS_AGO = (() => {
 
 export const executiveDashboardRouter = createTRPCRouter({
   getCEOView: protectedProcedure.query(async ({ ctx }) => {
-    const [ungovernedHighRisk, reputationalRisk, penaltyRes, incidents, governancePct] =
+    const [ungovernedHighRisk, reputationalRisk, penaltyRes, incidents, governancePct, org, latestAssessment] =
       await Promise.all([
         getUngovernedHighRisk(prisma, ctx.orgId),
         getReputationalRisk(prisma, ctx.orgId),
@@ -34,7 +34,16 @@ export const executiveDashboardRouter = createTRPCRouter({
         prisma.securityEvent.count({
           where: { orgId: ctx.orgId, createdAt: { gte: NINETY_DAYS_AGO } }
         }),
-        getGovernanceCoverage(prisma, ctx.orgId)
+        getGovernanceCoverage(prisma, ctx.orgId),
+        prisma.organization.findUnique({
+          where: { id: ctx.orgId },
+          select: { maturityLevel: true }
+        }),
+        prisma.maturityAssessment.findFirst({
+          where: { orgId: ctx.orgId },
+          orderBy: { createdAt: "desc" },
+          select: { scores: true }
+        })
       ]);
 
     const assets = await prisma.aIAsset.findMany({
@@ -54,6 +63,30 @@ export const executiveDashboardRouter = createTRPCRouter({
         ? `€${(penaltyRes.totalMin / 1_000_000).toFixed(1)}–${(penaltyRes.totalMax / 1_000_000).toFixed(1)}M`
         : "€0";
 
+    const maturityLevel = org?.maturityLevel ?? 1;
+    const scores = (latestAssessment?.scores ?? {}) as Record<string, number>;
+    const layerLabels: Record<string, string> = {
+      L1: "Business",
+      L2: "Information",
+      L3: "Application",
+      L4: "Platform",
+      L5: "Supply Chain"
+    };
+    const layers = ["L1", "L2", "L3", "L4", "L5"] as const;
+    let lowestLayer: string | null = null;
+    let lowestScore = 5;
+    for (const l of layers) {
+      const s = scores[l] ?? 1;
+      if (s < lowestScore) {
+        lowestScore = s;
+        lowestLayer = layerLabels[l];
+      }
+    }
+    const maturitySummary =
+      lowestLayer && lowestScore < 5
+        ? `Your ${lowestLayer} layer has the lowest maturity score (${lowestScore.toFixed(1)}).`
+        : null;
+
     return {
       data: {
         aiRiskExposure: ungovernedHighRisk,
@@ -64,6 +97,8 @@ export const executiveDashboardRouter = createTRPCRouter({
         aiIncidents: incidents,
         governanceCoverage: governancePct,
         posture,
+        maturityLevel,
+        maturitySummary,
         summary: `You have ${ungovernedHighRisk} high-risk AI systems with incomplete governance. Your largest regulatory exposure is EU AI Act at ${penaltyRange}.`
       },
       meta: {}
