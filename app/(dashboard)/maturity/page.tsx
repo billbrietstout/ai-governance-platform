@@ -144,6 +144,55 @@ export default async function MaturityPage() {
         lastAssessedAt={lastAssessedAt}
         currentScores={scores}
       />
+
+      {/* M5 Roadmap – visible when maturityLevel >= 4 */}
+      {maturityLevel >= 4 && (
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-6">
+          <h2 className="mb-2 text-lg font-semibold text-slate-900">Path to M5 Certification</h2>
+          <p className="mb-4 text-sm text-slate-600">
+            You&apos;re at M4 or higher. Complete these steps to reach M5 Optimised and achieve
+            full certification readiness.
+          </p>
+          <ul className="space-y-3">
+            <li className="flex items-center gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-xs font-bold text-emerald-800">
+                1
+              </span>
+              <Link href="/compliance/iso42001" className="text-navy-600 hover:underline">
+                ISO 42001 certification readiness
+              </Link>
+              — Complete clause-by-clause checklist
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-xs font-bold text-emerald-800">
+                2
+              </span>
+              <Link href="/compliance/eu-ai-act" className="text-navy-600 hover:underline">
+                EU AI Act conformity
+              </Link>
+              — High-risk asset conformity assessment
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-xs font-bold text-emerald-800">
+                3
+              </span>
+              <span>CE marking readiness</span>
+              — Technical documentation and declaration
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-xs font-bold text-emerald-800">
+                4
+              </span>
+              <span>Independent model validation</span>
+              — Third-party assessment of critical systems
+            </li>
+          </ul>
+          <p className="mt-4 text-xs text-slate-500">
+            Estimated timeline to M5: {maturityLevel === 4 ? "3–6 months" : "1–3 months"} based on
+            current gaps. Address next steps above to accelerate.
+          </p>
+        </div>
+      )}
     </main>
   );
 }

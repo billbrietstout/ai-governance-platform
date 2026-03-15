@@ -40,9 +40,11 @@ import {
   Bell
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
+import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
 import { getPersonaConfig } from "@/lib/personas/config";
 
 const STORAGE_KEY = "sidebar-collapsed";
+const STORAGE_KEY_EXPANDED = "sidebar-expanded-sections";
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }> };
 type GatedSection = {
@@ -113,6 +115,13 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
       { href: "/audit-package", label: "Audit Package", icon: Package },
       { href: "/audit-package/evidence-workbook", label: "Evidence Workbook", icon: BookOpen },
       { href: "/audit", label: "Audit Log", icon: ScrollText }
+    ]
+  },
+  {
+    title: "COMPLIANCE",
+    items: [
+      { href: "/compliance/iso42001", label: "ISO 42001", icon: FileText },
+      { href: "/compliance/eu-ai-act", label: "EU AI Act Conformity", icon: Shield }
     ]
   },
   {
@@ -195,8 +204,16 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
 
   const [collapsed, setCollapsedState] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
-    const s = currentSection ? new Set([currentSection]) : new Set([ALL_SECTIONS[0].title]);
-    return s;
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_EXPANDED);
+      if (stored) {
+        const arr = JSON.parse(stored) as string[];
+        if (Array.isArray(arr) && arr.length > 0) return new Set(arr);
+      }
+    } catch {
+      /* ignore */
+    }
+    return new Set([currentSection ?? ALL_SECTIONS[0].title]);
   });
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -223,7 +240,15 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
 
   useEffect(() => {
     if (currentSection) {
-      setExpandedSections((prev) => new Set([...prev, currentSection]));
+      setExpandedSections((prev) => {
+        const next = new Set([...prev, currentSection]);
+        try {
+          localStorage.setItem(STORAGE_KEY_EXPANDED, JSON.stringify([...next]));
+        } catch {
+          /* ignore */
+        }
+        return next;
+      });
     }
   }, [currentSection]);
 
@@ -244,6 +269,11 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
       const next = new Set(prev);
       if (next.has(title)) next.delete(title);
       else next.add(title);
+      try {
+        localStorage.setItem(STORAGE_KEY_EXPANDED, JSON.stringify([...next]));
+      } catch {
+        /* ignore */
+      }
       return next;
     });
   }, []);
@@ -302,30 +332,7 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
         </button>
       </div>
 
-      {/* Global search modal placeholder – opens on Cmd+K */}
-      {searchOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-32"
-          onClick={() => setSearchOpen(false)}
-        >
-          <div
-            className="w-full max-w-xl rounded-lg border border-slatePro-700 bg-slatePro-900 shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center gap-2 border-b border-slatePro-700 px-4 py-3">
-              <Search className="h-4 w-4 text-slatePro-500" />
-              <input
-                type="search"
-                placeholder="Search assets, vendors, controls…"
-                className="flex-1 bg-transparent text-slatePro-100 placeholder:text-slatePro-500 focus:outline-none"
-                autoFocus
-              />
-              <kbd className="rounded bg-slatePro-700 px-2 py-0.5 text-xs text-slatePro-400">Esc</kbd>
-            </div>
-            <p className="px-4 py-3 text-xs text-slatePro-500">Search across assets, vendors, and controls. Full implementation coming soon.</p>
-          </div>
-        </div>
-      )}
+      {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
 
       {/* Scrollable nav */}
       <div className="flex-1 overflow-y-auto py-2">

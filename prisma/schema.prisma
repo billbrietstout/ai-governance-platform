@@ -276,6 +276,7 @@ model Organization {
   regulationDiscoveries  RegulationDiscovery[]
   complianceSnapshots   ComplianceSnapshot[]
   provenanceRecords    ProvenanceRecord[]
+  isoReadiness         ISOReadiness[]
 }
 
 model MasterDataEntity {
@@ -830,4 +831,19 @@ model AccessReview {
   @@index([orgId])
   @@index([orgId, status])
   @@index([reviewDueAt])
+}
+
+model ISOReadiness {
+  id          String    @id @default(cuid())
+  orgId       String
+  clauseId    String    // e.g. "4.1", "5.2"
+  status      String    @default("NOT_STARTED") // NOT_STARTED | IN_PROGRESS | COMPLETE
+  notes       String?
+  completedAt DateTime?
+  completedBy String?
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, clauseId])
+  @@index([orgId])
 }

@@ -314,8 +314,20 @@ export function AgentsClient({ initialAssets }: Props) {
       </div>
 
       {filtered.length === 0 && (
-        <div className="rounded-lg border border-slate-200 bg-white p-12 text-center text-slate-500">
-          No agents match the current filters.
+        <div className="rounded-lg border border-slate-200 bg-white p-12 text-center">
+          <p className="text-slate-600">
+            {assets.length === 0
+              ? "No agents configured yet — promote an asset to agent status to see it here."
+              : "No agents match the current filters."}
+          </p>
+          {assets.length === 0 && (
+            <Link
+              href="/layer3-application/assets"
+              className="mt-3 inline-block rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500"
+            >
+              View AI Assets
+            </Link>
+          )}
         </div>
       )}
 

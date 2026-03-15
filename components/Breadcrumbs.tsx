@@ -41,7 +41,13 @@ const SEGMENT_LABELS: Record<string, string> = {
   agents: "Agents",
   monitoring: "Monitoring",
   maintenance: "Maintenance",
-  incidents: "Incidents"
+  incidents: "Incidents",
+  compliance: "Compliance",
+  iso42001: "ISO 42001",
+  "eu-ai-act": "EU AI Act Conformity",
+  topology: "Integration Topology",
+  provenance: "Model Provenance",
+  "risk-score": "Risk Scoring"
 };
 
 function isLikelyId(segment: string): boolean {
