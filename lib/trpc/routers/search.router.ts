@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const STATIC_PAGES = [
-  { href: "/", label: "Command Center", category: "pages" },
+  { href: "/dashboard", label: "Posture Overview", category: "pages" },
   { href: "/maturity", label: "Maturity Assessment", category: "pages" },
   { href: "/reports", label: "Reports", category: "pages" },
   { href: "/compliance/snapshots", label: "Snapshots", category: "pages" },

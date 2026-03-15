@@ -14,7 +14,7 @@ export default function OnboardingLayout({
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
         <Link href="/onboarding" className="flex items-center gap-2">
           <ShieldLogo className="h-8 w-8 text-navy-500" />
-          <span className="text-lg font-semibold text-slate-900">AI Governance Platform</span>
+          <span className="text-lg font-semibold text-slate-900">AI Posture</span>
         </Link>
       </header>
       <div className="flex-1 overflow-auto">{children}</div>

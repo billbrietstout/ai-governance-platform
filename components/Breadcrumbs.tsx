@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 /** Path segment to display label. Last segment may be dynamic (e.g. id). */
 const SEGMENT_LABELS: Record<string, string> = {
-  "": "Command Center",
-  dashboard: "Command Center",
+  "": "Posture Overview",
+  dashboard: "Posture Overview",
   audit: "Audit Log",
   "layer1-business": "Layer 1: Business",
   "regulatory-cascade": "Regulatory Cascade",
@@ -62,7 +62,7 @@ export function Breadcrumbs() {
   if (segments.length === 0 || (segments.length === 1 && segments[0] === "dashboard")) {
     return (
       <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
-        <span className="text-gray-900 font-medium">Command Center</span>
+        <span className="text-gray-900 font-medium">Posture Overview</span>
       </nav>
     );
   }
@@ -84,7 +84,7 @@ export function Breadcrumbs() {
       <ol className="flex flex-wrap items-center gap-1">
         <li>
           <Link href="/dashboard" className="text-navy-600 hover:text-navy-700 hover:underline">
-            Command Center
+            Posture Overview
           </Link>
         </li>
         {crumbs.map((crumb, i) => (

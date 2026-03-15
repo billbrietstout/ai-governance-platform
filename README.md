@@ -1,1 +1,1 @@
-# AI Governance Platform
+# AI Posture Platform

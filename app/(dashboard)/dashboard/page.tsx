@@ -1,5 +1,5 @@
 /**
- * Command Center – executive dashboard.
+ * Posture Overview – executive dashboard for AI readiness.
  */
 import Link from "next/link";
 import {
@@ -111,11 +111,11 @@ export default async function CommandCenterPage({
           <h3 className="text-lg font-semibold text-navy-900">
             {personaLabel
               ? `Welcome, ${displayName}. As ${personaLabel}, your priority this week is ${topNextSteps[0]?.action ?? "maintaining your governance posture"}.`
-              : `Welcome to AI Governance Platform`}
+              : `Welcome to AI Posture Platform`}
           </h3>
           {!personaLabel && (
             <p className="mt-1 text-navy-700">
-              Your baseline maturity score is{" "}
+              Your baseline readiness score is{" "}
               <span className="font-bold">M{maturityRes.data.maturityLevel}</span>.
               Here&apos;s what to do next:
             </p>
@@ -142,7 +142,12 @@ export default async function CommandCenterPage({
       )}
 
       <div className="flex items-start justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight text-gray-900">Command Center</h2>
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">Posture Overview</h2>
+          <p className="mt-0.5 text-sm text-slate-600">
+            Your AI readiness posture across the CoSAI five-layer framework
+          </p>
+        </div>
         <span
           className={`rounded-full px-3 py-1 text-xs font-medium ${
             systemOk ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"

@@ -26,7 +26,7 @@ export default async function ExecutiveSummaryReportPage() {
       </div>
 
       <div className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-6">
-        <h2 className="text-lg font-medium text-slatePro-200">AI Governance Posture</h2>
+        <h2 className="text-lg font-medium text-slatePro-200">AI Readiness Posture</h2>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div><span className="text-slatePro-500">Total AI Assets</span><div className="text-xl font-semibold">{kpis.totalAssets}</div></div>
           <div><span className="text-slatePro-500">Compliance Score</span><div className="text-xl font-semibold">{kpis.complianceScore}%</div></div>

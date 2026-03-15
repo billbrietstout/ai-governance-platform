@@ -41,9 +41,9 @@ export default async function MaturityPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Maturity Assessment</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">AI Readiness Assessment</h1>
         <p className="mt-1 text-slate-600">
-          Assess your AI governance maturity across the five CoSAI layers.
+          Measure your organization&apos;s AI governance maturity across the five CoSAI layers.
         </p>
       </div>
 
@@ -56,7 +56,7 @@ export default async function MaturityPage() {
 
       {/* Progress indicator */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="mb-2 text-sm font-medium text-slate-700">Maturity Progress</h2>
+        <h2 className="mb-2 text-sm font-medium text-slate-700">Readiness score</h2>
         <div className="flex items-center gap-4">
           <div
             className="rounded-lg px-3 py-1.5 text-sm font-semibold text-white"

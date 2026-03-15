@@ -108,7 +108,7 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   {
     title: "GOVERNANCE OVERVIEW",
     items: [
-      { href: "/dashboard", label: "Command Center", icon: LayoutDashboard },
+      { href: "/dashboard", label: "Posture Overview", icon: LayoutDashboard },
       { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
       { href: "/reports", label: "Reports", icon: FileBarChart },
       { href: "/compliance/snapshots", label: "Snapshots", icon: Camera },
@@ -330,8 +330,8 @@ export function Sidebar({
           <Link href="/dashboard" className="flex min-w-0 flex-1 items-center gap-2">
             <ShieldLogo className="h-8 w-8 shrink-0 text-navy-400" />
             <div className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-slatePro-100">AI Governance</span>
-              <span className="block text-[10px] text-slatePro-500">v1.0</span>
+              <span className="block truncate text-sm font-semibold text-slatePro-100">AI Posture</span>
+              <span className="block text-[10px] text-slatePro-500">Readiness & Governance</span>
             </div>
           </Link>
         )}

@@ -1,4 +1,4 @@
-// Enterprise AI Governance Platform – MVP Schema (Section 2.1)
+// AI Posture Platform – MVP Schema (Section 2.1)
 // PostgreSQL. All enums defined here even if not yet used by MVP tables.
 
 generator client {

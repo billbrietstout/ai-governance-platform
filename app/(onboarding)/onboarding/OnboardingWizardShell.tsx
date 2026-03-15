@@ -53,6 +53,15 @@ export function OnboardingWizardShell({
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-10">
+      <div className="mb-2">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          Let&apos;s assess your AI readiness
+        </h1>
+        <p className="mt-1 text-slate-600">
+          We&apos;ll help you understand where you stand across governance, data, applications,
+          platform, and supply chain — and what to do next.
+        </p>
+      </div>
       {/* Progress bar */}
       <div className="h-1 overflow-hidden rounded-full bg-slate-200">
         <div

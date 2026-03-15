@@ -26,7 +26,7 @@ export default async function ComplianceSnapshotsPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-6 py-10">
       <div>
         <Link href="/dashboard" className="text-sm text-navy-600 hover:underline">
-          ← Command Center
+          ← Posture Overview
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           Compliance Snapshots

@@ -68,7 +68,7 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
           You&apos;re ready to start
         </h3>
         <p className="mt-2 text-emerald-700">
-          Your baseline maturity score is{" "}
+          Your baseline readiness score is{" "}
           <span className="font-bold">{MATURITY_LEVEL_LABELS[resultLevel]}</span>
           .
         </p>
@@ -77,7 +77,7 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
           onClick={() => onComplete()}
           className="mt-4 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
         >
-          Go to Command Center
+          Go to Posture Overview
         </button>
       </div>
     );
@@ -140,7 +140,7 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
           disabled={!allAnswered || isPending}
           className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
         >
-          {isPending ? "Saving…" : "Complete & go to Command Center"}
+          {isPending ? "Saving…" : "Complete & go to Posture Overview"}
         </button>
       </div>
     </form>

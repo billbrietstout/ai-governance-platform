@@ -12,9 +12,9 @@ function LoginForm() {
     <main className="flex min-h-dvh items-center justify-center bg-slatePro-950 px-4">
       <div className="w-full max-w-sm rounded-lg border border-slatePro-700 bg-slatePro-900/50 p-8 shadow-xl">
         <h1 className="text-2xl font-semibold tracking-tight text-slatePro-50">
-          AI Governance Platform
+          AI Posture
         </h1>
-        <p className="mt-1 text-sm text-slatePro-400">Enterprise AI Governance</p>
+        <p className="mt-1 text-sm text-slatePro-400">AI Readiness & Governance</p>
 
         <button
           type="button"

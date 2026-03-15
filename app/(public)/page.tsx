@@ -65,24 +65,24 @@ export default async function PublicLandingPage() {
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20 sm:px-6 lg:py-28">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            Understand your AI readiness in 15 minutes
+            Know your AI posture in 15 minutes
           </h1>
           <p className="mt-6 text-xl text-slate-600">
-            Built on the CoSAI Shared Responsibility Framework — the open standard for
-            enterprise AI governance
+            The only platform built on the CoSAI Shared Responsibility Framework — assess
+            readiness, discover regulations, and build governance that satisfies auditors
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
               href="/discover/wizard"
               className="rounded-lg bg-navy-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-navy-500"
             >
-              Start free assessment →
+              Assess my AI readiness →
             </Link>
             <Link
               href="#how-it-works"
               className="rounded-lg border border-slate-300 px-6 py-3 text-base font-medium text-slate-700 hover:bg-slate-50"
             >
-              See how it works
+              See the framework
             </Link>
           </div>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6">
