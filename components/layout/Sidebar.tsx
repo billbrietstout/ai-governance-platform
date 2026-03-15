@@ -42,6 +42,7 @@ import {
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
 import { getPersonaConfig } from "@/lib/personas/config";
+import { canAccessFeature, getAssetLimit, type GatedFeature } from "@/lib/tiers/gates";
 
 const STORAGE_KEY = "sidebar-collapsed";
 const STORAGE_KEY_EXPANDED = "sidebar-expanded-sections";
@@ -107,7 +108,7 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   {
     title: "GOVERNANCE OVERVIEW",
     items: [
-      { href: "/", label: "Command Center", icon: LayoutDashboard },
+      { href: "/dashboard", label: "Command Center", icon: LayoutDashboard },
       { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
       { href: "/reports", label: "Reports", icon: FileBarChart },
       { href: "/compliance/snapshots", label: "Snapshots", icon: Camera },
@@ -149,6 +150,13 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
     ]
   }
 ];
+
+/** Sidebar items gated by tier (FREE cannot access) */
+const TIER_GATED_HREFS: Record<string, GatedFeature> = {
+  "/compliance/snapshots": "compliance_snapshots",
+  "/audit-package": "audit_packages",
+  "/audit-package/evidence-workbook": "evidence_workbook"
+};
 
 const FRAMEWORK_COLORS: Record<string, string> = {
   NIST_AI_RMF: "bg-blue-500/20 text-blue-300 border-blue-500/30",
@@ -196,9 +204,19 @@ export type SidebarProps = {
   persona?: string | null;
   featureFlags?: Record<string, boolean>;
   frameworks?: { code: string }[];
+  tier?: string;
+  assetCount?: number;
 };
 
-export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, frameworks = [] }: SidebarProps) {
+export function Sidebar({
+  userEmail,
+  orgName,
+  persona,
+  featureFlags = {},
+  frameworks = [],
+  tier = "FREE",
+  assetCount = 0
+}: SidebarProps) {
   const pathname = usePathname();
   const currentSection = getSectionForPath(pathname);
 
@@ -309,7 +327,7 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
       {/* Logo / search / collapse */}
       <div className="flex h-14 items-center justify-between gap-2 border-b border-slatePro-800 px-3">
         {!collapsed && (
-          <Link href="/" className="flex min-w-0 flex-1 items-center gap-2">
+          <Link href="/dashboard" className="flex min-w-0 flex-1 items-center gap-2">
             <ShieldLogo className="h-8 w-8 shrink-0 text-navy-400" />
             <div className="min-w-0">
               <span className="block truncate text-sm font-semibold text-slatePro-100">AI Governance</span>
@@ -370,8 +388,11 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
               </button>
               {(collapsed || isExpanded) &&
                 section.items.map((item) => {
-                  const active = enabled && isActive(item.href, pathname);
+                  const gatedFeature = TIER_GATED_HREFS[item.href];
+                  const tierEnabled = !gatedFeature || canAccessFeature(tier, gatedFeature);
+                  const active = enabled && tierEnabled && isActive(item.href, pathname);
                   const Icon = item.icon;
+                  const isTierLocked = !!gatedFeature && !tierEnabled;
                   if (!enabled) {
                     const showLock = showFullOpacity;
                     return (
@@ -400,14 +421,27 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
                     <Link
                       key={item.href}
                       href={item.href}
-                      title={collapsed ? item.label : undefined}
+                      title={collapsed ? item.label : isTierLocked ? "Upgrade to Pro" : undefined}
                       className={`flex items-center gap-2 px-3 py-2 text-sm ${
                         collapsed ? "justify-center pl-2" : "pl-6"
                       } ${active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"}`}
                       aria-current={active ? "page" : undefined}
                     >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      {!collapsed && <span className="truncate">{item.label}</span>}
+                      {isTierLocked ? (
+                        <Lock className="h-4 w-4 shrink-0 text-amber-500/70" />
+                      ) : (
+                        <Icon className="h-4 w-4 shrink-0" />
+                      )}
+                      {!collapsed && (
+                        <>
+                          <span className="truncate">{item.label}</span>
+                          {isTierLocked && (
+                            <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
+                              Pro
+                            </span>
+                          )}
+                        </>
+                      )}
                     </Link>
                   );
                 })}
@@ -415,6 +449,15 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
           );
         })}
       </div>
+
+      {/* Free tier indicator */}
+      {!collapsed && tier === "FREE" && (
+        <div className="border-t border-slatePro-800 px-3 py-2">
+          <p className="text-xs text-slatePro-500">
+            Free tier — {Math.max(0, getAssetLimit(tier) - assetCount)} assets remaining
+          </p>
+        </div>
+      )}
 
       {/* Persona indicator */}
       {!collapsed && persona && (

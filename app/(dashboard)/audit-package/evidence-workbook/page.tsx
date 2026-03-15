@@ -2,9 +2,22 @@
  * Evidence Workbook – CoSAI Appendix A.7 evidence requirements by layer.
  */
 import Link from "next/link";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { EvidenceWorkbookClient } from "./EvidenceWorkbookClient";
 
-export default function EvidenceWorkbookPage() {
+export default async function EvidenceWorkbookPage() {
+  const session = await auth();
+  const orgId = (session?.user as { orgId?: string })?.orgId;
+  const org = orgId
+    ? await prisma.organization.findUnique({
+        where: { id: orgId },
+        select: { tier: true }
+      })
+    : null;
+  const tier = org?.tier ?? "FREE";
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-6 py-10">
       <div>
@@ -17,7 +30,9 @@ export default function EvidenceWorkbookPage() {
         </p>
       </div>
 
-      <EvidenceWorkbookClient />
+      <UpgradeGate feature="evidence_workbook" tier="PRO" userTier={tier}>
+        <EvidenceWorkbookClient />
+      </UpgradeGate>
     </main>
   );
 }

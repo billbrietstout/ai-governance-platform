@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Organization" ADD COLUMN     "assetLimit" INTEGER NOT NULL DEFAULT 10,
+ADD COLUMN     "tier" TEXT NOT NULL DEFAULT 'FREE',
+ADD COLUMN     "trialEndsAt" TIMESTAMP(3),
+ADD COLUMN     "trialStartedAt" TIMESTAMP(3),
+ADD COLUMN     "usersLimit" INTEGER NOT NULL DEFAULT 3;

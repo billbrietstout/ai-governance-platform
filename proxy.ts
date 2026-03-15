@@ -9,7 +9,7 @@ import type { NextRequest } from "next/server";
 import { withAuth } from "next-auth/middleware";
 
 const PROTECTED_PATHS = [
-  "/",
+  "/dashboard",
   "/audit",
   "/onboarding",
   "/layer1-business",
@@ -25,11 +25,11 @@ const PROTECTED_PATHS = [
   "/monitoring"
 ];
 
-const PUBLIC_PATHS = ["/login", "/callback"];
+const PUBLIC_PATHS = ["/", "/login", "/callback", "/privacy", "/discover"];
 
 function isProtected(pathname: string): boolean {
   if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return false;
-  return PROTECTED_PATHS.some((p) => pathname === p || (p !== "/" && pathname.startsWith(`${p}/`)));
+  return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 function generateNonce(): string {

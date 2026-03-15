@@ -64,5 +64,5 @@ export async function skipOnboarding() {
   await caller.onboarding.skipOnboarding();
   revalidatePath("/");
   revalidatePath("/onboarding");
-  redirect("/");
+  redirect("/dashboard");
 }

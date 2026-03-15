@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { runDiscovery } from "./actions";
-
+import Link from "next/link";
+import { runDiscoveryGuest } from "./actions";
 const ASSET_TYPES = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"] as const;
 const BUSINESS_FUNCTIONS = ["HR", "Finance", "Operations", "Customer Service", "Healthcare", "Legal", "Other"] as const;
 const DEPLOYMENTS = ["EU_market", "US_only", "Global", "Internal_only"] as const;
@@ -44,65 +44,55 @@ type WizardInputs = {
 
 const VERTICAL_OPTIONS = ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR", "ENERGY", "HR_SERVICES"];
 
-type TemplateInputs = {
-  assetType: "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE";
-  description: string;
-  businessFunction: "HR" | "Finance" | "Operations" | "Customer Service" | "Healthcare" | "Legal" | "Other";
+const GUEST_STORAGE_KEY = "guestDiscoveryResults";
+
+type DiscoveryInputs = {
+  assetType: string;
+  description?: string;
+  businessFunction: string;
   decisionsAffectingPeople: boolean;
   interactsWithEndUsers: boolean;
-  deployment: "EU_market" | "US_only" | "Global" | "Internal_only";
+  deployment: string;
   verticals: string[];
-  autonomyLevel: "L0" | "L1" | "L2" | "L3" | "L4" | "L5";
+  operatingModel?: string;
+  autonomyLevel: string;
   dataTypes: string[];
-  euResidentsData: "Yes" | "No" | "Unknown";
-  expectedRiskLevel: "Low" | "Medium" | "High" | "Critical";
+  euResidentsData: string;
+  expectedRiskLevel: string;
   vulnerablePopulations: boolean;
 };
 
 type Props = {
   defaultVerticals: string[];
   defaultOperatingModel: string | null;
-  useCaseTemplate?: TemplateInputs | null;
+  isGuest: boolean;
+  runDiscoveryAuthenticated?: (inputs: DiscoveryInputs) => Promise<string>;
 };
 
-export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel, useCaseTemplate }: Props) {
+export function DiscoveryWizardClient({
+  defaultVerticals,
+  defaultOperatingModel,
+  isGuest,
+  runDiscoveryAuthenticated
+}: Props) {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
-  const [inputs, setInputs] = useState<WizardInputs>(() => {
-    if (useCaseTemplate) {
-      return {
-        assetType: useCaseTemplate.assetType,
-        description: useCaseTemplate.description,
-        businessFunction: useCaseTemplate.businessFunction,
-        decisionsAffectingPeople: useCaseTemplate.decisionsAffectingPeople,
-        interactsWithEndUsers: useCaseTemplate.interactsWithEndUsers,
-        deployment: useCaseTemplate.deployment,
-        verticals: useCaseTemplate.verticals.length > 0 ? useCaseTemplate.verticals : ["GENERAL"],
-        operatingModel: defaultOperatingModel ?? "",
-        autonomyLevel: useCaseTemplate.autonomyLevel,
-        dataTypes: useCaseTemplate.dataTypes,
-        euResidentsData: useCaseTemplate.euResidentsData,
-        expectedRiskLevel: useCaseTemplate.expectedRiskLevel,
-        vulnerablePopulations: useCaseTemplate.vulnerablePopulations
-      };
-    }
-    return {
-      assetType: "APPLICATION",
-      description: "",
-      businessFunction: "Other",
-      decisionsAffectingPeople: false,
-      interactsWithEndUsers: false,
-      deployment: "Global",
-      verticals: defaultVerticals.length > 0 ? defaultVerticals : ["GENERAL"],
-      operatingModel: defaultOperatingModel ?? "MIXED",
-      autonomyLevel: "L2",
-      dataTypes: [],
-      euResidentsData: "Unknown",
-      expectedRiskLevel: "Medium",
-      vulnerablePopulations: false
-    };
-  });
+  const [inputs, setInputs] = useState<WizardInputs>(() => ({
+    assetType: "APPLICATION",
+    description: "",
+    businessFunction: "Other",
+    decisionsAffectingPeople: false,
+    interactsWithEndUsers: false,
+    deployment: "Global",
+    verticals: defaultVerticals.length > 0 ? defaultVerticals : ["GENERAL"],
+    operatingModel: defaultOperatingModel ?? "MIXED",
+    autonomyLevel: "L2",
+    dataTypes: [],
+    euResidentsData: "Unknown",
+    expectedRiskLevel: "Medium",
+    vulnerablePopulations: false
+  }));
 
   const toggleVertical = (v: string) => {
     setInputs((prev) => ({
@@ -122,7 +112,7 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
     }));
   };
 
-  const handleRunDiscovery = async () => {
+  const runDiscovery = async () => {
     const required = [
       { val: inputs.assetType, label: "AI system type" },
       { val: inputs.businessFunction, label: "Business function" },
@@ -138,22 +128,44 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
     }
     setSaving(true);
     try {
-      const id = await runDiscovery({
-        assetType: inputs.assetType as (typeof ASSET_TYPES)[number],
-        description: inputs.description || undefined,
-        businessFunction: inputs.businessFunction as (typeof BUSINESS_FUNCTIONS)[number],
-        decisionsAffectingPeople: inputs.decisionsAffectingPeople,
-        interactsWithEndUsers: inputs.interactsWithEndUsers,
-        deployment: inputs.deployment as (typeof DEPLOYMENTS)[number],
-        verticals: inputs.verticals,
-        operatingModel: inputs.operatingModel || undefined,
-        autonomyLevel: inputs.autonomyLevel as (typeof AUTONOMY_LEVELS)[number],
-        dataTypes: inputs.dataTypes,
-        euResidentsData: inputs.euResidentsData as "Yes" | "No" | "Unknown",
-        expectedRiskLevel: inputs.expectedRiskLevel as (typeof RISK_LEVELS)[number],
-        vulnerablePopulations: inputs.vulnerablePopulations
-      });
-      router.push(`/discover/results/${id}`);
+      if (isGuest) {
+        const results = await runDiscoveryGuest({
+          assetType: inputs.assetType as (typeof ASSET_TYPES)[number],
+          description: inputs.description || undefined,
+          businessFunction: inputs.businessFunction as (typeof BUSINESS_FUNCTIONS)[number],
+          decisionsAffectingPeople: inputs.decisionsAffectingPeople,
+          interactsWithEndUsers: inputs.interactsWithEndUsers,
+          deployment: inputs.deployment as (typeof DEPLOYMENTS)[number],
+          verticals: inputs.verticals,
+          operatingModel: inputs.operatingModel || undefined,
+          autonomyLevel: inputs.autonomyLevel as (typeof AUTONOMY_LEVELS)[number],
+          dataTypes: inputs.dataTypes,
+          euResidentsData: inputs.euResidentsData as "Yes" | "No" | "Unknown",
+          expectedRiskLevel: inputs.expectedRiskLevel as (typeof RISK_LEVELS)[number],
+          vulnerablePopulations: inputs.vulnerablePopulations
+        });
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(results));
+        }
+        router.push("/discover/results/guest");
+      } else if (runDiscoveryAuthenticated) {
+        const id = await runDiscoveryAuthenticated({
+          assetType: inputs.assetType,
+          description: inputs.description || undefined,
+          businessFunction: inputs.businessFunction,
+          decisionsAffectingPeople: inputs.decisionsAffectingPeople,
+          interactsWithEndUsers: inputs.interactsWithEndUsers,
+          deployment: inputs.deployment,
+          verticals: inputs.verticals,
+          operatingModel: inputs.operatingModel || undefined,
+          autonomyLevel: inputs.autonomyLevel,
+          dataTypes: inputs.dataTypes,
+          euResidentsData: inputs.euResidentsData,
+          expectedRiskLevel: inputs.expectedRiskLevel,
+          vulnerablePopulations: inputs.vulnerablePopulations
+        } as DiscoveryInputs);
+        router.push(`/discover/results/${id}`);
+      }
     } catch (e) {
       console.error(e);
       setSaving(false);
@@ -162,7 +174,6 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
 
   return (
     <div className="discovery-wizard space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      {/* Step indicator */}
       <div className="flex gap-2">
         {[1, 2, 3, 4].map((s) => (
           <button
@@ -366,21 +377,54 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
       {step === 4 && (
         <div className="space-y-4">
           <h2 className="font-medium text-slate-900">Step 4: Run Discovery</h2>
-          <p className="text-sm text-slate-600">
-            Click below to run the discovery engine and see applicable regulations. Results will be saved and you can create an asset from the discovery.
-          </p>
-          <button
-            type="button"
-            onClick={handleRunDiscovery}
-            disabled={saving}
-            className="w-full rounded bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
-          >
-            {saving ? "Running discovery…" : "Run discovery & view results"}
-          </button>
+          {isGuest ? (
+            <>
+              <div className="rounded-lg border border-navy-200 bg-navy-50/50 p-4">
+                <h3 className="font-medium text-navy-900">Save your results</h3>
+                <p className="mt-1 text-sm text-navy-700">
+                  Create a free account to save your assessment, get your full maturity score, and see your
+                  personalized governance roadmap.
+                </p>
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    href="/login?callbackUrl=/discover/wizard"
+                    className="inline-flex items-center justify-center rounded-lg bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500"
+                  >
+                    Create free account to save
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={runDiscovery}
+                    disabled={saving}
+                    className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                  >
+                    {saving ? "Running…" : "Continue as guest"}
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-navy-600">
+                  As a guest, you&apos;ll see partial results. Create an account for the full control list,
+                  evidence requirements, and implementation roadmap.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-slate-600">
+                Click below to run the discovery engine and see applicable regulations. Results will be saved.
+              </p>
+              <button
+                type="button"
+                onClick={runDiscovery}
+                disabled={saving || !runDiscoveryAuthenticated}
+                className="w-full rounded bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+              >
+                {saving ? "Running discovery…" : "Run discovery & view results"}
+              </button>
+            </>
+          )}
         </div>
       )}
 
-      {/* Navigation */}
       <div className="flex justify-between border-t border-slate-200 pt-4">
         <button
           type="button"
@@ -403,3 +447,5 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
     </div>
   );
 }
+
+export { GUEST_STORAGE_KEY };

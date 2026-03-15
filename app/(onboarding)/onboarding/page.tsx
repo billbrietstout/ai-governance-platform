@@ -18,7 +18,7 @@ export default async function OnboardingPage() {
   const { data } = await caller.onboarding.getOnboardingState();
 
   if (data.onboardingComplete) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   return (

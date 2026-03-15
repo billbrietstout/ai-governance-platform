@@ -209,7 +209,7 @@ export const onboardingRouter = createTRPCRouter({
 
     return {
       data: {
-        redirectUrl: "/",
+        redirectUrl: "/dashboard",
         maturityLevel: org.maturityLevel
       },
       meta: {}
@@ -237,7 +237,7 @@ export const onboardingRouter = createTRPCRouter({
     });
 
     return {
-      data: { redirectUrl: "/" },
+      data: { redirectUrl: "/dashboard" },
       meta: {}
     };
   }),

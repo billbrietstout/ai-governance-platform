@@ -11,7 +11,7 @@ const ALLOWED_ORIGINS = (process.env.CORS_ALLOWED_ORIGINS ?? "http://localhost:3
   .filter(Boolean);
 
 const ALLOWED_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"];
-const ALLOWED_HEADERS = ["Content-Type", "Authorization", "x-org-id", "x-requested-with"];
+const ALLOWED_HEADERS = ["Content-Type", "Authorization", "x-requested-with"];
 
 export function corsHeaders(origin: string | null): Record<string, string> {
   const allowedOrigin =

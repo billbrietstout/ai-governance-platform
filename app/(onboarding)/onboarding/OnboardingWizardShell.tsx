@@ -80,7 +80,7 @@ export function OnboardingWizardShell({
           ))}
         </div>
         <Link
-          href="/"
+          href="/dashboard"
           onClick={(e) => {
             e.preventDefault();
             handleSkip();

@@ -237,23 +237,28 @@ enum AiAccessPolicy {
 // =============================================================================
 
 model Organization {
-  id                 String   @id @default(cuid())
+  id                 String    @id @default(cuid())
   name               String
-  slug               String   @unique
-  plan               Plan     @default(FREE)
+  slug               String    @unique
+  plan               Plan      @default(FREE)
+  tier               String    @default("FREE") // FREE, PRO, ENTERPRISE, CONSULTANT
+  trialStartedAt     DateTime?
+  trialEndsAt        DateTime?
+  assetLimit         Int       @default(10)
+  usersLimit         Int       @default(3)
   verticalMarket     VerticalMarket @default(GENERAL)
-  clientVerticals    Json?    // array of vertical codes the org serves
+  clientVerticals    Json?     // array of vertical codes the org serves
   dataResidency      DataResidency? @default(GLOBAL)
-  claimedDomain      String?  @unique
-  autoJoinRole       UserRole @default(VIEWER)
-  maturityLevel      Int      @default(1)
+  claimedDomain      String?   @unique
+  autoJoinRole       UserRole  @default(VIEWER)
+  maturityLevel      Int       @default(1)
   onboardingComplete Boolean  @default(false)
-  onboardingStep     Int      @default(0)  // 0=not started, 1-5=in progress, 6=complete
-  operatingModel     String?  // IAAS | PAAS | AGENT_PAAS | SAAS | MIXED
-  orgSize            String?  // SMALL | MEDIUM | LARGE | ENTERPRISE
-  primaryUseCase     String?  // free text, e.g. "Customer service chatbot"
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  onboardingStep     Int       @default(0)  // 0=not started, 1-5=in progress, 6=complete
+  operatingModel     String?   // IAAS | PAAS | AGENT_PAAS | SAAS | MIXED
+  orgSize            String?   // SMALL | MEDIUM | LARGE | ENTERPRISE
+  primaryUseCase     String?   // free text, e.g. "Customer service chatbot"
+  createdAt          DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   users                User[]
   pendingInvites       PendingInvite[]

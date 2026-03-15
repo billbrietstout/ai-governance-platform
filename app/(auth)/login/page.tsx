@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
 
   return (
     <main className="flex min-h-dvh items-center justify-center bg-slatePro-950 px-4">

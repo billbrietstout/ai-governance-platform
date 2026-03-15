@@ -16,7 +16,7 @@ export default async function AuditLogPage() {
   return (
     <main className="flex flex-col gap-6">
       <div>
-        <Link href="/" className="text-sm text-navy-600 hover:underline">
+        <Link href="/dashboard" className="text-sm text-navy-600 hover:underline">
           ← Command Center
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Audit Log</h1>

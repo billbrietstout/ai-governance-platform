@@ -33,11 +33,13 @@ export default async function DashboardLayout({
   const userId = (user as { id?: string } | undefined)?.id;
 
   let frameworks: { code: string }[] = [];
+  let tier = "FREE";
+  let assetCount = 0;
   if (orgId) {
-    const [org, flags, fws, dbUser] = await Promise.all([
+    const [org, flags, fws, dbUser, assetCnt] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
-        select: { name: true, onboardingComplete: true, onboardingStep: true }
+        select: { name: true, onboardingComplete: true, onboardingStep: true, tier: true }
       }),
       prisma.featureFlag.findMany({
         where: { orgId },
@@ -52,9 +54,12 @@ export default async function DashboardLayout({
             where: { id: userId },
             select: { persona: true, personaModalDismissedAt: true }
           })
-        : Promise.resolve(null)
+        : Promise.resolve(null),
+      prisma.aIAsset.count({ where: { orgId, deletedAt: null } })
     ]);
     orgName = org?.name ?? null;
+    tier = org?.tier ?? "FREE";
+    assetCount = assetCnt ?? 0;
     onboardingComplete = org?.onboardingComplete ?? true;
     if ((org?.onboardingStep ?? 0) >= 6 && !onboardingComplete) {
       onboardingComplete = true;
@@ -85,6 +90,8 @@ export default async function DashboardLayout({
         persona={persona}
         featureFlags={featureFlags}
         frameworks={frameworks}
+        tier={tier}
+        assetCount={assetCount}
       />
       <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
         <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">

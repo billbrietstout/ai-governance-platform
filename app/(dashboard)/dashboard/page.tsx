@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
-import { ComplianceHeatmap } from "./ComplianceHeatmap";
-import { RiskMatrix } from "./RiskMatrix";
-import { AuditFeed } from "./AuditFeed";
+import { ComplianceHeatmap } from "../ComplianceHeatmap";
+import { RiskMatrix } from "../RiskMatrix";
+import { AuditFeed } from "../AuditFeed";
 import { LayerSankeyDiagram } from "@/components/dashboard/LayerSankeyDiagram";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
