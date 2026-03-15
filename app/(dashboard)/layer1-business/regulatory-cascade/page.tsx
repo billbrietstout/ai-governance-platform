@@ -8,6 +8,15 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 import { prisma } from "@/lib/prisma";
 import * as engine from "@/lib/compliance/engine";
 import { RegulationCascadeView } from "./RegulationCascadeView";
+import { RegulationChordDiagram } from "@/components/discovery/RegulationChordDiagram";
+import { SharedControlsSummary } from "@/components/discovery/SharedControlsSummary";
+
+function frameworkCodeToJurisdiction(code: string): string {
+  if (code.startsWith("EU")) return "EU";
+  if (code.startsWith("NIST")) return "US";
+  if (code.includes("COSAI") || code.includes("ISO")) return "INTERNATIONAL";
+  return "INTERNATIONAL";
+}
 
 const REGULATIONS = [
   { id: "EU_AI_ACT", name: "EU AI Act", code: "EU_AI_ACT" },
@@ -94,6 +103,12 @@ export default async function RegulatoryCascadePage({
 
   const regName = REGULATIONS.find((r) => r.code === regulation)?.name ?? regulation;
 
+  const frameworkRegulations = map.frameworks.map((f) => ({
+    code: f.code,
+    name: f.name,
+    jurisdiction: frameworkCodeToJurisdiction(f.code)
+  }));
+
   if (!frameworkId) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
@@ -121,6 +136,21 @@ export default async function RegulatoryCascadePage({
           How {regName} flows through CoSAI layers. Controls at each layer. Unmet requirements with owner and remediation.
         </p>
       </div>
+
+      {/* Framework overlap chord */}
+      {frameworkRegulations.length >= 2 && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Framework overlap across your active regulations
+          </h2>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+              <RegulationChordDiagram regulations={frameworkRegulations} showMoreNote={true} />
+            </div>
+            <SharedControlsSummary regulations={frameworkRegulations} />
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2">
         {REGULATIONS.map((r) => (

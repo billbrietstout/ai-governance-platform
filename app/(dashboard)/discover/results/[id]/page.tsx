@@ -5,6 +5,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileDown, PlusCircle } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { RegulationChordDiagram } from "@/components/discovery/RegulationChordDiagram";
+import { SharedControlsSummary } from "@/components/discovery/SharedControlsSummary";
 
 const APPLICABILITY_COLORS: Record<string, string> = {
   MANDATORY: "bg-red-100 text-red-800 border-red-200",
@@ -44,6 +46,14 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
   const likelyApplicable = results?.likelyApplicable ?? [];
   const recommended = results?.recommended ?? [];
   const requiredControls = results?.requiredControls ?? [];
+
+  const applicableRegulations = [...mandatory, ...likelyApplicable].map((r) => ({
+    code: r.code,
+    name: r.name,
+    jurisdiction: r.jurisdiction,
+    applicability: r.applicability,
+    mandatory: r.applicability === "MANDATORY"
+  }));
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
@@ -93,6 +103,28 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
           )}
         </div>
       )}
+
+      {/* Regulatory overlap — chord diagram + shared controls */}
+      {applicableRegulations.length >= 2 ? (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-slate-900">
+            Regulatory overlap — implement once, satisfy many
+          </h2>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <RegulationChordDiagram regulations={applicableRegulations} />
+            </div>
+            <SharedControlsSummary regulations={applicableRegulations} />
+          </div>
+        </div>
+      ) : applicableRegulations.length === 1 ? (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900">Single regulation summary</h2>
+          <p className="mt-2 text-sm text-slate-600">
+            One applicable regulation ({applicableRegulations[0]?.name}) — no overlap analysis needed.
+          </p>
+        </div>
+      ) : null}
 
       {/* Regulations by applicability */}
       <div className="space-y-6">

@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+:root {
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94a3b8;
+  --color-background-primary: #ffffff;
+  --color-border-secondary: #cbd5e1;
+  --border-radius-md: 6px;
+}
+
 @theme {
   --color-navy-50: #eef3ff;
   --color-navy-100: #dbe7ff;
@@ -58,4 +67,49 @@ body {
 /* Table row hover – light content area */
 .dashboard-content tbody tr:hover {
   background-color: rgb(243 244 246); /* gray-100 */
+}
+
+/* Discovery wizard – text visibility and layout */
+.discovery-wizard select {
+  color: var(--color-text-primary);
+}
+.discovery-wizard select option[value=""] {
+  color: var(--color-text-tertiary);
+}
+.discovery-wizard textarea {
+  color: var(--color-text-primary);
+}
+.discovery-wizard textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Question labels */
+.discovery-wizard label.block {
+  color: var(--color-text-primary) !important;
+  font-weight: 500;
+}
+
+/* Checkbox/radio labels – full text visible, no clipping */
+.discovery-wizard label.flex {
+  color: var(--color-text-primary) !important;
+}
+.discovery-wizard label.flex span {
+  color: var(--color-text-primary) !important;
+}
+
+/* Helper/hint text */
+.discovery-wizard .text-slate-500,
+.discovery-wizard p.text-xs {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Step headings */
+.discovery-wizard h2 {
+  color: var(--color-text-primary) !important;
+  font-weight: 500;
+}
+
+/* Step 4 helper paragraph */
+.discovery-wizard p.text-slate-600 {
+  color: var(--color-text-secondary) !important;
 }

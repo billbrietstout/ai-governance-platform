@@ -27,18 +27,18 @@ const DATA_TYPES = ["PII", "Financial", "Health", "Biometric", "Employment", "Pu
 const RISK_LEVELS = ["Low", "Medium", "High", "Critical"] as const;
 
 type WizardInputs = {
-  assetType: (typeof ASSET_TYPES)[number];
+  assetType: (typeof ASSET_TYPES)[number] | "";
   description: string;
-  businessFunction: (typeof BUSINESS_FUNCTIONS)[number];
+  businessFunction: (typeof BUSINESS_FUNCTIONS)[number] | "";
   decisionsAffectingPeople: boolean;
   interactsWithEndUsers: boolean;
-  deployment: (typeof DEPLOYMENTS)[number];
+  deployment: (typeof DEPLOYMENTS)[number] | "";
   verticals: string[];
   operatingModel: string;
-  autonomyLevel: (typeof AUTONOMY_LEVELS)[number];
+  autonomyLevel: (typeof AUTONOMY_LEVELS)[number] | "";
   dataTypes: string[];
-  euResidentsData: "Yes" | "No" | "Unknown";
-  expectedRiskLevel: (typeof RISK_LEVELS)[number];
+  euResidentsData: "Yes" | "No" | "Unknown" | "";
+  expectedRiskLevel: (typeof RISK_LEVELS)[number] | "";
   vulnerablePopulations: boolean;
 };
 
@@ -79,7 +79,7 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
         interactsWithEndUsers: useCaseTemplate.interactsWithEndUsers,
         deployment: useCaseTemplate.deployment,
         verticals: useCaseTemplate.verticals.length > 0 ? useCaseTemplate.verticals : ["GENERAL"],
-        operatingModel: defaultOperatingModel ?? "MIXED",
+        operatingModel: defaultOperatingModel ?? "",
         autonomyLevel: useCaseTemplate.autonomyLevel,
         dataTypes: useCaseTemplate.dataTypes,
         euResidentsData: useCaseTemplate.euResidentsData,
@@ -123,21 +123,34 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
   };
 
   const handleRunDiscovery = async () => {
+    const required = [
+      { val: inputs.assetType, label: "AI system type" },
+      { val: inputs.businessFunction, label: "Business function" },
+      { val: inputs.deployment, label: "Deployment" },
+      { val: inputs.autonomyLevel, label: "Autonomy level" },
+      { val: inputs.euResidentsData, label: "EU residents data" },
+      { val: inputs.expectedRiskLevel, label: "Expected risk level" }
+    ];
+    const missing = required.filter((r) => !r.val);
+    if (missing.length > 0) {
+      alert(`Please complete: ${missing.map((m) => m.label).join(", ")}`);
+      return;
+    }
     setSaving(true);
     try {
       const id = await runDiscovery({
-        assetType: inputs.assetType,
+        assetType: inputs.assetType as (typeof ASSET_TYPES)[number],
         description: inputs.description || undefined,
-        businessFunction: inputs.businessFunction,
+        businessFunction: inputs.businessFunction as (typeof BUSINESS_FUNCTIONS)[number],
         decisionsAffectingPeople: inputs.decisionsAffectingPeople,
         interactsWithEndUsers: inputs.interactsWithEndUsers,
-        deployment: inputs.deployment,
+        deployment: inputs.deployment as (typeof DEPLOYMENTS)[number],
         verticals: inputs.verticals,
         operatingModel: inputs.operatingModel || undefined,
-        autonomyLevel: inputs.autonomyLevel,
+        autonomyLevel: inputs.autonomyLevel as (typeof AUTONOMY_LEVELS)[number],
         dataTypes: inputs.dataTypes,
-        euResidentsData: inputs.euResidentsData,
-        expectedRiskLevel: inputs.expectedRiskLevel,
+        euResidentsData: inputs.euResidentsData as "Yes" | "No" | "Unknown",
+        expectedRiskLevel: inputs.expectedRiskLevel as (typeof RISK_LEVELS)[number],
         vulnerablePopulations: inputs.vulnerablePopulations
       });
       router.push(`/discover/results/${id}`);
@@ -148,7 +161,7 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
   };
 
   return (
-    <div className="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="discovery-wizard space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
       {/* Step indicator */}
       <div className="flex gap-2">
         {[1, 2, 3, 4].map((s) => (
@@ -171,9 +184,10 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
             <label className="block text-sm font-medium text-slate-700">What type of AI system?</label>
             <select
               value={inputs.assetType}
-              onChange={(e) => setInputs((p) => ({ ...p, assetType: e.target.value as (typeof ASSET_TYPES)[number] }))}
+              onChange={(e) => setInputs((p) => ({ ...p, assetType: e.target.value as (typeof ASSET_TYPES)[number] | "" }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select type —</option>
               {ASSET_TYPES.map((t) => (
                 <option key={t} value={t}>{t}</option>
               ))}
@@ -195,9 +209,10 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
             <label className="block text-sm font-medium text-slate-700">Which business function?</label>
             <select
               value={inputs.businessFunction}
-              onChange={(e) => setInputs((p) => ({ ...p, businessFunction: e.target.value as (typeof BUSINESS_FUNCTIONS)[number] }))}
+              onChange={(e) => setInputs((p) => ({ ...p, businessFunction: e.target.value as (typeof BUSINESS_FUNCTIONS)[number] | "" }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select function —</option>
               {BUSINESS_FUNCTIONS.map((f) => (
                 <option key={f} value={f}>{f}</option>
               ))}
@@ -235,9 +250,10 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
             <label className="block text-sm font-medium text-slate-700">Where will it be deployed?</label>
             <select
               value={inputs.deployment}
-              onChange={(e) => setInputs((p) => ({ ...p, deployment: e.target.value as (typeof DEPLOYMENTS)[number] }))}
+              onChange={(e) => setInputs((p) => ({ ...p, deployment: e.target.value as (typeof DEPLOYMENTS)[number] | "" }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select deployment —</option>
               {DEPLOYMENTS.map((d) => (
                 <option key={d} value={d}>{DEPLOYMENT_LABELS[d] ?? d}</option>
               ))}
@@ -245,16 +261,16 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">Which verticals does your organization operate in?</label>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
               {VERTICAL_OPTIONS.map((v) => (
-                <label key={v} className="flex items-center gap-1.5">
+                <label key={v} className="flex shrink-0 items-center gap-2">
                   <input
                     type="checkbox"
                     checked={inputs.verticals.includes(v)}
                     onChange={() => toggleVertical(v)}
-                    className="rounded border-slate-300"
+                    className="shrink-0 rounded border-slate-300"
                   />
-                  <span className="text-sm">{v.replace(/_/g, " ")}</span>
+                  <span className="whitespace-nowrap text-sm">{v.replace(/_/g, " ")}</span>
                 </label>
               ))}
             </div>
@@ -266,6 +282,7 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
               onChange={(e) => setInputs((p) => ({ ...p, operatingModel: e.target.value }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select operating model —</option>
               {OPERATING_MODELS.map((m) => (
                 <option key={m} value={m}>{m}</option>
               ))}
@@ -275,9 +292,10 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
             <label className="block text-sm font-medium text-slate-700">Autonomy level?</label>
             <select
               value={inputs.autonomyLevel}
-              onChange={(e) => setInputs((p) => ({ ...p, autonomyLevel: e.target.value as (typeof AUTONOMY_LEVELS)[number] }))}
+              onChange={(e) => setInputs((p) => ({ ...p, autonomyLevel: e.target.value as (typeof AUTONOMY_LEVELS)[number] | "" }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select autonomy level —</option>
               {AUTONOMY_LEVELS.map((l) => (
                 <option key={l} value={l}>{l}: {AUTONOMY_DESCRIPTIONS[l]}</option>
               ))}
@@ -291,16 +309,16 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
           <h2 className="font-medium text-slate-900">Step 3: Data & Risk Profile</h2>
           <div>
             <label className="block text-sm font-medium text-slate-700">What data will it process?</label>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
               {DATA_TYPES.map((d) => (
-                <label key={d} className="flex items-center gap-1.5">
+                <label key={d} className="flex shrink-0 items-center gap-2">
                   <input
                     type="checkbox"
                     checked={inputs.dataTypes.includes(d)}
                     onChange={() => toggleDataType(d)}
-                    className="rounded border-slate-300"
+                    className="shrink-0 rounded border-slate-300"
                   />
-                  <span className="text-sm">{d}</span>
+                  <span className="whitespace-nowrap text-sm">{d}</span>
                 </label>
               ))}
             </div>
@@ -309,9 +327,10 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
             <label className="block text-sm font-medium text-slate-700">Does it process data about EU residents?</label>
             <select
               value={inputs.euResidentsData}
-              onChange={(e) => setInputs((p) => ({ ...p, euResidentsData: e.target.value as "Yes" | "No" | "Unknown" }))}
+              onChange={(e) => setInputs((p) => ({ ...p, euResidentsData: e.target.value as "Yes" | "No" | "Unknown" | "" }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select —</option>
               <option value="Yes">Yes</option>
               <option value="No">No</option>
               <option value="Unknown">Unknown</option>
@@ -321,9 +340,10 @@ export function DiscoveryWizardClient({ defaultVerticals, defaultOperatingModel,
             <label className="block text-sm font-medium text-slate-700">Expected risk level?</label>
             <select
               value={inputs.expectedRiskLevel}
-              onChange={(e) => setInputs((p) => ({ ...p, expectedRiskLevel: e.target.value as (typeof RISK_LEVELS)[number] }))}
+              onChange={(e) => setInputs((p) => ({ ...p, expectedRiskLevel: e.target.value as (typeof RISK_LEVELS)[number] | "" }))}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
+              <option value="">— Select risk level —</option>
               {RISK_LEVELS.map((r) => (
                 <option key={r} value={r}>{r}</option>
               ))}

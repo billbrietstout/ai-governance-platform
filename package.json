@@ -37,6 +37,8 @@
     "@trpc/client": "latest",
     "@trpc/react-query": "latest",
     "@trpc/server": "latest",
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0",
     "lucide-react": "^0.577.0",
     "next": "latest",
     "next-auth": "latest",
