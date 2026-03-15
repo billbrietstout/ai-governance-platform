@@ -52,6 +52,10 @@ type AssetInput = {
   cosaiLayer: "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN";
   autonomyLevel: "ASSISTED" | "SEMI_AUTONOMOUS" | "AUTONOMOUS";
   ownerEmail: string;
+  overrideTier?: "T1" | "T2" | "T3" | "T4" | "T5";
+  toolAuthorizations?: string[];
+  lifecycleStage?: string;
+  humanOversightRequired?: boolean;
 };
 
 const ASSETS: AssetInput[] = [
@@ -72,7 +76,10 @@ const ASSETS: AssetInput[] = [
     euRiskLevel: "HIGH",
     cosaiLayer: "LAYER_3_APPLICATION",
     autonomyLevel: "SEMI_AUTONOMOUS",
-    ownerEmail: "david.kim@meridian-industrial.com"
+    ownerEmail: "david.kim@meridian-industrial.com",
+    overrideTier: "T3",
+    lifecycleStage: "PRODUCTION",
+    humanOversightRequired: true
   },
   {
     name: "Production Schedule Optimizer",
@@ -81,7 +88,10 @@ const ASSETS: AssetInput[] = [
     euRiskLevel: "LIMITED",
     cosaiLayer: "LAYER_3_APPLICATION",
     autonomyLevel: "AUTONOMOUS",
-    ownerEmail: "david.kim@meridian-industrial.com"
+    ownerEmail: "david.kim@meridian-industrial.com",
+    overrideTier: "T2",
+    toolAuthorizations: ["mes-api", "scheduling-service"],
+    lifecycleStage: "PRODUCTION"
   },
   {
     name: "Equipment Failure Predictor",
@@ -117,7 +127,11 @@ const ASSETS: AssetInput[] = [
     euRiskLevel: "LIMITED",
     cosaiLayer: "LAYER_3_APPLICATION",
     autonomyLevel: "AUTONOMOUS",
-    ownerEmail: "lisa.wang@meridian-industrial.com"
+    ownerEmail: "lisa.wang@meridian-industrial.com",
+    overrideTier: "T3",
+    toolAuthorizations: ["erp-api", "supplier-portal", "inventory-db"],
+    lifecycleStage: "PRODUCTION",
+    humanOversightRequired: true
   },
   {
     name: "Supplier Risk Scorer",
@@ -246,7 +260,10 @@ const ASSETS: AssetInput[] = [
     euRiskLevel: "LIMITED",
     cosaiLayer: "LAYER_3_APPLICATION",
     autonomyLevel: "SEMI_AUTONOMOUS",
-    ownerEmail: "carlos.mendez@meridian-industrial.com"
+    ownerEmail: "carlos.mendez@meridian-industrial.com",
+    overrideTier: "T2",
+    toolAuthorizations: ["erp-api", "vendor-portal"],
+    lifecycleStage: "PRODUCTION"
   },
   {
     name: "Cash Flow Predictor",
@@ -310,7 +327,11 @@ const ASSETS: AssetInput[] = [
     euRiskLevel: "LIMITED",
     cosaiLayer: "LAYER_4_PLATFORM",
     autonomyLevel: "AUTONOMOUS",
-    ownerEmail: "marco.rossi@meridian-industrial.com"
+    ownerEmail: "marco.rossi@meridian-industrial.com",
+    overrideTier: "T4",
+    toolAuthorizations: ["siem-api", "splunk", "pagerduty"],
+    lifecycleStage: "PRODUCTION",
+    humanOversightRequired: true
   },
   // Corporate (4)
   {
@@ -446,6 +467,12 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
       where: { orgId: org.id, name: a.name, deletedAt: null }
     });
     const clientVertical = ASSET_CLIENT_VERTICALS[a.name] ?? null;
+    const extraData = {
+      ...(a.overrideTier && { overrideTier: a.overrideTier }),
+      ...(a.toolAuthorizations && { toolAuthorizations: a.toolAuthorizations }),
+      ...(a.lifecycleStage && { lifecycleStage: a.lifecycleStage }),
+      ...(a.humanOversightRequired !== undefined && { humanOversightRequired: a.humanOversightRequired })
+    };
     const asset = existing
       ? await prisma.aIAsset.update({
           where: { id: existing.id },
@@ -455,7 +482,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
             cosaiLayer: a.cosaiLayer,
             autonomyLevel: a.autonomyLevel,
             ownerId,
-            clientVertical
+            clientVertical,
+            ...extraData
           }
         })
       : await prisma.aIAsset.create({
@@ -470,7 +498,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
             verticalMarket: "GENERAL",
             status: "ACTIVE",
             ownerId,
-            clientVertical
+            clientVertical,
+            ...extraData
           }
         });
     assetIdsByName.set(a.name, asset.id);

@@ -194,5 +194,174 @@ export const assetsRouter = createTRPCRouter({
         euRiskLevel: input.euRiskLevel ?? undefined
       });
       return { data: result, meta: {} };
-    })
+    }),
+
+  getAgentRegistry: protectedProcedure
+    .input(
+      z
+        .object({
+          autonomyLevel: autonomySchema.optional(),
+          overrideTier: z.enum(["T1", "T2", "T3", "T4", "T5"]).optional(),
+          status: statusSchema.optional()
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const where: Record<string, unknown> = { orgId: ctx.orgId, deletedAt: null };
+      if (input?.autonomyLevel) where.autonomyLevel = input.autonomyLevel;
+      if (input?.overrideTier) where.overrideTier = input.overrideTier;
+      if (input?.status) where.status = input.status;
+
+      const assets = await prisma.aIAsset.findMany({
+        where,
+        include: { owner: { select: { id: true, email: true } } },
+        orderBy: { name: "asc" }
+      });
+      return { data: assets, meta: {} };
+    }),
+
+  updateAgentConfig: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        overrideTier: z.enum(["T1", "T2", "T3", "T4", "T5"]).nullable().optional(),
+        toolAuthorizations: z.array(z.string()).optional(),
+        oversightPolicy: z.string().nullable().optional(),
+        humanOversightRequired: z.boolean().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existing = await prisma.aIAsset.findFirst({
+        where: { id: input.id, orgId: ctx.orgId, deletedAt: null }
+      });
+      if (!existing) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+
+      const { id, ...data } = input;
+      const result = await prisma.aIAsset.update({
+        where: { id },
+        data: {
+          ...(data.overrideTier !== undefined && { overrideTier: data.overrideTier }),
+          ...(data.toolAuthorizations !== undefined && { toolAuthorizations: data.toolAuthorizations }),
+          ...(data.oversightPolicy !== undefined && { oversightPolicy: data.oversightPolicy }),
+          ...(data.humanOversightRequired !== undefined && { humanOversightRequired: data.humanOversightRequired })
+        },
+        include: { owner: { select: { id: true, email: true } } }
+      });
+      return { data: result, meta: {} };
+    }),
+
+  promoteLifecycleStage: protectedProcedure
+    .input(z.object({ id: z.string(), notes: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.id, orgId: ctx.orgId, deletedAt: null },
+        include: {
+          controlAttestations: { take: 1 },
+          accountabilityAssignments: { take: 1 }
+        }
+      });
+      if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+
+      const stages = ["DEVELOPMENT", "TESTING", "STAGING", "PRODUCTION", "DEPRECATED", "RETIRED"];
+      const idx = stages.indexOf(asset.lifecycleStage);
+      if (idx < 0 || idx >= stages.length - 1) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot promote from current stage" });
+      }
+      const nextStage = stages[idx + 1];
+
+      if (asset.euRiskLevel === "HIGH" && nextStage === "PRODUCTION") {
+        const [hasAttestation, hasAccountability] = await Promise.all([
+          prisma.controlAttestation.count({ where: { assetId: asset.id } }).then((c) => c > 0),
+          prisma.accountabilityAssignment.count({ where: { assetId: asset.id } }).then((c) => c > 0)
+        ]);
+        if (!hasAttestation || !hasAccountability) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "HIGH risk assets require control attestation and accountability assignment before production"
+          });
+        }
+      }
+
+      const result = await prisma.$transaction(async (tx) => {
+        const updated = await tx.aIAsset.update({
+          where: { id: input.id },
+          data: {
+            lifecycleStage: nextStage,
+            lifecycleUpdatedAt: new Date(),
+            lifecycleUpdatedBy: ctx.userId
+          }
+        });
+        await tx.assetLifecycleTransition.create({
+          data: {
+            assetId: input.id,
+            fromStage: asset.lifecycleStage,
+            toStage: nextStage,
+            direction: "PROMOTE",
+            userId: ctx.userId,
+            notes: input.notes ?? null
+          }
+        });
+        return updated;
+      });
+      return { data: result, meta: {} };
+    }),
+
+  demoteLifecycleStage: protectedProcedure
+    .input(z.object({ id: z.string(), notes: z.string().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.id, orgId: ctx.orgId, deletedAt: null }
+      });
+      if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+
+      const stages = ["DEVELOPMENT", "TESTING", "STAGING", "PRODUCTION", "DEPRECATED", "RETIRED"];
+      const idx = stages.indexOf(asset.lifecycleStage);
+      if (idx <= 0) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot demote from current stage" });
+      }
+      const prevStage = stages[idx - 1];
+
+      const result = await prisma.$transaction(async (tx) => {
+        const updated = await tx.aIAsset.update({
+          where: { id: input.id },
+          data: {
+            lifecycleStage: prevStage,
+            lifecycleUpdatedAt: new Date(),
+            lifecycleUpdatedBy: ctx.userId
+          }
+        });
+        await tx.assetLifecycleTransition.create({
+          data: {
+            assetId: input.id,
+            fromStage: asset.lifecycleStage,
+            toStage: prevStage,
+            direction: "DEMOTE",
+            userId: ctx.userId,
+            notes: input.notes ?? null
+          }
+        });
+        return updated;
+      });
+      return { data: result, meta: {} };
+    }),
+
+  getLifecycleBoard: protectedProcedure.query(async ({ ctx }) => {
+    const assets = await prisma.aIAsset.findMany({
+      where: { orgId: ctx.orgId, deletedAt: null },
+      include: {
+        owner: { select: { id: true, email: true } },
+        lifecycleTransitions: { orderBy: { createdAt: "desc" }, take: 5 }
+      },
+      orderBy: { name: "asc" }
+    });
+    const byStage: Record<string, typeof assets> = {};
+    const stages = ["DEVELOPMENT", "TESTING", "STAGING", "PRODUCTION", "DEPRECATED", "RETIRED"];
+    for (const s of stages) byStage[s] = [];
+    for (const a of assets) {
+      const stage = a.lifecycleStage || "DEVELOPMENT";
+      if (!byStage[stage]) byStage[stage] = [];
+      byStage[stage].push(a);
+    }
+    return { data: { byStage, assets }, meta: {} };
+  })
 });

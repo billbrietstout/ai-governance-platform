@@ -76,8 +76,5 @@
     "*.{ts,tsx,js,jsx,json,css,md,yml,yaml}": [
       "prettier --write"
     ]
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed/index.ts"
   }
 }

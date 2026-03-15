@@ -275,6 +275,7 @@ model Organization {
   dataGovernancePolicies DataGovernancePolicy[]
   regulationDiscoveries  RegulationDiscovery[]
   complianceSnapshots   ComplianceSnapshot[]
+  provenanceRecords    ProvenanceRecord[]
 }
 
 model MasterDataEntity {
@@ -488,22 +489,29 @@ model FeatureFlag {
 }
 
 model AIAsset {
-  id              String         @id @default(cuid())
-  orgId           String
-  name            String
-  description     String?
-  assetType       AssetType
-  euRiskLevel     EuRiskLevel?
-  operatingModel  OperatingModel?
-  cosaiLayer      CosaiLayer?
-  autonomyLevel   AutonomyLevel?
-  verticalMarket  VerticalMarket?
-  clientVertical  String?        // vertical this asset serves (e.g. FINANCIAL_SERVICES, HR_SERVICES)
-  status          AssetStatus    @default(DRAFT)
-  ownerId         String?
-  deletedAt       DateTime?      // soft delete – middleware filters to deletedAt = null
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id                    String         @id @default(cuid())
+  orgId                 String
+  name                  String
+  description           String?
+  assetType             AssetType
+  euRiskLevel           EuRiskLevel?
+  operatingModel        OperatingModel?
+  cosaiLayer            CosaiLayer?
+  autonomyLevel         AutonomyLevel?
+  verticalMarket        VerticalMarket?
+  clientVertical        String?        // vertical this asset serves (e.g. FINANCIAL_SERVICES, HR_SERVICES)
+  status                AssetStatus    @default(DRAFT)
+  ownerId               String?
+  overrideTier          String?        // T1/T2/T3/T4/T5
+  toolAuthorizations    String[]       @default([]) // list of authorized tools/APIs
+  lifecycleStage        String         @default("DEVELOPMENT") // DEVELOPMENT/TESTING/STAGING/PRODUCTION/DEPRECATED/RETIRED
+  lifecycleUpdatedAt    DateTime?
+  lifecycleUpdatedBy    String?        // userId
+  humanOversightRequired Boolean       @default(false)
+  oversightPolicy       String?        // description of oversight mechanism
+  deletedAt             DateTime?      // soft delete – middleware filters to deletedAt = null
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 
   organization   Organization   @relation(fields: [orgId], references: [id], onDelete: Cascade)
   owner          User?          @relation("AIAssetOwner", fields: [ownerId], references: [id], onDelete: SetNull)
@@ -515,10 +523,27 @@ model AIAsset {
   scanRecords    ScanRecord[]
   lineageRecords DataLineageRecord[]
   regulationDiscoveries RegulationDiscovery[]
+  lifecycleTransitions  AssetLifecycleTransition[]
 
   @@index([orgId])
   @@index([orgId, status])
+  @@index([orgId, lifecycleStage])
   @@index([ownerId])
+}
+
+model AssetLifecycleTransition {
+  id          String   @id @default(cuid())
+  assetId     String
+  fromStage   String
+  toStage     String
+  direction   String   // PROMOTE | DEMOTE
+  userId      String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  asset AIAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
 }
 
 model AccountabilityAssignment {
@@ -699,8 +724,29 @@ model VendorAssurance {
   updatedAt         DateTime  @updatedAt
 
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  provenanceRecords ProvenanceRecord[]
 
   @@index([orgId])
+}
+
+model ProvenanceRecord {
+  id                 String    @id @default(cuid())
+  orgId              String
+  vendorId           String
+  modelName          String
+  stepType           String    // TRAINING_DATA, BASE_MODEL, FINE_TUNING, DEPLOYMENT
+  description        String?
+  responsibleParty   String?
+  attestation        Boolean   @default(false)
+  attestationDetails String?
+  occurredAt         DateTime?
+  createdAt          DateTime  @default(now())
+
+  organization Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  vendor       VendorAssurance @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([vendorId])
 }
 
 model ScanRecord {

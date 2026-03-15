@@ -210,5 +210,240 @@ export const supplyChainRouter = createTRPCRouter({
       },
       meta: {}
     };
+  }),
+
+  getTopologyData: protectedProcedure.query(async ({ ctx }) => {
+    const orgId = ctx.orgId;
+    const [org, masterData, assets, lineage, vendors] = await Promise.all([
+      prisma.organization.findUnique({
+        where: { id: orgId },
+        select: { id: true, name: true }
+      }),
+      prisma.masterDataEntity.findMany({
+        where: { orgId },
+        select: { id: true, name: true, entityType: true }
+      }),
+      prisma.aIAsset.findMany({
+        where: { orgId, deletedAt: null },
+        select: { id: true, name: true, assetType: true }
+      }),
+      prisma.dataLineageRecord.findMany({
+        where: { orgId },
+        select: { sourceEntityId: true, targetAssetId: true }
+      }),
+      prisma.vendorAssurance.findMany({
+        where: { orgId },
+        select: { id: true, vendorName: true, vendorType: true, cosaiLayer: true }
+      })
+    ]);
+
+    const nodes: { id: string; label: string; layer: string; role: string; link?: string }[] = [];
+    const edges: { from: string; to: string }[] = [];
+
+    if (org) {
+      nodes.push({
+        id: `org-${org.id}`,
+        label: org.name,
+        layer: "L1",
+        role: "Organization",
+        link: "/settings"
+      });
+    }
+
+    for (const m of masterData) {
+      nodes.push({
+        id: `mde-${m.id}`,
+        label: m.name,
+        layer: "L2",
+        role: m.entityType,
+        link: `/layer2-information/master-data`
+      });
+    }
+
+    for (const a of assets) {
+      nodes.push({
+        id: `asset-${a.id}`,
+        label: a.name,
+        layer: "L3",
+        role: a.assetType,
+        link: `/layer3-application/assets/${a.id}`
+      });
+    }
+
+    const l4Vendors = vendors.filter(
+      (v) =>
+        v.vendorType === "INFRASTRUCTURE" ||
+        v.vendorType === "TOOLING" ||
+        v.cosaiLayer === "LAYER_4_PLATFORM"
+    );
+    const l5Vendors = vendors.filter(
+      (v) =>
+        v.vendorType === "MODEL_PROVIDER" ||
+        v.vendorType === "DATA_PROVIDER" ||
+        v.cosaiLayer === "LAYER_5_SUPPLY_CHAIN" ||
+        v.vendorType === "OTHER" ||
+        (!v.vendorType && !v.cosaiLayer)
+    );
+    const assigned = new Set<string>();
+    for (const v of l4Vendors) {
+      if (assigned.has(v.id)) continue;
+      assigned.add(v.id);
+      nodes.push({
+        id: `vendor-${v.id}`,
+        label: v.vendorName,
+        layer: "L4",
+        role: "Platform",
+        link: `/layer5-supply-chain/vendors/${v.id}`
+      });
+    }
+    for (const v of l5Vendors) {
+      if (assigned.has(v.id)) continue;
+      assigned.add(v.id);
+      nodes.push({
+        id: `vendor-${v.id}`,
+        label: v.vendorName,
+        layer: "L5",
+        role: "Model Provider",
+        link: `/layer5-supply-chain/vendors/${v.id}`
+      });
+    }
+    for (const v of vendors) {
+      if (assigned.has(v.id)) continue;
+      nodes.push({
+        id: `vendor-${v.id}`,
+        label: v.vendorName,
+        layer: "L5",
+        role: "Vendor",
+        link: `/layer5-supply-chain/vendors/${v.id}`
+      });
+    }
+
+    const seenEdges = new Set<string>();
+    for (const l of lineage) {
+      if (l.sourceEntityId && l.targetAssetId) {
+        const key = `mde-${l.sourceEntityId}-asset-${l.targetAssetId}`;
+        if (!seenEdges.has(key)) {
+          seenEdges.add(key);
+          edges.push({ from: `mde-${l.sourceEntityId}`, to: `asset-${l.targetAssetId}` });
+        }
+      }
+    }
+
+    if (org) {
+      for (const a of assets.slice(0, 3)) {
+        edges.push({ from: `org-${org.id}`, to: `asset-${a.id}` });
+      }
+    }
+
+    const byLayer: Record<string, number> = { L1: 0, L2: 0, L3: 0, L4: 0, L5: 0 };
+    for (const n of nodes) byLayer[n.layer] = (byLayer[n.layer] ?? 0) + 1;
+
+    return { data: { nodes, edges, byLayer }, meta: {} };
+  }),
+
+  getProvenanceRecords: protectedProcedure
+    .input(z.object({ vendorId: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const where = { orgId: ctx.orgId, ...(input?.vendorId && { vendorId: input.vendorId }) };
+      const records = await prisma.provenanceRecord.findMany({
+        where,
+        orderBy: [{ vendorId: "asc" }, { createdAt: "asc" }],
+        include: { vendor: { select: { vendorName: true } } }
+      });
+      return { data: records, meta: {} };
+    }),
+
+  addProvenanceRecord: protectedProcedure
+    .input(
+      z.object({
+        vendorId: z.string(),
+        modelName: z.string(),
+        stepType: z.enum(["TRAINING_DATA", "BASE_MODEL", "FINE_TUNING", "DEPLOYMENT"]),
+        description: z.string().optional(),
+        responsibleParty: z.string().optional(),
+        attestation: z.boolean().optional(),
+        attestationDetails: z.string().optional(),
+        occurredAt: z.coerce.date().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const vendor = await prisma.vendorAssurance.findFirst({
+        where: { id: input.vendorId, orgId: ctx.orgId }
+      });
+      if (!vendor) throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" });
+      const record = await prisma.provenanceRecord.create({
+        data: {
+          orgId: ctx.orgId,
+          vendorId: input.vendorId,
+          modelName: input.modelName,
+          stepType: input.stepType,
+          description: input.description ?? null,
+          responsibleParty: input.responsibleParty ?? null,
+          attestation: input.attestation ?? false,
+          attestationDetails: input.attestationDetails ?? null,
+          occurredAt: input.occurredAt ?? null
+        }
+      });
+      return { data: record, meta: {} };
+    }),
+
+  getSupplyChainRiskScores: protectedProcedure.query(async ({ ctx }) => {
+    const vendors = await prisma.vendorAssurance.findMany({
+      where: { orgId: ctx.orgId }
+    });
+    const scores = await Promise.all(
+      vendors.map(async (v) => {
+        const [assurance, expired, scanCoverage] = await Promise.all([
+          assessVendorPosture(prisma, ctx.orgId, v.id),
+          checkEvidenceCurrency(prisma, ctx.orgId, v.id),
+          (async () => {
+            const cards = await prisma.artifactCard.count({
+              where: { orgId: ctx.orgId }
+            });
+            const scans = await prisma.scanRecord.count({
+              where: { orgId: ctx.orgId }
+            });
+            return cards > 0 ? Math.min(100, Math.round((scans / Math.max(1, cards)) * 100)) : 0;
+          })()
+        ]);
+        const evidenceCurrency = expired.length > 0 ? Math.max(0, 100 - expired.length * 20) : 100;
+        const contractAlignment = v.contractAligned ? 100 : 0;
+        const overall =
+          Math.round(
+            (assurance.total * 30 + evidenceCurrency * 0.25 + contractAlignment * 0.2 + scanCoverage * 0.25) / 1
+          ) || 0;
+        return {
+          vendorId: v.id,
+          vendorName: v.vendorName,
+          evidenceCurrency,
+          contractAligned: v.contractAligned,
+          scanCoverage,
+          disclosureHistory: 70,
+          overallScore: Math.min(100, overall),
+          breakdown: assurance.breakdown,
+          expiredEvidence: expired
+        };
+      })
+    );
+    return { data: scores, meta: {} };
+  }),
+
+  getOverallSupplyChainRisk: protectedProcedure.query(async ({ ctx }) => {
+    const vendors = await prisma.vendorAssurance.findMany({ where: { orgId: ctx.orgId } });
+    if (vendors.length === 0) return { data: { overallScore: 100, rating: "LOW" }, meta: {} };
+    let total = 0;
+    for (const v of vendors) {
+      const [assurance, expired] = await Promise.all([
+        assessVendorPosture(prisma, ctx.orgId, v.id),
+        checkEvidenceCurrency(prisma, ctx.orgId, v.id)
+      ]);
+      const evidenceCurrency = expired.length > 0 ? Math.max(0, 100 - expired.length * 20) : 100;
+      const contractAlignment = v.contractAligned ? 100 : 0;
+      const scanCoverage = 50;
+      total += Math.min(100, Math.round(assurance.total * 30 + evidenceCurrency * 0.25 + contractAlignment * 0.2 + scanCoverage * 0.25));
+    }
+    const avg = total / vendors.length;
+    const rating = avg >= 70 ? "LOW" : avg >= 40 ? "MEDIUM" : "HIGH";
+    return { data: { overallScore: Math.round(avg), rating }, meta: {} };
   })
 });

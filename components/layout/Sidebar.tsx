@@ -70,6 +70,9 @@ const GATED_SECTIONS: GatedSection[] = [
     flag: "",
     items: [
       { href: "/layer3-application/assets", label: "AI Assets", icon: Bot },
+      { href: "/layer3-application/agents", label: "Agentic Registry", icon: Bot },
+      { href: "/layer3-application/topology", label: "Integration Topology", icon: GitBranch },
+      { href: "/layer3-application/lifecycle", label: "Lifecycle", icon: GitBranch },
       { href: "/layer3-application/accountability", label: "Accountability Matrix", icon: Users },
       { href: "/layer3-application/gaps", label: "Gap Analysis", icon: AlertTriangle },
       { href: "/assessments", label: "Assessments", icon: ClipboardCheck }
@@ -91,6 +94,8 @@ const GATED_SECTIONS: GatedSection[] = [
       { href: "/layer5-supply-chain", label: "Model Registry", icon: Archive },
       { href: "/layer5-supply-chain/cards", label: "Artifact Cards", icon: CreditCard },
       { href: "/layer5-supply-chain/vendors", label: "Vendors", icon: Building },
+      { href: "/layer5-supply-chain/provenance", label: "Model Provenance", icon: Layers },
+      { href: "/layer5-supply-chain/risk-score", label: "Risk Scoring", icon: Shield },
       { href: "/layer5-supply-chain/scanning", label: "Scan Coverage", icon: ScanLine }
     ]
   }
