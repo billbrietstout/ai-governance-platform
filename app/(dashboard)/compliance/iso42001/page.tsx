@@ -3,10 +3,13 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { getOrgTier } from "@/lib/tiers/check-tier";
+import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { ISO42001Client } from "./ISO42001Client";
 import { ISO_42001_CLAUSES } from "@/lib/iso42001/clauses";
 
 export default async function ISO42001Page() {
+  const orgTier = await getOrgTier();
   const caller = await createServerCaller();
   const { data } = await caller.isoReadiness.getReadiness();
 
@@ -28,7 +31,18 @@ export default async function ISO42001Page() {
         </p>
       </div>
 
-      <ISO42001Client
+      <UpgradeGate
+        feature="ISO 42001 Readiness"
+        requiredTier="PRO"
+        description="Clause-by-clause ISO 42001 compliance checklist with implementation guidance"
+        unlockedBy={[
+          "140+ clause checklist",
+          "Implementation status tracking",
+          "Gap identification and remediation"
+        ]}
+        orgTier={orgTier}
+      >
+        <ISO42001Client
         initialScore={data.score}
         groups={ISO_42001_CLAUSES.map((g) => ({
           ...g,
@@ -39,6 +53,7 @@ export default async function ISO42001Page() {
           }))
         }))}
       />
+      </UpgradeGate>
     </main>
   );
 }

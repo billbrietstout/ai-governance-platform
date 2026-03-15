@@ -3,9 +3,12 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { getOrgTier } from "@/lib/tiers/check-tier";
+import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { EUAIActWrapper } from "./EUAIActWrapper";
 
 export default async function EUAIActPage() {
+  const orgTier = await getOrgTier();
   const caller = await createServerCaller();
   const { data: assets } = await caller.assets.list({});
 
@@ -32,11 +35,23 @@ export default async function EUAIActPage() {
         </p>
       </div>
 
-      <EUAIActWrapper
+      <UpgradeGate
+        feature="EU AI Act Conformity"
+        requiredTier="PRO"
+        description="Track conformity with EU AI Act requirements including high-risk system obligations"
+        unlockedBy={[
+          "Risk classification mapping",
+          "Conformity deadline tracking",
+          "Article-by-article requirements"
+        ]}
+        orgTier={orgTier}
+      >
+        <EUAIActWrapper
         highRiskAssets={highRiskAssets}
         minimalLimitedCount={minimalLimitedCount}
         daysUntilDeadline={daysUntilDeadline}
       />
+      </UpgradeGate>
     </main>
   );
 }

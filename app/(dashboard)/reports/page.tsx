@@ -3,9 +3,12 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { getOrgTier } from "@/lib/tiers/check-tier";
+import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { ReportCardsClient } from "./ReportCardsClient";
 
 export default async function ReportsPage() {
+  const orgTier = await getOrgTier();
   const caller = await createServerCaller();
   const [maturityRes, snapshotsRes] = await Promise.all([
     caller.maturity.getMaturityScore(),
@@ -26,12 +29,24 @@ export default async function ReportsPage() {
         </p>
       </div>
 
-      <ReportCardsClient
+      <UpgradeGate
+        feature="Governance Reports"
+        requiredTier="PRO"
+        description="Generate executive and board-ready governance reports across all framework layers"
+        unlockedBy={[
+          "Executive summary reports",
+          "Compliance gap analysis",
+          "Board presentation exports"
+        ]}
+        orgTier={orgTier}
+      >
+        <ReportCardsClient
         maturityLevel={maturityLevel}
         scores={scores}
         snapshots={snapshots}
         gaps={gaps}
       />
+      </UpgradeGate>
     </main>
   );
 }

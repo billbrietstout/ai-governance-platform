@@ -19,6 +19,12 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
   }
   const orgId = meridian.id;
 
+  // Ensure demo org has PRO tier for full platform access
+  await prisma.organization.update({
+    where: { id: orgId },
+    data: { tier: "PRO" }
+  });
+
   const assets = await prisma.aIAsset.findMany({
     where: { orgId, deletedAt: null },
     select: { id: true, name: true }

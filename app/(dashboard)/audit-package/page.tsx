@@ -2,23 +2,13 @@
  * Audit Package Generator – export audit-ready evidence packages.
  */
 import Link from "next/link";
-import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
-import { prisma } from "@/lib/prisma";
+import { getOrgTier } from "@/lib/tiers/check-tier";
 import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { AuditPackageClient } from "./AuditPackageClient";
 
 export default async function AuditPackagePage() {
-  const session = await auth();
-  const orgId = (session?.user as { orgId?: string })?.orgId;
-  const org = orgId
-    ? await prisma.organization.findUnique({
-        where: { id: orgId },
-        select: { tier: true }
-      })
-    : null;
-  const tier = org?.tier ?? "FREE";
-
+  const orgTier = await getOrgTier();
   const caller = await createServerCaller();
   const [assetsRes, regulations] = await Promise.all([
     caller.assets.list({}),
@@ -50,7 +40,17 @@ export default async function AuditPackagePage() {
         </p>
       </div>
 
-      <UpgradeGate feature="audit_packages" tier="PRO" userTier={tier}>
+      <UpgradeGate
+        feature="Audit Packages"
+        requiredTier="PRO"
+        description="Generate audit-ready evidence packages mapped to the CoSAI framework evidence requirements"
+        unlockedBy={[
+          "Export evidence by asset or regulation",
+          "CoSAI A.7 evidence workbook",
+          "Compliance audit trail"
+        ]}
+        orgTier={orgTier}
+      >
         <AuditPackageClient assets={assets} regulations={regulations} />
       </UpgradeGate>
     </main>

@@ -155,7 +155,10 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
 const TIER_GATED_HREFS: Record<string, GatedFeature> = {
   "/compliance/snapshots": "compliance_snapshots",
   "/audit-package": "audit_packages",
-  "/audit-package/evidence-workbook": "evidence_workbook"
+  "/audit-package/evidence-workbook": "evidence_workbook",
+  "/compliance/iso42001": "compliance_snapshots",
+  "/compliance/eu-ai-act": "compliance_snapshots",
+  "/reports": "compliance_snapshots"
 };
 
 const FRAMEWORK_COLORS: Record<string, string> = {
@@ -450,12 +453,39 @@ export function Sidebar({
         })}
       </div>
 
-      {/* Free tier indicator */}
+      {/* Tier indicator */}
       {!collapsed && tier === "FREE" && (
-        <div className="border-t border-slatePro-800 px-3 py-2">
-          <p className="text-xs text-slatePro-500">
-            Free tier — {Math.max(0, getAssetLimit(tier) - assetCount)} assets remaining
-          </p>
+        <div className="border-t border-slatePro-800 p-3">
+          <div className="rounded-lg bg-slatePro-800 p-3">
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-xs font-medium text-slatePro-300">Free Plan</span>
+              <span className="text-xs text-amber-400">
+                {assetCount}/{getAssetLimit(tier)} assets
+              </span>
+            </div>
+            <div className="h-1.5 rounded-full bg-slatePro-700">
+              <div
+                className="h-1.5 rounded-full bg-amber-400 transition-all"
+                style={{ width: `${Math.min(100, (assetCount / getAssetLimit(tier)) * 100)}%` }}
+              />
+            </div>
+            <Link
+              href="/pricing"
+              className="mt-2 flex w-full items-center justify-center rounded-md bg-navy-600 py-1.5 text-xs font-medium text-white hover:bg-navy-500 transition-colors"
+            >
+              Upgrade to Pro →
+            </Link>
+          </div>
+        </div>
+      )}
+      {!collapsed && tier !== "FREE" && (
+        <div className="border-t border-slatePro-800 p-3">
+          <div className="flex items-center gap-2 px-1">
+            <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+              {tier === "PRO" ? "Pro Plan" : tier === "CONSULTANT" ? "Consultant Plan" : "Enterprise Plan"}
+            </span>
+            <span className="text-xs text-slatePro-400">Unlimited assets</span>
+          </div>
         </div>
       )}
 
@@ -494,6 +524,18 @@ export function Sidebar({
               </span>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Upgrade to Pro link – visible only to FREE tier, just above user avatar */}
+      {!collapsed && tier === "FREE" && (
+        <div className="border-t border-slatePro-800 px-3 py-2">
+          <Link
+            href="/pricing"
+            className="flex items-center justify-center gap-2 rounded-lg bg-navy-600 py-2 text-sm font-medium text-white hover:bg-navy-500 transition-colors"
+          >
+            Upgrade to Pro →
+          </Link>
         </div>
       )}
 

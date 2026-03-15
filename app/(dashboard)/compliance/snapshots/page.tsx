@@ -2,23 +2,13 @@
  * Compliance Snapshots – point-in-time compliance records.
  */
 import Link from "next/link";
-import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
-import { prisma } from "@/lib/prisma";
+import { getOrgTier } from "@/lib/tiers/check-tier";
 import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { SnapshotsClient } from "./SnapshotsClient";
 
 export default async function ComplianceSnapshotsPage() {
-  const session = await auth();
-  const orgId = (session?.user as { orgId?: string })?.orgId;
-  const org = orgId
-    ? await prisma.organization.findUnique({
-        where: { id: orgId },
-        select: { tier: true }
-      })
-    : null;
-  const tier = org?.tier ?? "FREE";
-
+  const orgTier = await getOrgTier();
   const caller = await createServerCaller();
   const { data: snapshots } = await caller.audit.getSnapshots();
 
@@ -36,7 +26,17 @@ export default async function ComplianceSnapshotsPage() {
         </p>
       </div>
 
-      <UpgradeGate feature="compliance_snapshots" tier="PRO" userTier={tier}>
+      <UpgradeGate
+        feature="Compliance Snapshots"
+        requiredTier="PRO"
+        description="Track compliance scores over time and identify trends across all five CoSAI layers"
+        unlockedBy={[
+          "Compliance trend charts",
+          "Point-in-time snapshot history",
+          "Layer-by-layer score tracking"
+        ]}
+        orgTier={orgTier}
+      >
         <SnapshotsClient initialSnapshots={snapshots} />
       </UpgradeGate>
     </main>

@@ -1,73 +1,73 @@
 "use client";
 
 import Link from "next/link";
-import { Lock, ArrowRight, Briefcase } from "lucide-react";
-import {
-  canAccessFeature,
-  getFeatureLabel,
-  getFeatureTier,
-  getOtherFeaturesInTier,
-  type GatedFeature
-} from "@/lib/tiers/gates";
+import { Lock } from "lucide-react";
+import { tierMeets, type OrgTier } from "@/lib/tiers/tier-utils";
 
-type Props = {
-  feature: GatedFeature;
-  tier: "PRO" | "CONSULTANT" | "ENTERPRISE";
-  userTier: string;
-  children?: React.ReactNode;
-};
+export interface UpgradeGateProps {
+  feature: string;
+  requiredTier: "PRO" | "CONSULTANT" | "ENTERPRISE";
+  description: string;
+  unlockedBy: string[];
+  orgTier: OrgTier;
+  children: React.ReactNode;
+}
 
-export function UpgradeGate({ feature, tier, userTier, children }: Props) {
-  if (canAccessFeature(userTier, feature)) {
+export function UpgradeGate({
+  feature,
+  requiredTier,
+  description,
+  unlockedBy,
+  orgTier,
+  children
+}: UpgradeGateProps) {
+  if (tierMeets(orgTier, requiredTier)) {
     return <>{children}</>;
   }
-  const label = getFeatureLabel(feature);
-  const requiredTier = getFeatureTier(feature);
-  const otherFeatures = getOtherFeaturesInTier(feature, 3);
+
+  const tierLabel = requiredTier === "PRO" ? "Pro" : requiredTier === "CONSULTANT" ? "Consultant" : "Enterprise";
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-amber-100">
-          <Lock className="h-6 w-6 text-amber-600" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-semibold text-slate-900">{label}</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            This feature is available on the {requiredTier} tier. Upgrade to unlock full access.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href="/settings/billing?upgrade=pro"
-              className="inline-flex items-center gap-2 rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
-            >
-              Upgrade to {requiredTier}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/settings?tab=consultant"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            >
-              <Briefcase className="h-4 w-4" />
-              Talk to a consultant
-            </Link>
+    <div className="flex min-h-[400px] items-center justify-center p-8">
+      <div className="max-w-md text-center">
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
+            <Lock className="h-8 w-8 text-amber-600" />
           </div>
-          {otherFeatures.length > 0 && (
-            <div className="mt-6 rounded-lg border border-slate-100 bg-slate-50/50 p-4">
-              <p className="text-xs font-medium text-slate-500">
-                You&apos;ll also unlock:
-              </p>
-              <ul className="mt-2 space-y-1 text-sm text-slate-700">
-                {otherFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-navy-400" />
-                    {getFeatureLabel(f)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
+        <h2 className="text-xl font-semibold text-slate-900">{feature}</h2>
+        <p className="mt-1 text-slate-600">{description}</p>
+        <span className="mt-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
+          Available in {tierLabel} plan
+        </span>
+        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50/50 p-4 text-left">
+          <p className="text-xs font-medium uppercase tracking-wider text-slate-500">What you unlock:</p>
+          <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
+            {unlockedBy.slice(0, 3).map((item) => (
+              <li key={item} className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-navy-400" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <Link
+            href="/pricing"
+            className="inline-flex items-center justify-center rounded-lg bg-navy-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-500"
+          >
+            Upgrade to {tierLabel}
+          </Link>
+          <a
+            href="mailto:contact@aiposture.com?subject=Consultant%20inquiry"
+            className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Talk to a consultant
+          </a>
+        </div>
+        <p className="mt-4 text-xs text-slate-500">
+          Need help deciding? Book a free 30-min assessment call.
+        </p>
       </div>
     </div>
   );
