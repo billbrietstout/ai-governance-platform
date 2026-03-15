@@ -267,11 +267,13 @@ model MaturityAssessment {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  orgId          String
-  email          String
-  role           UserRole  @default(MEMBER)
-  mfaEnabled     Boolean   @default(false)
+  id                      String    @id @default(cuid())
+  orgId                   String
+  email                   String
+  role                    UserRole  @default(MEMBER)
+  persona                 String?   // CEO | CFO | COO | CISO | LEGAL | CAIO | DATA_OWNER | DEV_LEAD | PLATFORM_ENG | VENDOR_MGR
+  personaModalDismissedAt DateTime? // when user skipped "What's your role?" modal
+  mfaEnabled              Boolean   @default(false)
   lockedUntil    DateTime?
   failedAttempts Int       @default(0)
   createdAt      DateTime  @default(now())

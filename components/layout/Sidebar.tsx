@@ -33,8 +33,8 @@ import {
   Search,
   TrendingUp
 } from "lucide-react";
-
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
+import { getPersonaConfig } from "@/lib/personas/config";
 
 const STORAGE_KEY = "sidebar-collapsed";
 
@@ -157,11 +157,12 @@ function ChevronRight({ className }: { className?: string }) {
 export type SidebarProps = {
   userEmail?: string | null;
   orgName?: string | null;
+  persona?: string | null;
   featureFlags?: Record<string, boolean>;
   frameworks?: { code: string }[];
 };
 
-export function Sidebar({ userEmail, orgName, featureFlags = {}, frameworks = [] }: SidebarProps) {
+export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, frameworks = [] }: SidebarProps) {
   const pathname = usePathname();
   const currentSection = getSectionForPath(pathname);
 
@@ -228,6 +229,12 @@ export function Sidebar({ userEmail, orgName, featureFlags = {}, frameworks = []
     : "?";
 
   const displayName = userEmail ? userEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "User";
+
+  const personaConfig = persona ? getPersonaConfig(persona) : null;
+  const showFullOpacity = !persona || persona === "CAIO";
+  const primarySections = new Set(personaConfig?.visibleSections ?? []);
+
+  const isSectionPrimary = (title: string) => showFullOpacity || primarySections.has(title);
 
   return (
     <aside
@@ -299,9 +306,11 @@ export function Sidebar({ userEmail, orgName, featureFlags = {}, frameworks = []
           const isExpanded = expandedSections.has(section.title);
           const flag = "flag" in section ? section.flag : undefined;
           const enabled = !flag || (featureFlags[flag] ?? false);
+          const isPrimary = isSectionPrimary(section.title);
+          const sectionOpacity = isPrimary ? "opacity-100" : "opacity-60";
 
           return (
-            <div key={section.title} className="mb-1">
+            <div key={section.title} className={`mb-1 ${sectionOpacity}`}>
               <button
                 type="button"
                 onClick={() => toggleSection(section.title)}
@@ -325,6 +334,7 @@ export function Sidebar({ userEmail, orgName, featureFlags = {}, frameworks = []
                   const active = enabled && isActive(item.href, pathname);
                   const Icon = item.icon;
                   if (!enabled) {
+                    const showLock = showFullOpacity;
                     return (
                       <div
                         key={item.href}
@@ -333,13 +343,15 @@ export function Sidebar({ userEmail, orgName, featureFlags = {}, frameworks = []
                         } cursor-not-allowed text-slatePro-600`}
                         title="Available via module"
                       >
-                        <LockKeyhole className="h-4 w-4 shrink-0 text-amber-500/70" />
+                        {showLock && <LockKeyhole className="h-4 w-4 shrink-0 text-amber-500/70" />}
                         {!collapsed && (
                           <>
                             <span className="truncate">{item.label}</span>
-                            <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
-                              Module
-                            </span>
+                            {showLock && (
+                              <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
+                                Module
+                              </span>
+                            )}
                           </>
                         )}
                       </div>
@@ -364,6 +376,23 @@ export function Sidebar({ userEmail, orgName, featureFlags = {}, frameworks = []
           );
         })}
       </div>
+
+      {/* Persona indicator */}
+      {!collapsed && persona && (
+        <div className="border-t border-slatePro-800 px-3 py-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="rounded bg-navy-500/30 px-2 py-0.5 text-xs font-medium text-navy-300">
+              {personaConfig?.label ?? persona}
+            </span>
+            <Link
+              href="/persona-select"
+              className="text-xs text-navy-400 hover:text-navy-300 hover:underline"
+            >
+              Switch view
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Active frameworks */}
       {!collapsed && frameworks.length > 0 && (

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PersonaModal } from "@/components/PersonaModal";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { prisma } from "@/lib/prisma";
 
@@ -24,10 +25,14 @@ export default async function DashboardLayout({
   let orgName: string | null = null;
   let featureFlags: Record<string, boolean> = {};
   let onboardingComplete = true;
+  let persona: string | null = null;
+  let personaModalDismissed = false;
+
+  const userId = (user as { id?: string } | undefined)?.id;
 
   let frameworks: { code: string }[] = [];
   if (orgId) {
-    const [org, flags, fws] = await Promise.all([
+    const [org, flags, fws, dbUser] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
         select: { name: true, onboardingComplete: true }
@@ -39,10 +44,18 @@ export default async function DashboardLayout({
       prisma.complianceFramework.findMany({
         where: { orgId, isActive: true },
         select: { code: true }
-      })
+      }),
+      userId
+        ? prisma.user.findUnique({
+            where: { id: userId },
+            select: { persona: true, personaModalDismissedAt: true }
+          })
+        : Promise.resolve(null)
     ]);
     orgName = org?.name ?? null;
     onboardingComplete = org?.onboardingComplete ?? true;
+    persona = dbUser?.persona ?? null;
+    personaModalDismissed = !!dbUser?.personaModalDismissedAt;
     featureFlags = MODULE_FLAGS.reduce(
       (acc, name) => {
         acc[name] = flags.find((f) => f.name === name)?.enabled ?? false;
@@ -57,11 +70,14 @@ export default async function DashboardLayout({
     redirect("/onboarding");
   }
 
+  const showPersonaModal = onboardingComplete && !persona && !personaModalDismissed;
+
   return (
     <div className="flex min-h-dvh">
       <Sidebar
         userEmail={user?.email ?? null}
         orgName={orgName}
+        persona={persona}
         featureFlags={featureFlags}
         frameworks={frameworks}
       />
@@ -73,6 +89,7 @@ export default async function DashboardLayout({
           <div className="page-fade-in">{children}</div>
         </div>
       </main>
+      {showPersonaModal && <PersonaModal />}
     </div>
   );
 }

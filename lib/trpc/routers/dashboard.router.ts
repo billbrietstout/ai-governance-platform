@@ -279,6 +279,20 @@ export const dashboardRouter = createTRPCRouter({
       return { data: entries, meta: {} };
     }),
 
+  getTopRisksByLayer: protectedProcedure.query(async ({ ctx }) => {
+    const risks = await prisma.riskRegister.findMany({
+      where: { orgId: ctx.orgId, deletedAt: null, cosaiLayer: { not: null } },
+      select: { cosaiLayer: true, title: true, riskScore: true },
+      orderBy: { riskScore: "desc" }
+    });
+    const byLayer: Record<string, { title: string; riskScore: number | null }> = {};
+    for (const r of risks) {
+      const layer = r.cosaiLayer!;
+      if (!(layer in byLayer)) byLayer[layer] = { title: r.title, riskScore: r.riskScore };
+    }
+    return { data: byLayer, meta: {} };
+  }),
+
   getEUPenaltyExposure: protectedProcedure.query(async ({ ctx }) => {
     if (ctx.role !== "CAIO" && ctx.role !== "ADMIN") {
       throw new TRPCError({ code: "FORBIDDEN", message: "EU penalty exposure requires CAIO or ADMIN role" });

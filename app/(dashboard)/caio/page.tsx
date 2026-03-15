@@ -1,0 +1,219 @@
+/**
+ * CAIO unified view – cross-layer summary, maturity, KPIs, critical gaps.
+ */
+import Link from "next/link";
+import { Bot, ShieldCheck, AlertTriangle, TrendingUp, Layers } from "lucide-react";
+import { createServerCaller } from "@/lib/trpc/server-caller";
+
+const LAYER_LABELS: Record<string, string> = {
+  LAYER_1_BUSINESS: "Layer 1: Business",
+  LAYER_2_INFORMATION: "Layer 2: Information",
+  LAYER_3_APPLICATION: "Layer 3: Application",
+  LAYER_4_PLATFORM: "Layer 4: Platform",
+  LAYER_5_SUPPLY_CHAIN: "Layer 5: Supply Chain"
+};
+
+const LAYER_LINKS: Record<string, string> = {
+  LAYER_1_BUSINESS: "/layer1-business",
+  LAYER_2_INFORMATION: "/layer2-information",
+  LAYER_3_APPLICATION: "/layer3-application/assets",
+  LAYER_4_PLATFORM: "/layer4-platform",
+  LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
+};
+
+const COSAI_LAYERS = [
+  "LAYER_1_BUSINESS",
+  "LAYER_2_INFORMATION",
+  "LAYER_3_APPLICATION",
+  "LAYER_4_PLATFORM",
+  "LAYER_5_SUPPLY_CHAIN"
+] as const;
+
+const MATURITY_COLORS: Record<number, string> = {
+  1: "#fbbf24",
+  2: "#f97316",
+  3: "#3b82f6",
+  4: "#8b5cf6",
+  5: "#10b981"
+};
+
+function scoreColor(pct: number): string {
+  if (pct <= 30) return "bg-red-500";
+  if (pct <= 60) return "bg-amber-500";
+  if (pct <= 80) return "bg-blue-500";
+  return "bg-emerald-500";
+}
+
+export default async function CAIOPage() {
+  const caller = await createServerCaller();
+
+  const [kpisRes, layerRes, gapsRes, maturityRes, topRisksRes] = await Promise.all([
+    caller.dashboard.getKPIs(),
+    caller.dashboard.getLayerPosture(),
+    caller.dashboard.getTopGaps({ limit: 5 }),
+    caller.maturity.getMaturityScore(),
+    caller.dashboard.getTopRisksByLayer()
+  ]);
+
+  const kpis = kpisRes.data;
+  const layers = layerRes.data;
+  const gaps = gapsRes.data;
+  const maturity = maturityRes.data;
+  const topRisks = topRisksRes.data;
+
+  const layerMap = new Map(layers.map((l) => [l.layer, l]));
+
+  return (
+    <main className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">CAIO Unified View</h1>
+        <p className="mt-1 text-slate-600">
+          Cross-layer governance summary across all CoSAI layers.
+        </p>
+      </div>
+
+      {/* Summary KPIs */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Link
+          href="/layer3-application/assets"
+          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+        >
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-navy-600" />
+            <span className="text-sm font-medium text-slate-600">Total Assets</span>
+          </div>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.totalAssets}</p>
+        </Link>
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="flex items-center gap-2">
+            <ShieldCheck
+              className={`h-5 w-5 ${
+                kpis.complianceScore >= 70
+                  ? "text-emerald-600"
+                  : kpis.complianceScore >= 30
+                    ? "text-amber-600"
+                    : "text-red-600"
+              }`}
+            />
+            <span className="text-sm font-medium text-slate-600">Compliance Score</span>
+          </div>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.complianceScore}%</p>
+        </div>
+        <Link
+          href="/maturity"
+          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+        >
+          <div className="flex items-center gap-2">
+            <TrendingUp
+              className="h-5 w-5"
+              style={{ color: MATURITY_COLORS[maturity.maturityLevel] ?? "#fbbf24" }}
+            />
+            <span className="text-sm font-medium text-slate-600">Maturity</span>
+          </div>
+          <p className="mt-2 text-2xl font-bold text-slate-900">M{maturity.maturityLevel}</p>
+        </Link>
+        <Link
+          href="/layer3-application/gaps"
+          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+        >
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <span className="text-sm font-medium text-slate-600">Critical Gaps</span>
+          </div>
+          <p className="mt-2 text-2xl font-bold text-slate-900">{gaps.length}</p>
+        </Link>
+      </div>
+
+      {/* Layer cards */}
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
+          <Layers className="h-5 w-5 text-navy-600" />
+          Cross-Layer Summary
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {COSAI_LAYERS.map((layer) => {
+            const data = layerMap.get(layer);
+            const topRisk = topRisks[layer];
+            const href = LAYER_LINKS[layer];
+            const label = LAYER_LABELS[layer] ?? layer;
+            const compliancePct = data?.compliancePct ?? 0;
+            const owner = data?.accountableOwner ?? "—";
+
+            return (
+              <Link
+                key={layer}
+                href={href}
+                className="flex flex-col rounded-lg border border-slate-200 bg-slate-50 p-4 transition hover:border-navy-300 hover:bg-navy-50/30"
+              >
+                <span className="text-sm font-medium text-slate-700">{label}</span>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-2xl font-bold text-slate-900">{compliancePct}%</span>
+                  <span className="text-xs text-slate-500">compliance</span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className={`h-full rounded-full ${scoreColor(compliancePct)}`}
+                    style={{ width: `${compliancePct}%` }}
+                  />
+                </div>
+                <div className="mt-3 space-y-1 text-xs">
+                  <div className="text-slate-600">
+                    <span className="font-medium">Top risk:</span>{" "}
+                    {topRisk?.title ?? "None"}
+                  </div>
+                  <div className="text-slate-500">
+                    <span className="font-medium">Owner:</span> {owner}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Critical gaps */}
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900">
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+          Critical Gaps
+        </h2>
+        {gaps.length === 0 ? (
+          <p className="text-sm text-slate-500">No critical gaps</p>
+        ) : (
+          <ul className="space-y-2">
+            {gaps.map((g) => (
+              <li
+                key={`${g.assetId}-${g.controlId}`}
+                className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2"
+              >
+                <div>
+                  <Link
+                    href={`/layer3-application/assets/${g.assetId}`}
+                    className="font-medium text-navy-600 hover:underline"
+                  >
+                    {g.assetName}
+                  </Link>
+                  <span className="ml-2 text-xs text-slate-500">
+                    {g.controlId} ({g.cosaiLayer ?? "—"})
+                  </span>
+                </div>
+                <Link
+                  href={`/layer3-application/assets/${g.assetId}`}
+                  className="shrink-0 text-sm font-medium text-navy-600 hover:underline"
+                >
+                  View →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Link
+          href="/reports/gap-analysis"
+          className="mt-3 inline-block text-sm font-medium text-navy-600 hover:underline"
+        >
+          Full gap analysis →
+        </Link>
+      </div>
+    </main>
+  );
+}

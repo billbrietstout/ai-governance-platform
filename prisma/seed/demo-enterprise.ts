@@ -13,19 +13,35 @@ const ORG = {
   claimedDomain: "meridian-industrial.com"
 };
 
-const USERS: Array<{ email: string; role: "CAIO" | "ADMIN" | "ANALYST" | "VIEWER" | "AUDITOR" }> = [
-  { email: "sarah.chen@meridian-industrial.com", role: "CAIO" },
-  { email: "james.okonkwo@meridian-industrial.com", role: "ADMIN" },
-  { email: "priya.patel@meridian-industrial.com", role: "ANALYST" },
-  { email: "marco.rossi@meridian-industrial.com", role: "ANALYST" },
-  { email: "lisa.wang@meridian-industrial.com", role: "ANALYST" },
-  { email: "david.kim@meridian-industrial.com", role: "VIEWER" },
-  { email: "anna.schmidt@meridian-industrial.com", role: "VIEWER" },
-  { email: "carlos.mendez@meridian-industrial.com", role: "VIEWER" },
-  { email: "rachel.obi@meridian-industrial.com", role: "AUDITOR" },
-  { email: "tom.bradley@meridian-industrial.com", role: "VIEWER" },
-  { email: "nina.volkov@meridian-industrial.com", role: "ANALYST" },
-  { email: "alex.foster@meridian-industrial.com", role: "VIEWER" }
+type Persona =
+  | "CEO"
+  | "CFO"
+  | "COO"
+  | "CISO"
+  | "LEGAL"
+  | "CAIO"
+  | "DATA_OWNER"
+  | "DEV_LEAD"
+  | "PLATFORM_ENG"
+  | "VENDOR_MGR";
+
+const USERS: Array<{
+  email: string;
+  role: "CAIO" | "ADMIN" | "ANALYST" | "VIEWER" | "AUDITOR";
+  persona: Persona;
+}> = [
+  { email: "sarah.chen@meridian-industrial.com", role: "CAIO", persona: "CAIO" },
+  { email: "james.okonkwo@meridian-industrial.com", role: "ADMIN", persona: "CISO" },
+  { email: "priya.patel@meridian-industrial.com", role: "ANALYST", persona: "CFO" },
+  { email: "marco.rossi@meridian-industrial.com", role: "ANALYST", persona: "PLATFORM_ENG" },
+  { email: "lisa.wang@meridian-industrial.com", role: "ANALYST", persona: "COO" },
+  { email: "david.kim@meridian-industrial.com", role: "VIEWER", persona: "DEV_LEAD" },
+  { email: "anna.schmidt@meridian-industrial.com", role: "VIEWER", persona: "LEGAL" },
+  { email: "carlos.mendez@meridian-industrial.com", role: "VIEWER", persona: "VENDOR_MGR" },
+  { email: "rachel.obi@meridian-industrial.com", role: "AUDITOR", persona: "DEV_LEAD" },
+  { email: "tom.bradley@meridian-industrial.com", role: "VIEWER", persona: "CEO" },
+  { email: "nina.volkov@meridian-industrial.com", role: "ANALYST", persona: "DATA_OWNER" },
+  { email: "alex.foster@meridian-industrial.com", role: "VIEWER", persona: "PLATFORM_ENG" }
 ];
 
 type AssetInput = {
@@ -404,9 +420,10 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
         orgId: org.id,
         email: u.email,
         role: u.role,
+        persona: u.persona,
         mfaEnabled: u.role === "ADMIN" || u.role === "CAIO"
       },
-      update: { role: u.role }
+      update: { role: u.role, persona: u.persona }
     });
     userMap.set(u.email, user.id);
   }

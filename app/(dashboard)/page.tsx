@@ -44,10 +44,15 @@ export default async function CommandCenterPage({
   const params = await searchParams;
   const showWelcome = params.welcome === "1";
   const session = await auth();
-  const role = (session?.user as { role?: string })?.role ?? "MEMBER";
+  const user = session?.user as { role?: string; email?: string | null } | undefined;
+  const role = user?.role ?? "MEMBER";
+  const displayName = user?.email
+    ? user.email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "there";
   const caller = await createServerCaller();
 
   const [
+    personaRes,
     kpisRes,
     deltasRes,
     layerRes,
@@ -59,6 +64,7 @@ export default async function CommandCenterPage({
     auditRes,
     maturityRes
   ] = await Promise.all([
+    caller.user.getUserPersona(),
     caller.dashboard.getKPIs(),
     caller.dashboard.getKPIDeltas(),
     caller.dashboard.getLayerPosture(),
@@ -70,6 +76,11 @@ export default async function CommandCenterPage({
     caller.dashboard.getAuditFeed({ limit: 20 }),
     caller.maturity.getMaturityScore()
   ]);
+
+  const persona = personaRes.data.persona;
+  const personaLabel = persona
+    ? { CEO: "CEO", CFO: "CFO", COO: "COO", CISO: "CISO", LEGAL: "Legal", CAIO: "CAIO", DATA_OWNER: "Data Owner", DEV_LEAD: "Dev Lead", PLATFORM_ENG: "Platform Engineer", VENDOR_MGR: "Vendor Manager" }[persona] ?? persona
+    : null;
 
   let penaltyRes: { data: { totalMin: number; totalMax: number; byArticle?: unknown[] } } | null = null;
   if (role === "CAIO" || role === "ADMIN") {
@@ -93,15 +104,22 @@ export default async function CommandCenterPage({
       {showWelcome && (
         <div className="rounded-lg border border-navy-200 bg-navy-50 p-4">
           <h3 className="text-lg font-semibold text-navy-900">
-            Welcome to AI Governance Platform
+            {personaLabel
+              ? `Welcome, ${displayName}. As ${personaLabel}, your priority this week is ${topNextSteps[0]?.action ?? "maintaining your governance posture"}.`
+              : `Welcome to AI Governance Platform`}
           </h3>
-          <p className="mt-1 text-navy-700">
-            Your baseline maturity score is{" "}
-            <span className="font-bold">M{maturityRes.data.maturityLevel}</span>.
-            Here&apos;s what to do next:
-          </p>
+          {!personaLabel && (
+            <p className="mt-1 text-navy-700">
+              Your baseline maturity score is{" "}
+              <span className="font-bold">M{maturityRes.data.maturityLevel}</span>.
+              Here&apos;s what to do next:
+            </p>
+          )}
+          {personaLabel && topNextSteps.length > 1 && (
+            <p className="mt-2 text-sm text-navy-700">Other priorities:</p>
+          )}
           <ul className="mt-3 space-y-2">
-            {topNextSteps.map((s, i) => (
+            {(personaLabel ? topNextSteps.slice(1) : topNextSteps).map((s, i) => (
               <li key={`${s.layer}-${s.action}`} className="flex items-center gap-2 text-sm text-navy-700">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy-200 text-xs font-medium text-navy-800">
                   {i + 1}
@@ -110,7 +128,7 @@ export default async function CommandCenterPage({
               </li>
             ))}
           </ul>
-          {topNextSteps.length === 0 && (
+          {topNextSteps.length === 0 && !personaLabel && (
             <p className="mt-2 text-sm text-navy-600">
               You&apos;re at maximum maturity. Keep up the great work!
             </p>
