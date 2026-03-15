@@ -51,7 +51,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
       <div>
-        <label className="block text-sm font-medium text-slate-700">Pipeline Name *</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Pipeline Name *</label>
         <input
           type="text"
           value={form.name}
@@ -61,7 +61,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700">Pipeline Type *</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Pipeline Type *</label>
         <select
           value={form.pipelineType}
           onChange={(e) => setForm((f) => ({ ...f, pipelineType: e.target.value }))}
@@ -75,7 +75,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700">Source Entity</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Source Entity</label>
         <select
           value={form.sourceEntityId}
           onChange={(e) => setForm((f) => ({ ...f, sourceEntityId: e.target.value }))}
@@ -90,7 +90,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700">Target AI Asset</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Target AI Asset</label>
         <select
           value={form.targetAssetId}
           onChange={(e) => setForm((f) => ({ ...f, targetAssetId: e.target.value }))}
@@ -105,7 +105,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700">Transformation Description</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Transformation Description</label>
         <textarea
           value={form.transformations}
           onChange={(e) => setForm((f) => ({ ...f, transformations: e.target.value }))}
@@ -114,7 +114,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700">Refresh Frequency</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Refresh Frequency</label>
         <select
           value={form.refreshFrequency}
           onChange={(e) => setForm((f) => ({ ...f, refreshFrequency: e.target.value }))}
@@ -129,7 +129,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-slate-700">Data Classification</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Data Classification</label>
         <select
           value={form.dataClassification}
           onChange={(e) => setForm((f) => ({ ...f, dataClassification: e.target.value as "INTERNAL" }))}

@@ -40,7 +40,9 @@ body {
 }
 
 body {
-  @apply bg-slatePro-950 text-slatePro-50 antialiased;
+  @apply antialiased;
+  background-color: #ffffff;
+  color: #0f172a;
 }
 
 /* NProgress – thin blue bar (matches navy theme) */

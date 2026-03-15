@@ -57,10 +57,13 @@ const RISK_COLORS: Record<string, string> = {
   MINIMAL: "#10b981"
 };
 
-const NODE_WIDTH = 140;
+const NODE_WIDTH = 130;
+const ASSET_NODE_WIDTH = 175;
+const PLATFORM_NODE_WIDTH = 200;
 const NODE_HEIGHT = 36;
-const COL_GAP = 80;
 const ROW_GAP = 16;
+
+const COL_X = [80, 260, 480, 720] as const;
 
 function getDownstreamIds(
   lineageRecords: LineageRecordNode[],
@@ -145,17 +148,21 @@ export function DataLineageDAG({
 
   const columns = [col1, col2, col3, col4];
   const maxRows = Math.max(...columns.map((c) => c.length), 1);
-  const width = 4 * NODE_WIDTH + 3 * COL_GAP + 80;
+  const width = COL_X[3] + Math.max(NODE_WIDTH, ASSET_NODE_WIDTH, PLATFORM_NODE_WIDTH) + 80;
   const height = Math.max(400, maxRows * (NODE_HEIGHT + ROW_GAP) + 60);
 
   const getPos = (colIdx: number, rowIdx: number) => ({
-    x: 40 + colIdx * (NODE_WIDTH + COL_GAP),
+    x: COL_X[colIdx],
     y: 40 + rowIdx * (NODE_HEIGHT + ROW_GAP)
   });
 
-  const pathD = (sx: number, sy: number, tx: number, ty: number) => {
-    const mx = (sx + tx) / 2;
-    return `M ${sx + NODE_WIDTH} ${sy + NODE_HEIGHT / 2} C ${mx} ${sy + NODE_HEIGHT / 2}, ${mx} ${ty + NODE_HEIGHT / 2}, ${tx} ${ty + NODE_HEIGHT / 2}`;
+  const pathD = (sx: number, sy: number, tx: number, ty: number, sourceWidth: number) => {
+    const startX = sx + sourceWidth;
+    const endX = tx;
+    const dx = endX - startX;
+    const sy2 = sy + NODE_HEIGHT / 2;
+    const ty2 = ty + NODE_HEIGHT / 2;
+    return `M${startX},${sy2} C${startX + dx / 2},${sy2} ${endX - dx / 2},${ty2} ${endX},${ty2}`;
   };
 
   useEffect(() => {
@@ -204,7 +211,7 @@ export function DataLineageDAG({
       const dashed = lr.status !== "ACTIVE";
       const color = getSourceColor(lr.sourceEntityId);
 
-      const d1 = pathD(sp.x, sp.y, pp.x, pp.y);
+      const d1 = pathD(sp.x, sp.y, pp.x, pp.y, NODE_WIDTH);
       g.append("path")
         .attr("d", d1)
         .attr("fill", "none")
@@ -214,7 +221,7 @@ export function DataLineageDAG({
         .attr("marker-end", "url(#arrowhead)")
         .attr("opacity", 0.8);
 
-      const d2 = pathD(pp.x, pp.y, tp.x, tp.y);
+      const d2 = pathD(pp.x, pp.y, tp.x, tp.y, NODE_WIDTH);
       g.append("path")
         .attr("d", d2)
         .attr("fill", "none")
@@ -223,16 +230,6 @@ export function DataLineageDAG({
         .attr("stroke-dasharray", dashed ? "6 4" : "none")
         .attr("marker-end", "url(#arrowhead)")
         .attr("opacity", 0.8);
-
-      const midX = (sp.x + NODE_WIDTH + pp.x) / 2;
-      const midY = sp.y + NODE_HEIGHT / 2;
-      g.append("text")
-        .attr("x", midX)
-        .attr("y", midY - 6)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 9)
-        .attr("fill", "#64748b")
-        .text(lr.pipelineType);
     });
 
     if (col4.length > 0) {
@@ -240,7 +237,7 @@ export function DataLineageDAG({
         const ap = assetPos.get(a.id);
         const pp = platformPos.get(col4[0].id);
         if (ap && pp) {
-          const d = pathD(ap.x, ap.y, pp.x, pp.y);
+          const d = pathD(ap.x, ap.y, pp.x, pp.y, ASSET_NODE_WIDTH);
           g.append("path")
             .attr("d", d)
             .attr("fill", "none")
@@ -317,13 +314,28 @@ export function DataLineageDAG({
         .attr("stroke", "#e2e8f0")
         .attr("stroke-width", 1);
       node
-        .append("text")
-        .attr("x", NODE_WIDTH / 2)
-        .attr("y", NODE_HEIGHT / 2 + 4)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 11)
-        .attr("fill", "#334155")
-        .text(e.name.length > 14 ? e.name.slice(0, 12) + "…" : e.name);
+        .append("title")
+        .text(`${e.name}\nClassification: ${e.classification}${e.aiAccessPolicy ? `\nAI Access: ${e.aiAccessPolicy}` : ""}`);
+      node
+        .append("foreignObject")
+        .attr("width", NODE_WIDTH - 8)
+        .attr("height", NODE_HEIGHT)
+        .attr("x", 4)
+        .attr("y", 0)
+        .append("xhtml:div")
+        .attr("xmlns", "http://www.w3.org/1999/xhtml")
+        .style("font-size", "11px")
+        .style("color", "#334155")
+        .style("text-align", "center")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("justify-content", "center")
+        .style("height", "100%")
+        .style("overflow", "hidden")
+        .style("text-overflow", "ellipsis")
+        .style("white-space", "nowrap")
+        .style("padding", "0 4px")
+        .text(e.name);
     });
 
     col2.forEach((l, i) => {
@@ -352,13 +364,16 @@ export function DataLineageDAG({
         .attr("stroke", "#94a3b8")
         .attr("stroke-width", 1);
       node
+        .append("title")
+        .text(l.name);
+      node
         .append("text")
         .attr("x", NODE_WIDTH / 2)
         .attr("y", NODE_HEIGHT / 2 + 4)
         .attr("text-anchor", "middle")
         .attr("font-size", 10)
         .attr("fill", "#64748b")
-        .text(l.name.length > 10 ? l.name.slice(0, 8) + "…" : l.name);
+        .text(l.pipelineType);
     });
 
     col3.forEach((a, i) => {
@@ -390,21 +405,36 @@ export function DataLineageDAG({
         .on("mouseleave", () => setTooltip(null));
 
       node
+        .append("title")
+        .text(`${a.name}${a.euRiskLevel ? `\nEU Risk: ${a.euRiskLevel}` : ""}`);
+      node
         .append("rect")
-        .attr("width", NODE_WIDTH)
+        .attr("width", ASSET_NODE_WIDTH)
         .attr("height", NODE_HEIGHT)
         .attr("rx", 6)
         .attr("fill", "white")
         .attr("stroke", color)
         .attr("stroke-width", 2);
       node
-        .append("text")
-        .attr("x", NODE_WIDTH / 2)
-        .attr("y", NODE_HEIGHT / 2 + 4)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 11)
-        .attr("fill", "#334155")
-        .text(a.name.length > 14 ? a.name.slice(0, 12) + "…" : a.name);
+        .append("foreignObject")
+        .attr("width", ASSET_NODE_WIDTH - 8)
+        .attr("height", NODE_HEIGHT)
+        .attr("x", 4)
+        .attr("y", 0)
+        .append("xhtml:div")
+        .attr("xmlns", "http://www.w3.org/1999/xhtml")
+        .style("font-size", "11px")
+        .style("color", "#334155")
+        .style("text-align", "center")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("justify-content", "center")
+        .style("height", "100%")
+        .style("overflow", "hidden")
+        .style("text-overflow", "ellipsis")
+        .style("white-space", "nowrap")
+        .style("padding", "0 4px")
+        .text(a.name);
     });
 
     col4.forEach((pl, i) => {
@@ -413,27 +443,43 @@ export function DataLineageDAG({
 
       node
         .append("rect")
-        .attr("width", NODE_WIDTH)
+        .attr("width", PLATFORM_NODE_WIDTH)
         .attr("height", NODE_HEIGHT)
         .attr("fill", "#f8fafc")
         .attr("stroke", "#cbd5e1")
         .attr("stroke-width", 1);
       node
         .append("text")
-        .attr("x", NODE_WIDTH / 2)
+        .attr("x", 20)
         .attr("y", NODE_HEIGHT / 2 - 6)
-        .attr("text-anchor", "middle")
+        .attr("text-anchor", "start")
         .attr("font-size", 16)
         .attr("fill", "#94a3b8")
         .text("☁");
       node
-        .append("text")
-        .attr("x", NODE_WIDTH / 2)
-        .attr("y", NODE_HEIGHT / 2 + 10)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 10)
-        .attr("fill", "#64748b")
-        .text(pl.name.length > 14 ? pl.name.slice(0, 12) + "…" : pl.name);
+        .append("title")
+        .text(pl.name);
+      node
+        .append("foreignObject")
+        .attr("width", PLATFORM_NODE_WIDTH - 32)
+        .attr("height", NODE_HEIGHT)
+        .attr("x", 28)
+        .attr("y", 0)
+        .append("xhtml:div")
+        .attr("xmlns", "http://www.w3.org/1999/xhtml")
+        .style("font-size", "10px")
+        .style("color", "#64748b")
+        .style("text-align", "left")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("height", "100%")
+        .style("overflow", "hidden")
+        .style("word-wrap", "break-word")
+        .style("overflow-wrap", "break-word")
+        .style("line-height", "1.2")
+        .style("padding", "0 4px")
+        .style("box-sizing", "border-box")
+        .text(pl.name);
     });
 
     return () => {
@@ -460,27 +506,33 @@ export function DataLineageDAG({
   return (
     <div ref={containerRef} className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex gap-2">
-          <label className="flex items-center gap-1.5 text-sm">
+        <div style={{ display: "flex", gap: "24px", marginBottom: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <input
+              id="restricted-filter"
               type="checkbox"
               checked={classificationFilter === "RESTRICTED"}
               onChange={(e) =>
                 setClassificationFilter(e.target.checked ? "RESTRICTED" : null)
               }
-              className="rounded"
+              style={{ width: "16px", height: "16px", cursor: "pointer", flexShrink: 0 }}
             />
-            RESTRICTED flow only
-          </label>
-          <label className="flex items-center gap-1.5 text-sm">
+            <label htmlFor="restricted-filter" style={{ cursor: "pointer" }}>
+              RESTRICTED flow only
+            </label>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <input
+              id="active-filter"
               type="checkbox"
               checked={activeOnly}
               onChange={(e) => setActiveOnly(e.target.checked)}
-              className="rounded"
+              style={{ width: "16px", height: "16px", cursor: "pointer", flexShrink: 0 }}
             />
-            Active pipelines only
-          </label>
+            <label htmlFor="active-filter" style={{ cursor: "pointer" }}>
+              Active pipelines only
+            </label>
+          </div>
         </div>
         <div className="flex gap-2">
           <button
@@ -500,7 +552,10 @@ export function DataLineageDAG({
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white p-4">
+      <div
+        className="overflow-x-auto rounded-lg border border-slate-200 bg-white p-4"
+        onMouseLeave={() => setTooltip(null)}
+      >
         <svg
           ref={svgRef}
           width={width}
@@ -511,8 +566,12 @@ export function DataLineageDAG({
 
       {tooltip && (
         <div
-          className="pointer-events-none fixed z-50 rounded border border-slate-200 bg-white px-3 py-2 text-slate-700 shadow-lg"
-          style={{ left: tooltip.x, top: tooltip.y }}
+          className="fixed z-50 rounded border border-slate-200 bg-white px-3 py-2 text-slate-700 shadow-lg"
+          style={{
+            left: tooltip.x,
+            top: tooltip.y,
+            pointerEvents: "none"
+          }}
         >
           {tooltip.content}
         </div>
