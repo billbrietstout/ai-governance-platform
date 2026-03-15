@@ -7,7 +7,10 @@ import { CreateAssetForm } from "./CreateAssetForm";
 
 export default async function NewAssetPage() {
   const caller = await createServerCaller();
-  const { data: users } = await caller.assets.getOrgUsers();
+  const [{ data: users }, { data: entities }] = await Promise.all([
+    caller.assets.getOrgUsers(),
+    caller.layer2.getMasterDataEntities({})
+  ]);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
@@ -24,6 +27,7 @@ export default async function NewAssetPage() {
       <CreateAssetForm
         euRequiredArticles={[]}
         users={users}
+        masterDataEntities={entities}
       />
     </main>
   );

@@ -208,6 +208,30 @@ enum SlsaLevel {
   L4
 }
 
+enum MasterDataEntityType {
+  CUSTOMER
+  PRODUCT
+  VENDOR
+  EMPLOYEE
+  FINANCE
+  LOCATION
+  OTHER
+}
+
+enum DataClassification {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum AiAccessPolicy {
+  OPEN       // any AI system can access
+  GOVERNED   // access with controls and logging
+  RESTRICTED // approved AI systems only
+  PROHIBITED // no AI access permitted
+}
+
 // =============================================================================
 // Tables
 // =============================================================================
@@ -246,6 +270,80 @@ model Organization {
   securityEvents       SecurityEvent[]
   accessReviews        AccessReview[]
   maturityAssessments  MaturityAssessment[]
+  masterDataEntities   MasterDataEntity[]
+  dataLineageRecords   DataLineageRecord[]
+  dataGovernancePolicies DataGovernancePolicy[]
+}
+
+model MasterDataEntity {
+  id              String               @id @default(cuid())
+  orgId           String
+  entityType      MasterDataEntityType
+  name            String
+  description     String?
+  stewardId       String?              // userId of data steward
+  classification  DataClassification   @default(INTERNAL)
+  qualityScore    Float?              // 0-100
+  recordCount     Int?
+  sourceSystem    String?
+  aiAccessPolicy  AiAccessPolicy       @default(RESTRICTED)
+  lastReviewed    DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  organization    Organization        @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  steward         User?               @relation("DataSteward", fields: [stewardId], references: [id], onDelete: SetNull)
+  lineageRecords  DataLineageRecord[] @relation("LineageSource")
+
+  @@index([orgId])
+  @@index([stewardId])
+}
+
+model DataLineageRecord {
+  id                 String             @id @default(cuid())
+  orgId              String
+  name               String
+  description        String?
+  sourceEntityId    String?            // MasterDataEntity
+  targetAssetId     String?            // AIAsset - which AI system uses this data
+  pipelineType      String             // ETL, API, STREAM, BATCH, MANUAL
+  transformations   String?           // description of transformations
+  refreshFrequency  String?            // REALTIME, HOURLY, DAILY, WEEKLY, MONTHLY
+  dataClassification DataClassification @default(INTERNAL)
+  ownerId           String?            // userId
+  lastRun           DateTime?
+  status            String             @default("ACTIVE")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  organization  Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  sourceEntity  MasterDataEntity?   @relation("LineageSource", fields: [sourceEntityId], references: [id], onDelete: SetNull)
+  targetAsset  AIAsset?            @relation(fields: [targetAssetId], references: [id], onDelete: SetNull)
+  owner        User?                @relation("LineageOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@index([sourceEntityId])
+  @@index([targetAssetId])
+}
+
+model DataGovernancePolicy {
+  id          String   @id @default(cuid())
+  orgId       String
+  name        String
+  policyType  String   // CLASSIFICATION, RETENTION, ACCESS, QUALITY, PRIVACY
+  description String
+  appliesTo   DataClassification[] // classifications this policy applies to
+  controls    String[]             // list of required controls
+  ownerId     String?
+  status      String   @default("DRAFT")
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  owner        User?        @relation("PolicyOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
 }
 
 model MaturityAssessment {
@@ -281,6 +379,9 @@ model User {
 
   organization        Organization        @relation(fields: [orgId], references: [id], onDelete: Cascade)
   ownedAssets         AIAsset[]           @relation("AIAssetOwner")
+  stewardedEntities   MasterDataEntity[]   @relation("DataSteward")
+  lineageRecordsOwned DataLineageRecord[]  @relation("LineageOwner")
+  dataGovernancePoliciesOwned DataGovernancePolicy[] @relation("PolicyOwner")
   attestations        ControlAttestation[]
   sessions            Session[]
   maturityAssessments MaturityAssessment[]
@@ -368,6 +469,7 @@ model AIAsset {
   assessments   Assessment[]
   artifactCards  ArtifactCard[]
   scanRecords    ScanRecord[]
+  lineageRecords DataLineageRecord[]
 
   @@index([orgId])
   @@index([orgId, status])

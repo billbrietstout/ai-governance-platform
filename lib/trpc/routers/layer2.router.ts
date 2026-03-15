@@ -1,10 +1,367 @@
 /**
- * Layer 2 – Information – prompts, data catalog, shadow AI.
+ * Layer 2 – Information – master data, lineage, governance, prompts, shadow AI.
  */
+import { z } from "zod";
+import type { MasterDataEntityType, DataClassification, AiAccessPolicy } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
+const entityTypeSchema = z.enum(["CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"]);
+const classificationSchema = z.enum(["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]);
+const aiAccessSchema = z.enum(["OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"]);
+
 export const layer2Router = createTRPCRouter({
+  getL2Summary: protectedProcedure.query(async ({ ctx }) => {
+    const [entities, lineage, policies] = await Promise.all([
+      prisma.masterDataEntity.findMany({
+        where: { orgId: ctx.orgId },
+        select: {
+          id: true,
+          classification: true,
+          aiAccessPolicy: true,
+          stewardId: true
+        }
+      }),
+      prisma.dataLineageRecord.count({ where: { orgId: ctx.orgId } }),
+      prisma.dataGovernancePolicy.count({ where: { orgId: ctx.orgId } })
+    ]);
+
+    const byClassification = entities.reduce(
+      (acc, e) => {
+        acc[e.classification] = (acc[e.classification] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+    const byAiAccess = entities.reduce(
+      (acc, e) => {
+        acc[e.aiAccessPolicy] = (acc[e.aiAccessPolicy] ?? 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+    const withSteward = entities.filter((e) => e.stewardId).length;
+    const withClassification = entities.filter((e) => e.classification).length;
+    const stewardshipPct = entities.length > 0 ? Math.round((withSteward / entities.length) * 100) : 0;
+    const governanceCoveragePct =
+      entities.length > 0
+        ? Math.round(
+            (entities.filter((e) => e.classification && e.stewardId).length / entities.length) * 100
+          )
+        : 0;
+    const overexposureCount = entities.filter(
+      (e) =>
+        e.classification === "RESTRICTED" &&
+        (e.aiAccessPolicy === "OPEN" || e.aiAccessPolicy === "GOVERNED")
+    ).length;
+
+    return {
+      data: {
+        totalEntities: entities.length,
+        totalLineage: lineage,
+        totalPolicies: policies,
+        byClassification,
+        byAiAccess,
+        stewardshipPct,
+        governanceCoveragePct,
+        overexposureCount,
+        withClassification,
+        withSteward
+      },
+      meta: {}
+    };
+  }),
+
+  getMasterDataEntities: protectedProcedure
+    .input(
+      z
+        .object({
+          entityType: entityTypeSchema.optional(),
+          classification: classificationSchema.optional(),
+          aiAccessPolicy: aiAccessSchema.optional()
+        })
+        .optional()
+    )
+    .query(async ({ ctx, input }) => {
+      const where: {
+        orgId: string;
+        entityType?: MasterDataEntityType;
+        classification?: DataClassification;
+        aiAccessPolicy?: AiAccessPolicy;
+      } = { orgId: ctx.orgId };
+      if (input?.entityType) where.entityType = input.entityType as MasterDataEntityType;
+      if (input?.classification) where.classification = input.classification as DataClassification;
+      if (input?.aiAccessPolicy) where.aiAccessPolicy = input.aiAccessPolicy as AiAccessPolicy;
+
+      const entities = await prisma.masterDataEntity.findMany({
+        where,
+        include: { steward: { select: { email: true } } },
+        orderBy: { name: "asc" }
+      });
+      return { data: entities, meta: {} };
+    }),
+
+  createMasterDataEntity: protectedProcedure
+    .input(
+      z.object({
+        entityType: entityTypeSchema,
+        name: z.string().min(1),
+        description: z.string().optional(),
+        stewardId: z.string().optional(),
+        classification: classificationSchema.default("INTERNAL"),
+        qualityScore: z.number().min(0).max(100).optional(),
+        recordCount: z.number().int().optional(),
+        sourceSystem: z.string().optional(),
+        aiAccessPolicy: aiAccessSchema.default("RESTRICTED")
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const e = await prisma.masterDataEntity.create({
+        data: { orgId: ctx.orgId, ...input },
+        include: { steward: { select: { email: true } } }
+      });
+      return { data: e, meta: {} };
+    }),
+
+  updateMasterDataEntity: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        stewardId: z.string().nullable().optional(),
+        classification: classificationSchema.optional(),
+        aiAccessPolicy: aiAccessSchema.optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...updates } = input;
+      const existing = await prisma.masterDataEntity.findFirst({
+        where: { id, orgId: ctx.orgId }
+      });
+      if (!existing) throw new Error("Entity not found");
+      const updated = await prisma.masterDataEntity.update({
+        where: { id },
+        data: updates,
+        include: { steward: { select: { email: true } } }
+      });
+      return { data: updated, meta: {} };
+    }),
+
+  getLineageRecords: protectedProcedure.query(async ({ ctx }) => {
+    const records = await prisma.dataLineageRecord.findMany({
+      where: { orgId: ctx.orgId },
+      include: {
+        sourceEntity: { select: { id: true, name: true } },
+        targetAsset: { select: { id: true, name: true } },
+        owner: { select: { email: true } }
+      },
+      orderBy: { name: "asc" }
+    });
+    return { data: records, meta: {} };
+  }),
+
+  getLineageDiagramData: protectedProcedure.query(async ({ ctx }) => {
+    const [entities, assets, lineage] = await Promise.all([
+      prisma.masterDataEntity.findMany({
+        where: { orgId: ctx.orgId },
+        select: { id: true, name: true }
+      }),
+      prisma.aIAsset.findMany({
+        where: { orgId: ctx.orgId, deletedAt: null },
+        select: { id: true, name: true }
+      }),
+      prisma.dataLineageRecord.findMany({
+        where: { orgId: ctx.orgId },
+        select: {
+          id: true,
+          name: true,
+          pipelineType: true,
+          sourceEntityId: true,
+          targetAssetId: true
+        }
+      })
+    ]);
+    return {
+      data: { entities, assets, lineage },
+      meta: {}
+    };
+  }),
+
+  createLineageRecord: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        sourceEntityId: z.string().optional(),
+        targetAssetId: z.string().optional(),
+        pipelineType: z.string().min(1),
+        transformations: z.string().optional(),
+        refreshFrequency: z.string().optional(),
+        dataClassification: classificationSchema.default("INTERNAL")
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const r = await prisma.dataLineageRecord.create({
+        data: { orgId: ctx.orgId, ...input },
+        include: {
+          sourceEntity: { select: { name: true } },
+          targetAsset: { select: { name: true } },
+          owner: { select: { email: true } }
+        }
+      });
+      return { data: r, meta: {} };
+    }),
+
+  getGovernancePolicies: protectedProcedure.query(async ({ ctx }) => {
+    const policies = await prisma.dataGovernancePolicy.findMany({
+      where: { orgId: ctx.orgId },
+      include: { owner: { select: { email: true } } },
+      orderBy: { name: "asc" }
+    });
+    return { data: policies, meta: {} };
+  }),
+
+  getGovernanceCoverage: protectedProcedure.query(async ({ ctx }) => {
+    const entities = await prisma.masterDataEntity.findMany({
+      where: { orgId: ctx.orgId },
+      select: { classification: true, stewardId: true, aiAccessPolicy: true }
+    });
+    const policies = await prisma.dataGovernancePolicy.findMany({
+      where: { orgId: ctx.orgId, status: "APPROVED" }
+    });
+
+    const withClassification = entities.filter((e) => e.classification).length;
+    const withSteward = entities.filter((e) => e.stewardId).length;
+    const withBoth = entities.filter((e) => e.classification && e.stewardId).length;
+    const total = entities.length;
+    const governanceCoveragePct = total > 0 ? Math.round((withBoth / total) * 100) : 0;
+
+    const confidentialRestricted = entities.filter(
+      (e) => e.classification === "CONFIDENTIAL" || e.classification === "RESTRICTED"
+    );
+    const applicablePolicies = policies.filter(
+      (p) =>
+        p.appliesTo.includes("CONFIDENTIAL") || p.appliesTo.includes("RESTRICTED")
+    );
+    const coveredCount = confidentialRestricted.filter((e) =>
+      applicablePolicies.some((p) => p.appliesTo.includes(e.classification))
+    ).length;
+    const policyCoveragePct =
+      confidentialRestricted.length > 0
+        ? Math.round((coveredCount / confidentialRestricted.length) * 100)
+        : 0;
+
+    const overexposureCount = entities.filter(
+      (e) =>
+        e.classification === "RESTRICTED" &&
+        (e.aiAccessPolicy === "OPEN" || e.aiAccessPolicy === "GOVERNED")
+    ).length;
+
+    return {
+      data: {
+        governanceCoveragePct,
+        policyCoveragePct,
+        overexposureCount,
+        withClassification,
+        withSteward,
+        total
+      },
+      meta: {}
+    };
+  }),
+
+  getClassificationMatrix: protectedProcedure.query(async ({ ctx }) => {
+    const entities = await prisma.masterDataEntity.findMany({
+      where: { orgId: ctx.orgId },
+      select: { entityType: true, aiAccessPolicy: true }
+    });
+    const entityTypes = ["CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"] as const;
+    const assetTypes = ["MODEL", "AGENT", "APPLICATION"] as const;
+    const matrix: Record<string, Record<string, string>> = {};
+    for (const et of entityTypes) {
+      matrix[et] = {};
+      const entitiesOfType = entities.filter((e) => e.entityType === et);
+      const policy = entitiesOfType[0]?.aiAccessPolicy ?? "RESTRICTED";
+      for (const at of assetTypes) {
+        matrix[et][at] = policy;
+      }
+    }
+    return { data: { matrix, entityTypes, assetTypes }, meta: {} };
+  }),
+
+  createGovernancePolicy: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        policyType: z.enum(["CLASSIFICATION", "RETENTION", "ACCESS", "QUALITY", "PRIVACY"]),
+        description: z.string().min(1),
+        appliesTo: z.array(classificationSchema),
+        controls: z.array(z.string()),
+        ownerId: z.string().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const p = await prisma.dataGovernancePolicy.create({
+        data: {
+          orgId: ctx.orgId,
+          ...input,
+          controls: input.controls,
+          appliesTo: input.appliesTo as DataClassification[]
+        },
+        include: { owner: { select: { email: true } } }
+      });
+      return { data: p, meta: {} };
+    }),
+
+  updateGovernancePolicy: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["DRAFT", "APPROVED"]).optional(),
+        approvedAt: z.date().nullable().optional()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existing = await prisma.dataGovernancePolicy.findFirst({
+        where: { id: input.id, orgId: ctx.orgId }
+      });
+      if (!existing) throw new Error("Policy not found");
+      const { id, ...updates } = input;
+      const p = await prisma.dataGovernancePolicy.update({
+        where: { id },
+        data: updates,
+        include: { owner: { select: { email: true } } }
+      });
+      return { data: p, meta: {} };
+    }),
+
+  linkDataSourcesToAsset: protectedProcedure
+    .input(
+      z.object({
+        assetId: z.string(),
+        sourceEntityIds: z.array(z.string())
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
+      if (!asset) throw new Error("Asset not found");
+      const records = await Promise.all(
+        input.sourceEntityIds.map((entityId) =>
+          prisma.dataLineageRecord.create({
+            data: {
+              orgId: ctx.orgId,
+              name: `Link: ${entityId} → ${asset.name}`,
+              sourceEntityId: entityId,
+              targetAssetId: asset.id,
+              pipelineType: "MANUAL"
+            }
+          })
+        )
+      );
+      return { data: records, meta: {} };
+    }),
+
   getPromptTemplates: protectedProcedure.query(async ({ ctx }) => {
     const cards = await prisma.artifactCard.findMany({
       where: { orgId: ctx.orgId, cardType: "PROMPT_TEMPLATE" },

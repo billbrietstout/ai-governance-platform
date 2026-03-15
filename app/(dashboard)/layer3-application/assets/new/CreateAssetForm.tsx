@@ -2,13 +2,17 @@
 
 import { useActionState } from "react";
 import { createAsset } from "./actions";
+import { DataSourcesSection } from "./DataSourcesSection";
+
+type MasterDataEntity = { id: string; name: string; classification: string };
 
 type Props = {
   euRequiredArticles: string[];
   users: { id: string; email: string }[];
+  masterDataEntities?: MasterDataEntity[];
 };
 
-export function CreateAssetForm({ euRequiredArticles, users }: Props) {
+export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities = [] }: Props) {
   const [state, formAction] = useActionState(
     async (_prev: { error?: string } | null, formData: FormData) => {
       const result = await createAsset(formData);
@@ -155,6 +159,11 @@ export function CreateAssetForm({ euRequiredArticles, users }: Props) {
           Auto-create AccountabilityAssignment on save
         </label>
       </div>
+
+      {masterDataEntities.length > 0 && (
+        <DataSourcesSection entities={masterDataEntities} />
+      )}
+
       {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
       <button
         type="submit"

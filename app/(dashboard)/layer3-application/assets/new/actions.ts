@@ -8,6 +8,7 @@ export async function createAsset(formData: FormData) {
   const assetType = formData.get("assetType") as string;
   const cosaiLayer = formData.get("cosaiLayer") as string | null;
   const createAccountability = formData.get("createAccountability") === "on";
+  const sourceEntityIds = (formData.getAll("sourceEntityIds") as string[]).filter(Boolean);
 
   if (!name?.trim() || !assetType) {
     return { error: "Name and asset type required" };
@@ -15,7 +16,7 @@ export async function createAsset(formData: FormData) {
 
   const caller = await createServerCaller();
   try {
-    await caller.assets.create({
+    const { data: asset } = await caller.assets.create({
       name: name.trim(),
       description: (formData.get("description") as string) || undefined,
       assetType: assetType as "MODEL" | "PROMPT" | "AGENT" | "DATASET" | "APPLICATION" | "TOOL" | "PIPELINE",
@@ -27,6 +28,10 @@ export async function createAsset(formData: FormData) {
       ownerId: (formData.get("ownerId") as string) || undefined,
       createAccountability: createAccountability && !!cosaiLayer
     });
+
+    if (sourceEntityIds.length > 0 && asset?.id) {
+      await caller.layer2.linkDataSourcesToAsset({ assetId: asset.id, sourceEntityIds });
+    }
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Create failed";
     return { error: msg };

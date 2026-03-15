@@ -11,6 +11,8 @@ import {
   Building2,
   GitBranch,
   Database,
+  FileText,
+  Shield,
   MessageSquareWarning,
   BookOpen,
   Eye,
@@ -50,6 +52,10 @@ const GATED_SECTIONS: GatedSection[] = [
     title: "LAYER 2: INFORMATION",
     flag: "MODULE_SHADOW_AI",
     items: [
+      { href: "/layer2-information/master-data", label: "Master Data", icon: Database },
+      { href: "/layer2-information/lineage", label: "Data Lineage", icon: GitBranch },
+      { href: "/layer2-information/governance", label: "Data Governance", icon: FileText },
+      { href: "/layer2-information/classification", label: "Data Classification", icon: Shield },
       { href: "/layer2-information/prompts", label: "Prompt Governance", icon: MessageSquareWarning },
       { href: "/layer2-information/data-catalog", label: "Data Catalog", icon: BookOpen },
       { href: "/layer2-information/shadow-ai", label: "Shadow AI Detection", icon: Eye }
