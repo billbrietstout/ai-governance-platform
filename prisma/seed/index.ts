@@ -9,6 +9,7 @@ import { seedDemoEnterpriseP2 } from "./demo-enterprise-p2";
 import { seedDemoEnterpriseP3 } from "./demo-enterprise-p3";
 import { seedDemoEnterpriseP4 } from "./demo-enterprise-p4";
 import { seedDemoLayer2 } from "./demo-layer2";
+import { seedDemoPhases48 } from "./demo-phases4-8";
 import { seedFrameworks } from "./frameworks";
 
 const prisma = new PrismaClient();
@@ -21,6 +22,7 @@ async function main() {
   await seedDemoEnterpriseP3(prisma);
   await seedDemoEnterpriseP4(prisma);
   await seedDemoLayer2(prisma);
+  await seedDemoPhases48(prisma);
 }
 
 main()

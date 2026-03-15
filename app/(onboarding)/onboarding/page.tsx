@@ -2,6 +2,8 @@
  * Onboarding wizard – 5-step flow with progress, navigation, and skip.
  */
 import { auth } from "@/auth";
+
+export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { OnboardingWizardShell } from "./OnboardingWizardShell";

@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+
+export const dynamic = "force-dynamic";
 import { PersonaModal } from "@/components/PersonaModal";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { prisma } from "@/lib/prisma";
@@ -35,7 +37,7 @@ export default async function DashboardLayout({
     const [org, flags, fws, dbUser] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
-        select: { name: true, onboardingComplete: true }
+        select: { name: true, onboardingComplete: true, onboardingStep: true }
       }),
       prisma.featureFlag.findMany({
         where: { orgId },
@@ -54,6 +56,9 @@ export default async function DashboardLayout({
     ]);
     orgName = org?.name ?? null;
     onboardingComplete = org?.onboardingComplete ?? true;
+    if ((org?.onboardingStep ?? 0) >= 6 && !onboardingComplete) {
+      onboardingComplete = true;
+    }
     persona = dbUser?.persona ?? null;
     personaModalDismissed = !!dbUser?.personaModalDismissedAt;
     featureFlags = MODULE_FLAGS.reduce(

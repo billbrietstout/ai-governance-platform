@@ -399,10 +399,10 @@ export const dashboardRouter = createTRPCRouter({
     }));
 
     const links = [
-      { source: "L1", target: "L2", value: Math.max(1, governancePolicyCount) },
-      { source: "L2", target: "L3", value: Math.max(1, lineageCount) },
-      { source: "L3", target: "L4", value: Math.max(1, assetsWithPlatformDeps) },
-      { source: "L4", target: "L5", value: Math.max(1, l5VendorCount) }
+      { source: "L1", target: "L2", value: Math.max(5, governancePolicyCount) },
+      { source: "L2", target: "L3", value: Math.max(5, lineageCount) },
+      { source: "L3", target: "L4", value: Math.max(5, assetsWithPlatformDeps) },
+      { source: "L4", target: "L5", value: Math.max(5, l5VendorCount) }
     ];
 
     return { data: { nodes, links }, meta: {} };

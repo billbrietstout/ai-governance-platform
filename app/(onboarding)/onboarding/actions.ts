@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 
@@ -54,10 +55,14 @@ export async function saveStep5(data: {
     stepId: 5,
     ...data
   });
+  revalidatePath("/");
+  revalidatePath("/onboarding");
 }
 
 export async function skipOnboarding() {
   const caller = await createServerCaller();
   await caller.onboarding.skipOnboarding();
+  revalidatePath("/");
+  revalidatePath("/onboarding");
   redirect("/");
 }

@@ -130,7 +130,7 @@ export function OnboardingWizardShell({
         {currentStep === 5 && (
           <Step5QuickAssessment
             onComplete={() =>
-              startTransition(() => router.push("/?welcome=1"))
+              startTransition(() => router.replace("/?welcome=1"))
             }
             isPending={isPending}
           />
