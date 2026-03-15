@@ -15,7 +15,7 @@ const CLAUSE_IDS = [
 
 export const isoReadinessRouter = createTRPCRouter({
   getReadiness: protectedProcedure.query(async ({ ctx }) => {
-    const records = await prisma.iSOReadiness.findMany({
+    const records = await prisma.isoReadiness.findMany({
       where: { orgId: ctx.orgId }
     });
     const byClause = new Map(records.map((r) => [r.clauseId, r]));
@@ -59,7 +59,7 @@ export const isoReadinessRouter = createTRPCRouter({
         data.completedAt = null;
         data.completedBy = null;
       }
-      const record = await prisma.iSOReadiness.upsert({
+      const record = await prisma.isoReadiness.upsert({
         where: {
           orgId_clauseId: { orgId: ctx.orgId, clauseId: input.clauseId }
         },

@@ -184,7 +184,7 @@ export function LifecycleClient({ board }: Props) {
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 text-xs text-slate-500">
+                    <div className="mt-1 text-xs text-slate-500" suppressHydrationWarning>
                       {a.owner?.email ?? "No owner"} • {days}d in stage
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1">

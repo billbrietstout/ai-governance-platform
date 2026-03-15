@@ -259,7 +259,7 @@ export default async function CommandCenterPage({
         ) : (
           <>
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-slate-600" suppressHydrationWarning>
                 Last assessed{" "}
                 {Math.floor(
                   (Date.now() - new Date(maturityRes.data.lastAssessedAt).getTime()) /

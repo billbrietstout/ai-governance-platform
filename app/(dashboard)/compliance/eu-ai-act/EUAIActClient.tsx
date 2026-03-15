@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, Check, X, Minus } from "lucide-react";
+import { Clock, Check, Minus } from "lucide-react";
 
 const ARTICLES = [
   { id: "art9", label: "Article 9 — Risk Management", evidenceLink: "/layer3-application/gaps" },

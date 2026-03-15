@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LAYER_LABELS, MATURITY_QUESTIONS } from "@/lib/maturity/questions";
 import type { MaturityLayer } from "@/lib/maturity/questions";
@@ -88,11 +88,16 @@ export function MaturityAssessmentClient({
     }
   };
 
-  const daysAgo = lastAssessedAt
-    ? Math.floor(
-        (Date.now() - new Date(lastAssessedAt).getTime()) / (24 * 60 * 60 * 1000)
-      )
-    : null;
+  const [daysAgo, setDaysAgo] = useState<number | null>(null);
+  useEffect(() => {
+    if (lastAssessedAt) {
+      setDaysAgo(
+        Math.floor(
+          (Date.now() - new Date(lastAssessedAt).getTime()) / (24 * 60 * 60 * 1000)
+        )
+      );
+    }
+  }, [lastAssessedAt]);
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -103,7 +108,7 @@ export function MaturityAssessmentClient({
           Complete the assessment to establish your baseline maturity score.
         </p>
       ) : (
-        <p className="mb-4 text-sm text-slate-600">
+        <p className="mb-4 text-sm text-slate-600" suppressHydrationWarning>
           Last assessed {daysAgo !== null ? `${daysAgo} days ago` : "recently"} by{" "}
           {latestAssessment.assessedBy}. Retake to update your score.
         </p>

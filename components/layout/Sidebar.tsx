@@ -203,18 +203,9 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
   const currentSection = getSectionForPath(pathname);
 
   const [collapsed, setCollapsedState] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY_EXPANDED);
-      if (stored) {
-        const arr = JSON.parse(stored) as string[];
-        if (Array.isArray(arr) && arr.length > 0) return new Set(arr);
-      }
-    } catch {
-      /* ignore */
-    }
-    return new Set([currentSection ?? ALL_SECTIONS[0].title]);
-  });
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    () => new Set([currentSection ?? ALL_SECTIONS[0].title])
+  );
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -224,6 +215,20 @@ export function Sidebar({ userEmail, orgName, persona, featureFlags = {}, framew
       setCollapsedState(stored === "true");
     } catch {
       setCollapsedState(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY_EXPANDED);
+      if (stored) {
+        const arr = JSON.parse(stored) as string[];
+        if (Array.isArray(arr) && arr.length > 0) {
+          setExpandedSections(new Set(arr));
+        }
+      }
+    } catch {
+      /* ignore */
     }
   }, []);
 

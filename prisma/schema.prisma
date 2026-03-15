@@ -276,7 +276,7 @@ model Organization {
   regulationDiscoveries  RegulationDiscovery[]
   complianceSnapshots   ComplianceSnapshot[]
   provenanceRecords    ProvenanceRecord[]
-  isoReadiness         ISOReadiness[]
+  isoReadiness         IsoReadiness[]
 }
 
 model MasterDataEntity {
@@ -833,7 +833,7 @@ model AccessReview {
   @@index([reviewDueAt])
 }
 
-model ISOReadiness {
+model IsoReadiness {
   id          String    @id @default(cuid())
   orgId       String
   clauseId    String    // e.g. "4.1", "5.2"

@@ -3,20 +3,20 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
-import { EUAIActClient } from "./EUAIActClient";
-
-const EU_DEADLINE = new Date("2026-08-02");
+import { EUAIActWrapper } from "./EUAIActWrapper";
 
 export default async function EUAIActPage() {
   const caller = await createServerCaller();
   const { data: assets } = await caller.assets.list({});
 
-  const highRiskAssets = assets.filter((a) => a.euRiskLevel === "HIGH");
-  const minimalLimited = assets.filter(
+  const highRiskAssets = assets
+    .filter((a) => a.euRiskLevel === "HIGH")
+    .map((a) => ({ id: a.id, name: a.name, euRiskLevel: a.euRiskLevel }));
+  const minimalLimitedCount = assets.filter(
     (a) => a.euRiskLevel === "MINIMAL" || a.euRiskLevel === "LIMITED" || !a.euRiskLevel
-  );
+  ).length;
 
-  const daysUntilDeadline = Math.ceil((EU_DEADLINE.getTime() - Date.now()) / 86400000);
+  const daysUntilDeadline = Math.ceil((new Date("2026-08-02").getTime() - Date.now()) / 86400000);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-8 px-6 py-10">
@@ -32,9 +32,9 @@ export default async function EUAIActPage() {
         </p>
       </div>
 
-      <EUAIActClient
+      <EUAIActWrapper
         highRiskAssets={highRiskAssets}
-        minimalLimitedCount={minimalLimited.length}
+        minimalLimitedCount={minimalLimitedCount}
         daysUntilDeadline={daysUntilDeadline}
       />
     </main>
