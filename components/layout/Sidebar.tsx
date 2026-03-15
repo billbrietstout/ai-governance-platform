@@ -484,7 +484,7 @@ export function Sidebar({
             <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
               {tier === "PRO" ? "Pro Plan" : tier === "CONSULTANT" ? "Consultant Plan" : "Enterprise Plan"}
             </span>
-            <span className="text-xs text-slatePro-400">Unlimited assets</span>
+            <span className="text-xs text-slatePro-400">Up to 500 assets</span>
           </div>
         </div>
       )}

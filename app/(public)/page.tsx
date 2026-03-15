@@ -29,7 +29,7 @@ const TRUST_BADGES = [
 
 const FREE_FEATURES = [
   { label: "AI Readiness Assessment (M1-M2)", icon: BarChart3 },
-  { label: "Regulation Discovery (unlimited)", icon: Search },
+  { label: "Regulation Discovery (up to 10 saved assessments)", icon: Search },
   { label: "AI Use Case Library (read-only)", icon: FileText },
   { label: "Operating Model Selector", icon: Layers },
   { label: "Basic asset inventory (up to 10 assets)", icon: Database },
@@ -38,7 +38,7 @@ const FREE_FEATURES = [
 
 const PRO_FEATURES = [
   { label: "Full five-layer governance (M3-M5)", icon: Layers },
-  { label: "Unlimited assets", icon: Database },
+  { label: "Up to 500 AI assets", icon: Database },
   { label: "Audit packages and evidence workbook", icon: Package },
   { label: "Compliance snapshots", icon: FileText },
   { label: "Team collaboration", icon: Users },
@@ -71,19 +71,27 @@ export default async function PublicLandingPage() {
             The only platform built on the CoSAI Shared Responsibility Framework — assess
             readiness, discover regulations, and build governance that satisfies auditors
           </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/discover/wizard"
-              className="rounded-lg bg-navy-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-navy-500"
-            >
-              Assess my AI readiness →
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="rounded-lg border border-slate-300 px-6 py-3 text-base font-medium text-slate-700 hover:bg-slate-50"
-            >
-              See the framework
-            </Link>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/register"
+                className="rounded-lg bg-navy-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-navy-500"
+              >
+                Assess my AI readiness →
+              </Link>
+              <Link
+                href="#how-it-works"
+                className="rounded-lg border border-slate-300 px-6 py-3 text-base font-medium text-slate-700 hover:bg-slate-50"
+              >
+                See the framework
+              </Link>
+            </div>
+            <p className="text-sm text-slate-500">
+              Already have an account?{" "}
+              <Link href="/login" className="font-medium text-navy-600 hover:underline">
+                Sign in
+              </Link>
+            </p>
           </div>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6">
             {TRUST_BADGES.map((badge) => (

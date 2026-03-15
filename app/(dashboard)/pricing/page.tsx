@@ -27,12 +27,12 @@ const TIERS = [
     features: [
       "Everything in Free, plus:",
       "Full governance (M3–M5)",
-      "Unlimited AI assets",
+      "Up to 500 AI assets",
       "Compliance snapshots & trends",
       "Audit packages & evidence workbook",
       "ISO 42001 & EU AI Act tracking",
       "Governance reports",
-      "Team collaboration (up to 10 users)"
+      "Team collaboration (up to 25 users)"
     ],
     cta: "Upgrade to Pro",
     ctaHref: "/settings/billing?upgrade=pro",

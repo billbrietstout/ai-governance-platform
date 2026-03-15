@@ -9,8 +9,8 @@ export default async function DiscoveryWizardPage() {
   const session = await auth();
   const isGuest = !session?.user;
 
-  let defaultVerticals = ["GENERAL"];
-  let defaultOperatingModel: string | null = "MIXED";
+  let defaultVerticals: string[] = [];
+  let defaultOperatingModel: string | null = null;
 
   if (!isGuest) {
     try {

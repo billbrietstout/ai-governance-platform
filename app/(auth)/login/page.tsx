@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
@@ -23,6 +24,13 @@ function LoginForm() {
         >
           Sign in with Auth0
         </button>
+
+        <p className="mt-6 text-center text-sm text-slatePro-400">
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="font-medium text-navy-400 hover:text-navy-300 hover:underline">
+            Start free →
+          </Link>
+        </p>
       </div>
     </main>
   );

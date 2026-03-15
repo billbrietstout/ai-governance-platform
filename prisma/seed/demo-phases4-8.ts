@@ -22,7 +22,7 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
   // Ensure demo org has PRO tier for full platform access
   await prisma.organization.update({
     where: { id: orgId },
-    data: { tier: "PRO" }
+    data: { tier: "PRO", assetLimit: 500, usersLimit: 25 }
   });
 
   const assets = await prisma.aIAsset.findMany({

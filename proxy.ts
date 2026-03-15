@@ -28,6 +28,7 @@ const PROTECTED_PATHS = [
 const PUBLIC_PATHS = [
   "/",
   "/login",
+  "/register",
   "/callback",
   "/privacy",
   "/discover",

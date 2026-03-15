@@ -3,7 +3,7 @@
  */
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileDown, PlusCircle } from "lucide-react";
+import { FileDown, PlusCircle, RotateCcw } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { RegulationChordDiagram } from "@/components/discovery/RegulationChordDiagram";
 import { SharedControlsSummary } from "@/components/discovery/SharedControlsSummary";
@@ -67,6 +67,13 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
           </p>
         </div>
         <div className="flex gap-2">
+          <Link
+            href="/discover/wizard"
+            className="flex items-center gap-2 rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Start over
+          </Link>
           <Link
             href={`/layer3-application/assets/new?fromDiscovery=${id}`}
             className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"

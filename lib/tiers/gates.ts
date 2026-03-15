@@ -108,16 +108,48 @@ export function getFeatureTier(feature: GatedFeature): Tier {
   return FEATURE_TIER[feature];
 }
 
+/** Tier limits. 0 = no limit (custom/negotiated). */
+export const TIER_LIMITS = {
+  FREE: { assetLimit: 10, usersLimit: 3, snapshotLimit: 0, savedDiscoveries: 3, workspaceLimit: 1 },
+  PRO: { assetLimit: 500, usersLimit: 25, snapshotLimit: 100, savedDiscoveries: 10, workspaceLimit: 1 },
+  CONSULTANT: {
+    assetLimit: 500,
+    usersLimit: 25,
+    snapshotLimit: 100,
+    savedDiscoveries: Infinity,
+    workspaceLimit: 50
+  },
+  ENTERPRISE: { assetLimit: 0, usersLimit: 0, snapshotLimit: 0, savedDiscoveries: 0, workspaceLimit: 0 }
+} as const;
+
 export function getAssetLimit(tier: string): number {
-  const t = tier.toUpperCase();
-  if (t === "PRO" || t === "ENTERPRISE" || t === "CONSULTANT") return Infinity;
-  return 10;
+  const t = tier.toUpperCase() as Tier;
+  const limit = TIER_LIMITS[t]?.assetLimit ?? TIER_LIMITS.FREE.assetLimit;
+  return limit === 0 ? Infinity : limit;
 }
 
 export function getUsersLimit(tier: string): number {
-  const t = tier.toUpperCase();
-  if (t === "PRO" || t === "ENTERPRISE" || t === "CONSULTANT") return Infinity;
-  return 3;
+  const t = tier.toUpperCase() as Tier;
+  const limit = TIER_LIMITS[t]?.usersLimit ?? TIER_LIMITS.FREE.usersLimit;
+  return limit === 0 ? Infinity : limit;
+}
+
+export function getSnapshotLimit(tier: string): number {
+  const t = tier.toUpperCase() as Tier;
+  const limit = TIER_LIMITS[t]?.snapshotLimit ?? TIER_LIMITS.FREE.snapshotLimit;
+  return limit === 0 ? Infinity : limit;
+}
+
+export function getSavedDiscoveriesLimit(tier: string): number {
+  const t = tier.toUpperCase() as Tier;
+  const limit = TIER_LIMITS[t]?.savedDiscoveries ?? TIER_LIMITS.FREE.savedDiscoveries;
+  return limit === 0 ? Infinity : limit;
+}
+
+export function getWorkspaceLimit(tier: string): number {
+  const t = tier.toUpperCase() as Tier;
+  const limit = TIER_LIMITS[t]?.workspaceLimit ?? TIER_LIMITS.FREE.workspaceLimit;
+  return limit === 0 ? Infinity : limit;
 }
 
 export function getOtherFeaturesInTier(feature: GatedFeature, limit = 3): GatedFeature[] {

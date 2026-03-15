@@ -419,6 +419,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
           verticalMarket: ORG.verticalMarket,
           plan: ORG.plan,
           tier: "PRO",
+          assetLimit: 500,
+          usersLimit: 25,
           claimedDomain: ORG.claimedDomain,
           clientVerticals: ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR"] as object
         }
@@ -430,6 +432,8 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
           verticalMarket: ORG.verticalMarket,
           plan: ORG.plan,
           tier: "PRO",
+          assetLimit: 500,
+          usersLimit: 25,
           claimedDomain: ORG.claimedDomain,
           clientVerticals: ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR"] as object
         }

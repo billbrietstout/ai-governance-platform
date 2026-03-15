@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { runDiscoveryGuest } from "./actions";
+import { GuestResultsView } from "./GuestResultsView";
+import type { RegulationDiscoveryResult } from "@/lib/discovery/engine";
 const ASSET_TYPES = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"] as const;
 const BUSINESS_FUNCTIONS = ["HR", "Finance", "Operations", "Customer Service", "Healthcare", "Legal", "Other"] as const;
 const DEPLOYMENTS = ["EU_market", "US_only", "Global", "Internal_only"] as const;
@@ -44,7 +46,24 @@ type WizardInputs = {
 
 const VERTICAL_OPTIONS = ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR", "ENERGY", "HR_SERVICES"];
 
-const GUEST_STORAGE_KEY = "guestDiscoveryResults";
+const getInitialInputs = (
+  defaultVerticals: string[],
+  defaultOperatingModel: string | null
+): WizardInputs => ({
+  assetType: "",
+  description: "",
+  businessFunction: "",
+  decisionsAffectingPeople: false,
+  interactsWithEndUsers: false,
+  deployment: "",
+  verticals: defaultVerticals.length > 0 ? [...defaultVerticals] : ["GENERAL"],
+  operatingModel: defaultOperatingModel ?? "",
+  autonomyLevel: "",
+  dataTypes: [],
+  euResidentsData: "",
+  expectedRiskLevel: "",
+  vulnerablePopulations: false
+});
 
 type DiscoveryInputs = {
   assetType: string;
@@ -78,21 +97,16 @@ export function DiscoveryWizardClient({
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
-  const [inputs, setInputs] = useState<WizardInputs>(() => ({
-    assetType: "APPLICATION",
-    description: "",
-    businessFunction: "Other",
-    decisionsAffectingPeople: false,
-    interactsWithEndUsers: false,
-    deployment: "Global",
-    verticals: defaultVerticals.length > 0 ? defaultVerticals : ["GENERAL"],
-    operatingModel: defaultOperatingModel ?? "MIXED",
-    autonomyLevel: "L2",
-    dataTypes: [],
-    euResidentsData: "Unknown",
-    expectedRiskLevel: "Medium",
-    vulnerablePopulations: false
-  }));
+  const [guestResults, setGuestResults] = useState<RegulationDiscoveryResult | null>(null);
+  const [inputs, setInputs] = useState<WizardInputs>(() =>
+    getInitialInputs(defaultVerticals, defaultOperatingModel)
+  );
+
+  const startOver = useCallback(() => {
+    setStep(1);
+    setGuestResults(null);
+    setInputs(getInitialInputs(defaultVerticals, defaultOperatingModel));
+  }, [defaultVerticals, defaultOperatingModel]);
 
   const toggleVertical = (v: string) => {
     setInputs((prev) => ({
@@ -144,10 +158,7 @@ export function DiscoveryWizardClient({
           expectedRiskLevel: inputs.expectedRiskLevel as (typeof RISK_LEVELS)[number],
           vulnerablePopulations: inputs.vulnerablePopulations
         });
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(results));
-        }
-        router.push("/discover/results/guest");
+        setGuestResults(results);
       } else if (runDiscoveryAuthenticated) {
         const id = await runDiscoveryAuthenticated({
           assetType: inputs.assetType,
@@ -448,4 +459,3 @@ export function DiscoveryWizardClient({
   );
 }
 
-export { GUEST_STORAGE_KEY };
