@@ -225,19 +225,14 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
       ])
     ) as Record<string, boolean>;
   });
-  const [showConnectedOnly, setShowConnectedOnly] = useState(false);
+  const [showConnectedOnly, setShowConnectedOnly] = useState(true);
 
   const layerCounts: Record<string, number> = {};
   for (const n of nodes) layerCounts[n.layer] = (layerCounts[n.layer] ?? 0) + 1;
 
   let filteredNodes = nodes.filter((n) => layerFilter[n.layer]);
   if (showConnectedOnly) {
-    const connectedIds = new Set<string>();
-    for (const e of edges) {
-      connectedIds.add(e.from);
-      connectedIds.add(e.to);
-    }
-    filteredNodes = filteredNodes.filter((n) => connectedIds.has(n.id));
+    filteredNodes = filteredNodes.filter((n) => hasEdges(edges, n.id));
   }
 
   const displayedNodes: TopologyNode[] = [];
@@ -487,7 +482,10 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
             {layerExpanded.L3 ? "Collapse L3" : "Expand L3"}
           </button>
         )}
-        <label className="flex cursor-pointer items-center gap-1.5 text-sm">
+        <label
+          className="flex cursor-pointer items-center gap-1.5 text-sm"
+          title="When checked, only nodes with at least one edge are shown"
+        >
           <input
             type="checkbox"
             checked={showConnectedOnly}
