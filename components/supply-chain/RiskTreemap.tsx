@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
-const WIDTH = 800;
-const HEIGHT = 300;
+const WIDTH = 900;
+const HEIGHT = 320;
 
 export type VendorTreemapNode = {
   id: string;
@@ -66,20 +66,18 @@ export function RiskTreemap({
     }))
   } as { name: string; value: number; children: (VendorTreemapNode & { value: number })[] };
 
-  const width = WIDTH;
-  const height = HEIGHT;
-
   useEffect(() => {
     if (!svgRef.current || displayVendors.length === 0) return;
 
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
+    try {
+      const svg = d3.select(svgRef.current);
+      svg.selectAll("*").remove();
 
-    const treemap = d3
-      .treemap<{ value?: number; name?: string; children?: unknown[] }>()
-      .size([Math.max(1, width), Math.max(1, height)])
-      .padding(3)
-      .round(true);
+      const treemap = d3
+        .treemap<{ value?: number; name?: string; children?: unknown[] }>()
+        .size([WIDTH, HEIGHT])
+        .padding(3)
+        .round(true);
 
     const hierarchy = d3
       .hierarchy(root)
@@ -161,9 +159,12 @@ export function RiskTreemap({
         .duration(300)
         .style("opacity", 1);
     });
+    } catch (err) {
+      console.error("[RiskTreemap] D3 rendering error:", err);
+    }
 
     return () => {
-      svg.selectAll("*").remove();
+      if (svgRef.current) d3.select(svgRef.current).selectAll("*").remove();
     };
   }, [displayVendors, onVendorClick]);
 
@@ -173,8 +174,7 @@ export function RiskTreemap({
       <div className="relative w-full overflow-auto" style={{ minHeight }}>
         <svg
           ref={svgRef}
-          width={WIDTH}
-          height={HEIGHT}
+          width="100%"
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           preserveAspectRatio="xMidYMid meet"
           className="w-full"

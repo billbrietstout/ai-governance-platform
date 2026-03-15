@@ -17,13 +17,25 @@ export type TopologyNode = {
   isIsolated?: boolean;
 };
 
-export type TopologyEdge = {
+type SimNode = TopologyNode & d3.SimulationNodeDatum;
+
+/** Node with x,y for simulation (d3 mutates these) */
+type SimNodeExt = SimNode & { x: number; y: number };
+
+/** Edge type. source/target satisfy SimulationLinkDatum; from/to used for API compatibility. */
+export interface TopologyEdge {
+  source?: string | SimNode;
+  target?: string | SimNode;
   from: string;
   to: string;
   type: "lineage" | "platform" | "model" | "governance";
-};
+  id?: string;
+  edgeType?: string;
+  label?: string;
+}
 
-type SimNode = TopologyNode & d3.SimulationNodeDatum;
+/** Link type after d3.forceLink resolves source/target to node refs */
+type SimLink = TopologyEdge & { source: SimNodeExt; target: SimNodeExt };
 
 type Props = {
   nodes: TopologyNode[];
@@ -208,7 +220,10 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   const height = heightProp;
   const [width, setWidth] = useState(800);
 
-  const simulationRef = useRef<d3.Simulation<SimNode, TopologyEdge> | null>(null);
+  const simulationRef = useRef<
+    d3.Simulation<SimNodeExt, TopologyEdge & d3.SimulationLinkDatum<SimNodeExt>>
+  | null>(null);
+  const dimensionsRef = useRef<{ width: number; height: number } | null>(null);
   const selectedRef = useRef<TopologyNode | null>(null);
   const [selected, setSelected] = useState<TopologyNode | null>(null);
   selectedRef.current = selected;
@@ -289,47 +304,45 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
     }
   }
 
-  const runSimulation = useCallback(() => {
-    if (!svgRef.current || !containerRef.current || displayedNodes.length === 0) return;
+  const initSimulation = useCallback(
+    (w: number, h: number) => {
+      if (!svgRef.current || displayedNodes.length === 0) return;
+      if (w <= 0 || h <= 0) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
-    const w = rect.width || 800;
-    const h = rect.height || height;
-    if (w === 0 || h === 0) return;
+      dimensionsRef.current = { width: w, height: h };
+      setWidth(w);
 
-    setWidth(w);
+      const svg = d3.select(svgRef.current);
+      svg.selectAll("*").remove();
+      svg.attr("viewBox", `0 0 ${w} ${h}`);
 
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
+      const g = svg.append("g");
 
-    const g = svg.append("g");
+      const layerY = (layerIdx: number) => layerIdx * (h / 5);
+      const bandHeight = h / 5;
 
-    const layerY = (layerIdx: number) => (layerIdx / 4) * (height - 80) + 40;
-    const bandHeight = height / 5;
+      for (let i = 0; i < 5; i++) {
+        g.append("rect")
+          .attr("x", 0)
+          .attr("y", i * bandHeight)
+          .attr("width", w)
+          .attr("height", bandHeight)
+          .attr("fill", "#f8fafc")
+          .attr("stroke", "none");
+        g.append("text")
+          .attr("x", 12)
+          .attr("y", layerY(i) + 4)
+          .attr("font-size", 11)
+          .attr("font-weight", 500)
+          .attr("fill", "#475569")
+          .text(`L${i + 1}`);
+      }
 
-    for (let i = 0; i < 5; i++) {
-      g.append("rect")
-        .attr("x", 0)
-        .attr("y", i * bandHeight)
-        .attr("width", w)
-        .attr("height", bandHeight)
-        .attr("fill", "#f8fafc")
-        .attr("stroke", "none");
-      g.append("text")
-        .attr("x", 12)
-        .attr("y", layerY(i) + 4)
-        .attr("font-size", 11)
-        .attr("font-weight", 500)
-        .attr("fill", "#475569")
-        .text(`L${i + 1}`);
-    }
-
-    type SimNodeExt = SimNode & { x: number; y: number };
-    const d3Nodes: SimNodeExt[] = displayedNodes.map((n) => ({
-      ...n,
-      x: w / 2,
-      y: layerY(LAYER_INDEX[n.layer] ?? 0)
-    }));
+      const d3Nodes: SimNodeExt[] = displayedNodes.map((n) => ({
+        ...n,
+        x: w / 2,
+        y: layerY(LAYER_INDEX[n.layer] ?? 0)
+      }));
     const nodeById = new Map(d3Nodes.map((n) => [n.id, n]));
     const d3Edges = displayedEdges
       .filter((e) => nodeById.has(e.from) && nodeById.has(e.to))
@@ -395,13 +408,15 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
     svg.call(zoom);
 
     const centerX = w / 2;
+    const centerY = h / 2;
     const isIsolated = (n: SimNodeExt) => n.isIsolated ?? !hasEdges(displayedEdges, n.id);
 
     const simulation = d3
       .forceSimulation<SimNodeExt>(d3Nodes)
-      .force("link", d3.forceLink(d3Edges).id((d) => (d as TopologyNode).id).distance(100))
+      .force("link", d3.forceLink<SimNodeExt, SimLink>(d3Edges).id((d) => d.id).distance(100))
       .force("charge", d3.forceManyBody().strength(-150))
       .force("collide", d3.forceCollide().radius(35))
+      .force("center", d3.forceCenter(centerX, centerY))
       .force(
         "y",
         d3
@@ -439,36 +454,27 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
       });
 
     simulationRef.current = simulation;
-  }, [displayedNodes, displayedEdges, height, onNodeClick]);
+  }, [displayedNodes, displayedEdges, onNodeClick]);
 
   useEffect(() => {
-    const initSimulation = () => {
-      if (!containerRef.current) return;
-      const { width: w, height: h } = containerRef.current.getBoundingClientRect();
-      if (w === 0 || h === 0) return;
-      runSimulation();
-    };
-
-    initSimulation();
-
     const container = containerRef.current;
     if (!container) return;
 
-    const ro = new ResizeObserver(() => {
-      initSimulation();
+    const ro = new ResizeObserver((entries) => {
+      const { width, height } = entries[0].contentRect;
+      if (width > 0 && height > 0) {
+        ro.disconnect();
+        initSimulation(width, height);
+      }
     });
     ro.observe(container);
+    return () => ro.disconnect();
+  }, [nodes, edges, initSimulation]);
 
-    const rafId = requestAnimationFrame(() => {
-      initSimulation();
-    });
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      ro.disconnect();
-      simulationRef.current?.stop();
-    };
-  }, [runSimulation]);
+  const runSimulation = useCallback(() => {
+    const dims = dimensionsRef.current;
+    if (dims) initSimulation(dims.width, dims.height);
+  }, [initSimulation]);
 
   useEffect(() => {
     if (selected && simulationRef.current) {
@@ -483,7 +489,12 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
     <div
       ref={containerRef}
       className="flex flex-col"
-      style={{ width: "100%", minHeight: 500, height: height + 60 }}
+      style={{
+        width: "100%",
+        height: "500px",
+        minHeight: "500px",
+        position: "relative"
+      }}
     >
       <div className="mb-2 flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white px-4 py-2">
         <div className="flex gap-2">
