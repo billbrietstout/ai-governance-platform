@@ -27,6 +27,20 @@ const PROTECTED_PATHS = [
 
 const PUBLIC_PATHS = ["/", "/login", "/callback", "/privacy", "/discover"];
 
+const rateLimitMap = new Map<string, { count: number; reset: number }>();
+
+function rateLimit(ip: string, limit: number, windowMs: number): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.reset) {
+    rateLimitMap.set(ip, { count: 1, reset: now + windowMs });
+    return true;
+  }
+  if (entry.count >= limit) return false;
+  entry.count++;
+  return true;
+}
+
 function isProtected(pathname: string): boolean {
   if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return false;
   return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -81,6 +95,18 @@ const proxy = withAuth(
       response.headers.set("x-org-id", token.orgId ?? "");
       response.headers.set("x-user-id", token.id ?? "");
       response.headers.set("x-user-role", token.role ?? "");
+    }
+
+    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+    if (pathname.startsWith("/api/v1/invites")) {
+      if (!rateLimit(ip, 5, 60 * 60 * 1000)) {
+        return new NextResponse("Too many requests", { status: 429 });
+      }
+    }
+    if (pathname.startsWith("/discover")) {
+      if (!rateLimit(ip, 20, 60 * 60 * 1000)) {
+        return new NextResponse("Too many requests", { status: 429 });
+      }
     }
 
     return response;
