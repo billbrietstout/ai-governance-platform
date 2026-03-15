@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { Bot, ShieldCheck, AlertTriangle, TrendingUp, Layers } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
 
 const LAYER_LABELS: Record<string, string> = {
   LAYER_1_BUSINESS: "Layer 1: Business",
@@ -124,7 +125,31 @@ export default async function CAIOPage() {
         </Link>
       </div>
 
-      {/* Layer cards */}
+      {/* Maturity radar + layer cards */}
+      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
+            <TrendingUp className="h-4 w-4 text-navy-600" />
+            Maturity by Layer
+          </h2>
+          <div className="flex justify-center">
+            <MaturityRadarChart
+              scores={maturity.scores as LayerScores}
+              targetLevel={3}
+              size={280}
+              interactive={true}
+            />
+          </div>
+          <p className="mt-2 text-center text-xs text-slate-500">
+            M3 target = minimum regulatory compliance
+          </p>
+          <Link
+            href="/maturity"
+            className="mt-2 block text-center text-sm font-medium text-navy-600 hover:underline"
+          >
+            View full assessment →
+          </Link>
+        </div>
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
           <Layers className="h-5 w-5 text-navy-600" />
@@ -169,6 +194,7 @@ export default async function CAIOPage() {
             );
           })}
         </div>
+      </div>
       </div>
 
       {/* Critical gaps */}

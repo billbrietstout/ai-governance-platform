@@ -8,14 +8,17 @@ import { ExecutiveDashboard } from "./ExecutiveDashboard";
 export default async function Layer1BusinessPage() {
   const caller = await createServerCaller();
 
-  const [ceoRes, cfoRes, cooRes, cisoRes, legalRes, portfolioRes] = await Promise.all([
-    caller.executiveDashboard.getCEOView(),
-    caller.executiveDashboard.getCFOView(),
-    caller.executiveDashboard.getCOOView(),
-    caller.executiveDashboard.getCISOView(),
-    caller.executiveDashboard.getLegalCLOView(),
-    caller.executiveDashboard.getVerticalPortfolio()
-  ]);
+  const [ceoRes, cfoRes, cooRes, cisoRes, legalRes, portfolioRes, recentSnapshotsRes, vendorScoresRes] =
+    await Promise.all([
+      caller.executiveDashboard.getCEOView(),
+      caller.executiveDashboard.getCFOView(),
+      caller.executiveDashboard.getCOOView(),
+      caller.executiveDashboard.getCISOView(),
+      caller.executiveDashboard.getLegalCLOView(),
+      caller.executiveDashboard.getVerticalPortfolio(),
+      caller.audit.getSnapshots({ limit: 5 }).catch(() => ({ data: [] })),
+      caller.supplyChain.getSupplyChainRiskScores().catch(() => ({ data: [] }))
+    ]);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
@@ -41,6 +44,8 @@ export default async function Layer1BusinessPage() {
         ciso={cisoRes.data}
         legal={legalRes.data}
         portfolio={portfolioRes.data}
+        recentSnapshots={recentSnapshotsRes.data}
+        vendorRiskScores={vendorScoresRes.data}
       />
     </main>
   );

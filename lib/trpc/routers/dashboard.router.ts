@@ -299,5 +299,112 @@ export const dashboardRouter = createTRPCRouter({
     }
     const exp = await calculateEUPenaltyExposure(prisma, ctx.orgId);
     return { data: exp, meta: {} };
+  }),
+
+  getSankeyData: protectedProcedure.query(async ({ ctx }) => {
+    const orgId = ctx.orgId;
+
+    const [
+      governancePolicyCount,
+      lineageCount,
+      masterDataCount,
+      assetCount,
+      assetsWithScans,
+      l4VendorCount,
+      l5VendorCount,
+      risksByLayer
+    ] = await Promise.all([
+      prisma.dataGovernancePolicy.count({ where: { orgId } }),
+      prisma.dataLineageRecord.count({
+        where: { orgId, sourceEntityId: { not: null }, targetAssetId: { not: null } }
+      }),
+      prisma.masterDataEntity.count({ where: { orgId } }),
+      prisma.aIAsset.count({ where: { orgId, deletedAt: null } }),
+      prisma.scanRecord.groupBy({
+        by: ["assetId"],
+        where: { orgId }
+      }),
+      prisma.vendorAssurance.count({
+        where: {
+          orgId,
+          OR: [
+            { vendorType: "INFRASTRUCTURE" },
+            { vendorType: "TOOLING" },
+            { cosaiLayer: "LAYER_4_PLATFORM" }
+          ]
+        }
+      }),
+      prisma.vendorAssurance.count({
+        where: {
+          orgId,
+          OR: [
+            { vendorType: "MODEL_PROVIDER" },
+            { vendorType: "DATA_PROVIDER" },
+            { cosaiLayer: "LAYER_5_SUPPLY_CHAIN" }
+          ]
+        }
+      }),
+      prisma.riskRegister.findMany({
+        where: { orgId, deletedAt: null, cosaiLayer: { not: null } },
+        select: { cosaiLayer: true }
+      })
+    ]);
+
+    const assetsWithPlatformDeps = assetsWithScans.length;
+    const riskCountByLayer: Record<string, number> = {};
+    for (const r of risksByLayer) {
+      const layer = r.cosaiLayer!;
+      riskCountByLayer[layer] = (riskCountByLayer[layer] ?? 0) + 1;
+    }
+
+    const LAYER_COLORS: Record<string, string> = {
+      LAYER_1_BUSINESS: "#1D9E75",
+      LAYER_2_INFORMATION: "#534AB7",
+      LAYER_3_APPLICATION: "#D85A30",
+      LAYER_4_PLATFORM: "#185FA5",
+      LAYER_5_SUPPLY_CHAIN: "#5F5E5A"
+    };
+
+    const LAYER_LABELS: Record<string, string> = {
+      LAYER_1_BUSINESS: "Business",
+      LAYER_2_INFORMATION: "Information",
+      LAYER_3_APPLICATION: "Application",
+      LAYER_4_PLATFORM: "Platform",
+      LAYER_5_SUPPLY_CHAIN: "Supply Chain"
+    };
+
+    const layerOrder = [
+      "LAYER_1_BUSINESS",
+      "LAYER_2_INFORMATION",
+      "LAYER_3_APPLICATION",
+      "LAYER_4_PLATFORM",
+      "LAYER_5_SUPPLY_CHAIN"
+    ];
+
+    const assetCounts = [
+      Math.max(1, governancePolicyCount),
+      Math.max(1, masterDataCount),
+      Math.max(1, assetCount),
+      Math.max(1, l4VendorCount),
+      Math.max(1, l5VendorCount)
+    ];
+
+    const nodes = layerOrder.map((layer, i) => ({
+      id: `L${i + 1}`,
+      label: LAYER_LABELS[layer],
+      assetCount: assetCounts[i],
+      complianceScore: 75,
+      riskCount: riskCountByLayer[layer] ?? 0,
+      color: LAYER_COLORS[layer]
+    }));
+
+    const links = [
+      { source: "L1", target: "L2", value: Math.max(1, governancePolicyCount) },
+      { source: "L2", target: "L3", value: Math.max(1, lineageCount) },
+      { source: "L3", target: "L4", value: Math.max(1, assetsWithPlatformDeps) },
+      { source: "L4", target: "L5", value: Math.max(1, l5VendorCount) }
+    ];
+
+    return { data: { nodes, links }, meta: {} };
   })
 });

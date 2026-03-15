@@ -16,6 +16,25 @@ const answerSchema = z.object({
 });
 
 export const maturityRouter = createTRPCRouter({
+  getPreviousAssessment: protectedProcedure.query(async ({ ctx }) => {
+    const assessments = await prisma.maturityAssessment.findMany({
+      where: { orgId: ctx.orgId },
+      orderBy: { createdAt: "desc" },
+      take: 2
+    });
+    const prev = assessments[1];
+    if (!prev) return { data: null, meta: {} };
+    return {
+      data: {
+        id: prev.id,
+        scores: prev.scores as Record<string, number>,
+        maturityLevel: prev.maturityLevel,
+        createdAt: prev.createdAt
+      },
+      meta: {}
+    };
+  }),
+
   getLatestAssessment: protectedProcedure.query(async ({ ctx }) => {
     const assessment = await prisma.maturityAssessment.findFirst({
       where: { orgId: ctx.orgId },

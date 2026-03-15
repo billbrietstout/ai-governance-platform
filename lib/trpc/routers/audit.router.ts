@@ -430,14 +430,17 @@ export const auditRouter = createTRPCRouter({
       return { data: snapshot, meta: {} };
     }),
 
-  getSnapshots: protectedProcedure.query(async ({ ctx }) => {
-    const snapshots = await prisma.complianceSnapshot.findMany({
-      where: { orgId: ctx.orgId },
-      orderBy: { createdAt: "desc" },
-      include: { creator: { select: { email: true } } }
-    });
-    return { data: snapshots, meta: {} };
-  }),
+  getSnapshots: protectedProcedure
+    .input(z.object({ limit: z.number().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const snapshots = await prisma.complianceSnapshot.findMany({
+        where: { orgId: ctx.orgId },
+        orderBy: { createdAt: "desc" },
+        take: input?.limit,
+        include: { creator: { select: { email: true } } }
+      });
+      return { data: snapshots, meta: {} };
+    }),
 
   getSnapshot: protectedProcedure
     .input(z.object({ id: z.string() }))

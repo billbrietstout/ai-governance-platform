@@ -12,6 +12,8 @@ import {
   Users
 } from "lucide-react";
 import { ComplianceRing } from "@/components/assets/ComplianceRing";
+import { ComplianceTrendChart } from "@/components/compliance/ComplianceTrendChart";
+import { RiskTreemap } from "@/components/supply-chain/RiskTreemap";
 
 const TABS = [
   { id: "ceo", label: "CEO View" },
@@ -78,6 +80,24 @@ type PortfolioData = {
   verticals: PortfolioVertical[];
 };
 
+type SnapshotForChart = {
+  id: string;
+  createdAt: Date;
+  overallScore: number;
+  layerScores?: unknown;
+};
+
+type VendorRiskScore = {
+  vendorId: string;
+  vendorName: string;
+  overallScore: number;
+  evidenceCurrency: number;
+  contractAligned: boolean | null;
+  scanCoverage: number;
+  modelCount?: number;
+  cosaiLayer?: string | null;
+};
+
 type Props = {
   ceo: CEOData;
   cfo: CFOData;
@@ -85,6 +105,8 @@ type Props = {
   ciso: CISOData;
   legal: LegalData;
   portfolio: PortfolioData;
+  recentSnapshots?: SnapshotForChart[];
+  vendorRiskScores?: VendorRiskScore[];
 };
 
 const VERTICAL_ICONS: Record<string, { icon: React.ReactNode; color: string }> = {
@@ -97,7 +119,16 @@ const VERTICAL_ICONS: Record<string, { icon: React.ReactNode; color: string }> =
   HR_SERVICES: { icon: <Users className="h-5 w-5" />, color: "text-green-600" }
 };
 
-export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal, portfolio }: Props) {
+export function ExecutiveDashboard({
+  ceo,
+  cfo,
+  coo,
+  ciso,
+  legal,
+  portfolio,
+  recentSnapshots = [],
+  vendorRiskScores = []
+}: Props) {
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>("ceo");
 
   return (
@@ -122,9 +153,9 @@ export function ExecutiveDashboard({ ceo, cfo, coo, ciso, legal, portfolio }: Pr
       </div>
 
       {tab === "ceo" && <CEOView data={ceo} />}
-      {tab === "cfo" && <CFOView data={cfo} />}
+      {tab === "cfo" && <CFOView data={cfo} recentSnapshots={recentSnapshots} />}
       {tab === "coo" && <COOView data={coo} />}
-      {tab === "ciso" && <CISOView data={ciso} />}
+      {tab === "ciso" && <CISOView data={ciso} vendorRiskScores={vendorRiskScores} />}
       {tab === "legal" && <LegalCLOView data={legal} />}
       {tab === "portfolio" && <VerticalPortfolioView data={portfolio} />}
     </div>
@@ -182,9 +213,23 @@ function CEOView({ data: d }: { data: CEOData }) {
   );
 }
 
-function CFOView({ data: d }: { data: CFOData }) {
+function CFOView({ data: d, recentSnapshots }: { data: CFOData; recentSnapshots: SnapshotForChart[] }) {
+  const chartSnapshots = recentSnapshots.slice(0, 5).reverse();
+
   return (
     <div className="space-y-6">
+      {chartSnapshots.length >= 2 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h4 className="mb-2 text-sm font-medium text-slate-700">Compliance trend</h4>
+          <ComplianceTrendChart snapshots={chartSnapshots} compact />
+          <Link
+            href="/compliance/snapshots"
+            className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline"
+          >
+            View full history →
+          </Link>
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {d.complianceCostExposure && (
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -254,9 +299,40 @@ function COOView({ data: d }: { data: COOData }) {
   );
 }
 
-function CISOView({ data: d }: { data: CISOData }) {
+function CISOView({
+  data: d,
+  vendorRiskScores = []
+}: {
+  data: CISOData;
+  vendorRiskScores?: VendorRiskScore[];
+}) {
+  const treemapVendors = vendorRiskScores
+    .slice(0, 8)
+    .map((v) => ({
+      id: v.vendorId,
+      vendorName: v.vendorName,
+      overallScore: v.overallScore,
+      evidenceCurrency: v.evidenceCurrency,
+      contractAligned: v.contractAligned,
+      scanCoverage: v.scanCoverage,
+      modelCount: v.modelCount ?? 1,
+      cosaiLayer: v.cosaiLayer ?? null
+    }));
+
   return (
     <div className="space-y-6">
+      {treemapVendors.length >= 1 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+          <h4 className="mb-2 text-sm font-medium text-slate-700">Supply chain risk exposure</h4>
+          <RiskTreemap vendors={treemapVendors} compact />
+          <Link
+            href="/layer5-supply-chain/risk-score"
+            className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline"
+          >
+            View full supply chain →
+          </Link>
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MetricCard label="Failed Scan Policies" value={Object.keys(d.failedScanPolicies).length} />
         <MetricCard label="Vendors Expired Certs" value={d.vendorSecurityPosture.length} />

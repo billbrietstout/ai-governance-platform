@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
   LineChart,
@@ -14,6 +14,7 @@ import {
 } from "recharts";
 import { Camera, Eye, GitCompare } from "lucide-react";
 import { takeSnapshot, compareSnapshots } from "./actions";
+import { ComplianceTrendChart } from "@/components/compliance/ComplianceTrendChart";
 
 type Snapshot = {
   id: string;
@@ -58,6 +59,8 @@ function Sparkline({ scores }: { scores: Record<string, number> }) {
 export function SnapshotsClient({ initialSnapshots }: Props) {
   const [snapshots, setSnapshots] = useState(initialSnapshots);
   const [taking, setTaking] = useState(false);
+  const [highlightedId, setHighlightedId] = useState<string | null>(null);
+  const tableRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
   const [compareIds, setCompareIds] = useState<[string | null, string | null]>([null, null]);
   const [compareResult, setCompareResult] = useState<{
     snapshot1: { id: string; createdAt: Date; overallScore: number; gapCount: number; assetCount: number };
@@ -81,6 +84,15 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
     }
   };
 
+  const handleSnapshotClick = useCallback((id: string) => {
+    setHighlightedId(id);
+    const row = tableRowRefs.current[id];
+    if (row) {
+      row.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => setHighlightedId(null), 2000);
+    }
+  }, []);
+
   const handleCompare = async () => {
     if (!compareIds[0] || !compareIds[1]) return;
     try {
@@ -90,15 +102,6 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
       console.error(e);
     }
   };
-
-  const chartData = snapshots
-    .slice()
-    .reverse()
-    .map((s) => ({
-      date: new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" }),
-      score: s.overallScore,
-      evidence: s.evidenceCompleteness
-    }));
 
   return (
     <div className="space-y-8">
@@ -119,24 +122,24 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
       </div>
 
       {/* Trend chart */}
-      {chartData.length > 0 && (
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Compliance score over time</h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="score" name="Compliance %" stroke="#1e3a5f" strokeWidth={2} dot={{ r: 3 }} />
-                <Line type="monotone" dataKey="evidence" name="Evidence %" stroke="#64748b" strokeWidth={1.5} strokeDasharray="4 4" dot={{ r: 2 }} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
+      <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <h3 className="mb-4 text-sm font-medium text-slate-700">Compliance trend</h3>
+        <ComplianceTrendChart
+          snapshots={snapshots}
+          onSnapshotClick={handleSnapshotClick}
+          emptyStateAction={
+            <button
+              type="button"
+              onClick={handleTakeSnapshot}
+              disabled={taking}
+              className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+            >
+              <Camera className="h-4 w-4" />
+              {taking ? "Capturing…" : "Take Snapshot"}
+            </button>
+          }
+        />
+      </div>
 
       {/* Compare snapshots */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
@@ -253,7 +256,13 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
           </thead>
           <tbody className="divide-y divide-slate-200">
             {snapshots.map((s) => (
-              <tr key={s.id} className="hover:bg-slate-50">
+              <tr
+                key={s.id}
+                ref={(el) => {
+                  tableRowRefs.current[s.id] = el;
+                }}
+                className={`hover:bg-slate-50 ${highlightedId === s.id ? "bg-amber-50 ring-1 ring-amber-300" : ""}`}
+              >
                 <td className="px-4 py-3 text-sm text-slate-900">
                   {new Date(s.createdAt).toLocaleDateString()}
                 </td>

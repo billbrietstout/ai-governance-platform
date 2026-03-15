@@ -160,14 +160,21 @@ export const layer2Router = createTRPCRouter({
   }),
 
   getLineageDiagramData: protectedProcedure.query(async ({ ctx }) => {
-    const [entities, assets, lineage] = await Promise.all([
+    const [entities, assets, lineage, platformVendors, scanAssetIds] = await Promise.all([
       prisma.masterDataEntity.findMany({
         where: { orgId: ctx.orgId },
-        select: { id: true, name: true }
+        select: {
+          id: true,
+          name: true,
+          classification: true,
+          aiAccessPolicy: true,
+          recordCount: true,
+          steward: { select: { email: true } }
+        }
       }),
       prisma.aIAsset.findMany({
         where: { orgId: ctx.orgId, deletedAt: null },
-        select: { id: true, name: true }
+        select: { id: true, name: true, euRiskLevel: true }
       }),
       prisma.dataLineageRecord.findMany({
         where: { orgId: ctx.orgId },
@@ -176,12 +183,64 @@ export const layer2Router = createTRPCRouter({
           name: true,
           pipelineType: true,
           sourceEntityId: true,
-          targetAssetId: true
+          targetAssetId: true,
+          status: true
         }
+      }),
+      prisma.vendorAssurance.findMany({
+        where: {
+          orgId: ctx.orgId,
+          OR: [
+            { cosaiLayer: "LAYER_4_PLATFORM" },
+            { vendorType: "INFRASTRUCTURE" },
+            { vendorType: "TOOLING" }
+          ]
+        },
+        select: { id: true, vendorName: true }
+      }),
+      prisma.scanRecord.groupBy({
+        by: ["assetId"],
+        where: { orgId: ctx.orgId }
       })
     ]);
+
+    const assetHasScans = scanAssetIds.reduce(
+      (acc, s) => {
+        acc[s.assetId] = true;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+
     return {
-      data: { entities, assets, lineage },
+      data: {
+        entities: entities.map((e) => ({
+          id: e.id,
+          name: e.name,
+          classification: e.classification,
+          aiAccessPolicy: e.aiAccessPolicy,
+          stewardName: e.steward?.email ?? null,
+          recordCount: e.recordCount
+        })),
+        assets: assets.map((a) => ({
+          id: a.id,
+          name: a.name,
+          euRiskLevel: a.euRiskLevel
+        })),
+        lineage: lineage.map((l) => ({
+          id: l.id,
+          name: l.name,
+          pipelineType: l.pipelineType,
+          sourceEntityId: l.sourceEntityId,
+          targetAssetId: l.targetAssetId,
+          status: l.status
+        })),
+        platformProviders: platformVendors.map((v) => ({
+          id: v.id,
+          name: v.vendorName
+        })),
+        assetHasScans
+      },
       meta: {}
     };
   }),

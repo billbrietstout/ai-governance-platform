@@ -5,8 +5,8 @@ import { GitBranch } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { EmptyState } from "@/components/EmptyState";
 import { LineageTable } from "./LineageTable";
-import { LineageDiagram } from "./LineageDiagram";
 import { AddPipelineButton } from "./AddPipelineButton";
+import { LineagePageClient } from "./LineagePageClient";
 
 const CLASSIFICATION_COLORS: Record<string, string> = {
   PUBLIC: "bg-emerald-100 text-emerald-700",
@@ -37,7 +37,7 @@ export default async function LineagePage() {
       {records.length === 0 && diagramData.lineage.length === 0 ? (
         <EmptyState
           title="No lineage records"
-          description="Add pipelines to trace data flow from master data entities to AI assets."
+          description="No lineage records yet — add a pipeline to see data flow visualization."
           ctaLabel="Add Pipeline"
           ctaHref="/layer2-information/lineage/new"
           icon={<GitBranch className="h-8 w-8" />}
@@ -46,12 +46,10 @@ export default async function LineagePage() {
         <>
           <LineageTable records={records} classificationColors={CLASSIFICATION_COLORS} />
 
-          {(diagramData.entities.length > 0 || diagramData.assets.length > 0) && (
-            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Lineage Diagram</h2>
-              <LineageDiagram data={diagramData} />
-            </div>
-          )}
+          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">Lineage Diagram</h2>
+            <LineagePageClient diagramData={diagramData} />
+          </div>
         </>
       )}
     </main>

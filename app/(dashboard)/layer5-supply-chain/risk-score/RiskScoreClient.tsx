@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { HelpCircle, ExternalLink } from "lucide-react";
+import { RiskTreemap } from "@/components/supply-chain/RiskTreemap";
 
 type ScoreRow = {
   vendorId: string;
@@ -14,6 +15,8 @@ type ScoreRow = {
   overallScore: number;
   breakdown?: Record<string, number>;
   expiredEvidence?: { type: string; message: string; expiredAt?: Date }[];
+  modelCount?: number;
+  cosaiLayer?: string | null;
 };
 
 type Overall = { overallScore: number; rating: string };
@@ -37,9 +40,38 @@ function pctColor(pct: number): string {
 
 export function RiskScoreClient({ scores, overall }: Props) {
   const [tooltipVendor, setTooltipVendor] = useState<string | null>(null);
+  const [highlightedVendorId, setHighlightedVendorId] = useState<string | null>(null);
+  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
+
+  const handleVendorClick = useCallback((vendorId: string) => {
+    setHighlightedVendorId(vendorId);
+    const row = rowRefs.current[vendorId];
+    if (row) {
+      row.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => setHighlightedVendorId(null), 2000);
+    }
+  }, []);
+
+  const treemapVendors = scores.map((s) => ({
+    id: s.vendorId,
+    vendorName: s.vendorName,
+    overallScore: s.overallScore,
+    evidenceCurrency: s.evidenceCurrency,
+    contractAligned: s.contractAligned,
+    scanCoverage: s.scanCoverage,
+    modelCount: s.modelCount ?? 1,
+    cosaiLayer: s.cosaiLayer ?? null
+  }));
 
   return (
     <div className="space-y-6">
+      {scores.length > 0 && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <h3 className="mb-4 text-sm font-medium text-slate-700">Vendor risk overview</h3>
+          <RiskTreemap vendors={treemapVendors} onVendorClick={handleVendorClick} />
+        </div>
+      )}
+
       <div className="rounded-lg border border-slate-200 bg-white p-4">
         <h3 className="text-sm font-medium text-slate-700">Overall supply chain risk</h3>
         <div className="mt-2 flex items-center gap-4">
@@ -67,7 +99,15 @@ export function RiskScoreClient({ scores, overall }: Props) {
           </thead>
           <tbody>
             {scores.map((row) => (
-              <tr key={row.vendorId} className="border-b border-slate-100 hover:bg-slate-50">
+              <tr
+                key={row.vendorId}
+                ref={(el) => {
+                  rowRefs.current[row.vendorId] = el;
+                }}
+                className={`border-b border-slate-100 hover:bg-slate-50 ${
+                  highlightedVendorId === row.vendorId ? "bg-amber-50 ring-1 ring-amber-300" : ""
+                }`}
+              >
                 <td className="px-4 py-3 font-medium text-slate-900">{row.vendorName}</td>
                 <td className="px-4 py-3 text-right">
                   <span className={pctColor(row.evidenceCurrency)}>{row.evidenceCurrency}%</span>

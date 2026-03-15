@@ -18,9 +18,10 @@ import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { ComplianceHeatmap } from "./ComplianceHeatmap";
 import { RiskMatrix } from "./RiskMatrix";
-import { LayerPosturePanel } from "./LayerPosturePanel";
 import { AuditFeed } from "./AuditFeed";
+import { LayerSankeyDiagram } from "@/components/dashboard/LayerSankeyDiagram";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
 
 const MATURITY_COLORS: Record<number, string> = {
   1: "#fbbf24",
@@ -32,7 +33,9 @@ const MATURITY_COLORS: Record<number, string> = {
 
 const LAYER_LINKS: Record<string, string> = {
   LAYER_1_BUSINESS: "/layer1-business",
+  LAYER_2_INFORMATION: "/layer2-information",
   LAYER_3_APPLICATION: "/layer3-application/assets",
+  LAYER_4_PLATFORM: "/layer4-platform",
   LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
 };
 
@@ -56,6 +59,7 @@ export default async function CommandCenterPage({
     kpisRes,
     deltasRes,
     layerRes,
+    sankeyRes,
     heatmapRes,
     riskRes,
     cascadeRes,
@@ -68,6 +72,7 @@ export default async function CommandCenterPage({
     caller.dashboard.getKPIs(),
     caller.dashboard.getKPIDeltas(),
     caller.dashboard.getLayerPosture(),
+    caller.dashboard.getSankeyData(),
     caller.dashboard.getComplianceHeatmap(),
     caller.dashboard.getRiskMatrix(),
     caller.dashboard.getRegulatoryCascadeStatus(),
@@ -241,7 +246,61 @@ export default async function CommandCenterPage({
         </div>
       )}
 
-      <LayerPosturePanel layers={layerRes.data} layerLinks={LAYER_LINKS} />
+      {/* Governance dependency flow */}
+      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+        <h3 className="mb-3 text-sm font-medium text-slate-700">Governance dependency flow</h3>
+        <LayerSankeyDiagram
+          layerData={sankeyRes.data.nodes.map((n, i) => {
+            const layerKey = [
+              "LAYER_1_BUSINESS",
+              "LAYER_2_INFORMATION",
+              "LAYER_3_APPLICATION",
+              "LAYER_4_PLATFORM",
+              "LAYER_5_SUPPLY_CHAIN"
+            ][i];
+            const lp = layerRes.data.find((l) => l.layer === layerKey);
+            return { ...n, complianceScore: lp?.compliancePct ?? n.complianceScore };
+          })}
+          links={sankeyRes.data.links}
+          layerLinks={{
+            L1: "/layer1-business",
+            L2: "/layer2-information",
+            L3: "/layer3-application/assets",
+            L4: "/layer4-platform",
+            L5: "/layer5-supply-chain"
+          }}
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          {layerRes.data.map((l) => {
+            const label =
+              {
+                LAYER_1_BUSINESS: "L1",
+                LAYER_2_INFORMATION: "L2",
+                LAYER_3_APPLICATION: "L3",
+                LAYER_4_PLATFORM: "L4",
+                LAYER_5_SUPPLY_CHAIN: "L5"
+              }[l.layer] ?? l.layer;
+            const href = LAYER_LINKS[l.layer];
+            const riskBadge =
+              l.riskCount > 0 ? (
+                <span className="rounded bg-red-100 px-2 py-0.5 text-xs text-red-700">{l.riskCount} risks</span>
+              ) : (
+                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">0 risks</span>
+              );
+            return (
+              <Link
+                key={l.layer}
+                href={href}
+                className="flex items-center gap-1.5 rounded border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm transition hover:border-slate-300"
+              >
+                <span className="font-medium text-slate-700">{label}</span>
+                {riskBadge}
+                <span className="text-slate-500">{l.compliancePct}%</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Maturity Progress */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -271,28 +330,20 @@ export default async function CommandCenterPage({
                 Retake →
               </Link>
             </div>
-            <div className="space-y-2">
-              {(["L1", "L2", "L3", "L4", "L5"] as const).map((layer) => {
-                const score = maturityRes.data.scores[layer] ?? 1;
-                const pct = (score / 5) * 100;
-                const level = Math.floor(score);
-                const color = MATURITY_COLORS[level] ?? MATURITY_COLORS[1];
-                return (
-                  <div key={layer} className="flex items-center gap-3">
-                    <span className="w-20 shrink-0 text-xs font-medium text-slate-600">{layer}</span>
-                    <div className="flex-1 h-5 overflow-hidden rounded-full bg-slate-200">
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{ width: `${pct}%`, backgroundColor: color }}
-                      />
-                    </div>
-                    <span className="w-8 shrink-0 text-right text-xs font-medium text-slate-700">
-                      {score.toFixed(1)}
-                    </span>
-                  </div>
-                );
-              })}
+            <div className="flex justify-center">
+              <MaturityRadarChart
+                scores={maturityRes.data.scores as LayerScores}
+                targetLevel={Math.min(maturityRes.data.maturityLevel + 1, 5)}
+                size={280}
+                interactive={false}
+              />
             </div>
+            <Link
+              href="/maturity"
+              className="mt-3 block text-center text-sm font-medium text-navy-600 hover:underline"
+            >
+              View full assessment →
+            </Link>
           </>
         )}
       </div>

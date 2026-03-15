@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { MaturityAssessmentClient } from "./MaturityAssessmentClient";
+import { MaturityRadarSection } from "./MaturityRadarSection";
+import type { LayerScores } from "@/components/maturity/MaturityRadarChart";
 import { LAYER_LABELS, MATURITY_LEVEL_LABELS } from "@/lib/maturity/questions";
 
 /** Color for a given score (1.0–5.0) based on maturity level thresholds */
@@ -25,15 +27,16 @@ const MATURITY_LEVEL_COLORS: Record<number, string> = {
 
 export default async function MaturityPage() {
   const caller = await createServerCaller();
-  const [scoreRes, latestRes] = await Promise.all([
+  const [scoreRes, latestRes, prevRes] = await Promise.all([
     caller.maturity.getMaturityScore(),
-    caller.maturity.getLatestAssessment()
+    caller.maturity.getLatestAssessment(),
+    caller.maturity.getPreviousAssessment()
   ]);
 
   const { scores, maturityLevel, progressToNext, nextSteps, lastAssessedAt } = scoreRes.data;
   const latest = latestRes.data;
-
-  const layerKeys = ["L1", "L2", "L3", "L4", "L5"] as const;
+  const previousScores = (prevRes.data?.scores as { L1: number; L2: number; L3: number; L4: number; L5: number } | null) ?? null;
+  const targetLevel = Math.min(maturityLevel + 1, 5);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
@@ -44,39 +47,12 @@ export default async function MaturityPage() {
         </p>
       </div>
 
-      {/* Current scores – horizontal bar chart per layer */}
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-medium text-slate-700">Current Scores by Layer</h2>
-        <div className="space-y-3">
-          {layerKeys.map((layer) => {
-            const score = scores[layer] ?? 1;
-            const widthPct = ((score - 1) / 4) * 100;
-            const color = getScoreColor(score);
-            return (
-              <div key={layer} className="flex items-center gap-3">
-                <span className="w-24 shrink-0 text-sm font-medium text-slate-700">
-                  {LAYER_LABELS[layer]}
-                </span>
-                <div className="flex-1 h-6 overflow-hidden rounded-full bg-slate-200">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${widthPct}%`, backgroundColor: color }}
-                  />
-                </div>
-                <span className="w-12 shrink-0 text-right text-sm font-medium text-slate-700">
-                  {score.toFixed(1)}
-                </span>
-                <Link
-                  href={`/maturity/${layer}`}
-                  className="text-xs text-navy-600 hover:underline"
-                >
-                  Details →
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {/* Current scores – radar chart */}
+      <MaturityRadarSection
+        scores={scores as LayerScores}
+        targetLevel={targetLevel}
+        previousScores={previousScores}
+      />
 
       {/* Progress indicator */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">

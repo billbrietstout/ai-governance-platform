@@ -214,18 +214,18 @@ export const supplyChainRouter = createTRPCRouter({
 
   getTopologyData: protectedProcedure.query(async ({ ctx }) => {
     const orgId = ctx.orgId;
-    const [org, masterData, assets, lineage, vendors] = await Promise.all([
+    const [org, masterData, assets, lineage, vendors, scanRecords] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
         select: { id: true, name: true }
       }),
       prisma.masterDataEntity.findMany({
         where: { orgId },
-        select: { id: true, name: true, entityType: true }
+        select: { id: true, name: true, entityType: true, recordCount: true }
       }),
       prisma.aIAsset.findMany({
         where: { orgId, deletedAt: null },
-        select: { id: true, name: true, assetType: true }
+        select: { id: true, name: true, assetType: true, euRiskLevel: true }
       }),
       prisma.dataLineageRecord.findMany({
         where: { orgId },
@@ -234,11 +234,40 @@ export const supplyChainRouter = createTRPCRouter({
       prisma.vendorAssurance.findMany({
         where: { orgId },
         select: { id: true, vendorName: true, vendorType: true, cosaiLayer: true }
+      }),
+      prisma.scanRecord.findMany({
+        where: { orgId },
+        select: { assetId: true }
       })
     ]);
 
-    const nodes: { id: string; label: string; layer: string; role: string; link?: string }[] = [];
-    const edges: { from: string; to: string }[] = [];
+    type TopologyNode = {
+      id: string;
+      label: string;
+      layer: "L1" | "L2" | "L3" | "L4" | "L5";
+      role: string;
+      link?: string;
+      recordCount?: number;
+      euRiskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+      assetType?: string;
+    };
+    type TopologyEdge = { from: string; to: string; type: "lineage" | "platform" | "model" | "governance" };
+
+    function mapEuRiskToTopology(
+      level: string | null | undefined
+    ): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" | undefined {
+      if (!level) return undefined;
+      const map: Record<string, "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"> = {
+        MINIMAL: "LOW",
+        LIMITED: "MEDIUM",
+        HIGH: "HIGH",
+        UNACCEPTABLE: "CRITICAL"
+      };
+      return map[level];
+    }
+
+    const nodes: TopologyNode[] = [];
+    const edges: TopologyEdge[] = [];
 
     if (org) {
       nodes.push({
@@ -246,7 +275,7 @@ export const supplyChainRouter = createTRPCRouter({
         label: org.name,
         layer: "L1",
         role: "Organization",
-        link: "/settings"
+        link: "/settings/organization"
       });
     }
 
@@ -255,8 +284,9 @@ export const supplyChainRouter = createTRPCRouter({
         id: `mde-${m.id}`,
         label: m.name,
         layer: "L2",
-        role: m.entityType,
-        link: `/layer2-information/master-data`
+        role: String(m.entityType),
+        link: "/layer2-information/master-data",
+        recordCount: m.recordCount ?? undefined
       });
     }
 
@@ -265,8 +295,10 @@ export const supplyChainRouter = createTRPCRouter({
         id: `asset-${a.id}`,
         label: a.name,
         layer: "L3",
-        role: a.assetType,
-        link: `/layer3-application/assets/${a.id}`
+        role: String(a.assetType),
+        link: `/layer3-application/assets/${a.id}`,
+        euRiskLevel: mapEuRiskToTopology(a.euRiskLevel),
+        assetType: String(a.assetType)
       });
     }
 
@@ -280,9 +312,11 @@ export const supplyChainRouter = createTRPCRouter({
       (v) =>
         v.vendorType === "MODEL_PROVIDER" ||
         v.vendorType === "DATA_PROVIDER" ||
-        v.cosaiLayer === "LAYER_5_SUPPLY_CHAIN" ||
-        v.vendorType === "OTHER" ||
-        (!v.vendorType && !v.cosaiLayer)
+        v.cosaiLayer === "LAYER_5_SUPPLY_CHAIN"
+    );
+    const otherVendors = vendors.filter(
+      (v) =>
+        !l4Vendors.some((l4) => l4.id === v.id) && !l5Vendors.some((l5) => l5.id === v.id)
     );
     const assigned = new Set<string>();
     for (const v of l4Vendors) {
@@ -307,8 +341,9 @@ export const supplyChainRouter = createTRPCRouter({
         link: `/layer5-supply-chain/vendors/${v.id}`
       });
     }
-    for (const v of vendors) {
+    for (const v of otherVendors) {
       if (assigned.has(v.id)) continue;
+      assigned.add(v.id);
       nodes.push({
         id: `vendor-${v.id}`,
         label: v.vendorName,
@@ -324,14 +359,44 @@ export const supplyChainRouter = createTRPCRouter({
         const key = `mde-${l.sourceEntityId}-asset-${l.targetAssetId}`;
         if (!seenEdges.has(key)) {
           seenEdges.add(key);
-          edges.push({ from: `mde-${l.sourceEntityId}`, to: `asset-${l.targetAssetId}` });
+          edges.push({
+            from: `mde-${l.sourceEntityId}`,
+            to: `asset-${l.targetAssetId}`,
+            type: "lineage"
+          });
         }
       }
     }
 
     if (org) {
-      for (const a of assets.slice(0, 3)) {
-        edges.push({ from: `org-${org.id}`, to: `asset-${a.id}` });
+      for (const a of assets.slice(0, 5)) {
+        const key = `org-${org.id}-asset-${a.id}`;
+        if (!seenEdges.has(key)) {
+          seenEdges.add(key);
+          edges.push({ from: `org-${org.id}`, to: `asset-${a.id}`, type: "governance" });
+        }
+      }
+    }
+
+    const assetsWithScans = new Set(scanRecords.map((s) => s.assetId));
+    for (const a of assets) {
+      if (!assetsWithScans.has(a.id)) continue;
+      for (const v of l4Vendors.slice(0, 2)) {
+        const key = `asset-${a.id}-vendor-${v.id}`;
+        if (!seenEdges.has(key)) {
+          seenEdges.add(key);
+          edges.push({ from: `asset-${a.id}`, to: `vendor-${v.id}`, type: "platform" });
+        }
+      }
+    }
+
+    for (const l4 of l4Vendors) {
+      for (const l5 of l5Vendors.slice(0, 2)) {
+        const key = `vendor-${l4.id}-vendor-${l5.id}`;
+        if (!seenEdges.has(key)) {
+          seenEdges.add(key);
+          edges.push({ from: `vendor-${l4.id}`, to: `vendor-${l5.id}`, type: "model" });
+        }
       }
     }
 
@@ -390,7 +455,10 @@ export const supplyChainRouter = createTRPCRouter({
   getSupplyChainRiskScores: protectedProcedure.query(async ({ ctx }) => {
     const orgId = ctx.orgId;
     const vendors = await prisma.vendorAssurance.findMany({
-      where: { orgId }
+      where: { orgId },
+      include: {
+        _count: { select: { provenanceRecords: true } }
+      }
     });
 
     const ninetyDaysAgo = new Date();
@@ -473,7 +541,9 @@ export const supplyChainRouter = createTRPCRouter({
           disclosureHistory: 70,
           overallScore: Math.min(100, Math.max(0, overall)),
           breakdown: assurance.breakdown,
-          expiredEvidence: expired
+          expiredEvidence: expired,
+          modelCount: v._count.provenanceRecords || 1,
+          cosaiLayer: v.cosaiLayer
         };
       })
     );
