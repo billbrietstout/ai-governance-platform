@@ -25,7 +25,19 @@ const PROTECTED_PATHS = [
   "/monitoring"
 ];
 
-const PUBLIC_PATHS = ["/", "/login", "/callback", "/privacy", "/discover"];
+const PUBLIC_PATHS = [
+  "/",
+  "/login",
+  "/callback",
+  "/privacy",
+  "/discover",
+  "/discover/wizard",
+  "/discover/use-cases",
+  "/discover/operating-model",
+  "/discover/results",
+  "/api/auth",
+  "/api/ready"
+];
 
 const rateLimitMap = new Map<string, { count: number; reset: number }>();
 
@@ -41,8 +53,14 @@ function rateLimit(ip: string, limit: number, windowMs: number): boolean {
   return true;
 }
 
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.some((p) =>
+    p === "/" ? pathname === "/" : pathname.startsWith(p)
+  );
+}
+
 function isProtected(pathname: string): boolean {
-  if (PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return false;
+  if (isPublicPath(pathname)) return false;
   return PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
