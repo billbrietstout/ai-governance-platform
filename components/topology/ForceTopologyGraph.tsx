@@ -13,6 +13,8 @@ export type TopologyNode = {
   recordCount?: number;
   euRiskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   assetType?: string;
+  isCluster?: boolean;
+  isIsolated?: boolean;
 };
 
 export type TopologyEdge = {
@@ -52,6 +54,18 @@ function getConnectedIds(edges: TopologyEdge[], nodeId: string): Set<string> {
   return ids;
 }
 
+function hasEdges(edges: TopologyEdge[], nodeId: string): boolean {
+  return edges.some((e) => e.from === nodeId || e.to === nodeId);
+}
+
+const LAYER_CLUSTER_LABELS: Record<string, string> = {
+  L1: "Organizations",
+  L2: "Data Entities",
+  L3: "AI Assets",
+  L4: "Platforms",
+  L5: "Vendors"
+};
+
 function truncate(str: string, maxLen: number): string {
   if (str.length <= maxLen) return str;
   return str.slice(0, maxLen - 1) + "…";
@@ -71,13 +85,17 @@ function drawNodeShape(
 
   sel.selectAll("*").remove();
 
+  const scale = node.isIsolated ? 0.75 : 1;
+
   if (node.layer === "L1") {
+    const w = 80 * scale;
+    const h = 36 * scale;
     sel
       .append("rect")
-      .attr("x", -40)
-      .attr("y", -18)
-      .attr("width", 80)
-      .attr("height", 36)
+      .attr("x", -w / 2)
+      .attr("y", -h / 2)
+      .attr("width", w)
+      .attr("height", h)
       .attr("rx", 4)
       .attr("fill", color)
       .attr("stroke", "#fff")
@@ -94,8 +112,8 @@ function drawNodeShape(
   } else if (node.layer === "L2") {
     sel
       .append("ellipse")
-      .attr("rx", 50)
-      .attr("ry", 20)
+      .attr("rx", 50 * scale)
+      .attr("ry", 20 * scale)
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
@@ -108,11 +126,29 @@ function drawNodeShape(
       .attr("font-size", 10)
       .attr("fill", "#fff")
       .text(truncate(node.label, 14));
+  } else if (node.isCluster) {
+    const r = 36;
+    sel
+      .append("circle")
+      .attr("r", r)
+      .attr("fill", color)
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 2);
+    sel
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "central")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("font-size", 11)
+      .attr("fill", "#fff")
+      .attr("font-weight", 600)
+      .text(node.label);
   } else if (node.layer === "L3") {
     const r = getNodeRadius(node);
     sel
       .append("circle")
-      .attr("r", r)
+      .attr("r", node.isIsolated ? r * 0.7 : r)
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
@@ -126,12 +162,14 @@ function drawNodeShape(
       .attr("fill", "#fff")
       .text(truncate(node.label, 10));
   } else if (node.layer === "L4" || node.layer === "L5") {
+    const w = 80 * scale;
+    const h = 32 * scale;
     sel
       .append("rect")
-      .attr("x", -40)
-      .attr("y", -16)
-      .attr("width", 80)
-      .attr("height", 32)
+      .attr("x", -w / 2)
+      .attr("y", -h / 2)
+      .attr("width", w)
+      .attr("height", h)
       .attr("rx", 4)
       .attr("fill", color)
       .attr("stroke", "#fff")
@@ -148,7 +186,7 @@ function drawNodeShape(
   } else {
     sel
       .append("circle")
-      .attr("r", 18)
+      .attr("r", 18 * scale)
       .attr("fill", color)
       .attr("stroke", "#fff")
       .attr("stroke-width", 2);
@@ -177,16 +215,87 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   const [layerFilter, setLayerFilter] = useState<Record<string, boolean>>(
     Object.fromEntries(LAYER_ORDER.map((l) => [l, true]))
   );
+  const [layerExpanded, setLayerExpanded] = useState<Record<string, boolean>>(() => {
+    const counts: Record<string, number> = {};
+    for (const n of nodes) counts[n.layer] = (counts[n.layer] ?? 0) + 1;
+    return Object.fromEntries(
+      LAYER_ORDER.map((l) => [
+        l,
+        l === "L3" ? (counts[l] ?? 0) <= 10 : true
+      ])
+    ) as Record<string, boolean>;
+  });
+  const [showConnectedOnly, setShowConnectedOnly] = useState(false);
 
-  const filteredNodes = nodes.filter((n) => layerFilter[n.layer]);
-  const filteredEdges = edges.filter(
-    (e) =>
-      layerFilter[nodes.find((n) => n.id === e.from)?.layer ?? "L1"] &&
-      layerFilter[nodes.find((n) => n.id === e.to)?.layer ?? "L1"]
-  );
+  const layerCounts: Record<string, number> = {};
+  for (const n of nodes) layerCounts[n.layer] = (layerCounts[n.layer] ?? 0) + 1;
+
+  let filteredNodes = nodes.filter((n) => layerFilter[n.layer]);
+  if (showConnectedOnly) {
+    const connectedIds = new Set<string>();
+    for (const e of edges) {
+      connectedIds.add(e.from);
+      connectedIds.add(e.to);
+    }
+    filteredNodes = filteredNodes.filter((n) => connectedIds.has(n.id));
+  }
+
+  const displayedNodes: TopologyNode[] = [];
+  const displayedEdges: TopologyEdge[] = [];
+  const clusterIdByLayer: Record<string, string> = {};
+  const displayedNodeIds = new Set<string>();
+
+  for (const layer of LAYER_ORDER) {
+    const layerNodes = filteredNodes.filter((n) => n.layer === layer);
+    const count = layerNodes.length;
+    const expanded = layerExpanded[layer] ?? true;
+    const shouldCluster = count > 10 && !expanded;
+
+    if (shouldCluster && count > 0) {
+      const clusterId = `cluster-${layer}`;
+      clusterIdByLayer[layer] = clusterId;
+      displayedNodes.push({
+        id: clusterId,
+        label: `${count} ${LAYER_CLUSTER_LABELS[layer]}`,
+        layer,
+        role: "Cluster",
+        isCluster: true
+      });
+      displayedNodeIds.add(clusterId);
+    } else {
+      for (const n of layerNodes) {
+        displayedNodes.push({
+          ...n,
+          isIsolated: !hasEdges(edges, n.id)
+        });
+        displayedNodeIds.add(n.id);
+      }
+    }
+  }
+
+  const seenEdgeKeys = new Set<string>();
+  for (const e of edges) {
+    const fromNode = nodes.find((n) => n.id === e.from);
+    const toNode = nodes.find((n) => n.id === e.to);
+    const fromLayer = fromNode?.layer ?? "";
+    const toLayer = toNode?.layer ?? "";
+    const fromId = clusterIdByLayer[fromLayer] ?? e.from;
+    const toId = clusterIdByLayer[toLayer] ?? e.to;
+    if (
+      fromId !== toId &&
+      displayedNodeIds.has(fromId) &&
+      displayedNodeIds.has(toId)
+    ) {
+      const key = fromId < toId ? `${fromId}-${toId}` : `${toId}-${fromId}`;
+      if (!seenEdgeKeys.has(key)) {
+        seenEdgeKeys.add(key);
+        displayedEdges.push({ from: fromId, to: toId, type: e.type });
+      }
+    }
+  }
 
   const runSimulation = useCallback(() => {
-    if (!svgRef.current || !containerRef.current || filteredNodes.length === 0) return;
+    if (!svgRef.current || !containerRef.current || displayedNodes.length === 0) return;
 
     const w = containerRef.current.clientWidth ?? 800;
     setWidth(w);
@@ -211,24 +320,21 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
         .attr("x", 12)
         .attr("y", layerY(i) + 4)
         .attr("font-size", 11)
-        .attr("fill", "#94a3b8")
+        .attr("font-weight", 500)
+        .attr("fill", "#475569")
         .text(`L${i + 1}`);
     }
 
     type SimNodeExt = SimNode & { x: number; y: number };
-    const d3Nodes: SimNodeExt[] = filteredNodes.map((n) => ({
+    const d3Nodes: SimNodeExt[] = displayedNodes.map((n) => ({
       ...n,
       x: w / 2,
       y: layerY(LAYER_INDEX[n.layer] ?? 0)
     }));
     const nodeById = new Map(d3Nodes.map((n) => [n.id, n]));
-    const d3Edges = filteredEdges
+    const d3Edges = displayedEdges
       .filter((e) => nodeById.has(e.from) && nodeById.has(e.to))
-      .map((e) => ({
-        ...e,
-        source: nodeById.get(e.from)!,
-        target: nodeById.get(e.to)!
-      }));
+      .map((e) => ({ ...e, source: nodeById.get(e.from)!, target: nodeById.get(e.to)! }));
 
     const link = g
       .append("g")
@@ -289,6 +395,9 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
       });
     svg.call(zoom);
 
+    const centerX = w / 2;
+    const isIsolated = (n: SimNodeExt) => n.isIsolated ?? !hasEdges(displayedEdges, n.id);
+
     const simulation = d3
       .forceSimulation<SimNodeExt>(d3Nodes)
       .force("link", d3.forceLink(d3Edges).id((d) => (d as TopologyNode).id).distance(100))
@@ -296,9 +405,16 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
       .force("collide", d3.forceCollide().radius(35))
       .force(
         "y",
-        d3.forceY<SimNodeExt>((d) => layerY(LAYER_INDEX[d.layer] ?? 0)).strength(0.8)
+        d3
+          .forceY<SimNodeExt>((d) => layerY(LAYER_INDEX[d.layer] ?? 0))
+          .strength((d) => (isIsolated(d) ? 1.0 : 0.8))
       )
-      .force("x", d3.forceX(w / 2).strength(0.05))
+      .force(
+        "x",
+        d3
+          .forceX<SimNodeExt>(centerX)
+          .strength((d) => (isIsolated(d) ? 0.4 : 0.05))
+      )
       .alphaDecay(0.05)
       .on("tick", () => {
         link
@@ -309,19 +425,22 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
           .attr("opacity", (d) => {
             const sel = selectedRef.current;
             if (!sel) return 1;
-            const ids = getConnectedIds(filteredEdges, sel.id);
+            const ids = getConnectedIds(displayedEdges, sel.id);
             return ids.has((d.source as SimNodeExt).id) && ids.has((d.target as SimNodeExt).id) ? 1 : 0.15;
           });
-        node.attr("transform", (d) => `translate(${d.x},${d.y})`).attr("opacity", (d) => {
-          const sel = selectedRef.current;
-          if (!sel) return 1;
-          const ids = getConnectedIds(filteredEdges, sel.id);
-          return ids.has(d.id) ? 1 : 0.2;
-        });
+        node
+          .attr("transform", (d) => `translate(${d.x},${d.y})`)
+          .attr("opacity", (d) => {
+            const sel = selectedRef.current;
+            if (sel && getConnectedIds(displayedEdges, sel.id).has(d.id)) return 1;
+            if (d.isIsolated) return 0.6;
+            if (sel) return 0.2;
+            return 1;
+          });
       });
 
     simulationRef.current = simulation;
-  }, [filteredNodes, filteredEdges, height, onNodeClick]);
+  }, [displayedNodes, displayedEdges, height, onNodeClick]);
 
   useEffect(() => {
     runSimulation();
@@ -337,7 +456,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   }, [selected]);
 
   const byLayer: Record<string, number> = {};
-  for (const n of filteredNodes) byLayer[n.layer] = (byLayer[n.layer] ?? 0) + 1;
+  for (const n of displayedNodes) byLayer[n.layer] = (byLayer[n.layer] ?? 0) + 1;
 
   return (
     <div ref={containerRef} className="flex flex-col" style={{ height: height + 60 }}>
@@ -356,6 +475,30 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
             </label>
           ))}
         </div>
+        {layerCounts.L3 > 10 && (
+          <button
+            type="button"
+            onClick={() => {
+              setLayerExpanded((p) => ({ ...p, L3: !p.L3 }));
+              setTimeout(runSimulation, 0);
+            }}
+            className="rounded border border-slate-300 bg-slate-50 px-3 py-1.5 text-sm hover:bg-slate-100"
+          >
+            {layerExpanded.L3 ? "Collapse L3" : "Expand L3"}
+          </button>
+        )}
+        <label className="flex cursor-pointer items-center gap-1.5 text-sm">
+          <input
+            type="checkbox"
+            checked={showConnectedOnly}
+            onChange={(e) => {
+              setShowConnectedOnly(e.target.checked);
+              setTimeout(runSimulation, 0);
+            }}
+            className="rounded"
+          />
+          <span>Show connected only</span>
+        </label>
         <button
           type="button"
           onClick={() => runSimulation()}
@@ -375,7 +518,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
         />
         {selected && (
           <div
-            className="absolute right-0 top-0 h-full border-l border-slate-200 bg-white p-4 shadow-lg"
+            className="absolute right-0 top-0 z-50 h-full border-l border-slate-200 bg-white p-4 shadow-xl"
             style={{ width: 240 }}
           >
             <h3 className="font-medium text-slate-900">{selected.label}</h3>
@@ -391,11 +534,11 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
             <div className="mt-3 text-sm">
               <p className="font-medium text-slate-700">Connected</p>
               <ul className="mt-1 space-y-1">
-                {filteredEdges
+                {displayedEdges
                   .filter((e) => e.from === selected.id || e.to === selected.id)
                   .map((e, i) => {
                     const otherId = e.from === selected.id ? e.to : e.from;
-                    const other = filteredNodes.find((n) => n.id === otherId);
+                    const other = displayedNodes.find((n) => n.id === otherId);
                     return (
                       <li key={`${e.from}-${e.to}-${i}`} className="text-slate-600">
                         {other?.label ?? otherId} ({e.type})
