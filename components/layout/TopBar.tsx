@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
-import { User, LayoutGrid, Settings, ChevronDown } from "lucide-react";
+import { Settings, ChevronDown } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
-import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { getPersonaConfig } from "@/lib/personas/config";
-import { isPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 
 type TopBarProps = {
   userEmail?: string | null;
@@ -17,13 +14,10 @@ type TopBarProps = {
   persona?: string | null;
 };
 
-const EXECUTIVE_PERSONAS = ["CEO", "CFO", "COO"];
-
 export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
-  const pathname = usePathname();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
-  const isPersonaDashboard = isPersonaDashboardPath(pathname);
+  const personaDashboardPath = getPersonaDashboardPath(persona ?? null);
 
   const initials = userEmail
     ? userEmail.split("@")[0].slice(0, 2).toUpperCase()
@@ -31,9 +25,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
   const displayName = userEmail
     ? userEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
     : "User";
-  const personaDashboardPath = getPersonaDashboardPath(persona ?? null);
   const personaConfig = persona ? getPersonaConfig(persona) : null;
-  const isExecutive = persona && EXECUTIVE_PERSONAS.includes(persona);
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 shadow-sm">
@@ -43,7 +35,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
       </Link>
 
       <div className="flex items-center gap-3">
-        {persona && isPersonaDashboard ? (
+        {persona ? (
           <div className="relative">
             <button
               type="button"
@@ -60,51 +52,24 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
                   aria-hidden
                 />
                 <div className="absolute right-0 top-full z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-xl">
-                  <div className="border-b border-slate-100 px-3 py-2">
-                    <p className="text-xs font-medium text-slate-500">Current view</p>
-                    <p className="text-sm font-medium text-slate-900">
-                      {isExecutive ? "AI Risk Briefing" : personaConfig?.label ?? persona} view
-                    </p>
-                  </div>
-                  <Link
-                    href="/dashboard?view=full"
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
-                    onClick={() => setViewDropdownOpen(false)}
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                    Full Platform →
-                  </Link>
                   <Link
                     href="/persona-select"
                     className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                     onClick={() => setViewDropdownOpen(false)}
                   >
-                    Switch persona →
+                    Switch view →
                   </Link>
                 </div>
               </>
             )}
           </div>
         ) : (
-          <>
-            <Link
-              href="/dashboard?view=full"
-              className="text-sm text-slate-500 hover:text-navy-600 hover:underline"
-            >
-              Full platform →
-            </Link>
-            {persona && (
-              <Tooltip content="Switch to your focused view" side="bottom">
-                <Link
-                  href={personaDashboardPath ?? "/persona-select"}
-                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-navy-600"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                  <span className="hidden sm:inline">My view</span>
-                </Link>
-              </Tooltip>
-            )}
-          </>
+          <Link
+            href="/persona-select"
+            className="text-sm font-medium text-slate-600 hover:text-navy-600 hover:underline"
+          >
+            Choose view →
+          </Link>
         )}
 
         <div className="relative">

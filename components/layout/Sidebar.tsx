@@ -40,7 +40,9 @@ import {
   Bell,
   Maximize2,
   RotateCcw,
-  Newspaper
+  Newspaper,
+  UserCircle,
+  User
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
@@ -55,7 +57,13 @@ import { canAccessFeature, getAssetLimit, TIER_LIMITS, type GatedFeature } from 
 const STORAGE_KEY = "sidebar-collapsed";
 const STORAGE_KEY_EXPANDED = "sidebar-expanded-sections";
 
-type NavItem = { href: string; label: string; icon: React.ComponentType<{ className?: string }> };
+type NavItem = {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  subtitle?: string;
+  changeHref?: string;
+};
 type GatedSection = {
   title: string;
   flag: string;
@@ -152,9 +160,18 @@ function getGovernanceOverviewItems(
   }
   if (persona && persona in PERSONA_FIRST_ITEM) {
     const item = PERSONA_FIRST_ITEM[persona as PersonaId];
-    return [item, ...base];
+    const config = getPersonaConfig(persona as PersonaId);
+    const label = config?.label ?? persona;
+    return [
+      {
+        ...item,
+        subtitle: `${label} view · `,
+        changeHref: "/persona-select"
+      },
+      ...base
+    ];
   }
-  return [{ href: "/persona-select", label: "Choose your view", icon: LayoutDashboard }, ...base];
+  return [{ href: "/persona-select", label: "Choose my view", icon: UserCircle }, ...base];
 }
 
 const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = [
@@ -188,9 +205,11 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   {
     title: "SETTINGS",
     items: [
+      { href: "/settings/profile", label: "Profile", icon: User },
       { href: "/settings/billing", label: "Billing", icon: CreditCard },
       { href: "/settings/users", label: "Users & Invites", icon: UserPlus },
       { href: "/settings/organization", label: "Organization", icon: Briefcase },
+      { href: "/settings/notifications", label: "Notifications", icon: Bell },
       { href: "/settings/data", label: "Data & Privacy", icon: Lock }
     ]
   }
@@ -659,38 +678,51 @@ export function Sidebar({
                       </div>
                     );
                   }
+                  const hasSubtitle = !collapsed && item.subtitle && item.changeHref;
                   return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      title={collapsed ? item.label : isTierLocked ? "Upgrade to Pro" : undefined}
-                      className={`flex items-center gap-2 px-3 py-2 text-sm ${
-                        collapsed ? "justify-center pl-2" : "pl-6"
-                      } ${active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"}`}
-                      aria-current={active ? "page" : undefined}
-                    >
-                      {isTierLocked ? (
-                        <Lock className="h-4 w-4 shrink-0 text-amber-500/70" />
-                      ) : (
-                        <Icon className="h-4 w-4 shrink-0" />
-                      )}
-                      {!collapsed && (
-                        <>
-                          <span className="truncate">{item.label}</span>
-                          {item.href === "/consultant" &&
-                            consultantWorkspaces.length > 0 && (
-                              <span className="shrink-0 rounded bg-navy-500/30 px-1.5 py-0.5 text-[10px] text-navy-300">
-                                {consultantWorkspaces.length}
+                    <div key={item.href} className={hasSubtitle ? "flex flex-col gap-0.5" : ""}>
+                      <Link
+                        href={item.href}
+                        title={collapsed ? item.label : isTierLocked ? "Upgrade to Pro" : undefined}
+                        className={`flex items-center gap-2 px-3 py-2 text-sm ${
+                          collapsed ? "justify-center pl-2" : "pl-6"
+                        } ${active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"}`}
+                        aria-current={active ? "page" : undefined}
+                      >
+                        {isTierLocked ? (
+                          <Lock className="h-4 w-4 shrink-0 text-amber-500/70" />
+                        ) : (
+                          <Icon className="h-4 w-4 shrink-0" />
+                        )}
+                        {!collapsed && (
+                          <>
+                            <span className="truncate">{item.label}</span>
+                            {item.href === "/consultant" &&
+                              consultantWorkspaces.length > 0 && (
+                                <span className="shrink-0 rounded bg-navy-500/30 px-1.5 py-0.5 text-[10px] text-navy-300">
+                                  {consultantWorkspaces.length}
+                                </span>
+                              )}
+                            {isTierLocked && (
+                              <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
+                                Pro
                               </span>
                             )}
-                          {isTierLocked && (
-                            <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
-                              Pro
-                            </span>
-                          )}
-                        </>
+                          </>
+                        )}
+                      </Link>
+                      {hasSubtitle && (
+                        <div className="px-3 pl-6 text-[10px] text-slatePro-500">
+                          {item.subtitle}
+                          <Link
+                            href={item.changeHref!}
+                            className="text-navy-400 hover:text-navy-300 hover:underline"
+                          >
+                            Change →
+                          </Link>
+                        </div>
                       )}
-                    </Link>
+                    </div>
                   );
                 })}
             </div>

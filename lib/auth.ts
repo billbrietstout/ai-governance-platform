@@ -108,6 +108,14 @@ export const authOptions = {
                 role: orgByDomain.autoJoinRole
               }
             });
+            await tx.notificationPreference.create({
+              data: {
+                userId: u.id,
+                orgId: orgByDomain.id,
+                weeklyDigest: true,
+                emailEnabled: true
+              }
+            });
             await tx.auditLog.create({
               data: {
                 orgId: orgByDomain.id,
@@ -153,6 +161,14 @@ export const authOptions = {
               orgId: invite.orgId,
               email,
               role: invite.role
+            }
+          });
+          await tx.notificationPreference.create({
+            data: {
+              userId: u.id,
+              orgId: invite.orgId,
+              weeklyDigest: true,
+              emailEnabled: true
             }
           });
           await tx.pendingInvite.delete({ where: { id: invite.id } });
@@ -266,6 +282,14 @@ export const authOptions = {
             orgId: o.id,
             email,
             role: "ADMIN"
+          }
+        });
+        await tx.notificationPreference.create({
+          data: {
+            userId: u.id,
+            orgId: o.id,
+            weeklyDigest: true,
+            emailEnabled: true
           }
         });
         await tx.auditLog.create({

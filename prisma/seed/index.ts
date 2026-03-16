@@ -11,12 +11,18 @@ import { seedDemoEnterpriseP4 } from "./demo-enterprise-p4";
 import { seedDemoLayer2 } from "./demo-layer2";
 import { seedDemoPhases48 } from "./demo-phases4-8";
 import { seedFrameworks } from "./frameworks";
+import { seedNotificationPrefs } from "./seed-notification-prefs";
 
 const prisma = new PrismaClient();
 
 async function main() {
   const demoOrgId = await seedDemo(prisma);
   await seedFrameworks(prisma, demoOrgId);
+  const prefsCreated = await seedNotificationPrefs(prisma);
+  if (prefsCreated > 0) {
+    // eslint-disable-next-line no-console
+    console.log(`Created ${prefsCreated} notification preference(s) for existing users.`);
+  }
   await seedDemoEnterprise(prisma);
   await seedDemoEnterpriseP2(prisma);
   await seedDemoEnterpriseP3(prisma);

@@ -54,6 +54,7 @@
     "react": "latest",
     "react-dom": "latest",
     "recharts": "^3.8.0",
+    "resend": "^6.9.4",
     "zod": "latest",
     "zustand": "^5.0.12"
   },

@@ -257,6 +257,7 @@ model Organization {
   operatingModel     String?   // IAAS | PAAS | AGENT_PAAS | SAAS | MIXED
   orgSize            String?   // SMALL | MEDIUM | LARGE | ENTERPRISE
   primaryUseCase     String?   // free text, e.g. "Customer service chatbot"
+  notificationsEnabled Boolean @default(true) // org-level kill switch for all emails
   createdAt          DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -286,6 +287,8 @@ model Organization {
   complianceSnapshots   ComplianceSnapshot[]
   provenanceRecords    ProvenanceRecord[]
   isoReadiness         IsoReadiness[]
+  notificationLogs     NotificationLog[]
+  notificationPreferences NotificationPreference[]
 }
 
 model MasterDataEntity {
@@ -417,9 +420,68 @@ model User {
   maturityAssessments MaturityAssessment[]
   regulationDiscoveries RegulationDiscovery[]
   complianceSnapshots  ComplianceSnapshot[]
+  notificationPreference NotificationPreference?
 
   @@unique([orgId, email])
   @@index([orgId])
+}
+
+model NotificationPreference {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  orgId            String
+
+  // Weekly digest
+  weeklyDigest     Boolean  @default(true)
+  weeklyDigestDay  String   @default("MONDAY")
+  weeklyDigestTime String   @default("08:00")
+
+  // Threshold alerts
+  complianceDropAlert    Boolean @default(true)
+  complianceDropThreshold Int    @default(10)
+  newCriticalRiskAlert   Boolean @default(true)
+
+  // Deadline reminders
+  regulatoryDeadline90   Boolean @default(true)
+  regulatoryDeadline30   Boolean @default(true)
+  regulatoryDeadline7    Boolean @default(true)
+
+  // Evidence alerts
+  vendorEvidenceExpiry   Boolean @default(true)
+  evidenceExpiryDays     Int     @default(30)
+
+  // Operational alerts
+  shadowAiDetected       Boolean @default(true)
+  newUnownedHighRisk     Boolean @default(true)
+  failedScanAlert        Boolean @default(false)
+
+  // Delivery
+  emailEnabled     Boolean  @default(true)
+  slackWebhookUrl  String?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org              Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+}
+
+model NotificationLog {
+  id               String   @id @default(cuid())
+  orgId            String
+  userId           String?
+  type             String   // WEEKLY_DIGEST, THRESHOLD_ALERT, etc
+  subject          String
+  sentAt           DateTime @default(now())
+  status           String   @default("SENT")
+  metadata         Json?
+
+  org              Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([orgId, sentAt])
 }
 
 model ComplianceSnapshot {

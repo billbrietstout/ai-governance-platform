@@ -15,3 +15,29 @@ export async function setOrgTierAction(tier: "FREE" | "PRO" | "CONSULTANT" | "EN
   revalidatePath("/settings/admin");
   revalidatePath("/");
 }
+
+export async function setOrgNotificationsEnabledAction(enabled: boolean) {
+  const session = await auth();
+  const user = session?.user as { role?: string } | undefined;
+  if (user?.role !== "ADMIN") throw new Error("Forbidden");
+  const caller = await createServerCaller();
+  await caller.notifications.setOrgNotificationsEnabled({ enabled });
+  revalidatePath("/settings/admin");
+}
+
+export async function sendTestDigestToAllAction() {
+  const session = await auth();
+  const user = session?.user as { role?: string } | undefined;
+  if (user?.role !== "ADMIN") throw new Error("Forbidden");
+  const caller = await createServerCaller();
+  return caller.notifications.sendTestDigestToAll();
+}
+
+export async function setUserEmailEnabledAction(targetUserId: string, enabled: boolean) {
+  const session = await auth();
+  const user = session?.user as { role?: string } | undefined;
+  if (user?.role !== "ADMIN") throw new Error("Forbidden");
+  const caller = await createServerCaller();
+  await caller.notifications.setUserEmailEnabled({ targetUserId, enabled });
+  revalidatePath("/settings/admin");
+}
