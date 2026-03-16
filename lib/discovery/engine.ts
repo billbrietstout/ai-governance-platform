@@ -1,6 +1,7 @@
 /**
  * Regulation Discovery Engine – determines applicable regulations
  * based on AI system characteristics before building.
+ * Pure computation — safe for client-side use (no prisma/server imports).
  */
 
 import type { VerticalKey } from "@/lib/vertical-regulations";

@@ -3,9 +3,9 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { runDiscoveryGuest } from "./actions";
+import { Loader2 } from "lucide-react";
+import { runDiscovery, type RegulationDiscoveryResult } from "@/lib/discovery/engine";
 import { GuestResultsView } from "./GuestResultsView";
-import type { RegulationDiscoveryResult } from "@/lib/discovery/engine";
 const ASSET_TYPES = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"] as const;
 const BUSINESS_FUNCTIONS = ["HR", "Finance", "Operations", "Customer Service", "Healthcare", "Legal", "Other"] as const;
 const DEPLOYMENTS = ["EU_market", "US_only", "Global", "Internal_only"] as const;
@@ -97,6 +97,7 @@ export function DiscoveryWizardClient({
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [guestResults, setGuestResults] = useState<RegulationDiscoveryResult | null>(null);
   const [inputs, setInputs] = useState<WizardInputs>(() =>
     getInitialInputs(defaultVerticals, defaultOperatingModel)
@@ -105,6 +106,7 @@ export function DiscoveryWizardClient({
   const startOver = useCallback(() => {
     setStep(1);
     setGuestResults(null);
+    setError(null);
     setInputs(getInitialInputs(defaultVerticals, defaultOperatingModel));
   }, [defaultVerticals, defaultOperatingModel]);
 
@@ -126,7 +128,7 @@ export function DiscoveryWizardClient({
     }));
   };
 
-  const runDiscovery = async () => {
+  const runDiscoveryHandler = useCallback(() => {
     const required = [
       { val: inputs.assetType, label: "AI system type" },
       { val: inputs.businessFunction, label: "Business function" },
@@ -140,10 +142,11 @@ export function DiscoveryWizardClient({
       alert(`Please complete: ${missing.map((m) => m.label).join(", ")}`);
       return;
     }
-    setSaving(true);
-    try {
-      if (isGuest) {
-        const results = await runDiscoveryGuest({
+    setError(null);
+    if (isGuest) {
+      setSaving(true);
+      try {
+        const result = runDiscovery({
           assetType: inputs.assetType as (typeof ASSET_TYPES)[number],
           description: inputs.description || undefined,
           businessFunction: inputs.businessFunction as (typeof BUSINESS_FUNCTIONS)[number],
@@ -158,30 +161,51 @@ export function DiscoveryWizardClient({
           expectedRiskLevel: inputs.expectedRiskLevel as (typeof RISK_LEVELS)[number],
           vulnerablePopulations: inputs.vulnerablePopulations
         });
-        setGuestResults(results);
-      } else if (runDiscoveryAuthenticated) {
-        const id = await runDiscoveryAuthenticated({
-          assetType: inputs.assetType,
-          description: inputs.description || undefined,
-          businessFunction: inputs.businessFunction,
-          decisionsAffectingPeople: inputs.decisionsAffectingPeople,
-          interactsWithEndUsers: inputs.interactsWithEndUsers,
-          deployment: inputs.deployment,
-          verticals: inputs.verticals,
-          operatingModel: inputs.operatingModel || undefined,
-          autonomyLevel: inputs.autonomyLevel,
-          dataTypes: inputs.dataTypes,
-          euResidentsData: inputs.euResidentsData,
-          expectedRiskLevel: inputs.expectedRiskLevel,
-          vulnerablePopulations: inputs.vulnerablePopulations
-        } as DiscoveryInputs);
-        router.push(`/discover/results/${id}`);
+        setGuestResults(result);
+      } catch (e) {
+        console.error(e);
+        setError("Something went wrong. Please try again.");
+      } finally {
+        setSaving(false);
       }
-    } catch (e) {
-      console.error(e);
-      setSaving(false);
+    } else if (runDiscoveryAuthenticated) {
+      setSaving(true);
+      runDiscoveryAuthenticated({
+        assetType: inputs.assetType,
+        description: inputs.description || undefined,
+        businessFunction: inputs.businessFunction,
+        decisionsAffectingPeople: inputs.decisionsAffectingPeople,
+        interactsWithEndUsers: inputs.interactsWithEndUsers,
+        deployment: inputs.deployment,
+        verticals: inputs.verticals,
+        operatingModel: inputs.operatingModel || undefined,
+        autonomyLevel: inputs.autonomyLevel,
+        dataTypes: inputs.dataTypes,
+        euResidentsData: inputs.euResidentsData,
+        expectedRiskLevel: inputs.expectedRiskLevel,
+        vulnerablePopulations: inputs.vulnerablePopulations
+      } as DiscoveryInputs)
+        .then((id) => router.push(`/discover/results/${id}`))
+        .catch((e) => {
+          console.error(e);
+          setError("Something went wrong. Please try again.");
+        })
+        .finally(() => setSaving(false));
     }
-  };
+  }, [
+    inputs,
+    isGuest,
+    runDiscoveryAuthenticated,
+    router
+  ]);
+
+  if (guestResults) {
+    return (
+      <div className="discovery-wizard space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <GuestResultsView results={guestResults} onStartOver={startOver} />
+      </div>
+    );
+  }
 
   return (
     <div className="discovery-wizard space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
@@ -388,6 +412,11 @@ export function DiscoveryWizardClient({
       {step === 4 && (
         <div className="space-y-4">
           <h2 className="font-medium text-slate-900">Step 4: Run Discovery</h2>
+          {error && (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {error}
+            </div>
+          )}
           {isGuest ? (
             <>
               <div className="rounded-lg border border-navy-200 bg-navy-50/50 p-4">
@@ -405,11 +434,18 @@ export function DiscoveryWizardClient({
                   </Link>
                   <button
                     type="button"
-                    onClick={runDiscovery}
+                    onClick={runDiscoveryHandler}
                     disabled={saving}
-                    className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {saving ? "Running…" : "Continue as guest"}
+                    {saving ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      "Continue as guest"
+                    )}
                   </button>
                 </div>
                 <p className="mt-2 text-xs text-navy-600">
@@ -425,11 +461,18 @@ export function DiscoveryWizardClient({
               </p>
               <button
                 type="button"
-                onClick={runDiscovery}
-                disabled={saving || !runDiscoveryAuthenticated}
-                className="w-full rounded bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+                onClick={runDiscoveryHandler}
+                disabled={saving}
+                className="flex w-full items-center justify-center gap-2 rounded bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {saving ? "Running discovery…" : "Run discovery & view results"}
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Running discovery…
+                  </>
+                ) : (
+                  "Run discovery & view results"
+                )}
               </button>
             </>
           )}
