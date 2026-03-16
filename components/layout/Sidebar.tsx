@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
+import { WorkspaceContextBanner } from "./WorkspaceContextBanner";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaConfig, type PersonaId } from "@/lib/personas/config";
@@ -267,7 +268,8 @@ export type SidebarProps = {
   consultantOrgId?: string | null;
   consultantWorkspaces?: ConsultantWorkspace[];
   consultantOrgName?: string | null;
-  currentOrgId?: string | null;
+  activeWorkspaceOrgId?: string | null;
+  activeWorkspaceName?: string | null;
   sidebarMode?: "full" | "focused";
   onExpandToFull?: () => void;
   onResetToPersonaView?: () => void;
@@ -285,7 +287,8 @@ export function Sidebar({
   consultantOrgId = null,
   consultantWorkspaces = [],
   consultantOrgName = null,
-  currentOrgId = null,
+  activeWorkspaceOrgId = null,
+  activeWorkspaceName = null,
   sidebarMode = "full",
   onExpandToFull,
   onResetToPersonaView
@@ -578,14 +581,17 @@ export function Sidebar({
 
       {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
 
-      {consultantOrgId && currentOrgId && !collapsed && (
+      {activeWorkspaceOrgId && activeWorkspaceName && !collapsed && (
+        <WorkspaceContextBanner activeWorkspaceName={activeWorkspaceName} />
+      )}
+
+      {consultantOrgId && !activeWorkspaceOrgId && !collapsed && consultantOrgName && (
         <div className="border-b border-slatePro-800 px-3 py-2">
           <WorkspaceSwitcher
-            currentOrgId={currentOrgId}
-            orgName={orgName ?? null}
             consultantOrgId={consultantOrgId}
+            consultantOrgName={consultantOrgName}
             consultantWorkspaces={consultantWorkspaces}
-            consultantOrgName={consultantOrgName ?? "My organization"}
+            activeWorkspaceOrgId={null}
           />
         </div>
       )}
@@ -671,6 +677,12 @@ export function Sidebar({
                       {!collapsed && (
                         <>
                           <span className="truncate">{item.label}</span>
+                          {item.href === "/consultant" &&
+                            consultantWorkspaces.length > 0 && (
+                              <span className="shrink-0 rounded bg-navy-500/30 px-1.5 py-0.5 text-[10px] text-navy-300">
+                                {consultantWorkspaces.length}
+                              </span>
+                            )}
                           {isTierLocked && (
                             <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
                               Pro

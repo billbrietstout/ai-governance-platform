@@ -10,7 +10,7 @@ const enforceAuth = t.middleware(({ ctx, next }) => {
   if (!session || !user?.orgId || !user?.id) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
   }
-  return next({ ctx: { ...ctx, session, orgId: user.orgId, userId: user.id, role: user.role ?? "MEMBER" } });
+  return next({ ctx });
 });
 
 export const createTRPCRouter = t.router;

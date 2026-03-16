@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { setOrgTierAction } from "./actions";
 
 const TIERS = ["FREE", "PRO", "CONSULTANT", "ENTERPRISE"] as const;
@@ -11,7 +10,6 @@ type Props = {
 };
 
 export function AdminContent({ currentTier }: Props) {
-  const { update } = useSession();
   const [selectedTier, setSelectedTier] = useState<string>(currentTier);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [pending, setPending] = useState(false);
@@ -21,9 +19,8 @@ export function AdminContent({ currentTier }: Props) {
     setPending(true);
     try {
       await setOrgTierAction(selectedTier as (typeof TIERS)[number]);
-      setMessage({ type: "success", text: "Tier updated successfully." });
-      await update();
-      window.location.reload();
+      setMessage({ type: "success", text: "Tier updated. Reloading..." });
+      setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
       setMessage({
         type: "error",

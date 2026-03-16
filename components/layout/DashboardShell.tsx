@@ -31,7 +31,8 @@ type DashboardShellProps = {
   consultantOrgId?: string | null;
   consultantWorkspaces?: ConsultantWorkspace[];
   consultantOrgName?: string | null;
-  currentOrgId?: string | null;
+  activeWorkspaceOrgId?: string | null;
+  activeWorkspaceName?: string | null;
   children: React.ReactNode;
 };
 
@@ -62,7 +63,8 @@ export function DashboardShell({
   consultantOrgId = null,
   consultantWorkspaces = [],
   consultantOrgName = null,
-  currentOrgId = null,
+  activeWorkspaceOrgId = null,
+  activeWorkspaceName = null,
   children
 }: DashboardShellProps) {
   const pathname = usePathname();
@@ -136,7 +138,8 @@ export function DashboardShell({
         consultantOrgId={consultantOrgId}
         consultantWorkspaces={consultantWorkspaces}
         consultantOrgName={consultantOrgName}
-        currentOrgId={currentOrgId}
+        activeWorkspaceOrgId={activeWorkspaceOrgId}
+        activeWorkspaceName={activeWorkspaceName}
         sidebarMode={effectiveMode}
         onExpandToFull={expandToFull}
         onResetToPersonaView={persona ? resetToPersonaView : undefined}

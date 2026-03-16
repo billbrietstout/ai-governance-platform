@@ -23,7 +23,11 @@ async function handler(req: NextRequest) {
     endpoint: "/api/trpc",
     req,
     router: appRouter,
-    createContext: () => createTrpcContext({ req, session: session as import("next-auth").Session | null })
+    createContext: () =>
+      createTrpcContext({
+        req,
+        session: session as import("next-auth").Session | null
+      })
   });
 
   for (const [k, v] of Object.entries(headers)) {

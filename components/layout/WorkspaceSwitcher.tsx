@@ -1,59 +1,46 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
-import { switchWorkspaceAction } from "@/app/(dashboard)/consultant/actions";
+import { useWorkspaceStore } from "@/lib/hooks/useWorkspaceContext";
 
 type Workspace = { id: string; clientOrgId: string; clientName: string };
 
 export function WorkspaceSwitcher({
-  currentOrgId,
-  orgName,
   consultantOrgId,
+  consultantOrgName,
   consultantWorkspaces,
-  consultantOrgName
+  activeWorkspaceOrgId
 }: {
-  currentOrgId: string;
-  orgName: string | null;
   consultantOrgId: string;
-  consultantWorkspaces: Workspace[];
   consultantOrgName: string;
+  consultantWorkspaces: Workspace[];
+  activeWorkspaceOrgId: string | null;
 }) {
-  const { update } = useSession();
   const router = useRouter();
+  const { setWorkspace } = useWorkspaceStore();
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const displayName =
-    currentOrgId === consultantOrgId ? consultantOrgName : orgName ?? "Client";
+  const displayName = activeWorkspaceOrgId
+    ? consultantWorkspaces.find((w) => w.clientOrgId === activeWorkspaceOrgId)?.clientName ??
+      "Client"
+    : consultantOrgName;
 
-  const handleSwitch = useCallback(
-    async (targetOrgId: string) => {
-      setLoading(true);
-      setOpen(false);
-      try {
-        const result = await switchWorkspaceAction(targetOrgId);
-        await update({ orgId: result.orgId });
-        router.refresh();
-        window.location.href = "/dashboard";
-      } catch (err) {
-        console.error(err);
-        setLoading(false);
-      }
-    },
-    [update, router]
-  );
+  const handleSelect = (orgId: string | null, name: string | null) => {
+    setOpen(false);
+    setWorkspace(orgId, name);
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <div className="relative">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        disabled={loading}
-        className="flex w-full items-center justify-between gap-1 rounded-lg px-3 py-2 text-left text-sm text-slatePro-200 hover:bg-slatePro-800 disabled:opacity-50"
+        className="flex w-full items-center justify-between gap-1 rounded-lg px-3 py-2 text-left text-sm text-slatePro-200 hover:bg-slatePro-800"
         aria-expanded={open}
         aria-haspopup="listbox"
       >
@@ -73,11 +60,9 @@ export function WorkspaceSwitcher({
           >
             <button
               type="button"
-              onClick={() => handleSwitch(consultantOrgId)}
+              onClick={() => handleSelect(null, null)}
               className={`flex w-full items-center px-3 py-2 text-left text-sm hover:bg-slatePro-800 ${
-                currentOrgId === consultantOrgId
-                  ? "bg-slatePro-800/50 text-navy-300"
-                  : "text-slatePro-200"
+                !activeWorkspaceOrgId ? "bg-slatePro-800/50 text-navy-300" : "text-slatePro-200"
               }`}
               role="option"
             >
@@ -87,9 +72,9 @@ export function WorkspaceSwitcher({
               <button
                 key={w.id}
                 type="button"
-                onClick={() => handleSwitch(w.clientOrgId)}
+                onClick={() => handleSelect(w.clientOrgId, w.clientName)}
                 className={`flex w-full items-center px-3 py-2 text-left text-sm hover:bg-slatePro-800 ${
-                  currentOrgId === w.clientOrgId
+                  activeWorkspaceOrgId === w.clientOrgId
                     ? "bg-slatePro-800/50 text-navy-300"
                     : "text-slatePro-200"
                 }`}

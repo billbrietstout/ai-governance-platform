@@ -1,9 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createConsultantWorkspaceAction } from "./actions";
+import { useWorkspaceStore } from "@/lib/hooks/useWorkspaceContext";
 
 const VERTICALS = [
   { value: "", label: "Select industry (optional)" },
@@ -25,8 +25,8 @@ const SCOPES = [
 ];
 
 export function CreateWorkspaceForm() {
-  const { update } = useSession();
   const router = useRouter();
+  const { setWorkspace } = useWorkspaceStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,9 +40,9 @@ export function CreateWorkspaceForm() {
 
     try {
       const result = await createConsultantWorkspaceAction(formData);
-      await update({ orgId: result.clientOrgId });
+      setWorkspace(result.clientOrgId, result.clientName);
+      router.push("/");
       router.refresh();
-      window.location.href = "/dashboard";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create workspace");
       setLoading(false);

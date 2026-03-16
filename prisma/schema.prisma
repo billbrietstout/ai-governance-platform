@@ -262,6 +262,8 @@ model Organization {
 
   consultantWorkspaces  ConsultantWorkspace[] @relation("ConsultantWorkspaces")
   clientWorkspaces     ConsultantWorkspace[]  @relation("ClientWorkspaces")
+  isClientOrg          Boolean                 @default(false)
+  createdByConsultantOrgId String?
   users                User[]
   pendingInvites       PendingInvite[]
   aiAssets             AIAsset[]
@@ -860,8 +862,12 @@ model ConsultantWorkspace {
   consultantOrgId  String
   clientOrgId      String
   clientName       String
+  clientContact    String?
+  clientVertical   String?
+  assessmentScope  String   @default("FULL")
   status           String   @default("ACTIVE")
   createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   consultantOrg Organization @relation("ConsultantWorkspaces", fields: [consultantOrgId], references: [id], onDelete: Cascade)
   clientOrg     Organization @relation("ClientWorkspaces", fields: [clientOrgId], references: [id], onDelete: Cascade)

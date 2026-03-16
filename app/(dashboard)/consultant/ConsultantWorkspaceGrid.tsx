@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { SwitchWorkspaceButton } from "./SwitchWorkspaceButton";
 
 type Workspace = {
   id: string;
   clientOrgId: string;
   clientName: string;
-  maturityLevel: number;
-  lastActivity: Date;
-  complianceScore: number | null;
-  createdAt: Date;
+  clientOrg: { maturityLevel: number; updatedAt: Date };
+  complianceScore: number;
+  lastSnapshot: Date | null;
+  assetCount: number;
+  clientVertical?: string | null;
 };
 
 export function ConsultantWorkspaceGrid({ workspaces }: { workspaces: Workspace[] }) {
@@ -18,7 +20,7 @@ export function ConsultantWorkspaceGrid({ workspaces }: { workspaces: Workspace[
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-16 text-center">
         <p className="text-slate-600">No client workspaces yet.</p>
-        <p className="mt-1 text-sm text-slate-500">Create your first client assessment.</p>
+        <p className="mt-1 text-sm text-slate-500">Create your first client assessment to get started.</p>
         <Link
           href="/consultant/new"
           className="mt-6 inline-flex items-center rounded-lg bg-navy-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-500"
@@ -29,9 +31,30 @@ export function ConsultantWorkspaceGrid({ workspaces }: { workspaces: Workspace[
     );
   }
 
-  const formatDate = (d: Date) => {
+  const formatDate = (d: Date | string | null) => {
+    if (!d) return "—";
     const date = typeof d === "string" ? new Date(d) : d;
     return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const formatDaysAgo = (d: Date | string | null) => {
+    if (!d) return "—";
+    const date = typeof d === "string" ? new Date(d) : d;
+    const days = Math.floor((Date.now() - date.getTime()) / 86400000);
+    if (days === 0) return "Updated today";
+    if (days === 1) return "Updated 1 day ago";
+    return `Updated ${days} days ago`;
+  };
+
+  const maturityLabel = (level: number) => {
+    const labels: Record<number, string> = {
+      1: "Initial",
+      2: "Developing",
+      3: "Defined",
+      4: "Managed",
+      5: "Optimizing"
+    };
+    return `M${level} — ${labels[level] ?? "Unknown"}`;
   };
 
   return (
@@ -43,19 +66,39 @@ export function ConsultantWorkspaceGrid({ workspaces }: { workspaces: Workspace[
         >
           <h3 className="font-semibold text-slate-900">{w.clientName}</h3>
           <div className="mt-3 flex flex-wrap gap-2">
-            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
-              Level {w.maturityLevel}
-            </span>
-            {w.complianceScore != null && (
-              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-                {Math.round(w.complianceScore)}% compliance
+            {w.clientVertical && (
+              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+                {w.clientVertical}
               </span>
             )}
+            <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
+              {maturityLabel(w.clientOrg.maturityLevel)}
+            </span>
           </div>
-          <p className="mt-2 text-xs text-slate-500">Last activity: {formatDate(w.lastActivity)}</p>
-          <SwitchWorkspaceButton clientOrgId={w.clientOrgId}>
-            Open workspace
-          </SwitchWorkspaceButton>
+          {w.complianceScore > 0 && (
+            <div className="mt-2">
+              <div className="h-1.5 w-full rounded-full bg-slate-200">
+                <div
+                  className="h-1.5 rounded-full bg-emerald-500"
+                  style={{ width: `${Math.min(100, w.complianceScore)}%` }}
+                />
+              </div>
+              <span className="text-xs text-slate-500">{Math.round(w.complianceScore)}% compliance</span>
+            </div>
+          )}
+          <p className="mt-2 text-xs text-slate-500">{w.assetCount} AI systems</p>
+          <p className="text-xs text-slate-500">{formatDaysAgo(w.lastSnapshot ?? w.clientOrg.updatedAt)}</p>
+          <div className="mt-4 flex gap-2">
+            <SwitchWorkspaceButton clientOrgId={w.clientOrgId} clientName={w.clientName}>
+              Open workspace →
+            </SwitchWorkspaceButton>
+            <Link
+              href={`/consultant?summary=${w.clientOrgId}`}
+              className="text-sm font-medium text-slate-600 hover:text-slate-800"
+            >
+              View summary
+            </Link>
+          </div>
         </div>
       ))}
     </div>

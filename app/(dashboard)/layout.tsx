@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 import { PersonaModal } from "@/components/PersonaModal";
@@ -21,77 +22,73 @@ export default async function DashboardLayout({
 }>) {
   const session = await auth();
   const user = session?.user as { email?: string | null; orgId?: string; role?: string } | undefined;
-  const orgId = user?.orgId;
+  const consultantOrgId = user?.orgId ?? null;
+  const userId = (user as { id?: string } | undefined)?.id;
+
+  const workspaceOrgId = (await cookies()).get("workspace-org-id")?.value ?? null;
+  let effectiveOrgId = consultantOrgId ?? "";
+  let activeWorkspaceOrgId: string | null = null;
+  let activeWorkspaceName: string | null = null;
+
+  if (workspaceOrgId && consultantOrgId) {
+    const workspace = await prisma.consultantWorkspace.findFirst({
+      where: { consultantOrgId, clientOrgId: workspaceOrgId, status: "ACTIVE" },
+      select: { clientName: true }
+    });
+    if (workspace) {
+      effectiveOrgId = workspaceOrgId;
+      activeWorkspaceOrgId = workspaceOrgId;
+      activeWorkspaceName = workspace.clientName;
+    }
+  }
 
   let orgName: string | null = null;
   let featureFlags: Record<string, boolean> = {};
   let onboardingComplete = true;
   let persona: string | null = null;
   let personaModalDismissed = false;
-
-  const userId = (user as { id?: string } | undefined)?.id;
-
   let frameworks: { code: string }[] = [];
   let tier = "FREE";
   let assetCount = 0;
   let consultantWorkspaces: { id: string; clientOrgId: string; clientName: string }[] = [];
-  let consultantOrgId: string | null = null;
   let consultantOrgName: string | null = null;
-  if (orgId) {
-    const [org, flags, fws, dbUser, assetCnt, consultantData] = await Promise.all([
+  let consultantData: string | null = null;
+
+  if (effectiveOrgId) {
+    const [org, flags, fws, dbUser, assetCnt, consultantTier] = await Promise.all([
       prisma.organization.findUnique({
-        where: { id: orgId },
+        where: { id: effectiveOrgId },
         select: { name: true, onboardingComplete: true, onboardingStep: true, tier: true }
       }),
       prisma.featureFlag.findMany({
-        where: { orgId },
+        where: { orgId: effectiveOrgId },
         select: { name: true, enabled: true }
       }),
       prisma.complianceFramework.findMany({
-        where: { orgId, isActive: true },
+        where: { orgId: effectiveOrgId, isActive: true },
         select: { code: true }
       }),
       userId
         ? prisma.user.findUnique({
             where: { id: userId },
-            select: { persona: true, personaModalDismissedAt: true, orgId: true }
+            select: { persona: true, personaModalDismissedAt: true }
           })
         : Promise.resolve(null),
-      prisma.aIAsset.count({ where: { orgId, deletedAt: null } }),
-      userId
+      prisma.aIAsset.count({ where: { orgId: effectiveOrgId, deletedAt: null } }),
+      consultantOrgId
         ? (async () => {
-            const u = await prisma.user.findUnique({
-              where: { id: userId },
-              select: { orgId: true }
-            });
-            if (!u?.orgId) return null;
-            const org = await prisma.organization.findUnique({
-              where: { id: u.orgId },
+            const o = await prisma.organization.findUnique({
+              where: { id: consultantOrgId },
               select: { tier: true }
             });
-            return org?.tier === "CONSULTANT" ? u.orgId : null;
+            return o?.tier === "CONSULTANT" || o?.tier === "ENTERPRISE" ? consultantOrgId : null;
           })()
         : Promise.resolve(null)
     ]);
+    consultantData = consultantTier;
     orgName = org?.name ?? null;
     tier = org?.tier ?? "FREE";
     assetCount = assetCnt ?? 0;
-    consultantOrgId = consultantData;
-    if (consultantOrgId) {
-      const [workspaces, consultantOrg] = await Promise.all([
-        prisma.consultantWorkspace.findMany({
-          where: { consultantOrgId, status: "ACTIVE" },
-          select: { id: true, clientOrgId: true, clientName: true },
-          orderBy: { createdAt: "desc" }
-        }),
-        prisma.organization.findUnique({
-          where: { id: consultantOrgId },
-          select: { name: true }
-        })
-      ]);
-      consultantWorkspaces = workspaces;
-      consultantOrgName = consultantOrg?.name ?? null;
-    }
     onboardingComplete = org?.onboardingComplete ?? true;
     if ((org?.onboardingStep ?? 0) >= 6 && !onboardingComplete) {
       onboardingComplete = true;
@@ -106,9 +103,25 @@ export default async function DashboardLayout({
       {} as Record<string, boolean>
     );
     frameworks = fws;
+
+    if (consultantData) {
+      const [workspaces, consultantOrg] = await Promise.all([
+        prisma.consultantWorkspace.findMany({
+          where: { consultantOrgId: consultantData, status: "ACTIVE" },
+          select: { id: true, clientOrgId: true, clientName: true },
+          orderBy: { updatedAt: "desc" }
+        }),
+        prisma.organization.findUnique({
+          where: { id: consultantData },
+          select: { name: true }
+        })
+      ]);
+      consultantWorkspaces = workspaces;
+      consultantOrgName = consultantOrg?.name ?? null;
+    }
   }
 
-  if (orgId && !onboardingComplete) {
+  if (consultantOrgId && effectiveOrgId === consultantOrgId && !onboardingComplete) {
     redirect("/onboarding");
   }
 
@@ -125,10 +138,11 @@ export default async function DashboardLayout({
         tier={tier}
         assetCount={assetCount}
         role={user?.role ?? null}
-        consultantOrgId={consultantOrgId}
+        consultantOrgId={consultantData ?? null}
         consultantWorkspaces={consultantWorkspaces}
         consultantOrgName={consultantOrgName}
-        currentOrgId={orgId ?? null}
+        activeWorkspaceOrgId={activeWorkspaceOrgId}
+        activeWorkspaceName={activeWorkspaceName}
       >
         {children}
       </DashboardShell>

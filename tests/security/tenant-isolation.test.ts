@@ -25,6 +25,20 @@ const mockSession = (orgId: string, userId: string, role: string) =>
     expires: new Date(Date.now() + 3600).toISOString()
   }) as import("next-auth").Session;
 
+function mockContext(session: import("next-auth").Session): TrpcContext {
+  const user = session?.user as { orgId?: string; id?: string; role?: string } | undefined;
+  return {
+    req: new Request("http://localhost") as import("next/server").NextRequest,
+    session,
+    orgId: user?.orgId ?? "",
+    userId: user?.id ?? "",
+    role: user?.role ?? "MEMBER",
+    activeWorkspaceOrgId: null,
+    isConsultantAccess: false,
+    consultantOrgId: user?.orgId ?? null
+  };
+}
+
 function createCaller(ctx: TrpcContext) {
   const factory = createCallerFactory(appRouter);
   return factory(ctx);
@@ -44,10 +58,7 @@ describe("Tenant isolation", () => {
       { id: "asset-a1", name: "Asset A1", orgId: "org-a" }
     ]);
 
-    const ctx: TrpcContext = {
-      req: new Request("http://localhost") as import("next/server").NextRequest,
-      session: mockSession("org-a", "user-a", "MEMBER")
-    };
+    const ctx = mockContext(mockSession("org-a", "user-a", "MEMBER"));
     const caller = createCaller(ctx);
     const result = await caller.assets.list();
 
@@ -63,10 +74,7 @@ describe("Tenant isolation", () => {
     const { prisma } = await import("@/lib/prisma");
     (prisma.aIAsset.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null);
 
-    const ctx: TrpcContext = {
-      req: new Request("http://localhost") as import("next/server").NextRequest,
-      session: mockSession("org-a", "user-a", "MEMBER")
-    };
+    const ctx = mockContext(mockSession("org-a", "user-a", "MEMBER"));
     const caller = createCaller(ctx);
 
     await expect(caller.assets.get({ id: "asset-b1" })).rejects.toMatchObject({
