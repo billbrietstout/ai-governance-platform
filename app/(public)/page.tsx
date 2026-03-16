@@ -74,13 +74,13 @@ export default async function PublicLandingPage() {
           <div className="mt-10 flex flex-col items-center justify-center gap-4">
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link
-                href="/register"
+                href="/discover/wizard"
                 className="rounded-lg bg-navy-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-navy-500"
               >
                 Assess my AI readiness →
               </Link>
               <Link
-                href="#how-it-works"
+                href="#framework"
                 className="rounded-lg border border-slate-300 px-6 py-3 text-base font-medium text-slate-700 hover:bg-slate-50"
               >
                 See the framework
@@ -206,7 +206,7 @@ export default async function PublicLandingPage() {
       </section>
 
       {/* CoSAI framework */}
-      <section id="how-it-works" className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
+      <section id="framework" className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">
             The CoSAI five-layer model
