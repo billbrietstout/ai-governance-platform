@@ -772,18 +772,6 @@ export function Sidebar({
         </div>
       )}
 
-      {/* Upgrade to Pro link – visible only to FREE tier, just above user avatar */}
-      {!collapsed && tier === "FREE" && (
-        <div className="border-t border-slatePro-800 px-3 py-2">
-          <Link
-            href="/pricing"
-            className="flex items-center justify-center gap-2 rounded-lg bg-navy-600 py-2 text-sm font-medium text-white hover:bg-navy-500 transition-colors"
-          >
-            Upgrade to Pro →
-          </Link>
-        </div>
-      )}
-
       {/* User avatar + dropdown */}
       <div className="relative border-t border-slatePro-800 p-3">
         <button
