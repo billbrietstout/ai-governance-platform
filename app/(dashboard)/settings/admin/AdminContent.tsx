@@ -33,6 +33,8 @@ export function AdminContent({
   const [selectedTier, setSelectedTier] = useState<string>(currentTier);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [pending, setPending] = useState(false);
+  const [orgNotifEnabled, setOrgNotifEnabled] = useState(orgNotificationsEnabled);
+  const [userStatus, setUserStatus] = useState(notificationStatus);
 
   const handleApply = async () => {
     setMessage(null);
@@ -116,7 +118,7 @@ export function AdminContent({
           <button
             type="button"
             onClick={async () => {
-              setNotifPending(true);
+              setPending(true);
               try {
                 const count = await sendTestDigestToAllAction();
                 setMessage({ type: "success", text: `Test digest sent to ${count} user(s).` });
@@ -127,13 +129,13 @@ export function AdminContent({
                   text: err instanceof Error ? err.message : "Failed to send"
                 });
               } finally {
-                setNotifPending(false);
+                setPending(false);
               }
             }}
-            disabled={notifPending || !orgNotifEnabled}
+            disabled={pending || !orgNotifEnabled}
             className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200 disabled:opacity-50"
           >
-            {notifPending ? "Sending…" : "Send test digest to all users"}
+            {pending ? "Sending…" : "Send test digest to all users"}
           </button>
 
           <div className="flex items-center gap-3">
@@ -141,7 +143,7 @@ export function AdminContent({
             <Toggle
               checked={!orgNotifEnabled}
               onChange={async (killSwitch) => {
-                setNotifPending(true);
+                setPending(true);
                 try {
                   await setOrgNotificationsEnabledAction(!killSwitch);
                   setOrgNotifEnabled(!killSwitch);
@@ -156,7 +158,7 @@ export function AdminContent({
                     text: err instanceof Error ? err.message : "Failed"
                   });
                 } finally {
-                  setNotifPending(false);
+                  setPending(false);
                 }
               }}
               size="default"
