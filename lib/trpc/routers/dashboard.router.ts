@@ -9,6 +9,7 @@ import {
 } from "@/lib/value/kpi-engine";
 import * as engine from "@/lib/compliance/engine";
 import * as verticalCascade from "@/lib/compliance/vertical-cascade";
+import { getExecutiveBriefingData } from "@/lib/executive-briefing";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const COSAI_LAYERS = [
@@ -299,6 +300,12 @@ export const dashboardRouter = createTRPCRouter({
     }
     const exp = await calculateEUPenaltyExposure(prisma, ctx.orgId);
     return { data: exp, meta: {} };
+  }),
+
+  /** Executive briefing – CEO-facing traffic lights. Includes penalty for org context. */
+  getExecutiveBriefing: protectedProcedure.query(async ({ ctx }) => {
+    const data = await getExecutiveBriefingData(prisma, ctx.orgId);
+    return { data, meta: {} };
   }),
 
   getSankeyData: protectedProcedure.query(async ({ ctx }) => {

@@ -4,6 +4,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  serverExternalPackages: ["@react-pdf/renderer"],
   async headers() {
     return [
       {

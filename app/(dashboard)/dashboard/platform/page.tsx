@@ -1,0 +1,96 @@
+/**
+ * Platform & Ops Overview – for PLATFORM_ENG.
+ */
+import Link from "next/link";
+import { Server, Cpu, AlertTriangle } from "lucide-react";
+import { createServerCaller } from "@/lib/trpc/server-caller";
+import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
+
+export default async function PlatformDashboardPage() {
+  const caller = await createServerCaller();
+
+  const [kpisRes, layerRes] = await Promise.all([
+    caller.dashboard.getKPIs(),
+    caller.dashboard.getLayerPosture()
+  ]);
+
+  const kpis = kpisRes.data;
+  const layers = layerRes.data;
+  const l4 = layers.find((l) => l.layer === "LAYER_4_PLATFORM");
+  const l5 = layers.find((l) => l.layer === "LAYER_5_SUPPLY_CHAIN");
+
+  return (
+    <PersonaDashboardShell
+      title="Platform & Ops Overview"
+      subtitle="Telemetry, supply chain, and platform compliance."
+    >
+      <div className="flex flex-col gap-6">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/layer4-platform/telemetry"
+            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+          >
+            <Server className="h-5 w-5 text-navy-600" />
+            <p className="mt-2 text-2xl font-bold text-slate-900">
+              L4 compliance: {l4?.compliancePct ?? 0}%
+            </p>
+            <p className="text-xs text-slate-500">Platform layer</p>
+          </Link>
+          <Link
+            href="/layer5-supply-chain"
+            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+          >
+            <Cpu className="h-5 w-5 text-navy-600" />
+            <p className="mt-2 text-2xl font-bold text-slate-900">
+              L5 compliance: {l5?.compliancePct ?? 0}%
+            </p>
+            <p className="text-xs text-slate-500">Supply chain</p>
+          </Link>
+          <Link
+            href="/layer5-supply-chain/scanning"
+            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+          >
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <p className="mt-2 text-2xl font-bold text-slate-900">
+              {kpis.failedScans ?? 0}
+            </p>
+            <p className="text-xs text-slate-500">Failed scans</p>
+          </Link>
+          <Link
+            href="/layer5-supply-chain/vendors"
+            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+          >
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
+            <p className="mt-2 text-2xl font-bold text-slate-900">
+              {kpis.vendorsExpiring ?? 0}
+            </p>
+            <p className="text-xs text-slate-500">Vendors expiring</p>
+          </Link>
+        </div>
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-sm font-medium text-slate-700">Quick links</h3>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/layer4-platform/telemetry"
+              className="text-sm font-medium text-navy-600 hover:underline"
+            >
+              Telemetry & Monitoring →
+            </Link>
+            <Link
+              href="/layer5-supply-chain/cards"
+              className="text-sm font-medium text-navy-600 hover:underline"
+            >
+              Artifact Cards →
+            </Link>
+            <Link
+              href="/layer5-supply-chain/scanning"
+              className="text-sm font-medium text-navy-600 hover:underline"
+            >
+              Scan Coverage →
+            </Link>
+          </div>
+        </div>
+      </div>
+    </PersonaDashboardShell>
+  );
+}

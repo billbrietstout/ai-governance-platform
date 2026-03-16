@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileBarChart, Shield, AlertTriangle, TrendingUp, Download } from "lucide-react";
+import { FileBarChart, Shield, AlertTriangle, TrendingUp, Download, Package } from "lucide-react";
 
 const MATURITY_LABELS: Record<number, string> = {
   1: "M1 Aware",
@@ -18,6 +18,52 @@ type Props = {
   gaps: unknown[];
 };
 
+function ReportExportButton({
+  url,
+  filename,
+  label,
+  disabled
+}: {
+  url: string;
+  filename: string;
+  label: string;
+  disabled?: boolean;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  const handleExport = async () => {
+    if (disabled) return;
+    setLoading(true);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Export failed");
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(blobUrl);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleExport}
+      disabled={loading || disabled}
+      className="flex items-center gap-1 rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+    >
+      <Download className="h-3.5 w-3.5" />
+      {loading ? "Generating…" : label}
+    </button>
+  );
+}
+
 export function ReportCardsClient({
   maturityLevel,
   scores,
@@ -25,37 +71,40 @@ export function ReportCardsClient({
   gaps
 }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
+  const date = new Date().toISOString().slice(0, 10);
 
   const reports = [
     {
-      id: "executive",
-      name: "Executive Summary",
-      description: "Overall governance posture for board presentations",
-      icon: FileBarChart,
-      onGenerate: () =>
-        setPreview(
-          `Executive Summary\n\nMaturity Level: ${MATURITY_LABELS[maturityLevel] ?? "—"}\nLayer Scores: L1 ${(scores.L1 ?? 0).toFixed(1)}, L2 ${(scores.L2 ?? 0).toFixed(1)}, L3 ${(scores.L3 ?? 0).toFixed(1)}, L4 ${(scores.L4 ?? 0).toFixed(1)}, L5 ${(scores.L5 ?? 0).toFixed(1)}\n\nKey metrics from platform data. Full report available on export.`
-        )
+      id: "audit-package",
+      name: "AI Governance Audit Package",
+      description: "Full audit-ready evidence package for regulators and auditors",
+      icon: Package,
+      exportUrl: "/api/v1/export/audit-package",
+      exportFilename: `ai-posture-audit-${date}.pdf`,
+      hasExport: true
     },
     {
-      id: "compliance",
-      name: "Compliance Status",
-      description: "Framework-by-framework compliance scores",
+      id: "executive",
+      name: "Executive Readiness Report",
+      description: "Overall governance posture for board presentations",
+      icon: FileBarChart,
+      exportUrl: "/api/v1/export/governance-report",
+      exportFilename: `ai-posture-governance-report-${date}.pdf`,
+      hasExport: true
+    },
+    {
+      id: "board",
+      name: "Board Presentation",
+      description: "Slide deck for board-level AI governance briefing",
       icon: Shield,
-      onGenerate: () =>
-        setPreview(
-          `Compliance Status\n\nSnapshots: ${snapshots.length} on record\nFrameworks: EU AI Act, NIST AI RMF, ISO 42001\n\nPer-framework scores and layer breakdown. Generate snapshots in Compliance to populate.`
-        )
+      hasExport: false
     },
     {
       id: "gap",
-      name: "Gap Analysis Report",
-      description: "All gaps with owners and timelines",
+      name: "Regulatory Gap Analysis",
+      description: "Regulatory requirements vs. current compliance status",
       icon: AlertTriangle,
-      onGenerate: () =>
-        setPreview(
-          `Gap Analysis Report\n\nOpen gaps: ${Array.isArray(gaps) ? gaps.length : 0}\n\nEach gap includes: description, owner, due date, priority. View full details in Gap Analysis.`
-        )
+      hasExport: false
     },
     {
       id: "maturity",
@@ -65,7 +114,8 @@ export function ReportCardsClient({
       onGenerate: () =>
         setPreview(
           `Maturity Trend Report\n\nCurrent: ${MATURITY_LABELS[maturityLevel] ?? "—"}\nScores: ${JSON.stringify(scores, null, 2)}\n\nHistorical progression and trajectory. Full trend data in Maturity Assessment.`
-        )
+        ),
+      hasExport: false
     }
   ];
 
@@ -87,17 +137,21 @@ export function ReportCardsClient({
                   <h3 className="font-medium text-slate-900">{r.name}</h3>
                   <p className="mt-1 text-sm text-slate-600">{r.description}</p>
                   <div className="mt-3 flex gap-2">
-                    <button
-                      type="button"
-                      onClick={r.onGenerate}
-                      className="rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500"
-                    >
-                      Generate
-                    </button>
-                    <span className="flex items-center gap-1 rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-500">
-                      <Download className="h-3.5 w-3.5" />
-                      Export as PDF — Coming soon
-                    </span>
+                    {r.hasExport ? (
+                      <ReportExportButton
+                        url={r.exportUrl!}
+                        filename={r.exportFilename!}
+                        label="Generate"
+                      />
+                    ) : (
+                      <span
+                        className="flex items-center gap-1 rounded border border-slate-200 px-3 py-1.5 text-xs text-slate-500"
+                        title="Coming soon"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        Coming soon
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

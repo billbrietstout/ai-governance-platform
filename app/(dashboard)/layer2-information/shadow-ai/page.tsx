@@ -97,7 +97,7 @@ export default async function ShadowAIDetectionPage() {
                       href={`/layer3-application/assets/${a.id}`}
                       className="inline-flex items-center gap-1 rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500"
                     >
-                      Begin Governance
+                      Begin Assessment
                       <ArrowRight className="h-3 w-3" />
                     </Link>
                   </td>

@@ -37,11 +37,16 @@ import {
   Search,
   TrendingUp,
   Camera,
-  Bell
+  Bell,
+  Maximize2,
+  RotateCcw
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaConfig } from "@/lib/personas/config";
+import { getPersonaSidebarConfig } from "@/lib/personas/sidebar-config";
+import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { canAccessFeature, getAssetLimit, type GatedFeature } from "@/lib/tiers/gates";
 
 const STORAGE_KEY = "sidebar-collapsed";
@@ -210,6 +215,9 @@ export type SidebarProps = {
   frameworks?: { code: string }[];
   tier?: string;
   assetCount?: number;
+  sidebarMode?: "full" | "focused";
+  onExpandToFull?: () => void;
+  onResetToPersonaView?: () => void;
 };
 
 export function Sidebar({
@@ -219,7 +227,10 @@ export function Sidebar({
   featureFlags = {},
   frameworks = [],
   tier = "FREE",
-  assetCount = 0
+  assetCount = 0,
+  sidebarMode = "full",
+  onExpandToFull,
+  onResetToPersonaView
 }: SidebarProps) {
   const pathname = usePathname();
   const currentSection = getSectionForPath(pathname);
@@ -315,10 +326,138 @@ export function Sidebar({
   const displayName = userEmail ? userEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "User";
 
   const personaConfig = persona ? getPersonaConfig(persona) : null;
+  const sidebarConfig = persona ? getPersonaSidebarConfig(persona) : null;
   const showFullOpacity = !persona || persona === "CAIO";
   const primarySections = new Set(personaConfig?.visibleSections ?? []);
 
   const isSectionPrimary = (title: string) => showFullOpacity || primarySections.has(title);
+
+  const isFocused = sidebarMode === "focused";
+  const allowedSectionSet =
+    sidebarConfig?.allowedSections === "all"
+      ? new Set(ALL_SECTIONS.map((s) => s.title))
+      : new Set((sidebarConfig?.allowedSections ?? []) as string[]);
+
+  const focusedSections = ALL_SECTIONS.filter((s) => {
+    if (!allowedSectionSet.has(s.title)) return false;
+    const flag = "flag" in s ? (s as GatedSection).flag : undefined;
+    return !flag || (featureFlags[flag] ?? false);
+  });
+
+  if (isFocused) {
+    return (
+      <aside
+        className="flex w-12 shrink-0 flex-col border-r border-slatePro-800 bg-slatePro-950"
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        {/* Banner */}
+        <div className="border-b border-slatePro-800 px-2 py-2">
+          <button
+            type="button"
+            onClick={onExpandToFull}
+            className="w-full rounded px-1 py-1 text-[10px] leading-tight text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300"
+          >
+            {personaConfig?.label ?? persona} view · Show all →
+          </button>
+        </div>
+
+        {/* Logo */}
+        <div className="flex h-12 items-center justify-center border-b border-slatePro-800">
+          <Link href={getPersonaDashboardPath(persona ?? null) ?? "/dashboard"}>
+            <ShieldLogo className="h-6 w-6 text-navy-400" />
+          </Link>
+        </div>
+
+        {/* Icon nav */}
+        <div className="flex-1 overflow-y-auto py-2">
+          {focusedSections.map((section) => {
+            const mainHref = section.items[0]?.href ?? "/dashboard";
+            const Icon = section.items[0]?.icon ?? LayoutDashboard;
+            const active = isActive(mainHref, pathname);
+            return (
+              <Tooltip key={section.title} content={section.title} side="right">
+                <Link
+                  href={mainHref}
+                  className={`flex h-10 w-full items-center justify-center ${
+                    active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200"
+                  }`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <Icon className="h-5 w-5" />
+                </Link>
+              </Tooltip>
+            );
+          })}
+        </div>
+
+        {/* Expand button */}
+        <div className="border-t border-slatePro-800 p-2">
+          <Tooltip content="Show full navigation" side="right">
+            <button
+              type="button"
+              onClick={onExpandToFull}
+              className="flex h-10 w-full items-center justify-center rounded text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300"
+            >
+              <Maximize2 className="h-5 w-5" />
+            </button>
+          </Tooltip>
+        </div>
+
+        {/* User avatar */}
+        <div className="relative border-t border-slatePro-800 p-2">
+          <button
+            type="button"
+            onClick={() => setUserMenuOpen((o) => !o)}
+            className="flex h-10 w-full items-center justify-center rounded-lg hover:bg-slatePro-800/50"
+          >
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-navy-500/30 text-sm font-medium text-navy-300">
+              {initials}
+            </div>
+          </button>
+          {userMenuOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} aria-hidden />
+              <div className="absolute bottom-full left-12 z-50 mb-1 w-48 rounded-lg border border-slatePro-700 bg-slatePro-900 shadow-xl">
+                <div className="border-b border-slatePro-700 px-3 py-2">
+                  <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
+                  <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
+                </div>
+                {onResetToPersonaView && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onResetToPersonaView();
+                      setUserMenuOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset to my view
+                  </button>
+                )}
+                <Link
+                  href="/settings/billing"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  onClick={() => setUserMenuOpen(false)}
+                >
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  className="w-full px-3 py-2 text-left text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                >
+                  Sign out
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside
@@ -331,7 +470,10 @@ export function Sidebar({
       {/* Logo / search / collapse */}
       <div className="flex h-14 items-center justify-between gap-2 border-b border-slatePro-800 px-3">
         {!collapsed && (
-          <Link href="/dashboard" className="flex min-w-0 flex-1 items-center gap-2">
+          <Link
+            href={getPersonaDashboardPath(persona ?? null) ?? "/dashboard"}
+            className="flex min-w-0 flex-1 items-center gap-2"
+          >
             <ShieldLogo className="h-8 w-8 shrink-0 text-navy-400" />
             <div className="min-w-0">
               <span className="block truncate text-sm font-semibold text-slatePro-100">AI Posture</span>
@@ -360,6 +502,23 @@ export function Sidebar({
       </div>
 
       {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
+
+      {/* My Dashboard – persona-specific, always visible */}
+      {!collapsed && persona && (
+        <div className="border-b border-slatePro-800 px-3 py-2">
+          <Link
+            href={getPersonaDashboardPath(persona) ?? "/dashboard"}
+            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
+              pathname.startsWith("/dashboard/")
+                ? "bg-navy-500/20 text-navy-300"
+                : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
+            }`}
+          >
+            <LayoutDashboard className="h-4 w-4 shrink-0" />
+            My Dashboard
+          </Link>
+        </div>
+      )}
 
       {/* Scrollable nav */}
       <div className="flex-1 overflow-y-auto py-2">
@@ -568,6 +727,19 @@ export function Sidebar({
                 <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
                 <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
               </div>
+              {onResetToPersonaView && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onResetToPersonaView();
+                    setUserMenuOpen(false);
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Reset to my view
+                </button>
+              )}
               <Link
                 href="/settings/billing"
                 className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"

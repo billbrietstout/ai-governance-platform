@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Package, Scale, Calendar } from "lucide-react";
+import { Package, Scale, Calendar, FileDown } from "lucide-react";
 import { getAuditPackagePreview } from "./actions";
 import { AuditPackageActions } from "./AuditPackageActions";
 
@@ -15,6 +15,41 @@ const RISK_COLORS: Record<string, string> = {
   HIGH: "bg-orange-100 text-orange-700",
   UNACCEPTABLE: "bg-red-100 text-red-700"
 };
+
+function ExportPDFButton() {
+  const [loading, setLoading] = useState(false);
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/v1/export/audit-package");
+      if (!res.ok) throw new Error("Export failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ai-posture-audit-${new Date().toISOString().slice(0, 10)}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleExport}
+      disabled={loading}
+      className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+    >
+      <FileDown className="h-4 w-4" />
+      {loading ? "Generating PDF…" : "Export as PDF"}
+    </button>
+  );
+}
 
 type Props = { assets: Asset[]; regulations: Regulation[] };
 
@@ -60,6 +95,19 @@ export function AuditPackageClient({ assets, regulations }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Full audit package PDF export */}
+      <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h3 className="font-medium text-slate-900">Full Audit Package (PDF)</h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Export complete org-wide audit package for regulators and auditors.
+            </p>
+          </div>
+          <ExportPDFButton />
+        </div>
+      </div>
+
       {/* Export mode cards */}
       <div className="grid gap-4 sm:grid-cols-2">
         <button

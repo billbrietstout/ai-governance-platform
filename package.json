@@ -32,6 +32,7 @@
     "@opentelemetry/sdk-node": "latest",
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^6.19.2",
+    "@react-pdf/renderer": "^4.3.2",
     "@sentry/nextjs": "latest",
     "@t3-oss/env-nextjs": "latest",
     "@tanstack/react-query": "latest",

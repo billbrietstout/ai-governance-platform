@@ -37,7 +37,7 @@ const FREE_FEATURES = [
 ];
 
 const PRO_FEATURES = [
-  { label: "Full five-layer governance (M3-M5)", icon: Layers },
+  { label: "Full five-layer accountability (M3-M5)", icon: Layers },
   { label: "Up to 500 AI assets", icon: Database },
   { label: "Audit packages and evidence workbook", icon: Package },
   { label: "Compliance snapshots", icon: FileText },
@@ -110,7 +110,7 @@ export default async function PublicLandingPage() {
       <section className="border-t border-slate-200 bg-white px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">
-            How are you approaching AI governance?
+            How are you approaching AI readiness?
           </h2>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             <Link
@@ -212,7 +212,7 @@ export default async function PublicLandingPage() {
             The CoSAI five-layer model
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-center text-slate-600">
-            Governance flows from business strategy down through data, applications, platform,
+            Accountability flows from business strategy down through data, applications, platform,
             and supply chain. Each layer depends on the one above.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">

@@ -81,15 +81,13 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
             <PlusCircle className="h-4 w-4" />
             Create Asset from this discovery
           </Link>
-          <button
-            type="button"
+          <a
+            href={`/api/v1/export/discovery-report?id=${id}`}
             className="flex items-center gap-2 rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-            disabled
-            title="Coming soon"
           >
             <FileDown className="h-4 w-4" />
             Export as PDF
-          </button>
+          </a>
         </div>
       </div>
 

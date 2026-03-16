@@ -1,6 +1,8 @@
 /**
  * Posture Overview – executive dashboard for AI readiness.
+ * Redirects to persona dashboard when persona is set, unless view=full.
  */
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   Bot,
@@ -42,10 +44,12 @@ const LAYER_LINKS: Record<string, string> = {
 export default async function CommandCenterPage({
   searchParams
 }: {
-  searchParams: Promise<{ welcome?: string }>;
+  searchParams: Promise<{ welcome?: string; view?: string }>;
 }) {
   const params = await searchParams;
   const showWelcome = params.welcome === "1";
+  const viewFull = params.view === "full";
+
   const session = await auth();
   const user = session?.user as { role?: string; email?: string | null } | undefined;
   const role = user?.role ?? "MEMBER";
@@ -83,6 +87,19 @@ export default async function CommandCenterPage({
   ]);
 
   const persona = personaRes.data.persona;
+
+  // Redirect to persona dashboard when persona is set (unless explicitly viewing full platform)
+  if (!viewFull) {
+    const { getPersonaDashboardPath } = await import("@/lib/personas/dashboard-routes");
+    const personaPath = getPersonaDashboardPath(persona);
+    if (personaPath) {
+      redirect(personaPath);
+    }
+    if (!persona) {
+      redirect("/persona-select");
+    }
+  }
+
   const personaLabel = persona
     ? { CEO: "CEO", CFO: "CFO", COO: "COO", CISO: "CISO", LEGAL: "Legal", CAIO: "CAIO", DATA_OWNER: "Data Owner", DEV_LEAD: "Dev Lead", PLATFORM_ENG: "Platform Engineer", VENDOR_MGR: "Vendor Manager" }[persona] ?? persona
     : null;

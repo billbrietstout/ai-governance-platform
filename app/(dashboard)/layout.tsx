@@ -1,10 +1,9 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export const dynamic = "force-dynamic";
 import { PersonaModal } from "@/components/PersonaModal";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { DashboardShell } from "@/components/layout/DashboardShell";
 import { prisma } from "@/lib/prisma";
 
 const MODULE_FLAGS = [
@@ -83,25 +82,19 @@ export default async function DashboardLayout({
   const showPersonaModal = onboardingComplete && !persona && !personaModalDismissed;
 
   return (
-    <div className="flex min-h-dvh">
-      <Sidebar
+    <>
+      <DashboardShell
+        persona={persona}
         userEmail={user?.email ?? null}
         orgName={orgName}
-        persona={persona}
         featureFlags={featureFlags}
         frameworks={frameworks}
         tier={tier}
         assetCount={assetCount}
-      />
-      <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
-        <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">
-          <div className="mb-4">
-            <Breadcrumbs />
-          </div>
-          <div className="page-fade-in">{children}</div>
-        </div>
-      </main>
+      >
+        {children}
+      </DashboardShell>
       {showPersonaModal && <PersonaModal />}
-    </div>
+    </>
   );
 }

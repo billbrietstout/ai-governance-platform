@@ -181,7 +181,7 @@ export const assetsRouter = createTRPCRouter({
   getOrgUsers: protectedProcedure.query(async ({ ctx }) => {
     const users = await prisma.user.findMany({
       where: { orgId: ctx.orgId },
-      select: { id: true, email: true }
+      select: { id: true, email: true, role: true, persona: true }
     });
     return { data: users, meta: {} };
   }),
@@ -344,6 +344,99 @@ export const assetsRouter = createTRPCRouter({
       });
       return { data: result, meta: {} };
     }),
+
+  getAssignmentSuggestions: protectedProcedure
+    .input(z.object({ assetId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const [asset, users] = await Promise.all([
+        prisma.aIAsset.findFirst({
+          where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null },
+          select: {
+            id: true,
+            name: true,
+            assetType: true,
+            cosaiLayer: true,
+            lifecycleUpdatedBy: true
+          }
+        }),
+        prisma.user.findMany({
+          where: { orgId: ctx.orgId },
+          select: { id: true, email: true, role: true, persona: true }
+        })
+      ]);
+
+      if (!asset) return { data: { suggestions: [], allUsers: users }, meta: {} };
+
+      const L2_LAYERS = ["LAYER_2_INFORMATION"];
+      const L4_LAYERS = ["LAYER_4_PLATFORM"];
+
+      const ranked = users
+        .map((user) => {
+          let score = 0;
+          let reason = "";
+
+          if (user.id === asset.lifecycleUpdatedBy) {
+            score += 40;
+            reason = "Last updated this asset";
+          }
+
+          if (user.persona === "DEV_LEAD" && asset.assetType === "APPLICATION") {
+            score += 30;
+            reason = reason || "Development lead";
+          }
+          if (user.persona === "CAIO") {
+            score += 20;
+            reason = reason || "AI governance officer";
+          }
+          if (user.persona === "DATA_OWNER" && asset.cosaiLayer && L2_LAYERS.includes(asset.cosaiLayer)) {
+            score += 25;
+            reason = reason || "Data owner";
+          }
+          if (user.persona === "PLATFORM_ENG" && asset.cosaiLayer && L4_LAYERS.includes(asset.cosaiLayer)) {
+            score += 25;
+            reason = reason || "Platform engineer";
+          }
+          if (user.role === "ADMIN") {
+            score += 10;
+            reason = reason || "Organization admin";
+          }
+
+          return { ...user, score, reason };
+        })
+        .filter((u) => u.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      return { data: { suggestions: ranked, allUsers: users }, meta: {} };
+    }),
+
+  getUnownedHighRiskAssets: protectedProcedure.query(async ({ ctx }) => {
+    const highRisk = await prisma.aIAsset.findMany({
+      where: { orgId: ctx.orgId, deletedAt: null, euRiskLevel: "HIGH" },
+      select: { id: true, name: true, description: true, euRiskLevel: true, cosaiLayer: true }
+    });
+    const withAssignments = await prisma.accountabilityAssignment.groupBy({
+      by: ["assetId"],
+      where: { assetId: { in: highRisk.map((a) => a.id) } }
+    });
+    const assignedIds = new Set(withAssignments.map((a) => a.assetId));
+    const unowned = highRisk.filter((a) => !assignedIds.has(a.id));
+    return { data: unowned.slice(0, 5), meta: {} };
+  }),
+
+  getUnownedAssets: protectedProcedure.query(async ({ ctx }) => {
+    const assets = await prisma.aIAsset.findMany({
+      where: { orgId: ctx.orgId, deletedAt: null },
+      select: { id: true, name: true, description: true, euRiskLevel: true, cosaiLayer: true }
+    });
+    const withAssignments = await prisma.accountabilityAssignment.groupBy({
+      by: ["assetId"],
+      where: { assetId: { in: assets.map((a) => a.id) } }
+    });
+    const assignedIds = new Set(withAssignments.map((a) => a.assetId));
+    const unowned = assets.filter((a) => !assignedIds.has(a.id));
+    return { data: unowned.slice(0, 5), meta: {} };
+  }),
 
   getLifecycleBoard: protectedProcedure.query(async ({ ctx }) => {
     const assets = await prisma.aIAsset.findMany({

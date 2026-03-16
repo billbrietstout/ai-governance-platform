@@ -139,7 +139,7 @@ export function BillingContent({
               <li>• Compliance snapshots & trends</li>
               <li>• Audit packages & evidence workbook</li>
               <li>• ISO 42001 & EU AI Act tracking</li>
-              <li>• Governance reports</li>
+              <li>• Readiness reports</li>
             </ul>
             <div className="mt-6">
               <button

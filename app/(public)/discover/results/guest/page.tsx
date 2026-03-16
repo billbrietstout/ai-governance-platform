@@ -12,7 +12,7 @@ export default function GuestResultsPage() {
           Your Discovery Results
         </h1>
         <p className="mt-1 text-slate-600">
-          Create a free account to save your assessment and unlock the full governance roadmap.
+          Create a free account to save your assessment and unlock your full readiness roadmap.
         </p>
       </div>
 
