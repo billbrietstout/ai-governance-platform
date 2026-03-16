@@ -36,6 +36,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   "scan-coverage": "Scan Coverage",
   "accountability-matrix": "Accountability Matrix",
   settings: "Settings",
+  billing: "Billing",
   data: "Data & Privacy",
   users: "Users & Invites",
   onboarding: "Onboarding",

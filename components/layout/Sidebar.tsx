@@ -144,8 +144,9 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   {
     title: "SETTINGS",
     items: [
+      { href: "/settings/billing", label: "Billing", icon: CreditCard },
       { href: "/settings/users", label: "Users & Invites", icon: UserPlus },
-      { href: "/settings", label: "Organization", icon: Briefcase },
+      { href: "/settings/organization", label: "Organization", icon: Briefcase },
       { href: "/settings/data", label: "Data & Privacy", icon: Lock }
     ]
   }
@@ -567,6 +568,14 @@ export function Sidebar({
                 <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
                 <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
               </div>
+              <Link
+                href="/settings/billing"
+                className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                onClick={() => setUserMenuOpen(false)}
+              >
+                <Settings className="h-4 w-4" />
+                Settings
+              </Link>
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/login" })}
