@@ -236,7 +236,62 @@ export const authOptions = {
         return true;
       }
 
-      return "/login?error=NotInvited";
+      // Self-service signup — create new org and user on FREE tier
+      const { org, newUser } = await prisma.$transaction(async (tx) => {
+        // Generate org name from email domain
+        const domain = email.split("@")[1]?.toLowerCase() ?? "myorg";
+        const orgName = domain.split(".")[0]
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, c => c.toUpperCase());
+
+        // Generate unique slug
+        const baseSlug = orgName.toLowerCase().replace(/\s+/g, "-");
+        const existing = await tx.organization.count({
+          where: { slug: { startsWith: baseSlug } }
+        });
+        const slug = existing > 0 ? `${baseSlug}-${existing + 1}` : baseSlug;
+
+        const o = await tx.organization.create({
+          data: {
+            name: `${orgName} AI`,
+            slug,
+            tier: "FREE",
+            assetLimit: 10,
+            usersLimit: 3,
+            onboardingComplete: false
+          }
+        });
+        const u = await tx.user.create({
+          data: {
+            orgId: o.id,
+            email,
+            role: "ADMIN"
+          }
+        });
+        await tx.auditLog.create({
+          data: {
+            orgId: o.id,
+            userId: u.id,
+            action: "CREATE",
+            resourceType: "User",
+            resourceId: u.id,
+            nextState: {
+              email,
+              role: "ADMIN",
+              source: "self_service_signup",
+              tier: "FREE"
+            }
+          }
+        });
+        return { org: o, newUser: u };
+      });
+
+      (user as unknown as { id: string }).id = newUser.id;
+      (user as unknown as { orgId: string }).orgId = newUser.orgId;
+      (user as unknown as { role: string }).role = newUser.role;
+      (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+      setTenantContext(org.id);
+      return true;
     }
   },
   pages: {
