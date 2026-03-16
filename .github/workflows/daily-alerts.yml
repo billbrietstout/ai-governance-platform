@@ -1,0 +1,19 @@
+name: Daily Alerts
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-alerts:
+    name: Check threshold alerts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger alert checks
+        run: |
+          curl -f -X POST \
+            "${{ secrets.STAGING_URL }}/api/v1/notifications/check-alerts" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
+          echo "Alert checks triggered"
