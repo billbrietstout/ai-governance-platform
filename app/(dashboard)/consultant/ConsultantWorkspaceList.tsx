@@ -33,7 +33,7 @@ export function ConsultantWorkspaceList({ workspaces }: { workspaces: Workspace[
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <input
           type="search"
-          placeholder="Search workspaces by name..."
+          placeholder="Search workspaces by client name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"

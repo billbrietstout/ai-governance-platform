@@ -36,7 +36,7 @@ export function WorkspaceSwitcher({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -55,7 +55,7 @@ export function WorkspaceSwitcher({
             aria-hidden
           />
           <div
-            className="absolute left-0 top-full z-50 mt-1 w-full min-w-[200px] rounded-lg border border-slatePro-700 bg-slatePro-900 py-1 shadow-xl"
+            className="absolute left-0 top-full z-50 mt-1 w-full min-w-0 overflow-hidden rounded-lg border border-slatePro-700 bg-slatePro-900 py-1 shadow-xl"
             role="listbox"
           >
             <button

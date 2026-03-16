@@ -539,7 +539,7 @@ export function Sidebar({
 
   return (
     <aside
-      className={`flex shrink-0 flex-col border-r border-slatePro-800 bg-slatePro-950 transition-[width] ${
+      className={`relative flex shrink-0 flex-col overflow-hidden border-r border-slatePro-800 bg-slatePro-950 transition-[width] ${
         collapsed ? "w-16" : "w-64"
       }`}
       role="navigation"
@@ -586,7 +586,7 @@ export function Sidebar({
       )}
 
       {consultantOrgId && !activeWorkspaceOrgId && !collapsed && consultantOrgName && (
-        <div className="border-b border-slatePro-800 px-3 py-2">
+        <div className="relative overflow-visible border-b border-slatePro-800 px-3 py-2">
           <WorkspaceSwitcher
             consultantOrgId={consultantOrgId}
             consultantOrgName={consultantOrgName}
