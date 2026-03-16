@@ -7,13 +7,7 @@ import { runDiscovery } from "./actions";
 
 export default async function DiscoveryWizardPage() {
   const session = await auth();
-  console.log("WIZARD SESSION:", JSON.stringify({
-    hasUser: !!session?.user,
-    userId: session?.user?.id,
-    email: session?.user?.email
-  }));
   const isGuest = !session?.user;
-  console.log("IS GUEST:", isGuest);
 
   let defaultVerticals: string[] = [];
   let defaultOperatingModel: string | null = null;
