@@ -22,7 +22,7 @@ export default async function ComplianceOfficerDashboardPage() {
 
   const cascade = cascadeRes.data;
   const snapshots = Array.isArray(snapshotsRes?.data) ? snapshotsRes.data : [];
-  const compliancePct = cascade.total > 0 ? Math.round((cascade.met / cascade.total) * 100) : 0;
+  const compliancePct = cascade.totalRequirements > 0 ? Math.round((cascade.met / cascade.totalRequirements) * 100) : 0;
 
   return (
     <PersonaDashboardShell
@@ -80,7 +80,7 @@ export default async function ComplianceOfficerDashboardPage() {
           <h3 className="mb-4 text-sm font-medium text-slate-700">Evidence status</h3>
           <div className="flex items-center gap-4">
             <p className="text-2xl font-bold text-slate-900">
-              {cascade.met} / {cascade.total} requirements met
+              {cascade.met} / {cascade.totalRequirements} requirements met
             </p>
             <div className="flex-1">
               <div className="h-2 overflow-hidden rounded-full bg-slate-200">
@@ -93,7 +93,7 @@ export default async function ComplianceOfficerDashboardPage() {
             <span className="text-sm font-medium">{compliancePct}%</span>
           </div>
           <p className="mt-2 text-sm text-slate-600">
-            Missing critical evidence: {cascade.total - cascade.met} items
+            Missing critical evidence: {cascade.totalRequirements - cascade.met} items
           </p>
           <Link
             href="/audit-package/evidence-workbook"

@@ -13,11 +13,11 @@ export default async function DataStewardDashboardPage() {
   let lineageCount = 0;
   try {
     const [mdRes, linRes] = await Promise.all([
-      caller.masterData?.list?.().catch(() => ({ data: [] })),
-      caller.lineage?.getSummary?.().catch(() => ({ data: { entityCount: 0 } }))
+      caller.layer2.getMasterDataEntities().catch(() => ({ data: [] })),
+      caller.layer2.getLineageRecords().catch(() => ({ data: [] }))
     ]);
     masterDataCount = Array.isArray(mdRes?.data) ? mdRes.data.length : 0;
-    lineageCount = (linRes?.data as { entityCount?: number })?.entityCount ?? 0;
+    lineageCount = Array.isArray(linRes?.data) ? linRes.data.length : 0;
   } catch {
     // Modules may not be enabled
   }

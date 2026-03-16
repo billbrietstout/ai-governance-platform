@@ -113,10 +113,10 @@ export async function GET(req: NextRequest) {
     generatedAt
   });
 
-  const buffer = await renderToBuffer(doc);
+  const buffer = await renderToBuffer(doc as any);
   const date = generatedAt.toISOString().slice(0, 10);
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="discovery-report-${date}.pdf"`
