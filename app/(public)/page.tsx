@@ -65,7 +65,7 @@ export default async function PublicLandingPage() {
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20 sm:px-6 lg:py-28">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-            Know your AI posture in 15 minutes
+            Is your company prepared to deploy AI?
           </h1>
           <p className="mt-6 text-xl text-slate-600">
             The only platform built on the CoSAI Shared Responsibility Framework — assess
