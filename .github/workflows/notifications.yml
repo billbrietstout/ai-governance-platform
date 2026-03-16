@@ -1,0 +1,50 @@
+name: Notifications
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: 'Which job to run'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - digest
+          - alerts
+          - both
+
+jobs:
+  weekly-digest:
+    name: Send weekly digest
+    runs-on: ubuntu-latest
+    if: >
+      (github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.job == 'digest' ||
+      github.event.inputs.job == 'both')) ||
+      (github.event_name == 'schedule')
+    steps:
+      - name: Trigger weekly digest
+        run: |
+          curl -f -X POST \
+            "${{ secrets.STAGING_URL }}/api/v1/notifications/send-digest" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
+
+  daily-alerts:
+    name: Check threshold alerts
+    runs-on: ubuntu-latest
+    if: >
+      (github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.job == 'alerts' ||
+      github.event.inputs.job == 'both')) ||
+      (github.event_name == 'schedule')
+    steps:
+      - name: Trigger alert checks
+        run: |
+          curl -f -X POST \
+            "${{ secrets.STAGING_URL }}/api/v1/notifications/check-alerts" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
