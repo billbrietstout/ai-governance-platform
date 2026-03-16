@@ -26,11 +26,11 @@ export type PersonaSidebarConfig = {
 export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   CEO: {
     mode: "hidden",
-    allowedSections: []
+    allowedSections: ["GOVERNANCE OVERVIEW"]
   },
   CFO: {
     mode: "hidden",
-    allowedSections: []
+    allowedSections: ["GOVERNANCE OVERVIEW"]
   },
   COO: {
     mode: "focused",

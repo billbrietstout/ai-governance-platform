@@ -1,5 +1,5 @@
 /**
- * Layer 1 – Business – Executive Dashboard with role-based views.
+ * Layer 1 – Business & Governance Layer. Strategy, compliance, and accountability oversight.
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
@@ -24,9 +24,22 @@ export default async function Layer1BusinessPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 1: Business</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+              Business & Governance Layer
+            </h1>
+            <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+              Layer 1 — Business
+            </span>
+          </div>
           <p className="mt-1 text-slate-600">
-            Executive dashboard, regulatory cascade, and governance oversight.
+            L1 — Strategy, compliance, and accountability oversight.
+          </p>
+          <p className="mt-2 text-sm text-slate-500">
+            Looking for the executive summary? →{" "}
+            <Link href="/dashboard/executive" className="text-navy-600 hover:underline">
+              View AI Risk Briefing
+            </Link>
           </p>
         </div>
         <Link

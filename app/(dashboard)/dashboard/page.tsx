@@ -24,6 +24,7 @@ import { AuditFeed } from "../AuditFeed";
 import { LayerSankeyDiagram } from "@/components/dashboard/LayerSankeyDiagram";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
+import { PersonaShortcutBanner } from "@/components/dashboard/PersonaShortcutBanner";
 
 const MATURITY_COLORS: Record<number, string> = {
   1: "#fbbf24",
@@ -123,6 +124,9 @@ export default async function CommandCenterPage({
 
   return (
     <main className="flex flex-col gap-6">
+      {viewFull && persona && (
+        <PersonaShortcutBanner persona={persona} />
+      )}
       {showWelcome && (
         <div className="rounded-lg border border-navy-200 bg-navy-50 p-4">
           <h3 className="text-lg font-semibold text-navy-900">

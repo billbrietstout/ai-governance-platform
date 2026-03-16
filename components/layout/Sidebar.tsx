@@ -39,12 +39,13 @@ import {
   Camera,
   Bell,
   Maximize2,
-  RotateCcw
+  RotateCcw,
+  Newspaper
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
 import { Tooltip } from "@/components/ui/Tooltip";
-import { getPersonaConfig } from "@/lib/personas/config";
+import { getPersonaConfig, type PersonaId } from "@/lib/personas/config";
 import { getPersonaSidebarConfig } from "@/lib/personas/sidebar-config";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { canAccessFeature, getAssetLimit, type GatedFeature } from "@/lib/tiers/gates";
@@ -109,19 +110,42 @@ const GATED_SECTIONS: GatedSection[] = [
   }
 ];
 
+const GOVERNANCE_OVERVIEW_ITEMS: NavItem[] = [
+  { href: "/dashboard", label: "Posture Overview", icon: LayoutDashboard },
+  { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
+  { href: "/reports", label: "Reports", icon: FileBarChart },
+  { href: "/compliance/snapshots", label: "Snapshots", icon: Camera },
+  { href: "/compliance/regulation-feed", label: "Regulation Watch", icon: Bell },
+  { href: "/audit-package", label: "Audit Package", icon: Package },
+  { href: "/audit-package/evidence-workbook", label: "Evidence Workbook", icon: BookOpen },
+  { href: "/audit", label: "Audit Log", icon: ScrollText }
+];
+
+const PERSONA_FIRST_ITEM: Record<PersonaId, { href: string; label: string; icon: React.ComponentType<{ className?: string }> }> = {
+  CEO: { href: "/dashboard/executive", label: "AI Risk Briefing", icon: Newspaper },
+  CFO: { href: "/dashboard/executive", label: "AI Risk Briefing", icon: Newspaper },
+  COO: { href: "/dashboard/executive", label: "AI Risk Briefing", icon: Newspaper },
+  CAIO: { href: "/dashboard/caio", label: "CAIO View", icon: LayoutDashboard },
+  CISO: { href: "/dashboard/ciso", label: "Security Overview", icon: LayoutDashboard },
+  LEGAL: { href: "/dashboard/compliance-officer", label: "Compliance Status", icon: LayoutDashboard },
+  DATA_OWNER: { href: "/dashboard/data-steward", label: "Data Governance", icon: LayoutDashboard },
+  DEV_LEAD: { href: "/dashboard/developer", label: "Developer Checklist", icon: LayoutDashboard },
+  PLATFORM_ENG: { href: "/dashboard/platform", label: "Platform & Ops", icon: LayoutDashboard },
+  VENDOR_MGR: { href: "/dashboard/supply-chain", label: "Supply Chain", icon: LayoutDashboard }
+};
+
+function getGovernanceOverviewItems(persona: string | null): NavItem[] {
+  if (persona && persona in PERSONA_FIRST_ITEM) {
+    const item = PERSONA_FIRST_ITEM[persona as PersonaId];
+    return [item, ...GOVERNANCE_OVERVIEW_ITEMS];
+  }
+  return [{ href: "/persona-select", label: "Choose your view", icon: LayoutDashboard }, ...GOVERNANCE_OVERVIEW_ITEMS];
+}
+
 const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = [
   {
     title: "GOVERNANCE OVERVIEW",
-    items: [
-      { href: "/dashboard", label: "Posture Overview", icon: LayoutDashboard },
-      { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
-      { href: "/reports", label: "Reports", icon: FileBarChart },
-      { href: "/compliance/snapshots", label: "Snapshots", icon: Camera },
-      { href: "/compliance/regulation-feed", label: "Regulation Watch", icon: Bell },
-      { href: "/audit-package", label: "Audit Package", icon: Package },
-      { href: "/audit-package/evidence-workbook", label: "Evidence Workbook", icon: BookOpen },
-      { href: "/audit", label: "Audit Log", icon: ScrollText }
-    ]
+    items: GOVERNANCE_OVERVIEW_ITEMS
   },
   {
     title: "COMPLIANCE",
@@ -141,7 +165,7 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   {
     title: "LAYER 1: BUSINESS",
     items: [
-      { href: "/layer1-business", label: "Executive Dashboard", icon: Building2 },
+      { href: "/layer1-business", label: "L1 Business Overview", icon: Building2 },
       { href: "/layer1-business/regulatory-cascade", label: "Regulatory Cascade", icon: GitBranch }
     ]
   },
@@ -175,9 +199,11 @@ const FRAMEWORK_COLORS: Record<string, string> = {
   ISO_42001: "bg-slatePro-500/20 text-slatePro-300 border-slatePro-500/30"
 };
 
-function getSectionForPath(pathname: string): string | null {
+function getSectionForPath(pathname: string, persona: string | null): string | null {
   for (const section of ALL_SECTIONS) {
-    for (const item of section.items) {
+    const items =
+      section.title === "GOVERNANCE OVERVIEW" ? getGovernanceOverviewItems(persona) : section.items;
+    for (const item of items) {
       if (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))) {
         return section.title;
       }
@@ -233,7 +259,7 @@ export function Sidebar({
   onResetToPersonaView
 }: SidebarProps) {
   const pathname = usePathname();
-  const currentSection = getSectionForPath(pathname);
+  const currentSection = getSectionForPath(pathname, persona ?? null);
 
   const [collapsed, setCollapsedState] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
@@ -423,6 +449,14 @@ export function Sidebar({
                   <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
                   <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
                 </div>
+                <Link
+                  href={getPersonaDashboardPath(persona ?? null) ?? "/persona-select"}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  onClick={() => setUserMenuOpen(false)}
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  My Dashboard →
+                </Link>
                 {onResetToPersonaView && (
                   <button
                     type="button"
@@ -503,23 +537,6 @@ export function Sidebar({
 
       {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
 
-      {/* My Dashboard – persona-specific, always visible */}
-      {!collapsed && persona && (
-        <div className="border-b border-slatePro-800 px-3 py-2">
-          <Link
-            href={getPersonaDashboardPath(persona) ?? "/dashboard"}
-            className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
-              pathname.startsWith("/dashboard/")
-                ? "bg-navy-500/20 text-navy-300"
-                : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
-            }`}
-          >
-            <LayoutDashboard className="h-4 w-4 shrink-0" />
-            My Dashboard
-          </Link>
-        </div>
-      )}
-
       {/* Scrollable nav */}
       <div className="flex-1 overflow-y-auto py-2">
         {ALL_SECTIONS.map((section) => {
@@ -550,7 +567,10 @@ export function Sidebar({
                 )}
               </button>
               {(collapsed || isExpanded) &&
-                section.items.map((item) => {
+                (section.title === "GOVERNANCE OVERVIEW"
+                  ? getGovernanceOverviewItems(persona ?? null)
+                  : section.items
+                ).map((item) => {
                   const gatedFeature = TIER_GATED_HREFS[item.href];
                   const tierEnabled = !gatedFeature || canAccessFeature(tier, gatedFeature);
                   const active = enabled && tierEnabled && isActive(item.href, pathname);
@@ -727,6 +747,14 @@ export function Sidebar({
                 <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
                 <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
               </div>
+              <Link
+                href={getPersonaDashboardPath(persona ?? null) ?? "/persona-select"}
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                onClick={() => setUserMenuOpen(false)}
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                My Dashboard →
+              </Link>
               {onResetToPersonaView && (
                 <button
                   type="button"

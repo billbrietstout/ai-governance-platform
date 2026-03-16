@@ -14,7 +14,7 @@ const STATIC_PAGES = [
   { href: "/audit", label: "Audit Log", category: "pages" },
   { href: "/discover", label: "Regulation Discovery", category: "pages" },
   { href: "/discover/use-cases", label: "Use Case Library", category: "pages" },
-  { href: "/layer1-business", label: "Executive Dashboard", category: "pages" },
+  { href: "/layer1-business", label: "L1 Business Overview", category: "pages" },
   { href: "/layer3-application/assets", label: "AI Assets", category: "pages" },
   { href: "/layer3-application/agents", label: "Agentic Registry", category: "pages" },
   { href: "/layer5-supply-chain", label: "Model Registry", category: "pages" },
