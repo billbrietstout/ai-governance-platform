@@ -50,7 +50,7 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaConfig, type PersonaId } from "@/lib/personas/config";
 import { getPersonaSidebarConfig } from "@/lib/personas/sidebar-config";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
-import { canAccessFeature, getAssetLimit, type GatedFeature } from "@/lib/tiers/gates";
+import { canAccessFeature, getAssetLimit, TIER_LIMITS, type GatedFeature } from "@/lib/tiers/gates";
 
 const STORAGE_KEY = "sidebar-collapsed";
 const STORAGE_KEY_EXPANDED = "sidebar-expanded-sections";
@@ -703,7 +703,7 @@ export function Sidebar({
         <div className="border-t border-slatePro-800 p-3">
           <div className="rounded-lg bg-slatePro-800 p-3">
             <div className="mb-1 flex items-center justify-between">
-              <span className="text-xs font-medium text-slatePro-300">Free Plan</span>
+              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">Free Plan</span>
               <span className="text-xs text-amber-400">
                 {assetCount}/{getAssetLimit(tier)} assets
               </span>
@@ -725,11 +725,23 @@ export function Sidebar({
       )}
       {!collapsed && tier !== "FREE" && (
         <div className="border-t border-slatePro-800 p-3">
-          <div className="flex items-center gap-2 px-1">
-            <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+          <div className="flex flex-col gap-1.5">
+            <span
+              className={`inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-medium ${
+                tier === "PRO"
+                  ? "bg-blue-500/20 text-blue-400"
+                  : tier === "CONSULTANT"
+                    ? "bg-purple-500/20 text-purple-400"
+                    : "bg-green-500/20 text-green-400"
+              }`}
+            >
               {tier === "PRO" ? "Pro Plan" : tier === "CONSULTANT" ? "Consultant Plan" : "Enterprise Plan"}
             </span>
-            <span className="text-xs text-slatePro-400">Up to 500 assets</span>
+            <span className="text-xs text-slatePro-400">
+              {(TIER_LIMITS[tier?.toUpperCase() as keyof typeof TIER_LIMITS]?.assetLimit ?? 0) === 0
+                ? "No asset limit"
+                : `Up to ${TIER_LIMITS[tier?.toUpperCase() as keyof typeof TIER_LIMITS]?.assetLimit ?? 0} assets`}
+            </span>
           </div>
         </div>
       )}
