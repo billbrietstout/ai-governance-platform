@@ -260,6 +260,8 @@ model Organization {
   createdAt          DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  consultantWorkspaces  ConsultantWorkspace[] @relation("ConsultantWorkspaces")
+  clientWorkspaces     ConsultantWorkspace[]  @relation("ClientWorkspaces")
   users                User[]
   pendingInvites       PendingInvite[]
   aiAssets             AIAsset[]
@@ -851,4 +853,20 @@ model IsoReadiness {
 
   @@unique([orgId, clauseId])
   @@index([orgId])
+}
+
+model ConsultantWorkspace {
+  id               String   @id @default(cuid())
+  consultantOrgId  String
+  clientOrgId      String
+  clientName       String
+  status           String   @default("ACTIVE")
+  createdAt        DateTime @default(now())
+
+  consultantOrg Organization @relation("ConsultantWorkspaces", fields: [consultantOrgId], references: [id], onDelete: Cascade)
+  clientOrg     Organization @relation("ClientWorkspaces", fields: [clientOrgId], references: [id], onDelete: Cascade)
+
+  @@unique([consultantOrgId, clientOrgId])
+  @@index([consultantOrgId])
+  @@index([clientOrgId])
 }

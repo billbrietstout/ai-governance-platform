@@ -43,6 +43,7 @@ import {
   Newspaper
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
+import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaConfig, type PersonaId } from "@/lib/personas/config";
@@ -110,6 +111,12 @@ const GATED_SECTIONS: GatedSection[] = [
   }
 ];
 
+const CLIENT_WORKSPACES_ITEM: NavItem = {
+  href: "/consultant",
+  label: "Client Workspaces",
+  icon: Building2
+};
+
 const GOVERNANCE_OVERVIEW_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Posture Overview", icon: LayoutDashboard },
   { href: "/maturity", label: "Maturity Assessment", icon: TrendingUp },
@@ -134,12 +141,19 @@ const PERSONA_FIRST_ITEM: Record<PersonaId, { href: string; label: string; icon:
   VENDOR_MGR: { href: "/dashboard/supply-chain", label: "Supply Chain", icon: LayoutDashboard }
 };
 
-function getGovernanceOverviewItems(persona: string | null): NavItem[] {
+function getGovernanceOverviewItems(
+  persona: string | null,
+  consultantOrgId?: string | null
+): NavItem[] {
+  const base = [...GOVERNANCE_OVERVIEW_ITEMS];
+  if (consultantOrgId) {
+    base.unshift(CLIENT_WORKSPACES_ITEM);
+  }
   if (persona && persona in PERSONA_FIRST_ITEM) {
     const item = PERSONA_FIRST_ITEM[persona as PersonaId];
-    return [item, ...GOVERNANCE_OVERVIEW_ITEMS];
+    return [item, ...base];
   }
-  return [{ href: "/persona-select", label: "Choose your view", icon: LayoutDashboard }, ...GOVERNANCE_OVERVIEW_ITEMS];
+  return [{ href: "/persona-select", label: "Choose your view", icon: LayoutDashboard }, ...base];
 }
 
 const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = [
@@ -199,10 +213,16 @@ const FRAMEWORK_COLORS: Record<string, string> = {
   ISO_42001: "bg-slatePro-500/20 text-slatePro-300 border-slatePro-500/30"
 };
 
-function getSectionForPath(pathname: string, persona: string | null): string | null {
+function getSectionForPath(
+  pathname: string,
+  persona: string | null,
+  consultantOrgId?: string | null
+): string | null {
   for (const section of ALL_SECTIONS) {
     const items =
-      section.title === "GOVERNANCE OVERVIEW" ? getGovernanceOverviewItems(persona) : section.items;
+      section.title === "GOVERNANCE OVERVIEW"
+        ? getGovernanceOverviewItems(persona, consultantOrgId)
+        : section.items;
     for (const item of items) {
       if (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))) {
         return section.title;
@@ -233,6 +253,8 @@ function ChevronRight({ className }: { className?: string }) {
   );
 }
 
+type ConsultantWorkspace = { id: string; clientOrgId: string; clientName: string };
+
 export type SidebarProps = {
   userEmail?: string | null;
   orgName?: string | null;
@@ -241,6 +263,11 @@ export type SidebarProps = {
   frameworks?: { code: string }[];
   tier?: string;
   assetCount?: number;
+  role?: string | null;
+  consultantOrgId?: string | null;
+  consultantWorkspaces?: ConsultantWorkspace[];
+  consultantOrgName?: string | null;
+  currentOrgId?: string | null;
   sidebarMode?: "full" | "focused";
   onExpandToFull?: () => void;
   onResetToPersonaView?: () => void;
@@ -254,12 +281,17 @@ export function Sidebar({
   frameworks = [],
   tier = "FREE",
   assetCount = 0,
+  role = null,
+  consultantOrgId = null,
+  consultantWorkspaces = [],
+  consultantOrgName = null,
+  currentOrgId = null,
   sidebarMode = "full",
   onExpandToFull,
   onResetToPersonaView
 }: SidebarProps) {
   const pathname = usePathname();
-  const currentSection = getSectionForPath(pathname, persona ?? null);
+  const currentSection = getSectionForPath(pathname, persona ?? null, consultantOrgId);
 
   const [collapsed, setCollapsedState] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
@@ -478,6 +510,15 @@ export function Sidebar({
                   <Settings className="h-4 w-4" />
                   Settings
                 </Link>
+                {role === "ADMIN" && (
+                  <Link
+                    href="/settings/admin"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                )}
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/login" })}
@@ -537,6 +578,18 @@ export function Sidebar({
 
       {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
 
+      {consultantOrgId && currentOrgId && !collapsed && (
+        <div className="border-b border-slatePro-800 px-3 py-2">
+          <WorkspaceSwitcher
+            currentOrgId={currentOrgId}
+            orgName={orgName ?? null}
+            consultantOrgId={consultantOrgId}
+            consultantWorkspaces={consultantWorkspaces}
+            consultantOrgName={consultantOrgName ?? "My organization"}
+          />
+        </div>
+      )}
+
       {/* Scrollable nav */}
       <div className="flex-1 overflow-y-auto py-2">
         {ALL_SECTIONS.map((section) => {
@@ -568,7 +621,7 @@ export function Sidebar({
               </button>
               {(collapsed || isExpanded) &&
                 (section.title === "GOVERNANCE OVERVIEW"
-                  ? getGovernanceOverviewItems(persona ?? null)
+                  ? getGovernanceOverviewItems(persona ?? null, consultantOrgId)
                   : section.items
                 ).map((item) => {
                   const gatedFeature = TIER_GATED_HREFS[item.href];
@@ -785,6 +838,14 @@ export function Sidebar({
               </button>
             </div>
           </>
+        )}
+        {!collapsed && role === "ADMIN" && (
+          <Link
+            href="/settings/admin"
+            className="mt-2 flex justify-center px-3 py-1 text-xs text-slatePro-600 hover:text-slatePro-400"
+          >
+            Admin
+          </Link>
         )}
       </div>
     </aside>

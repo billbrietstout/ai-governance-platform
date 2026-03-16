@@ -17,6 +17,8 @@ import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 
 const STORAGE_KEY = "sidebar-mode";
 
+type ConsultantWorkspace = { id: string; clientOrgId: string; clientName: string };
+
 type DashboardShellProps = {
   persona?: string | null;
   userEmail?: string | null;
@@ -25,6 +27,11 @@ type DashboardShellProps = {
   frameworks?: { code: string }[];
   tier?: string;
   assetCount?: number;
+  role?: string | null;
+  consultantOrgId?: string | null;
+  consultantWorkspaces?: ConsultantWorkspace[];
+  consultantOrgName?: string | null;
+  currentOrgId?: string | null;
   children: React.ReactNode;
 };
 
@@ -51,6 +58,11 @@ export function DashboardShell({
   frameworks = [],
   tier = "FREE",
   assetCount = 0,
+  role,
+  consultantOrgId = null,
+  consultantWorkspaces = [],
+  consultantOrgName = null,
+  currentOrgId = null,
   children
 }: DashboardShellProps) {
   const pathname = usePathname();
@@ -120,6 +132,11 @@ export function DashboardShell({
         frameworks={frameworks}
         tier={tier}
         assetCount={assetCount}
+        role={role}
+        consultantOrgId={consultantOrgId}
+        consultantWorkspaces={consultantWorkspaces}
+        consultantOrgName={consultantOrgName}
+        currentOrgId={currentOrgId}
         sidebarMode={effectiveMode}
         onExpandToFull={expandToFull}
         onResetToPersonaView={persona ? resetToPersonaView : undefined}

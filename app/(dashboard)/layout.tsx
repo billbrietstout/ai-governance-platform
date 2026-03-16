@@ -20,7 +20,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const user = session?.user as { email?: string | null; orgId?: string } | undefined;
+  const user = session?.user as { email?: string | null; orgId?: string; role?: string } | undefined;
   const orgId = user?.orgId;
 
   let orgName: string | null = null;
@@ -34,8 +34,11 @@ export default async function DashboardLayout({
   let frameworks: { code: string }[] = [];
   let tier = "FREE";
   let assetCount = 0;
+  let consultantWorkspaces: { id: string; clientOrgId: string; clientName: string }[] = [];
+  let consultantOrgId: string | null = null;
+  let consultantOrgName: string | null = null;
   if (orgId) {
-    const [org, flags, fws, dbUser, assetCnt] = await Promise.all([
+    const [org, flags, fws, dbUser, assetCnt, consultantData] = await Promise.all([
       prisma.organization.findUnique({
         where: { id: orgId },
         select: { name: true, onboardingComplete: true, onboardingStep: true, tier: true }
@@ -51,14 +54,44 @@ export default async function DashboardLayout({
       userId
         ? prisma.user.findUnique({
             where: { id: userId },
-            select: { persona: true, personaModalDismissedAt: true }
+            select: { persona: true, personaModalDismissedAt: true, orgId: true }
           })
         : Promise.resolve(null),
-      prisma.aIAsset.count({ where: { orgId, deletedAt: null } })
+      prisma.aIAsset.count({ where: { orgId, deletedAt: null } }),
+      userId
+        ? (async () => {
+            const u = await prisma.user.findUnique({
+              where: { id: userId },
+              select: { orgId: true }
+            });
+            if (!u?.orgId) return null;
+            const org = await prisma.organization.findUnique({
+              where: { id: u.orgId },
+              select: { tier: true }
+            });
+            return org?.tier === "CONSULTANT" ? u.orgId : null;
+          })()
+        : Promise.resolve(null)
     ]);
     orgName = org?.name ?? null;
     tier = org?.tier ?? "FREE";
     assetCount = assetCnt ?? 0;
+    consultantOrgId = consultantData;
+    if (consultantOrgId) {
+      const [workspaces, consultantOrg] = await Promise.all([
+        prisma.consultantWorkspace.findMany({
+          where: { consultantOrgId, status: "ACTIVE" },
+          select: { id: true, clientOrgId: true, clientName: true },
+          orderBy: { createdAt: "desc" }
+        }),
+        prisma.organization.findUnique({
+          where: { id: consultantOrgId },
+          select: { name: true }
+        })
+      ]);
+      consultantWorkspaces = workspaces;
+      consultantOrgName = consultantOrg?.name ?? null;
+    }
     onboardingComplete = org?.onboardingComplete ?? true;
     if ((org?.onboardingStep ?? 0) >= 6 && !onboardingComplete) {
       onboardingComplete = true;
@@ -91,6 +124,11 @@ export default async function DashboardLayout({
         frameworks={frameworks}
         tier={tier}
         assetCount={assetCount}
+        role={user?.role ?? null}
+        consultantOrgId={consultantOrgId}
+        consultantWorkspaces={consultantWorkspaces}
+        consultantOrgName={consultantOrgName}
+        currentOrgId={orgId ?? null}
       >
         {children}
       </DashboardShell>

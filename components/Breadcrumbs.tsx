@@ -37,6 +37,8 @@ const SEGMENT_LABELS: Record<string, string> = {
   "accountability-matrix": "Accountability Matrix",
   settings: "Settings",
   billing: "Billing",
+  admin: "Admin",
+  consultant: "Client Workspaces",
   executive: "AI Risk Briefing",
   caio: "CAIO View",
   ciso: "Security Overview",

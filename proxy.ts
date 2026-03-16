@@ -6,7 +6,37 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 import { withAuth } from "next-auth/middleware";
+
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN
+      })
+    : null;
+
+const discoverRatelimit = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(20, "1 h"),
+      analytics: true,
+      prefix: "rl:discover"
+    })
+  : null;
+
+const inviteRatelimit = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(5, "1 h"),
+      analytics: true,
+      prefix: "rl:invite"
+    })
+  : null;
+
+const isProd = process.env.NODE_ENV === "production";
 
 const PROTECTED_PATHS = [
   "/dashboard",
@@ -40,20 +70,6 @@ const PUBLIC_PATHS = [
   "/api/ready"
 ];
 
-const rateLimitMap = new Map<string, { count: number; reset: number }>();
-
-function rateLimit(ip: string, limit: number, windowMs: number): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.reset) {
-    rateLimitMap.set(ip, { count: 1, reset: now + windowMs });
-    return true;
-  }
-  if (entry.count >= limit) return false;
-  entry.count++;
-  return true;
-}
-
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((p) =>
     p === "/" ? pathname === "/" : pathname.startsWith(p)
@@ -72,7 +88,7 @@ function generateNonce(): string {
 }
 
 const proxy = withAuth(
-  function proxyHandler(req) {
+  async function proxyHandler(req) {
     const pathname = req.nextUrl.pathname;
 
     if (pathname.startsWith("/api/auth")) {
@@ -116,15 +132,33 @@ const proxy = withAuth(
       response.headers.set("x-user-role", token.role ?? "");
     }
 
-    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
-    if (pathname.startsWith("/api/v1/invites")) {
-      if (!rateLimit(ip, 5, 60 * 60 * 1000)) {
-        return new NextResponse("Too many requests", { status: 429 });
+    const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+
+    if (isProd && pathname.startsWith("/discover") && discoverRatelimit) {
+      try {
+        const { success } = await discoverRatelimit.limit(ip);
+        if (!success) {
+          return new NextResponse("Too many requests", {
+            status: 429,
+            headers: { "Retry-After": "3600" }
+          });
+        }
+      } catch {
+        console.warn("Rate limit check failed, allowing request");
       }
     }
-    if (pathname.startsWith("/discover")) {
-      if (!rateLimit(ip, 20, 60 * 60 * 1000)) {
-        return new NextResponse("Too many requests", { status: 429 });
+
+    if (isProd && pathname.startsWith("/api/v1/invites") && inviteRatelimit) {
+      try {
+        const { success } = await inviteRatelimit.limit(ip);
+        if (!success) {
+          return new NextResponse("Too many requests", {
+            status: 429,
+            headers: { "Retry-After": "3600" }
+          });
+        }
+      } catch {
+        console.warn("Rate limit check failed, allowing request");
       }
     }
 

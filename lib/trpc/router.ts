@@ -19,6 +19,7 @@ import { auditRouter } from "./routers/audit.router";
 import { isoReadinessRouter } from "./routers/iso-readiness.router";
 import { searchRouter } from "./routers/search.router";
 import { orgRouter } from "./routers/org.router";
+import { consultantRouter } from "./routers/consultant.router";
 
 export const appRouter = createTRPCRouter({
   healthcheck: publicProcedure
@@ -42,7 +43,8 @@ export const appRouter = createTRPCRouter({
   audit: auditRouter,
   isoReadiness: isoReadinessRouter,
   search: searchRouter,
-  org: orgRouter
+  org: orgRouter,
+  consultant: consultantRouter
 });
 
 export type AppRouter = typeof appRouter;
