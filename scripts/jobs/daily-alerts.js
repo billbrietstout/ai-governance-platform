@@ -59,7 +59,7 @@ async function sendSlackAlert(webhookUrl, alert) {
         },
         {
           type: 'context',
-          elements: [{ type: 'mrkdwn', text: `AI Posture Platform · Built on CoSAI SRF v0.7` }],
+          elements: [{ type: 'mrkdwn', text: `AI Readiness Platform · Built on CoSAI SRF v0.7` }],
         },
       ],
     }],
@@ -235,7 +235,7 @@ async function main() {
         <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9fafb; margin: 0; padding: 40px 20px;">
           <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
             <div style="padding: 24px 32px; border-bottom: 1px solid #f3f4f6; text-align: center;">
-              <p style="margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: #9CA3AF; text-transform: uppercase;">AI Posture Platform</p>
+              <p style="margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: #9CA3AF; text-transform: uppercase;">AI Readiness Platform</p>
               <h1 style="margin: 8px 0 4px; font-size: 22px; font-weight: 700; color: #111827;">Daily Alert Summary</h1>
               <p style="margin: 0; font-size: 14px; color: #6B7280;">${org.name} · ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
             </div>
@@ -269,7 +269,7 @@ async function main() {
                 &nbsp;·&nbsp;
                 <a href="${APP_URL}/settings/notifications" style="color: #9CA3AF;">Manage preferences</a>
               </p>
-              <p style="margin: 6px 0 0; font-size: 11px; color: #D1D5DB;">AI Posture Platform · Built on CoSAI SRF v0.7</p>
+              <p style="margin: 6px 0 0; font-size: 11px; color: #D1D5DB;">AI Readiness Platform · Built on CoSAI SRF v0.7</p>
             </div>
           </div>
         </body>
@@ -282,7 +282,7 @@ async function main() {
       } else {
         try {
           await resend.emails.send({
-            from: 'AI Posture Platform <alerts@yourdomain.com>',
+            from: 'AI Readiness Platform <alerts@yourdomain.com>',
             to: user.email,
             subject: `${userAlerts.filter(a => a.severity === 'critical').length > 0 ? '🔴' : '🟠'} ${userAlerts.length} AI governance alert${userAlerts.length !== 1 ? 's' : ''} — ${org.name}`,
             html,

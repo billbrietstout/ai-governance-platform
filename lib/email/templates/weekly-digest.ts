@@ -112,7 +112,7 @@ export function weeklyDigestTemplate({
     <!-- Header -->
     <div style="text-align:center;margin-bottom:32px;">
       <div style="font-size:13px;color:#64748b;
-        margin-bottom:8px;">AI Posture Platform</div>
+        margin-bottom:8px;">AI Readiness Platform</div>
       <h1 style="margin:0;font-size:24px;
         font-weight:600;color:#0f172a;">
         AI Risk Briefing
@@ -154,7 +154,7 @@ export function weeklyDigestTemplate({
         <p style="font-size:12px;color:#64748b;
           margin:0 0 8px;">
           You&apos;re receiving this because you have an
-          AI Posture Platform account at ${orgName}.
+          AI Readiness Platform account at ${orgName}.
         </p>
         <a href="${unsubscribeUrl}"
           style="font-size:12px;color:#64748b;
@@ -170,7 +170,7 @@ export function weeklyDigestTemplate({
       </div>
       <div style="margin-top:12px;font-size:11px;
         color:#94a3b8;">
-        AI Posture Platform · Built on CoSAI SRF v0.7
+        AI Readiness Platform · Built on CoSAI SRF v0.7
       </div>
     </div>
   </div>

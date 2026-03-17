@@ -87,7 +87,7 @@ function UnsubscribeContent() {
       <main className="mx-auto max-w-xl px-4 py-16">
         <h1 className="text-xl font-semibold text-slate-900">Unsubscribe</h1>
         <p className="mt-2 text-slate-600">
-          Use the unsubscribe link in any AI Posture Platform email to manage your preferences.
+          Use the unsubscribe link in any AI Readiness Platform email to manage your preferences.
         </p>
         <Link
           href="/settings/notifications"
@@ -102,7 +102,7 @@ function UnsubscribeContent() {
   return (
     <main className="mx-auto max-w-xl px-4 py-16">
       <h1 className="text-2xl font-semibold text-slate-900">
-        You&apos;ve been unsubscribed from AI Posture Platform emails
+        You&apos;ve been unsubscribed from AI Readiness Platform emails
       </h1>
 
       <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
@@ -154,7 +154,7 @@ function UnsubscribeContent() {
       </div>
 
       <p className="mt-8 text-xs text-slate-400">
-        AI Posture Platform · Built on CoSAI SRF v0.7
+        AI Readiness Platform · Built on CoSAI SRF v0.7
       </p>
     </main>
   );

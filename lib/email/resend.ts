@@ -31,7 +31,7 @@ export async function sendEmail({
   try {
     const client = getResendClient();
     const { data, error } = await client.emails.send({
-      from: process.env.RESEND_FROM_EMAIL ?? "AI Posture <notifications@aiposture.io>",
+      from: process.env.RESEND_FROM_EMAIL ?? "AI Readiness <notifications@aiposture.io>",
       to,
       subject,
       html,

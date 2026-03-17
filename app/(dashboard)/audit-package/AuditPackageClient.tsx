@@ -28,7 +28,7 @@ function ExportPDFButton() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `ai-posture-audit-${new Date().toISOString().slice(0, 10)}.pdf`;
+      a.download = `ai-readiness-audit-${new Date().toISOString().slice(0, 10)}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {

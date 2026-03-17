@@ -132,7 +132,7 @@ export default async function CommandCenterPage({
           <h3 className="text-lg font-semibold text-navy-900">
             {personaLabel
               ? `Welcome, ${displayName}. As ${personaLabel}, your priority this week is ${topNextSteps[0]?.action ?? "maintaining your governance posture"}.`
-              : `Welcome to AI Posture Platform`}
+              : `Welcome to AI Readiness Platform`}
           </h3>
           {!personaLabel && (
             <p className="mt-1 text-navy-700">

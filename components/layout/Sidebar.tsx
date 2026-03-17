@@ -573,7 +573,7 @@ export function Sidebar({
           >
             <ShieldLogo className="h-8 w-8 shrink-0 text-navy-400" />
             <div className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-slatePro-100">AI Posture</span>
+              <span className="block truncate text-sm font-semibold text-slatePro-100">AI Readiness</span>
               <span className="block text-[10px] text-slatePro-500">Readiness & Governance</span>
             </div>
           </Link>

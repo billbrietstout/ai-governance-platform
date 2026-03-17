@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { NProgressProvider } from "@/components/NProgressProvider";
 
 export const metadata: Metadata = {
-  title: "AI Posture | AI Readiness Platform",
+  title: "AI Readiness | AI Readiness Platform",
   description: "Assess, plan, and govern your AI systems across the CoSAI five-layer framework"
 };
 

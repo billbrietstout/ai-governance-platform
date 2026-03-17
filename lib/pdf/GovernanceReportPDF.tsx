@@ -160,7 +160,7 @@ const LAYER_NAMES: Record<string, string> = {
 function PDFFooter({ pageNumber, totalPages }: { pageNumber: number; totalPages: number }) {
   return (
     <View style={styles.footer} fixed>
-      <Text>AI Posture Platform — Confidential</Text>
+      <Text>AI Readiness Platform — Confidential</Text>
       <Text>
         Page {pageNumber} of {totalPages} • Built on CoSAI SRF v0.7
       </Text>
@@ -190,7 +190,7 @@ export function GovernanceReportPDF({
     <Document>
       {/* Page 1 – Cover */}
       <Page size="A4" style={styles.page}>
-        <Text style={styles.coverTitle}>AI Posture Platform</Text>
+        <Text style={styles.coverTitle}>AI Readiness Platform</Text>
         <Text style={styles.coverSubtitle}>Executive Readiness Report</Text>
         <Text style={styles.coverOrg}>{org.name}</Text>
         <Text style={styles.coverDate}>Generated {dateStr}</Text>

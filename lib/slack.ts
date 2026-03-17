@@ -1,6 +1,6 @@
 /**
  * lib/slack.ts
- * Slack webhook notification service for AI Posture Platform
+ * Slack webhook notification service for AI Readiness Platform
  * Sends critical/high alerts via Slack Block Kit messages
  */
 
@@ -85,7 +85,7 @@ function buildAlertBlocks(alert: SlackAlert) {
             elements: [
               {
                 type: 'mrkdwn',
-                text: `AI Posture Platform · Built on CoSAI SRF v0.7 · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
+                text: `AI Readiness Platform · Built on CoSAI SRF v0.7 · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
               },
             ],
           },

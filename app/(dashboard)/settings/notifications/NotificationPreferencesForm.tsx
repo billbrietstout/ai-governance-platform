@@ -286,7 +286,7 @@ export function NotificationPreferencesForm({
                 ? "All email notifications are disabled at the organization level."
                 : emailEnabled
                 ? `You are receiving email notifications at ${userEmail ?? "your email"}`
-                : "All email notifications are disabled. You will not receive any emails from AI Posture Platform."}
+                : "All email notifications are disabled. You will not receive any emails from AI Readiness Platform."}
             </p>
           </div>
           <Toggle

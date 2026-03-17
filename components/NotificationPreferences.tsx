@@ -156,7 +156,7 @@ export default function NotificationPreferences({ isAdmin = false }: { isAdmin?:
               {emailEffectivelyDisabled
                 ? orgKilled
                   ? 'All email notifications are disabled at the organization level.'
-                  : 'All email notifications are disabled. You will not receive any emails from AI Posture Platform.'
+                  : 'All email notifications are disabled. You will not receive any emails from AI Readiness Platform.'
                 : 'You will receive email notifications based on your preferences below.'}
             </p>
             {!orgKilled && !prefs.emailEnabled && (

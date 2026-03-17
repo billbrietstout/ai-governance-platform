@@ -187,7 +187,7 @@ export async function GET() {
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="ai-posture-audit-${date}.pdf"`
+      "Content-Disposition": `attachment; filename="ai-readiness-audit-${date}.pdf"`
     }
   });
 }

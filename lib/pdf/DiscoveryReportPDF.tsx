@@ -107,7 +107,7 @@ const LAYER_NAMES: Record<string, string> = {
 function PDFFooter({ pageNumber }: { pageNumber: number }) {
   return (
     <View style={styles.footer} fixed>
-      <Text>AI Posture Platform — Regulation Discovery</Text>
+      <Text>AI Readiness Platform — Regulation Discovery</Text>
       <Text>Page {pageNumber} of 2 • Built on CoSAI SRF v0.7</Text>
     </View>
   );

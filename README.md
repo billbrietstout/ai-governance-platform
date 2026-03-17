@@ -1,1 +1,1 @@
-# AI Posture Platform
+# AI Readiness Platform

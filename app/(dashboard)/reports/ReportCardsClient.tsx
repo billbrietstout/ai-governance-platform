@@ -80,7 +80,7 @@ export function ReportCardsClient({
       description: "Full audit-ready evidence package for regulators and auditors",
       icon: Package,
       exportUrl: "/api/v1/export/audit-package",
-      exportFilename: `ai-posture-audit-${date}.pdf`,
+      exportFilename: `ai-readiness-audit-${date}.pdf`,
       hasExport: true
     },
     {
@@ -89,7 +89,7 @@ export function ReportCardsClient({
       description: "Overall governance posture for board presentations",
       icon: FileBarChart,
       exportUrl: "/api/v1/export/governance-report",
-      exportFilename: `ai-posture-governance-report-${date}.pdf`,
+      exportFilename: `ai-readiness-governance-report-${date}.pdf`,
       hasExport: true
     },
     {

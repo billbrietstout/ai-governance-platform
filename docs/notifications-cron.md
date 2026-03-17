@@ -1,6 +1,6 @@
 # Email Notification Cron Jobs
 
-The AI Posture Platform sends weekly digests and daily alerts via email. These are triggered by HTTP endpoints that must be called on a schedule.
+The AI Readiness Platform sends weekly digests and daily alerts via email. These are triggered by HTTP endpoints that must be called on a schedule.
 
 ## Required Environment Variables
 

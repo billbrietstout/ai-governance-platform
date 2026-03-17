@@ -39,7 +39,7 @@ function UnsubscribeContent() {
         {/* Logo / Brand */}
         <div className="mb-6">
           <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-1">
-            AI Posture Platform
+            AI Readiness Platform
           </p>
           <p className="text-xs text-gray-400">Built on CoSAI SRF v0.7</p>
         </div>
@@ -57,7 +57,7 @@ function UnsubscribeContent() {
             <div className="text-4xl mb-4">📭</div>
             <h1 className="text-xl font-semibold text-gray-900 mb-2">Already unsubscribed</h1>
             <p className="text-gray-500 text-sm mb-6">
-              This email address is already unsubscribed from AI Posture Platform notifications.
+              This email address is already unsubscribed from AI Readiness Platform notifications.
             </p>
           </>
         ) : (
@@ -65,7 +65,7 @@ function UnsubscribeContent() {
             <div className="text-4xl mb-4">✉️</div>
             <h1 className="text-xl font-semibold text-gray-900 mb-2">You've been unsubscribed</h1>
             <p className="text-gray-500 text-sm mb-2">
-              <strong>{email}</strong> will no longer receive emails from AI Posture Platform.
+              <strong>{email}</strong> will no longer receive emails from AI Readiness Platform.
             </p>
             <p className="text-gray-400 text-xs mb-6">
               Changed your mind? You can re-enable notifications below or in your account settings.

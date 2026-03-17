@@ -34,7 +34,7 @@ export function thresholdAlertTemplate({
     
     <div style="text-align:center;margin-bottom:24px;">
       <div style="font-size:13px;color:#64748b;">
-        AI Posture Platform Alert
+        AI Readiness Platform Alert
       </div>
     </div>
     

@@ -31,7 +31,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
     <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 shadow-sm">
       <Link href={personaDashboardPath ?? "/dashboard"} className="flex items-center gap-2">
         <ShieldLogo className="h-8 w-8 shrink-0 text-navy-500" />
-        <span className="text-lg font-semibold text-slate-900">AI Posture</span>
+        <span className="text-lg font-semibold text-slate-900">AI Readiness</span>
       </Link>
 
       <div className="flex items-center gap-3">
