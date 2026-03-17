@@ -13,6 +13,7 @@ import {
   type SidebarMode
 } from "@/lib/personas/sidebar-config";
 import { isPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
+import { SessionExpiryWarning } from "@/components/auth/SessionExpiryWarning";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 
 const STORAGE_KEY = "sidebar-mode";
@@ -126,6 +127,7 @@ export function DashboardShell({
 
   return (
     <div className="flex min-h-dvh">
+      <SessionExpiryWarning />
       <Sidebar
         userEmail={userEmail}
         orgName={orgName}
