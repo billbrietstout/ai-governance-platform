@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { sendWeeklyDigestToUser } from "@/lib/notifications/engine";
 
+export const dynamic = "force-dynamic";
+
 export async function POST() {
   const session = await auth();
   const user = session?.user as { id?: string; orgId?: string } | undefined;
