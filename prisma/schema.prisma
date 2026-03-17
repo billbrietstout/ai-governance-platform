@@ -257,7 +257,9 @@ model Organization {
   operatingModel     String?   // IAAS | PAAS | AGENT_PAAS | SAAS | MIXED
   orgSize            String?   // SMALL | MEDIUM | LARGE | ENTERPRISE
   primaryUseCase     String?   // free text, e.g. "Customer service chatbot"
-  notificationsEnabled Boolean @default(true) // org-level kill switch for all emails
+  notificationsEnabled Boolean @default(true)
+  slackEnabled         Boolean  @default(false)
+  slackWebhookUrl      String? // org-level kill switch for all emails
   createdAt          DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -421,6 +423,8 @@ model User {
   regulationDiscoveries RegulationDiscovery[]
   complianceSnapshots  ComplianceSnapshot[]
   notificationPreference NotificationPreference?
+  unsubscribeToken    String?   @unique
+  unsubscribedAt      DateTime?
 
   @@unique([orgId, email])
   @@index([orgId])
