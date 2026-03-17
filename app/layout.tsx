@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { NProgressProvider } from "@/components/NProgressProvider";
-import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
   title: "AI Readiness | AI Readiness Platform",
@@ -16,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>
-          <NProgressProvider>{children}</NProgressProvider>
-        </SessionProvider>
+        <NProgressProvider>{children}</NProgressProvider>
       </body>
     </html>
   );
