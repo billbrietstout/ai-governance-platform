@@ -1,7 +1,7 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 const WARNING_BEFORE_EXPIRY_MS = 5 * 60 * 1000; // warn 5 min before expiry
 const CHECK_INTERVAL_MS = 30 * 1000; // check every 30 seconds
