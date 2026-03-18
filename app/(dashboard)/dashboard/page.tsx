@@ -8,7 +8,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { unstable_cache } from "next/cache";
 import {
   Bot, ShieldCheck, AlertOctagon, Scale, UserX,
   Clock, XCircle, Building, Info, TrendingUp
@@ -23,6 +22,14 @@ import { LayerSankeyDiagram } from "@/components/dashboard/LayerSankeyDiagram";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
 import { PersonaShortcutBanner } from "@/components/dashboard/PersonaShortcutBanner";
+import {
+  getCachedKPIs,
+  getCachedLayerPosture,
+  getCachedSankey,
+  getCachedHeatmap,
+  getCachedRiskMatrix,
+  getCachedMaturity,
+} from "@/lib/dashboard/cached-queries";
 
 const MATURITY_COLORS: Record<number, string> = {
   1: "#fbbf24", 2: "#f97316", 3: "#3b82f6", 4: "#8b5cf6", 5: "#10b981"
@@ -36,67 +43,6 @@ const LAYER_LINKS: Record<string, string> = {
   LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
 };
 
-// ─── Cached data fetchers (5-minute TTL) ─────────────────────────────────────
-
-const getCachedKPIs = (orgId: string) =>
-  unstable_cache(
-    async () => {
-      const caller = await createServerCaller();
-      return caller.dashboard.getKPIs();
-    },
-    [`dashboard-kpis-${orgId}`],
-    { revalidate: 300, tags: [`org-${orgId}`, "kpis"] }
-  )();
-
-const getCachedLayerPosture = (orgId: string) =>
-  unstable_cache(
-    async () => {
-      const caller = await createServerCaller();
-      return caller.dashboard.getLayerPosture();
-    },
-    [`dashboard-layer-posture-${orgId}`],
-    { revalidate: 300, tags: [`org-${orgId}`, "layer-posture"] }
-  )();
-
-const getCachedSankey = (orgId: string) =>
-  unstable_cache(
-    async () => {
-      const caller = await createServerCaller();
-      return caller.dashboard.getSankeyData();
-    },
-    [`dashboard-sankey-${orgId}`],
-    { revalidate: 300, tags: [`org-${orgId}`, "sankey"] }
-  )();
-
-const getCachedHeatmap = (orgId: string) =>
-  unstable_cache(
-    async () => {
-      const caller = await createServerCaller();
-      return caller.dashboard.getComplianceHeatmap();
-    },
-    [`dashboard-heatmap-${orgId}`],
-    { revalidate: 300, tags: [`org-${orgId}`, "heatmap"] }
-  )();
-
-const getCachedRiskMatrix = (orgId: string) =>
-  unstable_cache(
-    async () => {
-      const caller = await createServerCaller();
-      return caller.dashboard.getRiskMatrix();
-    },
-    [`dashboard-risk-matrix-${orgId}`],
-    { revalidate: 300, tags: [`org-${orgId}`, "risk-matrix"] }
-  )();
-
-const getCachedMaturity = (orgId: string) =>
-  unstable_cache(
-    async () => {
-      const caller = await createServerCaller();
-      return caller.maturity.getMaturityScore();
-    },
-    [`dashboard-maturity-${orgId}`],
-    { revalidate: 300, tags: [`org-${orgId}`, "maturity"] }
-  )();
 
 // ─── Skeleton components ──────────────────────────────────────────────────────
 

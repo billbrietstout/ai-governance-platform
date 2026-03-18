@@ -289,3 +289,7 @@ DATABASE_URL="<public url>" npx prisma migrate resolve --rolled-back <migration_
 
 *Last updated: March 17, 2026*
 *Stack: Next.js 16.1.6 · Prisma 6.19.2 · PostgreSQL · Railway · Auth0 · Resend · CoSAI SRF v0.7*
+
+## Local Dev Troubleshooting
+- Auth0 hang / signout hang: run `rm -rf .next && npm run dev`
+- Multiple dev servers: run `pkill -f 'next dev' && pkill -f 'next-server'`
