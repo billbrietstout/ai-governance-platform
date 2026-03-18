@@ -67,7 +67,7 @@ export function getCachedLayerPosture(orgId: string) {
       const layers = await getBulkLayerPosture(prisma, orgId);
       return { data: layers, meta: {} };
     },
-    [`dashboard-layer-posture-${orgId}`],
+    [`dashboard-layer-posture-v2-${orgId}`],
     { revalidate: 300, tags: [`org-${orgId}`, "layer-posture"] }
   )();
 }
