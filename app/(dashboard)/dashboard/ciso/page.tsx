@@ -58,9 +58,9 @@ export default async function CISODashboardPage() {
               return (
                 <div key={l.layer} className="flex items-center gap-4">
                   <span className="w-24 text-sm text-slate-600">{label}</span>
-                  <div className="relative h-2 flex-1 rounded-full bg-slate-200">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
                     <div
-                      className="absolute left-0 top-0 h-full rounded-full"
+                      className="h-full rounded-full"
                       style={{ width: `${l.compliancePct}%`, backgroundColor: scoreColor(l.compliancePct) }}
                     />
                   </div>
