@@ -6,7 +6,7 @@
 import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { calculateKPI } from "@/lib/value/kpi-engine";
-import * as engine from "@/lib/compliance/engine";
+import { getBulkLayerPosture, getBulkComplianceHeatmap } from "@/lib/compliance/bulk-engine";
 
 // ─── KPIs ─────────────────────────────────────────────────────────────────────
 
@@ -64,36 +64,7 @@ const COSAI_LAYERS = [
 export function getCachedLayerPosture(orgId: string) {
   return unstable_cache(
     async () => {
-      const assets = await prisma.aIAsset.findMany({
-        where: { orgId, deletedAt: null },
-        select: { id: true },
-      });
-
-      const layers = [];
-      for (const layer of COSAI_LAYERS) {
-        const assignments = await prisma.accountabilityAssignment.findMany({
-          where: { asset: { orgId, deletedAt: null }, cosaiLayer: layer },
-          take: 1,
-          orderBy: { updatedAt: "desc" },
-        });
-        let complianceSum = 0;
-        let count = 0;
-        for (const a of assets) {
-          const r = await engine.calculateComplianceScore(prisma, a.id);
-          const layerData = r.byLayer[layer];
-          if (layerData) { complianceSum += layerData.percentage; count++; }
-        }
-        const risks = await prisma.riskRegister.count({
-          where: { orgId, deletedAt: null, cosaiLayer: layer },
-        });
-        layers.push({
-          layer,
-          compliancePct: count > 0 ? Math.round(complianceSum / count) : 0,
-          riskCount: risks,
-          accountableOwner: assignments[0]?.accountableParty ?? null,
-          lastReviewed: assignments[0]?.updatedAt ?? null,
-        });
-      }
+      const layers = await getBulkLayerPosture(prisma, orgId);
       return { data: layers, meta: {} };
     },
     [`dashboard-layer-posture-${orgId}`],
@@ -106,28 +77,7 @@ export function getCachedLayerPosture(orgId: string) {
 export function getCachedHeatmap(orgId: string) {
   return unstable_cache(
     async () => {
-      const frameworks = await prisma.complianceFramework.findMany({
-        where: { orgId, isActive: true },
-        select: { id: true, code: true },
-      });
-      const assets = await prisma.aIAsset.findMany({
-        where: { orgId, deletedAt: null },
-        select: { id: true, assetType: true },
-      });
-      const rows: { framework: string; [assetType: string]: string | number }[] = [];
-      for (const fw of frameworks) {
-        const row: { framework: string; [assetType: string]: string | number } = { framework: fw.code };
-        const byType: Record<string, number[]> = {};
-        for (const a of assets) {
-          const r = await engine.calculateComplianceScore(prisma, a.id, fw.id);
-          if (!byType[a.assetType]) byType[a.assetType] = [];
-          byType[a.assetType].push(r.percentage);
-        }
-        for (const [t, pcts] of Object.entries(byType)) {
-          row[t] = pcts.length > 0 ? Math.round(pcts.reduce((s, p) => s + p, 0) / pcts.length) : 0;
-        }
-        rows.push(row);
-      }
+      const rows = await getBulkComplianceHeatmap(prisma, orgId);
       return { data: rows, meta: {} };
     },
     [`dashboard-heatmap-${orgId}`],
