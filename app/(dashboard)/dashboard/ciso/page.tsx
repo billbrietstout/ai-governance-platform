@@ -50,23 +50,18 @@ export default async function CISODashboardPage() {
         {/* Section 1 – Security posture */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-sm font-medium text-slate-700">Layer compliance scores</h3>
-          <div className="space-y-3">
-            {layers.map((l) => {
+          <div className="grid grid-cols-5 gap-3">
+          {layers.map((l) => {
               const label =
                 LAYER_LABELS[l.layer] ??
                 l.layer.replace("LAYER_", "L").replace("_", " ");
+              const pct = l.compliancePct;
+              const bg = pct <= 30 ? "bg-red-50 border-red-200" : pct <= 60 ? "bg-amber-50 border-amber-200" : pct <= 80 ? "bg-blue-50 border-blue-200" : "bg-emerald-50 border-emerald-200";
+              const text = pct <= 30 ? "text-red-700" : pct <= 60 ? "text-amber-700" : pct <= 80 ? "text-blue-700" : "text-emerald-700";
               return (
-                <div key={l.layer} className="flex items-center gap-4">
-                  <span className="w-24 text-sm text-slate-600">{label}</span>
-                  <div className="h-2 w-full rounded-full bg-slate-200">
-                    <div
-                      className={`h-full rounded-full ${scoreColor(l.compliancePct)}`}
-                      style={{ width: `${l.compliancePct}%` }}
-                    />
-                  </div>
-                  <span className="w-12 text-right text-sm font-medium text-slate-700">
-                    {l.compliancePct}%
-                  </span>
+                <div key={l.layer} className={`rounded-lg border p-4 text-center ${bg}`}>
+                  <div className={`text-2xl font-bold ${text}`}>{pct}%</div>
+                  <div className="mt-1 text-xs font-medium text-slate-600">{label}</div>
                 </div>
               );
             })}
