@@ -17,7 +17,7 @@ const LAYER_LABELS: Record<string, string> = {
 
 function scoreColor(pct: number): string {
   if (pct <= 30) return "#ef4444";
-  if (pct <= 60) return "#f59e0b";
+  if (pct <= 60) return "#ff0000";
   if (pct <= 80) return "#3b82f6";
   return "#10b981";
 }
