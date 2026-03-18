@@ -16,10 +16,10 @@ const LAYER_LABELS: Record<string, string> = {
 };
 
 function scoreColor(pct: number): string {
-  if (pct <= 30) return "#ef4444";
-  if (pct <= 60) return "#ff0000";
-  if (pct <= 80) return "#3b82f6";
-  return "#10b981";
+  if (pct <= 30) return "bg-red-500";
+  if (pct <= 60) return "bg-amber-500";
+  if (pct <= 80) return "bg-blue-500";
+  return "bg-emerald-500";
 }
 
 export default async function CISODashboardPage() {
@@ -60,8 +60,8 @@ export default async function CISODashboardPage() {
                   <span className="w-24 text-sm text-slate-600">{label}</span>
                   <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
                     <div
-                      className="h-full rounded-full"
-                      style={{ width: `${l.compliancePct}%`, backgroundColor: scoreColor(l.compliancePct) }}
+                      className={`h-full rounded-full ${scoreColor(l.compliancePct)}`}
+                      style={{ width: `${l.compliancePct}%` }}
                     />
                   </div>
                   <span className="w-12 text-right text-sm font-medium text-slate-700">
