@@ -69,13 +69,7 @@ export async function getBulkLayerPosture(
   const assetIds = assets.map((a) => a.id);
   const frameworkIds = frameworks.map((f) => f.id);
 
-  // Bulk fetch controls and attestations in 2 queries
-  const [controls, attestations] = await Promise.all([
-    prisma.control.findMany({
-      where: { frameworkId: { in: frameworkIds } },
-      select: { id: true, cosaiLayer: true, frameworkId: true },
-    }),
-  ]);
+  const controls = await prisma.control.findMany({ where: { frameworkId: { in: frameworkIds } }, select: { id: true, cosaiLayer: true, frameworkId: true } });
 
   // Fetch attestations with correct control IDs
   const controlIds = controls.map((c) => c.id);
