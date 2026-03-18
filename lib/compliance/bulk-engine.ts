@@ -75,17 +75,9 @@ export async function getBulkLayerPosture(
       where: { frameworkId: { in: frameworkIds } },
       select: { id: true, cosaiLayer: true, frameworkId: true },
     }),
-    prisma.controlAttestation.findMany({
-      where: {
-        assetId: { in: assetIds },
-        controlId: { in: [] }, // populated below
-        status: { in: ["COMPLIANT", "NOT_APPLICABLE"] },
-      },
-      select: { assetId: true, controlId: true },
-    }),
   ]);
 
-  // Re-fetch attestations with correct control IDs
+  // Fetch attestations with correct control IDs
   const controlIds = controls.map((c) => c.id);
   const bulkAttestations = await prisma.controlAttestation.findMany({
     where: {
@@ -95,9 +87,6 @@ export async function getBulkLayerPosture(
     },
     select: { assetId: true, controlId: true },
   });
-
-  // Build lookup: controlId → cosaiLayer
-  const controlLayerMap = new Map(controls.map((c) => [c.id, c.cosaiLayer]));
 
   // Build lookup: assetId+controlId → attested
   const attestedSet = new Set(bulkAttestations.map((a) => `${a.assetId}:${a.controlId}`));
@@ -119,6 +108,8 @@ export async function getBulkLayerPosture(
   }
 
   // Compute layer scores in memory — no more DB calls
+  // Logic: for each layer, score = attested controls / total controls
+  // where controls are counted per asset in that layer (all controls, grouped by cosaiLayer)
   return COSAI_LAYERS.map((layer) => {
     const layerAssets = assets.filter((a) => a.cosaiLayer === layer);
     const assignment = assignmentByLayer.get(layer);
@@ -133,18 +124,16 @@ export async function getBulkLayerPosture(
       };
     }
 
-    // Score = attested controls / total controls across all assets in this layer
+    // Count total controls and attested controls across all assets in this layer
+    // Use all controls (regardless of cosaiLayer on control) — matches original engine behavior
     let totalControls = 0;
     let attestedControls = 0;
 
     for (const asset of layerAssets) {
       for (const control of controls) {
-        const controlLayer = controlLayerMap.get(control.id);
-        if (controlLayer === layer) {
-          totalControls++;
-          if (attestedSet.has(`${asset.id}:${control.id}`)) {
-            attestedControls++;
-          }
+        totalControls++;
+        if (attestedSet.has(`${asset.id}:${control.id}`)) {
+          attestedControls++;
         }
       }
     }
