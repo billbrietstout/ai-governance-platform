@@ -137,7 +137,7 @@ export const VERTICAL_REGULATIONS: Record<VerticalKey, VerticalProfile> = {
         code: "EU_AI_ACT",
         name: "EU AI Act",
         jurisdiction: "EU",
-        mandatory: true,
+        mandatory: false,
         applies_to: ["MODEL", "AGENT", "APPLICATION", "PIPELINE"]
       },
       {
