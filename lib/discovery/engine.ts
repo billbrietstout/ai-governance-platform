@@ -283,6 +283,8 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
     const profile = VERTICAL_REGULATIONS[vk];
     for (const reg of profile.regulations) {
       if (seenCodes.has(reg.code)) continue;
+      // Skip EU regulations if no EU jurisdiction
+      if (reg.jurisdiction === "EU" && !euJurisdiction && !euPossible) continue;
       if (!assetAppliesToRegulation(asset, reg)) continue;
       const entry: DiscoveredRegulation = {
         code: reg.code,
