@@ -8,6 +8,7 @@ import { env } from "@/env";
 import { prisma } from "@/lib/prisma";
 import { clearFailedAttempts } from "@/lib/session";
 import { setTenantContext } from "@/lib/tenant";
+import { setAuth0MfaRequired } from "@/lib/auth0-mgmt";
 
 const EIGHT_HOURS = 8 * 60 * 60;
 const THIRTY_MINUTES = 30 * 60;
@@ -33,17 +34,20 @@ export const authOptions = {
     updateAge: THIRTY_MINUTES
   },
   callbacks: {
-    jwt({ token, user, trigger, session }: { token: Record<string, unknown>; user?: { id?: string; orgId?: string; role?: string; mfaEnabled?: boolean }; trigger?: string; session?: Record<string, unknown> }) {
+    jwt({ token, user, trigger, session }: { token: Record<string, unknown>; user?: { id?: string; orgId?: string; role?: string; mfaEnabled?: boolean; isSuperAdmin?: boolean }; trigger?: string; session?: Record<string, unknown> }) {
       if (user) {
         token.id = user.id;
         token.orgId = user.orgId;
         token.role = user.role;
         token.mfaEnabled = user.mfaEnabled;
+        token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
+        token.mfaVerified = (user as any).mfa_verified === true;
       }
       if (trigger === "update" && session) {
         token.orgId = (session as { orgId?: string }).orgId;
         token.role = (session as { role?: string }).role;
         token.mfaEnabled = (session as { mfaEnabled?: boolean }).mfaEnabled;
+        // NOTE: isSuperAdmin is intentionally NOT updatable via session update (security)
       }
       return token;
     },
@@ -53,6 +57,8 @@ export const authOptions = {
         session.user.orgId = token.orgId as string;
         session.user.role = token.role as string;
         session.user.mfaEnabled = token.mfaEnabled as boolean;
+        session.user.mfaVerified = (token.mfaVerified as boolean) ?? false;
+        session.user.isSuperAdmin = (token.isSuperAdmin as boolean) ?? false;
       }
       return session;
     },
@@ -62,7 +68,7 @@ export const authOptions = {
 
       let dbUser = await prisma.user.findFirst({
         where: { email },
-        select: { id: true, orgId: true, role: true, mfaEnabled: true, lockedUntil: true }
+        select: { id: true, orgId: true, role: true, mfaEnabled: true, isSuperAdmin: true, lockedUntil: true }
       });
 
       if (dbUser) {
@@ -72,9 +78,12 @@ export const authOptions = {
         (user as unknown as { orgId: string }).orgId = dbUser.orgId;
         (user as unknown as { role: string }).role = dbUser.role;
         (user as unknown as { mfaEnabled: boolean }).mfaEnabled = dbUser.mfaEnabled;
+        (user as unknown as { isSuperAdmin: boolean }).isSuperAdmin = dbUser.isSuperAdmin;
 
-        if (dbUser.role === "ADMIN" || dbUser.role === "CAIO") {
-          if (dbUser.mfaEnabled && !(user as any).mfaVerified) {
+        const mfaConfigured = !!env.AUTH0_MGMT_CLIENT_ID;
+        if (mfaConfigured && dbUser.mfaEnabled) {
+          const mfaVerified = (user as any)?.mfa_verified === true;
+          if (!mfaVerified) {
             return "/auth/mfa-required";
           }
         }
@@ -133,6 +142,11 @@ export const authOptions = {
           (user as unknown as { orgId: string }).orgId = newUser.orgId;
           (user as unknown as { role: string }).role = newUser.role;
           (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+          (user as unknown as { isSuperAdmin: boolean }).isSuperAdmin = false;
+
+          if (newUser.role === "ADMIN" || newUser.role === "CAIO") {
+            setAuth0MfaRequired(email, true).catch(() => {});
+          }
 
           setTenantContext(newUser.orgId);
           await prisma.auditLog.create({
@@ -190,6 +204,11 @@ export const authOptions = {
         (user as unknown as { orgId: string }).orgId = newUser.orgId;
         (user as unknown as { role: string }).role = newUser.role;
         (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+        (user as unknown as { isSuperAdmin: boolean }).isSuperAdmin = false;
+
+        if (newUser.role === "ADMIN" || newUser.role === "CAIO") {
+          setAuth0MfaRequired(email, true).catch(() => {});
+        }
 
         setTenantContext(newUser.orgId);
         await prisma.auditLog.create({
@@ -238,6 +257,9 @@ export const authOptions = {
         (user as unknown as { orgId: string }).orgId = newUser.orgId;
         (user as unknown as { role: string }).role = newUser.role;
         (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+        (user as unknown as { isSuperAdmin: boolean }).isSuperAdmin = false;
+
+        setAuth0MfaRequired(email, true).catch(() => {});
 
         setTenantContext(org.id);
         await prisma.auditLog.create({
@@ -314,6 +336,8 @@ export const authOptions = {
       (user as unknown as { orgId: string }).orgId = newUser.orgId;
       (user as unknown as { role: string }).role = newUser.role;
       (user as unknown as { mfaEnabled: boolean }).mfaEnabled = newUser.mfaEnabled;
+      (user as unknown as { isSuperAdmin: boolean }).isSuperAdmin = false;
+      setAuth0MfaRequired(email, true).catch(() => {});
       setTenantContext(org.id);
       return true;
     }

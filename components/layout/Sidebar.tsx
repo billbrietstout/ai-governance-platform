@@ -289,6 +289,7 @@ export type SidebarProps = {
   consultantOrgName?: string | null;
   activeWorkspaceOrgId?: string | null;
   activeWorkspaceName?: string | null;
+  isSuperAdmin?: boolean;
   sidebarMode?: "full" | "focused";
   onExpandToFull?: () => void;
   onResetToPersonaView?: () => void;
@@ -308,6 +309,7 @@ export function Sidebar({
   consultantOrgName = null,
   activeWorkspaceOrgId = null,
   activeWorkspaceName = null,
+  isSuperAdmin = false,
   sidebarMode = "full",
   onExpandToFull,
   onResetToPersonaView
@@ -539,6 +541,16 @@ export function Sidebar({
                     onClick={() => setUserMenuOpen(false)}
                   >
                     Admin
+                  </Link>
+                )}
+                {isSuperAdmin && (
+                  <Link
+                    href="/super-admin"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:bg-slatePro-800 hover:text-amber-300"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <Shield className="h-4 w-4" />
+                    Super Admin
                   </Link>
                 )}
                 <button
@@ -873,6 +885,16 @@ export function Sidebar({
                 <Settings className="h-4 w-4" />
                 Settings
               </Link>
+              {isSuperAdmin && (
+                <Link
+                  href="/super-admin"
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:bg-slatePro-800 hover:text-amber-300"
+                  onClick={() => setUserMenuOpen(false)}
+                >
+                  <Shield className="h-4 w-4" />
+                  Super Admin
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/login" })}
@@ -889,6 +911,15 @@ export function Sidebar({
             className="mt-2 flex justify-center px-3 py-1 text-xs text-slatePro-600 hover:text-slatePro-400"
           >
             Admin
+          </Link>
+        )}
+        {!collapsed && isSuperAdmin && (
+          <Link
+            href="/super-admin"
+            className="mt-1 flex items-center justify-center gap-1 px-3 py-1 text-xs text-amber-500 hover:text-amber-400"
+          >
+            <Shield className="h-3 w-3" />
+            Super Admin
           </Link>
         )}
       </div>

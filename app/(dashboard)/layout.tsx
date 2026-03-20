@@ -53,6 +53,7 @@ export default async function DashboardLayout({
   let consultantWorkspaces: { id: string; clientOrgId: string; clientName: string }[] = [];
   let consultantOrgName: string | null = null;
   let consultantData: string | null = null;
+  let isSuperAdmin = false;
 
   if (effectiveOrgId) {
     const [org, flags, fws, dbUser, assetCnt, consultantTier] = await Promise.all([
@@ -71,7 +72,7 @@ export default async function DashboardLayout({
       userId
         ? prisma.user.findUnique({
             where: { id: userId },
-            select: { persona: true, personaModalDismissedAt: true }
+            select: { persona: true, personaModalDismissedAt: true, isSuperAdmin: true }
           })
         : Promise.resolve(null),
       prisma.aIAsset.count({ where: { orgId: effectiveOrgId, deletedAt: null } }),
@@ -95,6 +96,7 @@ export default async function DashboardLayout({
     }
     persona = dbUser?.persona ?? null;
     personaModalDismissed = !!dbUser?.personaModalDismissedAt;
+    isSuperAdmin = dbUser?.isSuperAdmin ?? false;
     featureFlags = MODULE_FLAGS.reduce(
       (acc, name) => {
         acc[name] = flags.find((f) => f.name === name)?.enabled ?? false;
@@ -143,6 +145,7 @@ export default async function DashboardLayout({
         consultantOrgName={consultantOrgName}
         activeWorkspaceOrgId={activeWorkspaceOrgId}
         activeWorkspaceName={activeWorkspaceName}
+        isSuperAdmin={isSuperAdmin}
       >
         {children}
       </DashboardShell>

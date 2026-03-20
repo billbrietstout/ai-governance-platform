@@ -34,6 +34,7 @@ type DashboardShellProps = {
   consultantOrgName?: string | null;
   activeWorkspaceOrgId?: string | null;
   activeWorkspaceName?: string | null;
+  isSuperAdmin?: boolean;
   children: React.ReactNode;
 };
 
@@ -66,6 +67,7 @@ export function DashboardShell({
   consultantOrgName = null,
   activeWorkspaceOrgId = null,
   activeWorkspaceName = null,
+  isSuperAdmin = false,
   children
 }: DashboardShellProps) {
   const pathname = usePathname();
@@ -145,6 +147,7 @@ export function DashboardShell({
         sidebarMode={effectiveMode}
         onExpandToFull={expandToFull}
         onResetToPersonaView={persona ? resetToPersonaView : undefined}
+        isSuperAdmin={isSuperAdmin}
       />
       <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
         <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">

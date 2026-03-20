@@ -25,6 +25,7 @@
 | Email | Resend |
 | Styling | Tailwind CSS v4 |
 | Deployment | Railway (staging auto-deploy from `develop`) |
+| Editor | Cursor (AI-assisted) + Claude Code CLI |
 | Notifications | GitHub Actions (weekly-digest.yml, daily-alerts.yml) |
 | Monitoring | Railway logs |
 

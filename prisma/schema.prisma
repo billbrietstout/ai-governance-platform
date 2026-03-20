@@ -262,6 +262,7 @@ model Organization {
   slackWebhookUrl      String? // org-level kill switch for all emails
   createdAt          DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
+  deletedAt          DateTime?
 
   consultantWorkspaces  ConsultantWorkspace[] @relation("ConsultantWorkspaces")
   clientWorkspaces     ConsultantWorkspace[]  @relation("ClientWorkspaces")
@@ -407,10 +408,12 @@ model User {
   persona                 String?   // CEO | CFO | COO | CISO | LEGAL | CAIO | DATA_OWNER | DEV_LEAD | PLATFORM_ENG | VENDOR_MGR
   personaModalDismissedAt DateTime? // when user skipped "What's your role?" modal
   mfaEnabled              Boolean   @default(false)
+  isSuperAdmin            Boolean   @default(false)
   lockedUntil    DateTime?
   failedAttempts Int       @default(0)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 
   organization        Organization        @relation(fields: [orgId], references: [id], onDelete: Cascade)
   ownedAssets         AIAsset[]           @relation("AIAssetOwner")
