@@ -41,7 +41,6 @@ jobs:
             -H "Authorization: Bearer $CRON_SECRET" \
             -H "X-Severity: $ALERT_SEVERITY" \
             -f "$APP_URL/api/v1/notifications/check-alerts"
-
       - name: Notify on failure
         if: failure()
         uses: actions/github-script@v8
