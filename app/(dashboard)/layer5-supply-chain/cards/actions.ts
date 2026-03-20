@@ -6,7 +6,11 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 export async function importCard(formData: FormData) {
   const assetId = formData.get("assetId") as string | null;
   const source = formData.get("source") as string | null;
-  const type = formData.get("type") as "HUGGINGFACE_MODEL" | "HUGGINGFACE_DATASET" | "GITHUB" | null;
+  const type = formData.get("type") as
+    | "HUGGINGFACE_MODEL"
+    | "HUGGINGFACE_DATASET"
+    | "GITHUB"
+    | null;
 
   if (!assetId || !source?.trim() || !type) {
     return { error: "Missing asset, source, or type" };

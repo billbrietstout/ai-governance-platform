@@ -44,7 +44,9 @@ export default async function Layer2InformationPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 2: Information</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          Layer 2: Information
+        </h1>
         <p className="mt-1 text-slate-600">
           Master data, lineage, governance policies, and AI-ready data assets.
         </p>
@@ -54,43 +56,45 @@ export default async function Layer2InformationPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Link
           href="/layer2-information/master-data"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex items-center gap-2">
-            <Database className="h-5 w-5 text-navy-600" />
+            <Database className="text-navy-600 h-5 w-5" />
             <span className="text-sm font-medium text-slate-600">Total Entities</span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalEntities}</p>
         </Link>
         <Link
           href="/layer2-information/lineage"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex items-center gap-2">
-            <GitBranch className="h-5 w-5 text-navy-600" />
+            <GitBranch className="text-navy-600 h-5 w-5" />
             <span className="text-sm font-medium text-slate-600">Lineage Records</span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalLineage}</p>
         </Link>
         <Link
           href="/layer2-information/governance"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-navy-600" />
+            <FileText className="text-navy-600 h-5 w-5" />
             <span className="text-sm font-medium text-slate-600">Governance Policies</span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalPolicies}</p>
         </Link>
         <Link
           href="/layer2-information/governance"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-navy-600" />
+            <Shield className="text-navy-600 h-5 w-5" />
             <span className="text-sm font-medium text-slate-600">Governance Coverage</span>
           </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900">{data.governanceCoveragePct ?? 0}%</p>
+          <p className="mt-2 text-2xl font-bold text-slate-900">
+            {data.governanceCoveragePct ?? 0}%
+          </p>
           <p className="mt-0.5 text-xs text-slate-500">entities with classification + steward</p>
         </Link>
         {data.overexposureCount != null && data.overexposureCount > 0 && (
@@ -110,7 +114,7 @@ export default async function Layer2InformationPage() {
         )}
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-navy-600" />
+            <Users className="text-navy-600 h-5 w-5" />
             <span className="text-sm font-medium text-slate-600">Stewardship Coverage</span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.stewardshipPct}%</p>
@@ -139,7 +143,7 @@ export default async function Layer2InformationPage() {
       {/* AI Access Policy summary */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
-          <Shield className="h-4 w-4 text-navy-600" />
+          <Shield className="text-navy-600 h-4 w-4" />
           AI Access Policy Summary
         </h3>
         <div className="flex flex-wrap gap-3">
@@ -163,14 +167,14 @@ export default async function Layer2InformationPage() {
           <Link
             key={href}
             href={href}
-            className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+            className="hover:border-navy-300 flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
           >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-navy-100">
-              <Icon className="h-6 w-6 text-navy-600" />
+            <div className="bg-navy-100 flex h-12 w-12 shrink-0 items-center justify-center rounded-lg">
+              <Icon className="text-navy-600 h-6 w-6" />
             </div>
             <div>
               <h3 className="font-medium text-slate-900">{label}</h3>
-              <span className="text-sm text-navy-600">View →</span>
+              <span className="text-navy-600 text-sm">View →</span>
             </div>
           </Link>
         ))}

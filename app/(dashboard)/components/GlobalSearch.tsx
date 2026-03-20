@@ -93,11 +93,14 @@ export function GlobalSearch({ onClose }: Props) {
     pages: "Platform Pages"
   };
 
-  const byCategory = allResults.reduce((acc, r) => {
-    if (!acc[r.category]) acc[r.category] = [];
-    acc[r.category].push(r);
-    return acc;
-  }, {} as Record<string, SearchResult[]>);
+  const byCategory = allResults.reduce(
+    (acc, r) => {
+      if (!acc[r.category]) acc[r.category] = [];
+      acc[r.category].push(r);
+      return acc;
+    },
+    {} as Record<string, SearchResult[]>
+  );
 
   return (
     <div
@@ -105,40 +108,40 @@ export function GlobalSearch({ onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-lg border border-slatePro-700 bg-slatePro-900 shadow-xl"
+        className="border-slatePro-700 bg-slatePro-900 w-full max-w-xl rounded-lg border shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-2 border-b border-slatePro-700 px-4 py-3">
-          <Search className="h-4 w-4 shrink-0 text-slatePro-500" />
+        <div className="border-slatePro-700 flex items-center gap-2 border-b px-4 py-3">
+          <Search className="text-slatePro-500 h-4 w-4 shrink-0" />
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search assets, vendors, pages…"
-            className="flex-1 bg-transparent text-slatePro-100 placeholder:text-slatePro-500 focus:outline-none"
+            className="text-slatePro-100 placeholder:text-slatePro-500 flex-1 bg-transparent focus:outline-none"
             autoFocus
           />
-          <kbd className="rounded bg-slatePro-700 px-2 py-0.5 text-xs text-slatePro-400">Esc</kbd>
+          <kbd className="bg-slatePro-700 text-slatePro-400 rounded px-2 py-0.5 text-xs">Esc</kbd>
         </div>
         <div className="max-h-80 overflow-y-auto">
           {loading ? (
-            <div className="flex items-center justify-center gap-2 py-8 text-slatePro-500">
+            <div className="text-slatePro-500 flex items-center justify-center gap-2 py-8">
               <Loader2 className="h-5 w-5 animate-spin" />
               Searching…
             </div>
           ) : query.trim() === "" ? (
-            <p className="px-4 py-6 text-sm text-slatePro-500">
+            <p className="text-slatePro-500 px-4 py-6 text-sm">
               Type to search across AI assets, vendors, and platform pages.
             </p>
           ) : allResults.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-slatePro-500">No results found.</p>
+            <p className="text-slatePro-500 px-4 py-6 text-sm">No results found.</p>
           ) : (
             <div className="py-2">
               {Object.entries(byCategory).map(([cat, items]) => {
                 const Icon = categoryIcons[cat] ?? FileText;
                 return (
                   <div key={cat} className="mb-2">
-                    <div className="flex items-center gap-2 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-slatePro-500">
+                    <div className="text-slatePro-500 flex items-center gap-2 px-4 py-1.5 text-xs font-medium tracking-wider uppercase">
                       <Icon className="h-3.5 w-3.5" />
                       {categoryLabels[cat] ?? cat}
                     </div>
@@ -147,9 +150,9 @@ export function GlobalSearch({ onClose }: Props) {
                         key={`${r.category}-${r.id}`}
                         type="button"
                         onClick={() => handleSelect(r.href)}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-slatePro-200 hover:bg-slatePro-800"
+                        className="text-slatePro-200 hover:bg-slatePro-800 flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm"
                       >
-                        <Icon className="h-4 w-4 shrink-0 text-slatePro-500" />
+                        <Icon className="text-slatePro-500 h-4 w-4 shrink-0" />
                         <span className="truncate">{r.label}</span>
                       </button>
                     ))}

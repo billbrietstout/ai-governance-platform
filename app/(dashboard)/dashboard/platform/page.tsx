@@ -28,9 +28,9 @@ export default async function PlatformDashboardPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             href="/layer4-platform/telemetry"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
-            <Server className="h-5 w-5 text-navy-600" />
+            <Server className="text-navy-600 h-5 w-5" />
             <p className="mt-2 text-2xl font-bold text-slate-900">
               L4 compliance: {l4?.compliancePct ?? 0}%
             </p>
@@ -38,9 +38,9 @@ export default async function PlatformDashboardPage() {
           </Link>
           <Link
             href="/layer5-supply-chain"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
-            <Cpu className="h-5 w-5 text-navy-600" />
+            <Cpu className="text-navy-600 h-5 w-5" />
             <p className="mt-2 text-2xl font-bold text-slate-900">
               L5 compliance: {l5?.compliancePct ?? 0}%
             </p>
@@ -48,22 +48,18 @@ export default async function PlatformDashboardPage() {
           </Link>
           <Link
             href="/layer5-supply-chain/scanning"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
             <AlertTriangle className="h-5 w-5 text-red-600" />
-            <p className="mt-2 text-2xl font-bold text-slate-900">
-              {kpis.failedScans ?? 0}
-            </p>
+            <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.failedScans ?? 0}</p>
             <p className="text-xs text-slate-500">Failed scans</p>
           </Link>
           <Link
             href="/layer5-supply-chain/vendors"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
             <AlertTriangle className="h-5 w-5 text-amber-600" />
-            <p className="mt-2 text-2xl font-bold text-slate-900">
-              {kpis.vendorsExpiring ?? 0}
-            </p>
+            <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.vendorsExpiring ?? 0}</p>
             <p className="text-xs text-slate-500">Vendors expiring</p>
           </Link>
         </div>
@@ -72,19 +68,19 @@ export default async function PlatformDashboardPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/layer4-platform/telemetry"
-              className="text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 text-sm font-medium hover:underline"
             >
               Telemetry & Monitoring →
             </Link>
             <Link
               href="/layer5-supply-chain/cards"
-              className="text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 text-sm font-medium hover:underline"
             >
               Artifact Cards →
             </Link>
             <Link
               href="/layer5-supply-chain/scanning"
-              className="text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 text-sm font-medium hover:underline"
             >
               Scan Coverage →
             </Link>

@@ -36,7 +36,7 @@ export function AuditPackageActions({ assetId, regulationCode }: Props) {
       type="button"
       onClick={handleGenerate}
       disabled={generating || (!assetId && !regulationCode)}
-      className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+      className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
     >
       <FileDown className="h-4 w-4" />
       {generating ? "Generating…" : "Generate Package"}

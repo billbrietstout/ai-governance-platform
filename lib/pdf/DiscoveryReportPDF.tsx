@@ -196,7 +196,9 @@ export function DiscoveryReportPDF({
             </View>
             {recommended.map((r, i) => (
               <View key={i} style={{ marginBottom: 8 }}>
-                <Text>{r.name} ({r.jurisdiction})</Text>
+                <Text>
+                  {r.name} ({r.jurisdiction})
+                </Text>
               </View>
             ))}
           </>
@@ -221,9 +223,7 @@ export function DiscoveryReportPDF({
           {requiredControls.map((c, i) => (
             <View key={i} style={styles.tableRow}>
               <Text style={styles.tableCell}>{c.title}</Text>
-              <Text style={styles.tableCellSmall}>
-                {LAYER_NAMES[c.cosaiLayer] ?? c.cosaiLayer}
-              </Text>
+              <Text style={styles.tableCellSmall}>{LAYER_NAMES[c.cosaiLayer] ?? c.cosaiLayer}</Text>
               <Text style={styles.tableCellSmall}>{c.complianceStatus ?? "—"}</Text>
             </View>
           ))}
@@ -235,13 +235,16 @@ export function DiscoveryReportPDF({
         )}
 
         <Text style={styles.sectionTitle}>Implementation Roadmap</Text>
-        {(implementationRoadmap.length > 0 ? implementationRoadmap : [
-          "1. Assess applicability of identified regulations",
-          "2. Map controls to CoSAI layers",
-          "3. Assign accountability for each control",
-          "4. Collect evidence and document compliance",
-          "5. Schedule recurring compliance reviews"
-        ]).map((step, i) => (
+        {(implementationRoadmap.length > 0
+          ? implementationRoadmap
+          : [
+              "1. Assess applicability of identified regulations",
+              "2. Map controls to CoSAI layers",
+              "3. Assign accountability for each control",
+              "4. Collect evidence and document compliance",
+              "5. Schedule recurring compliance reviews"
+            ]
+        ).map((step, i) => (
           <View key={i} style={styles.listItem}>
             <Text>{step}</Text>
           </View>

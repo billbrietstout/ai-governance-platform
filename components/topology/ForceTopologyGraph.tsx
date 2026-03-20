@@ -87,13 +87,14 @@ function drawNodeShape(
   sel: d3.Selection<SVGGElement, SimNode, d3.BaseType, unknown>,
   node: TopologyNode
 ) {
-  const color = {
-    L1: "#1D9E75",
-    L2: "#534AB7",
-    L3: "#D85A30",
-    L4: "#185FA5",
-    L5: "#5F5E5A"
-  }[node.layer] ?? "#64748b";
+  const color =
+    {
+      L1: "#1D9E75",
+      L2: "#534AB7",
+      L3: "#D85A30",
+      L4: "#185FA5",
+      L5: "#5F5E5A"
+    }[node.layer] ?? "#64748b";
 
   sel.selectAll("*").remove();
 
@@ -220,9 +221,10 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   const height = heightProp;
   const [width, setWidth] = useState(800);
 
-  const simulationRef = useRef<
-    d3.Simulation<SimNodeExt, TopologyEdge & d3.SimulationLinkDatum<SimNodeExt>>
-  | null>(null);
+  const simulationRef = useRef<d3.Simulation<
+    SimNodeExt,
+    TopologyEdge & d3.SimulationLinkDatum<SimNodeExt>
+  > | null>(null);
   const dimensionsRef = useRef<{ width: number; height: number } | null>(null);
   const selectedRef = useRef<TopologyNode | null>(null);
   const [selected, setSelected] = useState<TopologyNode | null>(null);
@@ -234,10 +236,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
     const counts: Record<string, number> = {};
     for (const n of nodes) counts[n.layer] = (counts[n.layer] ?? 0) + 1;
     return Object.fromEntries(
-      LAYER_ORDER.map((l) => [
-        l,
-        l === "L3" ? (counts[l] ?? 0) <= 10 : true
-      ])
+      LAYER_ORDER.map((l) => [l, l === "L3" ? (counts[l] ?? 0) <= 10 : true])
     ) as Record<string, boolean>;
   });
   const [showConnectedOnly, setShowConnectedOnly] = useState(true);
@@ -291,11 +290,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
     const toLayer = toNode?.layer ?? "";
     const fromId = clusterIdByLayer[fromLayer] ?? e.from;
     const toId = clusterIdByLayer[toLayer] ?? e.to;
-    if (
-      fromId !== toId &&
-      displayedNodeIds.has(fromId) &&
-      displayedNodeIds.has(toId)
-    ) {
+    if (fromId !== toId && displayedNodeIds.has(fromId) && displayedNodeIds.has(toId)) {
       const key = fromId < toId ? `${fromId}-${toId}` : `${toId}-${fromId}`;
       if (!seenEdgeKeys.has(key)) {
         seenEdgeKeys.add(key);
@@ -343,118 +338,127 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
         x: w / 2,
         y: layerY(LAYER_INDEX[n.layer] ?? 0)
       }));
-    const nodeById = new Map(d3Nodes.map((n) => [n.id, n]));
-    const d3Edges = displayedEdges
-      .filter((e) => nodeById.has(e.from) && nodeById.has(e.to))
-      .map((e) => ({ ...e, source: nodeById.get(e.from)!, target: nodeById.get(e.to)! }));
+      const nodeById = new Map(d3Nodes.map((n) => [n.id, n]));
+      const d3Edges = displayedEdges
+        .filter((e) => nodeById.has(e.from) && nodeById.has(e.to))
+        .map((e) => ({ ...e, source: nodeById.get(e.from)!, target: nodeById.get(e.to)! }));
 
-    const link = g
-      .append("g")
-      .attr("class", "links")
-      .selectAll<SVGLineElement, (typeof d3Edges)[number]>("line")
-      .data(d3Edges)
-      .join("line")
-      .attr("stroke", "#cbd5e1")
-      .attr("stroke-width", 1.5);
+      const link = g
+        .append("g")
+        .attr("class", "links")
+        .selectAll<SVGLineElement, (typeof d3Edges)[number]>("line")
+        .data(d3Edges)
+        .join("line")
+        .attr("stroke", "#cbd5e1")
+        .attr("stroke-width", 1.5);
 
-    const node = g
-      .append("g")
-      .attr("class", "nodes")
-      .selectAll<SVGGElement, SimNodeExt>("g")
-      .data(d3Nodes)
-      .join("g")
-      .attr("cursor", "move")
-      .style("pointer-events", "all")
-      .call(
-        d3.drag<SVGGElement, SimNodeExt>()
-          .on("start", (event) => {
-            if (!event.active) simulationRef.current?.alphaTarget(0.3).restart();
-          })
-          .on("drag", (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on("end", (event, d) => {
-            if (!event.active) simulationRef.current?.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          })
-      )
-      .on("click", (event, d) => {
-        event.stopPropagation();
-        setSelected(d);
-        onNodeClick?.(d);
-      })
-      .on("dblclick", (event, d) => {
-        event.stopPropagation();
-        if (d.link) window.location.href = d.link;
+      const node = g
+        .append("g")
+        .attr("class", "nodes")
+        .selectAll<SVGGElement, SimNodeExt>("g")
+        .data(d3Nodes)
+        .join("g")
+        .attr("cursor", "move")
+        .style("pointer-events", "all")
+        .call(
+          d3
+            .drag<SVGGElement, SimNodeExt>()
+            .on("start", (event) => {
+              if (!event.active) simulationRef.current?.alphaTarget(0.3).restart();
+            })
+            .on("drag", (event, d) => {
+              d.fx = event.x;
+              d.fy = event.y;
+            })
+            .on("end", (event, d) => {
+              if (!event.active) simulationRef.current?.alphaTarget(0);
+              d.fx = null;
+              d.fy = null;
+            })
+        )
+        .on("click", (event, d) => {
+          event.stopPropagation();
+          setSelected(d);
+          onNodeClick?.(d);
+        })
+        .on("dblclick", (event, d) => {
+          event.stopPropagation();
+          if (d.link) window.location.href = d.link;
+        });
+
+      node.each(function (d) {
+        drawNodeShape(d3.select(this), d);
+      });
+      node.append("title").text((d) => d.label);
+
+      g.on("click", () => {
+        setSelected(null);
       });
 
-    node.each(function (d) {
-      drawNodeShape(d3.select(this), d);
-    });
-    node.append("title").text((d) => d.label);
+      const zoom = d3
+        .zoom<SVGSVGElement, unknown>()
+        .scaleExtent([0.5, 3])
+        .on("zoom", (event) => {
+          g.attr("transform", event.transform);
+        });
+      svg.call(zoom);
 
-    g.on("click", () => {
-      setSelected(null);
-    });
+      const centerX = w / 2;
+      const centerY = h / 2;
+      const isIsolated = (n: SimNodeExt) => n.isIsolated ?? !hasEdges(displayedEdges, n.id);
 
-    const zoom = d3
-      .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 3])
-      .on("zoom", (event) => {
-        g.attr("transform", event.transform);
-      });
-    svg.call(zoom);
+      const simulation = d3
+        .forceSimulation<SimNodeExt>(d3Nodes)
+        .force(
+          "link",
+          d3
+            .forceLink<SimNodeExt, SimLink>(d3Edges)
+            .id((d) => d.id)
+            .distance(100)
+        )
+        .force("charge", d3.forceManyBody().strength(-150))
+        .force("collide", d3.forceCollide().radius(35))
+        .force("center", d3.forceCenter(centerX, centerY))
+        .force(
+          "y",
+          d3
+            .forceY<SimNodeExt>((d) => layerY(LAYER_INDEX[d.layer] ?? 0))
+            .strength((d) => (isIsolated(d) ? 1.0 : 0.8))
+        )
+        .force(
+          "x",
+          d3.forceX<SimNodeExt>(centerX).strength((d) => (isIsolated(d) ? 0.4 : 0.05))
+        )
+        .alphaDecay(0.05)
+        .on("tick", () => {
+          link
+            .attr("x1", (d) => (d.source as SimNodeExt).x)
+            .attr("y1", (d) => (d.source as SimNodeExt).y)
+            .attr("x2", (d) => (d.target as SimNodeExt).x)
+            .attr("y2", (d) => (d.target as SimNodeExt).y)
+            .attr("opacity", (d) => {
+              const sel = selectedRef.current;
+              if (!sel) return 1;
+              const ids = getConnectedIds(displayedEdges, sel.id);
+              return ids.has((d.source as SimNodeExt).id) && ids.has((d.target as SimNodeExt).id)
+                ? 1
+                : 0.15;
+            });
+          node
+            .attr("transform", (d) => `translate(${d.x},${d.y})`)
+            .attr("opacity", (d) => {
+              const sel = selectedRef.current;
+              if (sel && getConnectedIds(displayedEdges, sel.id).has(d.id)) return 1;
+              if (d.isIsolated) return 0.6;
+              if (sel) return 0.2;
+              return 1;
+            });
+        });
 
-    const centerX = w / 2;
-    const centerY = h / 2;
-    const isIsolated = (n: SimNodeExt) => n.isIsolated ?? !hasEdges(displayedEdges, n.id);
-
-    const simulation = d3
-      .forceSimulation<SimNodeExt>(d3Nodes)
-      .force("link", d3.forceLink<SimNodeExt, SimLink>(d3Edges).id((d) => d.id).distance(100))
-      .force("charge", d3.forceManyBody().strength(-150))
-      .force("collide", d3.forceCollide().radius(35))
-      .force("center", d3.forceCenter(centerX, centerY))
-      .force(
-        "y",
-        d3
-          .forceY<SimNodeExt>((d) => layerY(LAYER_INDEX[d.layer] ?? 0))
-          .strength((d) => (isIsolated(d) ? 1.0 : 0.8))
-      )
-      .force(
-        "x",
-        d3
-          .forceX<SimNodeExt>(centerX)
-          .strength((d) => (isIsolated(d) ? 0.4 : 0.05))
-      )
-      .alphaDecay(0.05)
-      .on("tick", () => {
-        link
-          .attr("x1", (d) => (d.source as SimNodeExt).x)
-          .attr("y1", (d) => (d.source as SimNodeExt).y)
-          .attr("x2", (d) => (d.target as SimNodeExt).x)
-          .attr("y2", (d) => (d.target as SimNodeExt).y)
-          .attr("opacity", (d) => {
-            const sel = selectedRef.current;
-            if (!sel) return 1;
-            const ids = getConnectedIds(displayedEdges, sel.id);
-            return ids.has((d.source as SimNodeExt).id) && ids.has((d.target as SimNodeExt).id) ? 1 : 0.15;
-          });
-        node
-          .attr("transform", (d) => `translate(${d.x},${d.y})`)
-          .attr("opacity", (d) => {
-            const sel = selectedRef.current;
-            if (sel && getConnectedIds(displayedEdges, sel.id).has(d.id)) return 1;
-            if (d.isIsolated) return 0.6;
-            if (sel) return 0.2;
-            return 1;
-          });
-      });
-
-    simulationRef.current = simulation;
-  }, [displayedNodes, displayedEdges, onNodeClick]);
+      simulationRef.current = simulation;
+    },
+    [displayedNodes, displayedEdges, onNodeClick]
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -557,7 +561,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
         />
         {selected && (
           <div
-            className="absolute right-0 top-0 z-50 h-full border-l border-slate-200 bg-white p-4 shadow-xl"
+            className="absolute top-0 right-0 z-50 h-full border-l border-slate-200 bg-white p-4 shadow-xl"
             style={{ width: 240 }}
           >
             <h3 className="font-medium text-slate-900">{selected.label}</h3>
@@ -568,7 +572,9 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
               <p className="mt-2 text-sm text-slate-600">Risk: {selected.euRiskLevel}</p>
             )}
             {selected.recordCount != null && (
-              <p className="mt-1 text-sm text-slate-600">Records: {selected.recordCount.toLocaleString()}</p>
+              <p className="mt-1 text-sm text-slate-600">
+                Records: {selected.recordCount.toLocaleString()}
+              </p>
             )}
             <div className="mt-3 text-sm">
               <p className="font-medium text-slate-700">Connected</p>
@@ -589,7 +595,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
             {selected.link && (
               <Link
                 href={selected.link}
-                className="mt-4 inline-block text-sm font-medium text-navy-600 hover:underline"
+                className="text-navy-600 mt-4 inline-block text-sm font-medium hover:underline"
               >
                 View details →
               </Link>

@@ -43,12 +43,7 @@ function TrafficLight({ status }: { status: "red" | "amber" | "green" }) {
     amber: "bg-amber-500",
     green: "bg-emerald-500"
   };
-  return (
-    <div
-      className={`h-4 w-4 shrink-0 rounded-full ${colors[status]}`}
-      aria-label={status}
-    />
-  );
+  return <div className={`h-4 w-4 shrink-0 rounded-full ${colors[status]}`} aria-label={status} />;
 }
 
 function getLegalStatus(data: BriefingData): "red" | "amber" | "green" {
@@ -133,7 +128,8 @@ export function AIRiskBriefingClient({ data }: Props) {
     0,
     Math.floor((Date.now() - new Date(data.lastUpdated).getTime()) / (60 * 60 * 1000))
   );
-  const lastUpdatedText = hoursAgo < 1 ? "Just now" : `${hoursAgo} hour${hoursAgo === 1 ? "" : "s"} ago`;
+  const lastUpdatedText =
+    hoursAgo < 1 ? "Just now" : `${hoursAgo} hour${hoursAgo === 1 ? "" : "s"} ago`;
 
   const legalStatus = getLegalStatus(data);
   const safetyStatus = getSafetyStatus(data);
@@ -199,9 +195,7 @@ export function AIRiskBriefingClient({ data }: Props) {
 
       {/* Card 1 — Legal & Regulatory Exposure */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-medium text-slate-700">
-          Legal & Regulatory Exposure
-        </h2>
+        <h2 className="mb-3 text-sm font-medium text-slate-700">Legal & Regulatory Exposure</h2>
         <div className="flex items-start gap-4">
           <TrafficLight status={legalStatus} />
           <p className="flex-1 text-slate-800">{legalSummary}</p>
@@ -248,7 +242,9 @@ export function AIRiskBriefingClient({ data }: Props) {
         {showDetail && (
           <div className="mt-4 space-y-3 border-t border-slate-200 pt-4 text-sm text-slate-600">
             <p>Current: {maturityLabel}</p>
-            <p>Target: Governance implemented — controls and accountability assigned — by August 2026</p>
+            <p>
+              Target: Governance implemented — controls and accountability assigned — by August 2026
+            </p>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
@@ -265,7 +261,7 @@ export function AIRiskBriefingClient({ data }: Props) {
       </div>
 
       {/* Decision box */}
-      <div className="rounded-lg border-2 border-navy-200 bg-navy-50/50 p-6">
+      <div className="border-navy-200 bg-navy-50/50 rounded-lg border-2 p-6">
         <h2 className="mb-3 text-sm font-semibold text-slate-900">
           One thing that needs your attention
         </h2>
@@ -279,15 +275,13 @@ export function AIRiskBriefingClient({ data }: Props) {
             <button
               type="button"
               onClick={() => setModalOpen(true)}
-              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+              className="bg-navy-600 hover:bg-navy-500 mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white"
             >
               {currentDecision.cta}
             </button>
           </>
         ) : (
-          <p className="text-slate-600">
-            Nothing urgent this week. Next check-in: Monday.
-          </p>
+          <p className="text-slate-600">Nothing urgent this week. Next check-in: Monday.</p>
         )}
       </div>
 
@@ -305,10 +299,7 @@ export function AIRiskBriefingClient({ data }: Props) {
         <Link href="/dashboard?view=full" className="hover:text-navy-600 hover:underline">
           Full governance dashboard →
         </Link>
-        <a
-          href="/api/v1/export/governance-report"
-          className="hover:text-navy-600 hover:underline"
-        >
+        <a href="/api/v1/export/governance-report" className="hover:text-navy-600 hover:underline">
           Export board briefing →
         </a>
         <span className="text-slate-400">View last week&apos;s briefing →</span>

@@ -19,26 +19,119 @@ export type ControlDomain = (typeof CONTROL_DOMAINS)[number];
 /** Regulation code → control domains (partial match by prefix) */
 const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
   // EU AI Act variants
-  EU_AI_ACT: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
-  EU_AI_ACT_ANNEX_III: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
+  EU_AI_ACT: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
+  EU_AI_ACT_ANNEX_III: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
   EU_AI_ACT_LIMITED: ["Documentation", "Human Oversight", "Bias & Fairness"],
   EU_AI_ACT_MINIMAL: ["Documentation"],
-  EU_AI_ACT_CREDIT: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
-  EU_AI_ACT_MEDICAL: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
-  EU_AI_ACT_INSURANCE: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
-  EU_AI_ACT_PUBLIC: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
-  EU_AI_ACT_CRITICAL: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
-  EU_AI_ACT_EMPLOYMENT: ["Data Governance", "Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
+  EU_AI_ACT_CREDIT: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
+  EU_AI_ACT_MEDICAL: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
+  EU_AI_ACT_INSURANCE: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
+  EU_AI_ACT_PUBLIC: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
+  EU_AI_ACT_CRITICAL: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
+  EU_AI_ACT_EMPLOYMENT: [
+    "Data Governance",
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
 
   // ISO 42001
-  ISO_42001: ["Data Governance", "Risk Management", "Documentation", "Monitoring", "Supply Chain", "Incident Response"],
+  ISO_42001: [
+    "Data Governance",
+    "Risk Management",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response"
+  ],
 
   // NIST
-  NIST_AI_RMF: ["Risk Management", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
+  NIST_AI_RMF: [
+    "Risk Management",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
   NIST_CSF: ["Risk Management", "Monitoring", "Incident Response"],
 
   // CoSAI
-  COSAI_SRF: ["Risk Management", "Human Oversight", "Documentation", "Monitoring", "Supply Chain", "Incident Response", "Bias & Fairness"],
+  COSAI_SRF: [
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response",
+    "Bias & Fairness"
+  ],
   AGENTIC_GOVERNANCE: ["Human Oversight", "Documentation", "Monitoring", "Incident Response"],
 
   // US financial
@@ -95,7 +188,10 @@ export type RegulationForChord = {
 };
 
 /** Build chord matrix: matrix[i][j] = shared control domains between reg i and j; diagonal = total for reg i */
-export function buildChordMatrix(regulations: RegulationForChord[]): { matrix: number[][]; sharedByPair: Map<string, number> } {
+export function buildChordMatrix(regulations: RegulationForChord[]): {
+  matrix: number[][];
+  sharedByPair: Map<string, number>;
+} {
   const n = regulations.length;
   const matrix: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
   const sharedByPair = new Map<string, number>();
@@ -118,7 +214,9 @@ export function buildChordMatrix(regulations: RegulationForChord[]): { matrix: n
 }
 
 /** Shared control domains across regulations */
-export function getSharedDomainsSummary(regulations: RegulationForChord[]): { domain: ControlDomain; regulations: RegulationForChord[] }[] {
+export function getSharedDomainsSummary(
+  regulations: RegulationForChord[]
+): { domain: ControlDomain; regulations: RegulationForChord[] }[] {
   const domainToRegs = new Map<ControlDomain, RegulationForChord[]>();
 
   for (const reg of regulations) {

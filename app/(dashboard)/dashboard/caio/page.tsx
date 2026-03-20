@@ -74,10 +74,10 @@ export default async function CAIODashboardPage() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Link
             href="/layer3-application/assets"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
           >
             <div className="flex items-center gap-2">
-              <Bot className="h-5 w-5 text-navy-600" />
+              <Bot className="text-navy-600 h-5 w-5" />
               <span className="text-sm font-medium text-slate-600">Total Assets</span>
             </div>
             <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.totalAssets}</p>
@@ -99,7 +99,7 @@ export default async function CAIODashboardPage() {
           </div>
           <Link
             href="/maturity"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
           >
             <div className="flex items-center gap-2">
               <TrendingUp
@@ -112,7 +112,7 @@ export default async function CAIODashboardPage() {
           </Link>
           <Link
             href="/layer3-application/gaps"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
           >
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-600" />
@@ -125,7 +125,7 @@ export default async function CAIODashboardPage() {
         <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
-              <TrendingUp className="h-4 w-4 text-navy-600" />
+              <TrendingUp className="text-navy-600 h-4 w-4" />
               Maturity by Layer
             </h2>
             <div className="flex justify-center">
@@ -141,14 +141,14 @@ export default async function CAIODashboardPage() {
             </p>
             <Link
               href="/maturity"
-              className="mt-2 block text-center text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 mt-2 block text-center text-sm font-medium hover:underline"
             >
               View full assessment →
             </Link>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
-              <Layers className="h-5 w-5 text-navy-600" />
+              <Layers className="text-navy-600 h-5 w-5" />
               Cross-Layer Summary
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -164,7 +164,7 @@ export default async function CAIODashboardPage() {
                   <Link
                     key={layer}
                     href={href}
-                    className="flex flex-col rounded-lg border border-slate-200 bg-slate-50 p-4 transition hover:border-navy-300 hover:bg-navy-50/30"
+                    className="hover:border-navy-300 hover:bg-navy-50/30 flex flex-col rounded-lg border border-slate-200 bg-slate-50 p-4 transition"
                   >
                     <span className="text-sm font-medium text-slate-700">{label}</span>
                     <div className="mt-2 flex items-baseline gap-2">
@@ -179,8 +179,7 @@ export default async function CAIODashboardPage() {
                     </div>
                     <div className="mt-3 space-y-1 text-xs">
                       <div className="text-slate-600">
-                        <span className="font-medium">Top risk:</span>{" "}
-                        {topRisk?.title ?? "None"}
+                        <span className="font-medium">Top risk:</span> {topRisk?.title ?? "None"}
                       </div>
                       <div className="text-slate-500">
                         <span className="font-medium">Owner:</span> {owner}
@@ -210,7 +209,7 @@ export default async function CAIODashboardPage() {
                   <div>
                     <Link
                       href={`/layer3-application/assets/${g.assetId}`}
-                      className="font-medium text-navy-600 hover:underline"
+                      className="text-navy-600 font-medium hover:underline"
                     >
                       {g.assetName}
                     </Link>
@@ -220,7 +219,7 @@ export default async function CAIODashboardPage() {
                   </div>
                   <Link
                     href={`/layer3-application/assets/${g.assetId}`}
-                    className="shrink-0 text-sm font-medium text-navy-600 hover:underline"
+                    className="text-navy-600 shrink-0 text-sm font-medium hover:underline"
                   >
                     View →
                   </Link>
@@ -230,7 +229,7 @@ export default async function CAIODashboardPage() {
           )}
           <Link
             href="/reports/gap-analysis"
-            className="mt-3 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
           >
             Full gap analysis →
           </Link>

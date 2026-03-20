@@ -71,9 +71,7 @@ const PUBLIC_PATHS = [
 ];
 
 function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.some((p) =>
-    p === "/" ? pathname === "/" : pathname.startsWith(p)
-  );
+  return PUBLIC_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname.startsWith(p)));
 }
 
 function isProtected(pathname: string): boolean {

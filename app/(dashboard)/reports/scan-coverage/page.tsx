@@ -13,13 +13,15 @@ export default async function ScanCoverageReportPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/reports" className="text-sm text-navy-400 hover:underline">
+          <Link href="/reports" className="text-navy-400 text-sm hover:underline">
             ← Reports
           </Link>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight">Scan Coverage Report</h1>
         </div>
         <div className="flex gap-2">
-          <button className="rounded border border-slatePro-600 px-3 py-1 text-sm text-slatePro-300">Export CSV</button>
+          <button className="border-slatePro-600 text-slatePro-300 rounded border px-3 py-1 text-sm">
+            Export CSV
+          </button>
         </div>
       </div>
 

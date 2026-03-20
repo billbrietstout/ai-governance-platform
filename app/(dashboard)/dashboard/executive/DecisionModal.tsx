@@ -38,12 +38,17 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
   const [suggestionsByAsset, setSuggestionsByAsset] = useState<Record<string, Suggestion[]>>({});
   const [assignments, setAssignments] = useState<Record<string, string>>({});
   const [assignmentMeta, setAssignmentMeta] = useState<
-    Record<string, { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }>
+    Record<
+      string,
+      { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }
+    >
   >({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [smartAssignPreview, setSmartAssignPreview] = useState(false);
-  const [smartAssignMap, setSmartAssignMap] = useState<Record<string, { userId: string; reason: string }>>({});
+  const [smartAssignMap, setSmartAssignMap] = useState<
+    Record<string, { userId: string; reason: string }>
+  >({});
 
   const isHighRisk = decisionType === "ASSIGN_ACCOUNTABILITY_HIGH_RISK";
   const isAssign = decisionType === "ASSIGN_ACCOUNTABILITY" || isHighRisk;
@@ -67,7 +72,10 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
 
       const suggMap: Record<string, Suggestion[]> = {};
       const initAssign: Record<string, string> = {};
-      const initMeta: Record<string, { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }> = {};
+      const initMeta: Record<
+        string,
+        { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }
+      > = {};
 
       for (const asset of assetArr.slice(0, 5)) {
         const res = await getAssignmentSuggestions(asset.id);
@@ -81,7 +89,8 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
             wasAutoSuggested: true
           };
         } else {
-          const fallback = userArr.find((u) => u.role === "CAIO" || u.role === "ADMIN") ?? userArr[0];
+          const fallback =
+            userArr.find((u) => u.role === "CAIO" || u.role === "ADMIN") ?? userArr[0];
           if (fallback) initAssign[asset.id] = fallback.id;
         }
       }
@@ -95,7 +104,10 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
 
   const handleAssignAll = (userId: string) => {
     const next: Record<string, string> = {};
-    const nextMeta: Record<string, { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }> = {};
+    const nextMeta: Record<
+      string,
+      { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }
+    > = {};
     assets.forEach((a) => {
       next[a.id] = userId;
       nextMeta[a.id] = {};
@@ -121,7 +133,10 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
 
   const handleConfirmSmartAssign = () => {
     const next: Record<string, string> = {};
-    const nextMeta: Record<string, { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }> = {};
+    const nextMeta: Record<
+      string,
+      { suggestionRank?: number; suggestionReason?: string; wasAutoSuggested?: boolean }
+    > = {};
     Object.entries(smartAssignMap).forEach(([assetId, { userId }], _, arr) => {
       next[assetId] = userId;
       const sugg = suggestionsByAsset[assetId] ?? [];
@@ -158,7 +173,18 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
         return;
       }
       const res = await assignAccountabilityBulk(input);
-      const byUser = (res as { byUser?: Array<{ userId: string; count: number; email?: string; persona?: string; role?: string }> }).byUser ?? [];
+      const byUser =
+        (
+          res as {
+            byUser?: Array<{
+              userId: string;
+              count: number;
+              email?: string;
+              persona?: string;
+              role?: string;
+            }>;
+          }
+        ).byUser ?? [];
       const parts = byUser.map(
         (u) =>
           `${getUserDisplayName({ email: u.email ?? "", persona: u.persona, role: u.role })} is now responsible for ${u.count} AI system${u.count === 1 ? "" : "s"}`
@@ -192,19 +218,28 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
     }));
   };
 
-  if (decisionType === "ASSIGN_ACCOUNTABILITY_HIGH_RISK" || decisionType === "ASSIGN_ACCOUNTABILITY") {
+  if (
+    decisionType === "ASSIGN_ACCOUNTABILITY_HIGH_RISK" ||
+    decisionType === "ASSIGN_ACCOUNTABILITY"
+  ) {
     const displayCount = count ?? assets.length;
-    const mostSenior = users.find((u) => u.role === "CAIO") ?? users.find((u) => u.role === "ADMIN") ?? users[0];
+    const mostSenior =
+      users.find((u) => u.role === "CAIO") ?? users.find((u) => u.role === "ADMIN") ?? users[0];
 
     if (smartAssignPreview) {
       return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setSmartAssignPreview(false)}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setSmartAssignPreview(false)}
+        >
           <div
             className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
-              <h2 className="text-lg font-semibold text-slate-900">Assign all to recommended owners</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Assign all to recommended owners
+              </h2>
               <p className="mt-1 text-sm text-slate-600">Review the suggested assignments below.</p>
               <div className="mt-4 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 {assets.slice(0, 5).map((asset) => {
@@ -212,7 +247,8 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                   const user = entry ? users.find((u) => u.id === entry.userId) : null;
                   return (
                     <p key={asset.id} className="text-sm text-slate-700">
-                      {asset.name} → {user ? getUserDisplayName(user) : "—"} ({entry?.reason ?? "—"})
+                      {asset.name} → {user ? getUserDisplayName(user) : "—"} ({entry?.reason ?? "—"}
+                      )
                     </p>
                   );
                 })}
@@ -221,7 +257,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                 <button
                   type="button"
                   onClick={handleConfirmSmartAssign}
-                  className="rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+                  className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2 text-sm font-medium text-white"
                 >
                   Confirm all
                 </button>
@@ -240,17 +276,22 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
     }
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        onClick={onClose}
+      >
         <div
           className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-xl"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-6">
             <h2 className="text-lg font-semibold text-slate-900">
-              {displayCount} AI system{displayCount === 1 ? "" : "s"} need{displayCount === 1 ? "s" : ""} an owner
+              {displayCount} AI system{displayCount === 1 ? "" : "s"} need
+              {displayCount === 1 ? "s" : ""} an owner
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              High-risk AI systems must have a named person responsible for their governance. This takes 2 minutes.
+              High-risk AI systems must have a named person responsible for their governance. This
+              takes 2 minutes.
             </p>
 
             {loading ? (
@@ -260,7 +301,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                 <button
                   type="button"
                   onClick={handleSmartAssignPreview}
-                  className="mt-4 w-full rounded-lg border-2 border-dashed border-navy-300 bg-navy-50/50 py-2.5 text-sm font-medium text-navy-700 hover:bg-navy-100"
+                  className="border-navy-300 bg-navy-50/50 text-navy-700 hover:bg-navy-100 mt-4 w-full rounded-lg border-2 border-dashed py-2.5 text-sm font-medium"
                 >
                   Assign all to recommended owners →
                 </button>
@@ -297,7 +338,9 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                             <button
                               key={u.id}
                               type="button"
-                              onClick={() => handleSelectSuggestion(asset.id, u.id, i + 1, u.reason, true)}
+                              onClick={() =>
+                                handleSelectSuggestion(asset.id, u.id, i + 1, u.reason, true)
+                              }
                               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
                                 selectedId === u.id
                                   ? "bg-navy-600 text-white"
@@ -316,7 +359,13 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                               if (v) {
                                 const inSugg = sugg.find((s) => s.id === v);
                                 if (inSugg) {
-                                  handleSelectSuggestion(asset.id, v, sugg.indexOf(inSugg) + 1, inSugg.reason, true);
+                                  handleSelectSuggestion(
+                                    asset.id,
+                                    v,
+                                    sugg.indexOf(inSugg) + 1,
+                                    inSugg.reason,
+                                    true
+                                  );
                                 } else {
                                   handleSelectOther(asset.id, v);
                                 }
@@ -341,7 +390,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                   <button
                     type="button"
                     onClick={() => handleAssignAll(mostSenior.id)}
-                    className="mt-3 w-full rounded-lg border border-navy-200 bg-navy-50 py-2 text-sm font-medium text-navy-700 hover:bg-navy-100"
+                    className="border-navy-200 bg-navy-50 text-navy-700 hover:bg-navy-100 mt-3 w-full rounded-lg border py-2 text-sm font-medium"
                   >
                     Assign all to {getUserDisplayName(mostSenior)}
                   </button>
@@ -352,7 +401,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                     type="button"
                     onClick={handleSave}
                     disabled={saving}
-                    className="rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+                    className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
                   >
                     {saving ? "Saving..." : "Save assignments"}
                   </button>
@@ -386,7 +435,10 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
 
   if (decisionType === "MATURITY_ASSESSMENT") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        onClick={onClose}
+      >
         <div
           className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-xl"
           onClick={(e) => e.stopPropagation()}
@@ -400,15 +452,11 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
               <p className="text-sm text-slate-600">
                 1. Do you have a policy for AI governance? (Yes/No)
               </p>
-              <p className="text-sm text-slate-600">
-                2. Are AI systems documented? (Yes/No)
-              </p>
+              <p className="text-sm text-slate-600">2. Are AI systems documented? (Yes/No)</p>
               <p className="text-sm text-slate-600">
                 3. Are accountability owners assigned? (Yes/No)
               </p>
-              <p className="text-sm text-slate-600">
-                4. Do you monitor AI risks? (Yes/No)
-              </p>
+              <p className="text-sm text-slate-600">4. Do you monitor AI risks? (Yes/No)</p>
               <p className="text-sm text-slate-600">
                 5. Do you review AI governance regularly? (Yes/No)
               </p>
@@ -416,7 +464,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
             <div className="mt-4 flex gap-2">
               <a
                 href="/maturity"
-                className="rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+                className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2 text-sm font-medium text-white"
               >
                 Start quick check →
               </a>
@@ -435,7 +483,10 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
 
   if (decisionType === "GOVERNANCE_GAPS") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        onClick={onClose}
+      >
         <div
           className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-xl"
           onClick={(e) => e.stopPropagation()}
@@ -475,7 +526,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
                   onSuccess("Delegated to your team.");
                   onClose();
                 }}
-                className="rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+                className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2 text-sm font-medium text-white"
               >
                 Delegate to AI Officer →
               </button>

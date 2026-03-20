@@ -1,5 +1,6 @@
 # AI Readiness Platform — Claude Code Handoff Document
-*Generated from active development session — March 19, 2026*
+
+_Generated from active development session — March 19, 2026_
 
 ---
 
@@ -15,19 +16,19 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 16.1.6 (Turbopack, App Router) |
-| Language | TypeScript |
-| Database | PostgreSQL (Railway) + Prisma 6.19.2 |
-| Auth | Auth0 via Auth.js v5 |
-| API | tRPC |
-| Email | Resend |
-| Styling | Tailwind CSS v4 |
-| Deployment | Railway (staging auto-deploy from `develop`) |
-| Editor | Cursor (AI-assisted) + Claude Code CLI |
+| Layer         | Technology                                           |
+| ------------- | ---------------------------------------------------- |
+| Framework     | Next.js 16.1.6 (Turbopack, App Router)               |
+| Language      | TypeScript                                           |
+| Database      | PostgreSQL (Railway) + Prisma 6.19.2                 |
+| Auth          | Auth0 via Auth.js v5                                 |
+| API           | tRPC                                                 |
+| Email         | Resend                                               |
+| Styling       | Tailwind CSS v4                                      |
+| Deployment    | Railway (staging auto-deploy from `develop`)         |
+| Editor        | Cursor (AI-assisted) + Claude Code CLI               |
 | Notifications | GitHub Actions (weekly-digest.yml, daily-alerts.yml) |
-| Monitoring | Railway logs |
+| Monitoring    | Railway logs                                         |
 
 ---
 
@@ -42,11 +43,11 @@
 
 ## Accounts
 
-| Email | Org | Role | Notes |
-|-------|-----|------|-------|
-| bill@vstout.com | Stout Ventures | ENTERPRISE / platform admin | Primary admin |
-| billbrietstout@yahoo.com | Stout AI Advisory | CONSULTANT | Consultant demo |
-| Meridian Industrial Group | — | PRO | Seeded demo client org |
+| Email                     | Org               | Role                        | Notes                  |
+| ------------------------- | ----------------- | --------------------------- | ---------------------- |
+| bill@vstout.com           | Stout Ventures    | ENTERPRISE / platform admin | Primary admin          |
+| billbrietstout@yahoo.com  | Stout AI Advisory | CONSULTANT                  | Consultant demo        |
+| Meridian Industrial Group | —                 | PRO                         | Seeded demo client org |
 
 ---
 
@@ -54,13 +55,13 @@
 
 The platform maps all AI assets to one of 5 CoSAI SRF layers:
 
-| Layer | Code | Focus |
-|-------|------|-------|
-| L1 | LAYER_1_BUSINESS | Governance, strategy, compliance (C-Suite) |
-| L2 | LAYER_2_INFORMATION | Data management, quality, privacy (Data Owners) |
-| L3 | LAYER_3_APPLICATION | Development, integration, testing (Dev Teams) |
-| L4 | LAYER_4_PLATFORM | Infrastructure, APIs, tooling (Platform Providers) |
-| L5 | LAYER_5_SUPPLY_CHAIN | Models, training, supply chain (Model Providers) |
+| Layer | Code                 | Focus                                              |
+| ----- | -------------------- | -------------------------------------------------- |
+| L1    | LAYER_1_BUSINESS     | Governance, strategy, compliance (C-Suite)         |
+| L2    | LAYER_2_INFORMATION  | Data management, quality, privacy (Data Owners)    |
+| L3    | LAYER_3_APPLICATION  | Development, integration, testing (Dev Teams)      |
+| L4    | LAYER_4_PLATFORM     | Infrastructure, APIs, tooling (Platform Providers) |
+| L5    | LAYER_5_SUPPLY_CHAIN | Models, training, supply chain (Model Providers)   |
 
 ---
 
@@ -117,11 +118,13 @@ docs/
 ## Completed Work (This Session)
 
 ### ✅ GitHub Actions Workflows
+
 - `weekly-digest.yml` and `daily-alerts.yml` created and live
 - Must exist on `main` branch to appear in GitHub Actions sidebar
 - Tested via manual workflow_dispatch — email confirmed delivered
 
 ### ✅ Email Notification Enhancements
+
 - Org-level kill switch (`Organization.notificationsEnabled`)
 - Per-user email toggle (`NotificationPreference.emailEnabled`)
 - Token-based unsubscribe (security fix — replaces email-based)
@@ -130,6 +133,7 @@ docs/
 - Resubscribe via token at `app/api/v1/notifications/unsubscribe/route.ts`
 
 ### ✅ Slack Integration
+
 - Webhook-based (Option A — not full OAuth)
 - Slack app: "AI Readiness Platform" with incoming webhooks
 - Block Kit messages with severity badges, org name, "View in Platform" button
@@ -139,11 +143,13 @@ docs/
 - Admin-only configuration
 
 ### ✅ Rebrand
+
 - "AI Posture Platform" → "AI Readiness Platform" across all 40 files
-- Export filenames updated (ai-posture-* → ai-readiness-*)
+- Export filenames updated (ai-posture-_ → ai-readiness-_)
 - Footer in Slack messages still says "AI Posture Platform" — needs updating
 
 ### ✅ Session Expiry Warning Modal
+
 - `components/auth/SessionExpiryWarning.tsx`
 - Polls `/api/auth/session` every 30 seconds
 - Shows warning 5 minutes before expiry
@@ -152,6 +158,7 @@ docs/
 - Does NOT use `useSession` (incompatible with Auth.js v5) — uses fetch polling
 
 ### ✅ Dashboard Performance
+
 - **Persona fast-path:** Only 1 DB query before redirect (was 12 queries)
 - **Suspense streaming:** Page renders in ~200ms with skeletons, data streams in
 - **unstable_cache:** 5-minute TTL on KPIs, layer posture, sankey, heatmap, risk matrix, maturity
@@ -159,16 +166,19 @@ docs/
 - Cached query functions in `lib/dashboard/cached-queries.ts` use Prisma directly (not tRPC) to avoid `headers()` conflict with `unstable_cache`
 
 ### ✅ CISO Dashboard Bar Chart Fix
+
 - Compliance bars now use `scoreColor()` with Tailwind classes
 - Tailwind v4 safelist added to `app/globals.css` via `@source inline()`
 - Bars correctly sized and colored (amber for 30-60%, red <30%, blue 60-80%, green >80%)
 
 ### ✅ Regulation Discovery Engine Fix
+
 - EU AI Act no longer shows as MANDATORY for US-only deployments with no EU resident data
 - Fixed: `GENERAL` vertical had `EU_AI_ACT` with `mandatory: true` — changed to `false`
 - Fixed: Vertical regulations loop now checks `euJurisdiction && euPossible` before adding EU regs
 
 ### ✅ Dev Lead Deployment Checklist
+
 - `docs/DEPLOYMENT_CHECKLIST.md` — comprehensive runbook
 - Covers: env vars, Railway deploy, migrations, GitHub Actions, Auth0, Slack, pre-launch
 
@@ -176,21 +186,23 @@ docs/
 
 ## Current Issues & Known Bugs
 
-| # | Issue | File | Priority |
-|---|-------|------|----------|
-| 1 | `ci.yml` CI checks failing on PRs | `.github/workflows/ci.yml` | Medium |
-| 2 | Slack footer still says "AI Posture Platform" | `lib/slack.ts` line ~60 | Low |
-| 3 | Dashboard slow queries remain in non-cached paths (persona dashboards) | Various | Medium |
-| 4 | No super-admin interface for managing orgs/users | — | High |
-| 5 | `next-env.d.ts` conflicts on branch switch | — | Low |
+| #   | Issue                                                                  | File                       | Priority |
+| --- | ---------------------------------------------------------------------- | -------------------------- | -------- |
+| 1   | `ci.yml` CI checks failing on PRs                                      | `.github/workflows/ci.yml` | Medium   |
+| 2   | Slack footer still says "AI Posture Platform"                          | `lib/slack.ts` line ~60    | Low      |
+| 3   | Dashboard slow queries remain in non-cached paths (persona dashboards) | Various                    | Medium   |
+| 4   | No super-admin interface for managing orgs/users                       | —                          | High     |
+| 5   | `next-env.d.ts` conflicts on branch switch                             | —                          | Low      |
 
 ---
 
 ## Immediate Next Steps (Priority Order)
 
 ### 1. Super-Admin Interface (HIGH)
+
 Need a super-admin panel to manage organizations without direct DB access.
 Required features:
+
 - List all organizations (name, plan, tier, user count, created date)
 - View/edit org details (plan, tier, asset limit, users limit)
 - List users in an org
@@ -201,6 +213,7 @@ Required features:
 Suggested route: `app/(dashboard)/settings/admin/` (may already partially exist — check)
 
 ### 2. Stripe Integration (HIGH)
+
 - Pricing page exists at `/pricing`
 - `BillingContent.tsx` exists at `app/(dashboard)/settings/billing/`
 - Plans: FREE, PRO ($49/mo), ENTERPRISE ($199/mo), CONSULTANT ($149/mo)
@@ -208,9 +221,11 @@ Suggested route: `app/(dashboard)/settings/admin/` (may already partially exist 
 - DB fields already exist: `Organization.plan`, `Organization.tier`, `Organization.trialStartedAt`, `Organization.trialEndsAt`
 
 ### 3. Usability Fixes from Sarah Persona Test (HIGH)
+
 See full list below.
 
 ### 4. Resume Sarah Usability Test
+
 Sarah just signed up after the Regulation Discovery Wizard. Next screen to test: post-registration onboarding flow.
 
 ---
@@ -219,25 +234,26 @@ Sarah just signed up after the Regulation Discovery Wizard. Next screen to test:
 
 Sarah Chen — SMB Operations Manager, non-technical, uses ChatGPT + Copilot, auditor asked about AI governance.
 
-| # | Issue | Location | Priority | Recommended Fix |
-|---|-------|----------|----------|-----------------|
-| 1 | AI system type dropdown uses jargon (MODEL/AGENT/APPLICATION/PIPELINE) | Regulation Wizard Step 1 | High | Add plain-language descriptions: "AI-Powered App (e.g. ChatGPT, Grammarly)" |
-| 2 | "Operating model" uses IaaS/PaaS/SaaS terminology | Regulation Wizard Step 2 | High | Rephrase as "How do you access this AI?" with plain options |
-| 3 | "Autonomy level" opaque to non-technical users | Regulation Wizard Step 2 | High | Rephrase as "How independently does this AI act?" with examples |
-| 4 | "Expected risk level" asks users to self-assess | Regulation Wizard Step 3 | Medium | Remove field — derive from other answers |
-| 5 | "Evidence requirements" jargon in CTA | Regulation Wizard Step 4 | Medium | Change to "step-by-step action plan" |
-| 6 | Risk score 30/100 needs plain-language label | Results page | High | Add color + label: "Low Risk / Medium Risk / High Risk" |
-| 7 | "M3" maturity level needs inline context | Results page | Medium | Show as "Level 3 of 5 — Intermediate" |
-| 8 | Regulatory Overlap donut chart too technical | Results page | Medium | Replace with plain-language summary paragraph |
-| 9 | "Layer 1/3" CoSAI references confusing | Results page | Low | Add tooltip: "Business governance layer" etc. |
+| #   | Issue                                                                  | Location                 | Priority | Recommended Fix                                                             |
+| --- | ---------------------------------------------------------------------- | ------------------------ | -------- | --------------------------------------------------------------------------- |
+| 1   | AI system type dropdown uses jargon (MODEL/AGENT/APPLICATION/PIPELINE) | Regulation Wizard Step 1 | High     | Add plain-language descriptions: "AI-Powered App (e.g. ChatGPT, Grammarly)" |
+| 2   | "Operating model" uses IaaS/PaaS/SaaS terminology                      | Regulation Wizard Step 2 | High     | Rephrase as "How do you access this AI?" with plain options                 |
+| 3   | "Autonomy level" opaque to non-technical users                         | Regulation Wizard Step 2 | High     | Rephrase as "How independently does this AI act?" with examples             |
+| 4   | "Expected risk level" asks users to self-assess                        | Regulation Wizard Step 3 | Medium   | Remove field — derive from other answers                                    |
+| 5   | "Evidence requirements" jargon in CTA                                  | Regulation Wizard Step 4 | Medium   | Change to "step-by-step action plan"                                        |
+| 6   | Risk score 30/100 needs plain-language label                           | Results page             | High     | Add color + label: "Low Risk / Medium Risk / High Risk"                     |
+| 7   | "M3" maturity level needs inline context                               | Results page             | Medium   | Show as "Level 3 of 5 — Intermediate"                                       |
+| 8   | Regulatory Overlap donut chart too technical                           | Results page             | Medium   | Replace with plain-language summary paragraph                               |
+| 9   | "Layer 1/3" CoSAI references confusing                                 | Results page             | Low      | Add tooltip: "Business governance layer" etc.                               |
 
-*Test paused: Sarah just signed up. Resume from post-registration onboarding screen.*
+_Test paused: Sarah just signed up. Resume from post-registration onboarding screen._
 
 ---
 
 ## Environment Variables
 
 ### Local (`.env.local`)
+
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ai_governance
 AUTH0_CLIENT_ID=I1bZJkMKhoIzH06jELtauMvQ8Ms80vqB
@@ -248,11 +264,13 @@ RESEND_FROM_EMAIL=onboarding@resend.dev
 ```
 
 ### Railway Staging
+
 - `DATABASE_URL` — internal Railway Postgres URL
 - Public URL for migrations: `postgresql://postgres:PASSWORD@yamanote.proxy.rlwy.net:50847/railway`
 - All other vars set in Railway Variables tab
 
 ### Pre-Production Changes Needed
+
 - `RESEND_FROM_EMAIL` → verified custom domain (not `onboarding@resend.dev`)
 - `APP_URL` → production URL
 - `NEXTAUTH_URL` → production URL
@@ -282,6 +300,7 @@ DATABASE_URL="postgresql://postgres:PASSWORD@yamanote.proxy.rlwy.net:50847/railw
 ---
 
 ## Branch Protection Notes
+
 - `main` requires PR approval + CI checks to pass
 - CI checks currently failing (pre-existing lint/type errors)
 - Workaround: temporarily disable branch protection in Settings → Branches → Edit
@@ -291,8 +310,10 @@ DATABASE_URL="postgresql://postgres:PASSWORD@yamanote.proxy.rlwy.net:50847/railw
 ---
 
 ## CoSAI SRF Reference
+
 The platform is built on the CoSAI AI Shared Responsibility Framework Draft V0.7 (OASIS Open Project).
 Key concepts used throughout:
+
 - 5 enterprise architecture layers (see above)
 - 8 personas: Agentic Platform Provider, Application Developer, Data Provider, AI System Users, AI System Governance, Model Provider, AI Model Serving, AI Platform Provider
 - Operating models: IaaS, AI-PaaS, Agent-PaaS, AI-SaaS
@@ -302,6 +323,6 @@ Key concepts used throughout:
 
 ---
 
-*Handoff generated: March 19, 2026*
-*Session length: ~8 hours of active development*
-*Commits this session: ~35*
+_Handoff generated: March 19, 2026_
+_Session length: ~8 hours of active development_
+_Commits this session: ~35_

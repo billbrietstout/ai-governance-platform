@@ -14,7 +14,8 @@ export async function createConsultantWorkspaceAction(formData: FormData) {
   const clientName = formData.get("clientName") as string;
   const clientContact = formData.get("primaryContactEmail") as string | null;
   const clientVertical = formData.get("clientIndustryVertical") as string | null;
-  const assessmentScope = (formData.get("assessmentScope") as "FULL" | "QUICK" | "CUSTOM") || "FULL";
+  const assessmentScope =
+    (formData.get("assessmentScope") as "FULL" | "QUICK" | "CUSTOM") || "FULL";
 
   if (!clientName?.trim()) {
     throw new Error("Client organization name is required");

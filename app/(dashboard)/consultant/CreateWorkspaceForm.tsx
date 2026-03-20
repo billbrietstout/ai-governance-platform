@@ -67,19 +67,22 @@ export function CreateWorkspaceForm() {
           type="text"
           required
           maxLength={200}
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
           placeholder="Acme Corp"
         />
       </div>
 
       <div>
-        <label htmlFor="clientIndustryVertical" className="block text-sm font-medium text-slate-700">
+        <label
+          htmlFor="clientIndustryVertical"
+          className="block text-sm font-medium text-slate-700"
+        >
           Client industry vertical
         </label>
         <select
           id="clientIndustryVertical"
           name="clientIndustryVertical"
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
         >
           {VERTICALS.map((v) => (
             <option key={v.value || "empty"} value={v.value}>
@@ -97,7 +100,7 @@ export function CreateWorkspaceForm() {
           id="primaryContactEmail"
           name="primaryContactEmail"
           type="email"
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
           placeholder="contact@client.com"
         />
       </div>
@@ -109,7 +112,7 @@ export function CreateWorkspaceForm() {
         <select
           id="assessmentScope"
           name="assessmentScope"
-          className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
         >
           {SCOPES.map((s) => (
             <option key={s.value} value={s.value}>
@@ -122,7 +125,7 @@ export function CreateWorkspaceForm() {
       <button
         type="submit"
         disabled={loading}
-        className="rounded-lg bg-navy-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+        className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50"
       >
         {loading ? "Creating…" : "Create workspace"}
       </button>

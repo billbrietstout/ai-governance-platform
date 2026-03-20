@@ -14,7 +14,9 @@ import { withCors } from "@/lib/security";
 const ROLES: UserRole[] = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"];
 const INVITE_EXPIRY_DAYS = 7;
 
-function requireAdmin(session: { user?: { orgId?: string; id?: string; role?: string } } | null):
+function requireAdmin(
+  session: { user?: { orgId?: string; id?: string; role?: string } } | null
+):
   | { ok: false; status: 401 | 403; body: { error: string } }
   | { ok: true; orgId: string; userId: string } {
   if (!session?.user) {
@@ -87,7 +89,10 @@ export async function POST(req: NextRequest) {
     where: { orgId, email }
   });
   if (existingUser) {
-    const res = NextResponse.json({ error: "User already exists in this organization" }, { status: 409 });
+    const res = NextResponse.json(
+      { error: "User already exists in this organization" },
+      { status: 409 }
+    );
     return withCors(res, req.headers.get("origin"));
   }
 
@@ -95,7 +100,10 @@ export async function POST(req: NextRequest) {
     where: { orgId, email, expiresAt: { gt: new Date() } }
   });
   if (existingInvite) {
-    const res = NextResponse.json({ error: "Pending invite already exists for this email" }, { status: 409 });
+    const res = NextResponse.json(
+      { error: "Pending invite already exists for this email" },
+      { status: 409 }
+    );
     return withCors(res, req.headers.get("origin"));
   }
 
@@ -115,7 +123,12 @@ export async function POST(req: NextRequest) {
   });
 
   const res = NextResponse.json(
-    { id: invite.id, email: invite.email, role: invite.role, expiresAt: invite.expiresAt.toISOString() },
+    {
+      id: invite.id,
+      email: invite.email,
+      role: invite.role,
+      expiresAt: invite.expiresAt.toISOString()
+    },
     { status: 201 }
   );
   return withCors(res, req.headers.get("origin"));

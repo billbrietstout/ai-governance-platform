@@ -14,17 +14,17 @@ export default async function ScanningPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer5-supply-chain" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer5-supply-chain" className="text-navy-400 text-sm hover:underline">
           ← Supply Chain
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Scan Coverage</h1>
-        <p className="mt-1 text-slatePro-300">
+        <p className="text-slatePro-300 mt-1">
           Assets × scan types. Red = never run, Yellow = overdue, Green = current.
         </p>
       </div>
 
-      <div className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
-        <h2 className="mb-2 text-sm font-medium text-slatePro-400">Legend</h2>
+      <div className="border-slatePro-700 bg-slatePro-900/30 rounded-lg border p-4">
+        <h2 className="text-slatePro-400 mb-2 text-sm font-medium">Legend</h2>
         <div className="flex gap-4">
           <span className="flex items-center gap-2">
             <span className="inline-block h-4 w-4 rounded bg-red-500/30" />
@@ -41,20 +41,19 @@ export default async function ScanningPage() {
         </div>
       </div>
 
-      <ScanCoverageMatrix
-        assets={data.assets}
-        scanTypes={data.scanTypes}
-      />
+      <ScanCoverageMatrix assets={data.assets} scanTypes={data.scanTypes} />
 
       <section>
         <h2 className="mb-2 text-lg font-medium">Policy Compliance by Asset</h2>
         <PolicyComplianceTable />
       </section>
 
-      <div className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
-        <h2 className="mb-2 text-sm font-medium text-slatePro-400">Webhook</h2>
-        <p className="text-sm text-slatePro-300">
-          External scanners can push results via <code className="rounded bg-slatePro-800 px-1">POST /api/v1/scans</code> with API key auth.
+      <div className="border-slatePro-700 bg-slatePro-900/30 rounded-lg border p-4">
+        <h2 className="text-slatePro-400 mb-2 text-sm font-medium">Webhook</h2>
+        <p className="text-slatePro-300 text-sm">
+          External scanners can push results via{" "}
+          <code className="bg-slatePro-800 rounded px-1">POST /api/v1/scans</code> with API key
+          auth.
         </p>
       </div>
     </main>
@@ -67,7 +66,7 @@ async function PolicyComplianceTable() {
 
   if (data.assets.length === 0) {
     return (
-      <p className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4 text-sm text-slatePro-400">
+      <p className="border-slatePro-700 bg-slatePro-900/30 text-slatePro-400 rounded-lg border p-4 text-sm">
         No assets. Add assets to see policy compliance.
       </p>
     );
@@ -81,22 +80,22 @@ async function PolicyComplianceTable() {
   );
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slatePro-700">
+    <div className="border-slatePro-700 overflow-x-auto rounded-lg border">
       <table className="min-w-full text-sm">
         <thead>
-          <tr className="border-b border-slatePro-700 bg-slatePro-900/50">
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Asset</th>
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Score</th>
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Compliant</th>
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Passed</th>
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Missing</th>
-            <th className="px-4 py-2 text-left font-medium text-slatePro-300">Overdue</th>
+          <tr className="border-slatePro-700 bg-slatePro-900/50 border-b">
+            <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Asset</th>
+            <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Score</th>
+            <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Compliant</th>
+            <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Passed</th>
+            <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Missing</th>
+            <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Overdue</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.assetId} className="border-b border-slatePro-800 last:border-0">
-              <td className="px-4 py-2 font-medium text-slatePro-100">{r.assetName}</td>
+            <tr key={r.assetId} className="border-slatePro-800 border-b last:border-0">
+              <td className="text-slatePro-100 px-4 py-2 font-medium">{r.assetName}</td>
               <td className="px-4 py-2">{r.compliance.score}%</td>
               <td className="px-4 py-2">
                 {r.compliance.compliant ? (
@@ -105,7 +104,9 @@ async function PolicyComplianceTable() {
                   <span className="text-amber-400">No</span>
                 )}
               </td>
-              <td className="px-4 py-2 text-slatePro-300">{r.compliance.passed.join(", ") || "—"}</td>
+              <td className="text-slatePro-300 px-4 py-2">
+                {r.compliance.passed.join(", ") || "—"}
+              </td>
               <td className="px-4 py-2 text-amber-400">{r.compliance.missing.join(", ") || "—"}</td>
               <td className="px-4 py-2 text-red-400">{r.compliance.overdue.join(", ") || "—"}</td>
             </tr>

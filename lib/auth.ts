@@ -34,7 +34,23 @@ export const authOptions = {
     updateAge: THIRTY_MINUTES
   },
   callbacks: {
-    jwt({ token, user, trigger, session }: { token: Record<string, unknown>; user?: { id?: string; orgId?: string; role?: string; mfaEnabled?: boolean; isSuperAdmin?: boolean }; trigger?: string; session?: Record<string, unknown> }) {
+    jwt({
+      token,
+      user,
+      trigger,
+      session
+    }: {
+      token: Record<string, unknown>;
+      user?: {
+        id?: string;
+        orgId?: string;
+        role?: string;
+        mfaEnabled?: boolean;
+        isSuperAdmin?: boolean;
+      };
+      trigger?: string;
+      session?: Record<string, unknown>;
+    }) {
       if (user) {
         token.id = user.id;
         token.orgId = user.orgId;
@@ -51,7 +67,13 @@ export const authOptions = {
       }
       return token;
     },
-    session({ session, token }: { session: { user?: Record<string, unknown> }; token: Record<string, unknown> }) {
+    session({
+      session,
+      token
+    }: {
+      session: { user?: Record<string, unknown> };
+      token: Record<string, unknown>;
+    }) {
       if (session?.user) {
         session.user.id = token.id as string;
         session.user.orgId = token.orgId as string;
@@ -68,7 +90,14 @@ export const authOptions = {
 
       let dbUser = await prisma.user.findFirst({
         where: { email },
-        select: { id: true, orgId: true, role: true, mfaEnabled: true, isSuperAdmin: true, lockedUntil: true }
+        select: {
+          id: true,
+          orgId: true,
+          role: true,
+          mfaEnabled: true,
+          isSuperAdmin: true,
+          lockedUntil: true
+        }
       });
 
       if (dbUser) {
@@ -278,9 +307,10 @@ export const authOptions = {
       const { org, newUser } = await prisma.$transaction(async (tx) => {
         // Generate org name from email domain
         const domain = email.split("@")[1]?.toLowerCase() ?? "myorg";
-        const orgName = domain.split(".")[0]
+        const orgName = domain
+          .split(".")[0]
           .replace(/-/g, " ")
-          .replace(/\b\w/g, c => c.toUpperCase());
+          .replace(/\b\w/g, (c) => c.toUpperCase());
 
         // Generate unique slug
         const baseSlug = orgName.toLowerCase().replace(/\s+/g, "-");
@@ -352,4 +382,5 @@ export const authOptions = {
 const handler = NextAuth(authOptions as any);
 
 export const handlers = { GET: handler, POST: handler };
-export const auth = () => getServerSession(authOptions) as Promise<import("next-auth").Session | null>;
+export const auth = () =>
+  getServerSession(authOptions) as Promise<import("next-auth").Session | null>;

@@ -24,8 +24,8 @@ export function WorkspaceSwitcher({
   const [open, setOpen] = useState(false);
 
   const displayName = activeWorkspaceOrgId
-    ? consultantWorkspaces.find((w) => w.clientOrgId === activeWorkspaceOrgId)?.clientName ??
-      "Client"
+    ? (consultantWorkspaces.find((w) => w.clientOrgId === activeWorkspaceOrgId)?.clientName ??
+      "Client")
     : consultantOrgName;
 
   const handleSelect = (orgId: string | null, name: string | null) => {
@@ -40,28 +40,24 @@ export function WorkspaceSwitcher({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-1 rounded-lg px-3 py-2 text-left text-sm text-slatePro-200 hover:bg-slatePro-800"
+        className="text-slatePro-200 hover:bg-slatePro-800 flex w-full items-center justify-between gap-1 rounded-lg px-3 py-2 text-left text-sm"
         aria-expanded={open}
         aria-haspopup="listbox"
       >
         <span className="truncate">Viewing: {displayName}</span>
-        <ChevronDown className="h-4 w-4 shrink-0 text-slatePro-400" />
+        <ChevronDown className="text-slatePro-400 h-4 w-4 shrink-0" />
       </button>
       {open && (
         <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
           <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-            aria-hidden
-          />
-          <div
-            className="absolute left-0 top-full z-50 mt-1 w-full min-w-0 overflow-hidden rounded-lg border border-slatePro-700 bg-slatePro-900 py-1 shadow-xl"
+            className="border-slatePro-700 bg-slatePro-900 absolute top-full left-0 z-50 mt-1 w-full min-w-0 overflow-hidden rounded-lg border py-1 shadow-xl"
             role="listbox"
           >
             <button
               type="button"
               onClick={() => handleSelect(null, null)}
-              className={`flex w-full items-center px-3 py-2 text-left text-sm hover:bg-slatePro-800 ${
+              className={`hover:bg-slatePro-800 flex w-full items-center px-3 py-2 text-left text-sm ${
                 !activeWorkspaceOrgId ? "bg-slatePro-800/50 text-navy-300" : "text-slatePro-200"
               }`}
               role="option"
@@ -73,7 +69,7 @@ export function WorkspaceSwitcher({
                 key={w.id}
                 type="button"
                 onClick={() => handleSelect(w.clientOrgId, w.clientName)}
-                className={`flex w-full items-center px-3 py-2 text-left text-sm hover:bg-slatePro-800 ${
+                className={`hover:bg-slatePro-800 flex w-full items-center px-3 py-2 text-left text-sm ${
                   activeWorkspaceOrgId === w.clientOrgId
                     ? "bg-slatePro-800/50 text-navy-300"
                     : "text-slatePro-200"
@@ -86,7 +82,7 @@ export function WorkspaceSwitcher({
             <Link
               href="/consultant/new"
               onClick={() => setOpen(false)}
-              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-navy-400 hover:bg-slatePro-800 hover:text-navy-300"
+              className="text-navy-400 hover:bg-slatePro-800 hover:text-navy-300 flex w-full items-center gap-2 px-3 py-2 text-sm"
             >
               <Plus className="h-4 w-4" />
               Add new client +

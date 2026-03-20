@@ -13,7 +13,7 @@ export default function OnboardingLayout({
     <div className="flex min-h-dvh flex-col bg-slate-50">
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
         <Link href="/onboarding" className="flex items-center gap-2">
-          <ShieldLogo className="h-8 w-8 text-navy-500" />
+          <ShieldLogo className="text-navy-500 h-8 w-8" />
           <span className="text-lg font-semibold text-slate-900">AI Readiness</span>
         </Link>
       </header>

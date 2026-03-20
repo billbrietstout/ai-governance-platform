@@ -20,7 +20,7 @@ export default async function ISO42001Page() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-8 px-6 py-10">
       <div>
-        <Link href="/compliance/snapshots" className="text-sm text-navy-600 hover:underline">
+        <Link href="/compliance/snapshots" className="text-navy-600 text-sm hover:underline">
           ← Compliance
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
@@ -43,16 +43,16 @@ export default async function ISO42001Page() {
         orgTier={orgTier}
       >
         <ISO42001Client
-        initialScore={data.score}
-        groups={ISO_42001_CLAUSES.map((g) => ({
-          ...g,
-          clauses: g.clauses.map((c) => ({
-            ...c,
-            status: clauseMap.get(c.id)?.status ?? "NOT_STARTED",
-            notes: clauseMap.get(c.id)?.notes ?? null
-          }))
-        }))}
-      />
+          initialScore={data.score}
+          groups={ISO_42001_CLAUSES.map((g) => ({
+            ...g,
+            clauses: g.clauses.map((c) => ({
+              ...c,
+              status: clauseMap.get(c.id)?.status ?? "NOT_STARTED",
+              notes: clauseMap.get(c.id)?.notes ?? null
+            }))
+          }))}
+        />
       </UpgradeGate>
     </main>
   );

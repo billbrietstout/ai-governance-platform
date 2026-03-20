@@ -34,7 +34,7 @@ export function ControlAttestationForm({
         <select
           name="status"
           defaultValue={currentStatus}
-          className="rounded border border-slatePro-600 bg-slatePro-900 px-2 py-1 text-sm text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 rounded border px-2 py-1 text-sm"
         >
           <option value="PENDING">Pending</option>
           <option value="COMPLIANT">Compliant</option>
@@ -46,11 +46,11 @@ export function ControlAttestationForm({
           type="text"
           placeholder="Notes"
           defaultValue={currentNotes}
-          className="rounded border border-slatePro-600 bg-slatePro-900 px-2 py-1 text-sm text-slatePro-100 w-40"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 w-40 rounded border px-2 py-1 text-sm"
         />
         <button
           type="submit"
-          className="rounded bg-navy-600 px-2 py-1 text-xs text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-2 py-1 text-xs text-white"
         >
           Save
         </button>

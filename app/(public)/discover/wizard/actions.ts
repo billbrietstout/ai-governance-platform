@@ -5,7 +5,14 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 export async function runDiscovery(inputs: {
   assetType: "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE";
   description?: string;
-  businessFunction: "HR" | "Finance" | "Operations" | "Customer Service" | "Healthcare" | "Legal" | "Other";
+  businessFunction:
+    | "HR"
+    | "Finance"
+    | "Operations"
+    | "Customer Service"
+    | "Healthcare"
+    | "Legal"
+    | "Other";
   decisionsAffectingPeople: boolean;
   interactsWithEndUsers: boolean;
   deployment: "EU_market" | "US_only" | "Global" | "Internal_only";

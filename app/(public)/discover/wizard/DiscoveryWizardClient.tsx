@@ -7,7 +7,15 @@ import { Loader2 } from "lucide-react";
 import { runDiscovery, type RegulationDiscoveryResult } from "@/lib/discovery/engine";
 import { GuestResultsView } from "./GuestResultsView";
 const ASSET_TYPES = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"] as const;
-const BUSINESS_FUNCTIONS = ["HR", "Finance", "Operations", "Customer Service", "Healthcare", "Legal", "Other"] as const;
+const BUSINESS_FUNCTIONS = [
+  "HR",
+  "Finance",
+  "Operations",
+  "Customer Service",
+  "Healthcare",
+  "Legal",
+  "Other"
+] as const;
 const DEPLOYMENTS = ["EU_market", "US_only", "Global", "Internal_only"] as const;
 const DEPLOYMENT_LABELS: Record<string, string> = {
   EU_market: "EU market",
@@ -25,7 +33,15 @@ const AUTONOMY_DESCRIPTIONS: Record<string, string> = {
   L4: "High automation – AI operates with limited oversight",
   L5: "Full autonomy – AI operates independently"
 };
-const DATA_TYPES = ["PII", "Financial", "Health", "Biometric", "Employment", "Public", "Proprietary"] as const;
+const DATA_TYPES = [
+  "PII",
+  "Financial",
+  "Health",
+  "Biometric",
+  "Employment",
+  "Public",
+  "Proprietary"
+] as const;
 const RISK_LEVELS = ["Low", "Medium", "High", "Critical"] as const;
 
 type WizardInputs = {
@@ -44,7 +60,15 @@ type WizardInputs = {
   vulnerablePopulations: boolean;
 };
 
-const VERTICAL_OPTIONS = ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR", "ENERGY", "HR_SERVICES"];
+const VERTICAL_OPTIONS = [
+  "GENERAL",
+  "FINANCIAL_SERVICES",
+  "HEALTHCARE",
+  "INSURANCE",
+  "PUBLIC_SECTOR",
+  "ENERGY",
+  "HR_SERVICES"
+];
 
 const getInitialInputs = (
   defaultVerticals: string[],
@@ -192,12 +216,7 @@ export function DiscoveryWizardClient({
         })
         .finally(() => setSaving(false));
     }
-  }, [
-    inputs,
-    isGuest,
-    runDiscoveryAuthenticated,
-    router
-  ]);
+  }, [inputs, isGuest, runDiscoveryAuthenticated, router]);
 
   if (guestResults) {
     return (
@@ -227,23 +246,36 @@ export function DiscoveryWizardClient({
         <div className="space-y-4">
           <h2 className="font-medium text-slate-900">Step 1: System Description</h2>
           <div>
-            <label className="block text-sm font-medium text-slate-700">What type of AI system?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              What type of AI system?
+            </label>
             <select
               value={inputs.assetType}
-              onChange={(e) => setInputs((p) => ({ ...p, assetType: e.target.value as (typeof ASSET_TYPES)[number] | "" }))}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  assetType: e.target.value as (typeof ASSET_TYPES)[number] | ""
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="">— Select type —</option>
               {ASSET_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
+                <option key={t} value={t}>
+                  {t}
+                </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">What does it do? (max 200 chars)</label>
+            <label className="block text-sm font-medium text-slate-700">
+              What does it do? (max 200 chars)
+            </label>
             <textarea
               value={inputs.description}
-              onChange={(e) => setInputs((p) => ({ ...p, description: e.target.value.slice(0, 200) }))}
+              onChange={(e) =>
+                setInputs((p) => ({ ...p, description: e.target.value.slice(0, 200) }))
+              }
               maxLength={200}
               rows={2}
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
@@ -252,15 +284,24 @@ export function DiscoveryWizardClient({
             <p className="mt-0.5 text-xs text-slate-500">{inputs.description.length}/200</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Which business function?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Which business function?
+            </label>
             <select
               value={inputs.businessFunction}
-              onChange={(e) => setInputs((p) => ({ ...p, businessFunction: e.target.value as (typeof BUSINESS_FUNCTIONS)[number] | "" }))}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  businessFunction: e.target.value as (typeof BUSINESS_FUNCTIONS)[number] | ""
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="">— Select function —</option>
               {BUSINESS_FUNCTIONS.map((f) => (
-                <option key={f} value={f}>{f}</option>
+                <option key={f} value={f}>
+                  {f}
+                </option>
               ))}
             </select>
           </div>
@@ -269,10 +310,14 @@ export function DiscoveryWizardClient({
               <input
                 type="checkbox"
                 checked={inputs.decisionsAffectingPeople}
-                onChange={(e) => setInputs((p) => ({ ...p, decisionsAffectingPeople: e.target.checked }))}
+                onChange={(e) =>
+                  setInputs((p) => ({ ...p, decisionsAffectingPeople: e.target.checked }))
+                }
                 className="rounded border-slate-300"
               />
-              <span className="text-sm text-slate-700">Will it make or influence decisions affecting people?</span>
+              <span className="text-sm text-slate-700">
+                Will it make or influence decisions affecting people?
+              </span>
             </label>
           </div>
           <div className="flex items-center gap-4">
@@ -280,10 +325,14 @@ export function DiscoveryWizardClient({
               <input
                 type="checkbox"
                 checked={inputs.interactsWithEndUsers}
-                onChange={(e) => setInputs((p) => ({ ...p, interactsWithEndUsers: e.target.checked }))}
+                onChange={(e) =>
+                  setInputs((p) => ({ ...p, interactsWithEndUsers: e.target.checked }))
+                }
                 className="rounded border-slate-300"
               />
-              <span className="text-sm text-slate-700">Will it interact directly with end users?</span>
+              <span className="text-sm text-slate-700">
+                Will it interact directly with end users?
+              </span>
             </label>
           </div>
         </div>
@@ -293,20 +342,31 @@ export function DiscoveryWizardClient({
         <div className="space-y-4">
           <h2 className="font-medium text-slate-900">Step 2: Deployment Context</h2>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Where will it be deployed?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Where will it be deployed?
+            </label>
             <select
               value={inputs.deployment}
-              onChange={(e) => setInputs((p) => ({ ...p, deployment: e.target.value as (typeof DEPLOYMENTS)[number] | "" }))}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  deployment: e.target.value as (typeof DEPLOYMENTS)[number] | ""
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="">— Select deployment —</option>
               {DEPLOYMENTS.map((d) => (
-                <option key={d} value={d}>{DEPLOYMENT_LABELS[d] ?? d}</option>
+                <option key={d} value={d}>
+                  {DEPLOYMENT_LABELS[d] ?? d}
+                </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Which verticals does your organization operate in?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Which verticals does your organization operate in?
+            </label>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
               {VERTICAL_OPTIONS.map((v) => (
                 <label key={v} className="flex shrink-0 items-center gap-2">
@@ -316,7 +376,7 @@ export function DiscoveryWizardClient({
                     onChange={() => toggleVertical(v)}
                     className="shrink-0 rounded border-slate-300"
                   />
-                  <span className="whitespace-nowrap text-sm">{v.replace(/_/g, " ")}</span>
+                  <span className="text-sm whitespace-nowrap">{v.replace(/_/g, " ")}</span>
                 </label>
               ))}
             </div>
@@ -330,7 +390,9 @@ export function DiscoveryWizardClient({
             >
               <option value="">— Select operating model —</option>
               {OPERATING_MODELS.map((m) => (
-                <option key={m} value={m}>{m}</option>
+                <option key={m} value={m}>
+                  {m}
+                </option>
               ))}
             </select>
           </div>
@@ -338,12 +400,19 @@ export function DiscoveryWizardClient({
             <label className="block text-sm font-medium text-slate-700">Autonomy level?</label>
             <select
               value={inputs.autonomyLevel}
-              onChange={(e) => setInputs((p) => ({ ...p, autonomyLevel: e.target.value as (typeof AUTONOMY_LEVELS)[number] | "" }))}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  autonomyLevel: e.target.value as (typeof AUTONOMY_LEVELS)[number] | ""
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="">— Select autonomy level —</option>
               {AUTONOMY_LEVELS.map((l) => (
-                <option key={l} value={l}>{l}: {AUTONOMY_DESCRIPTIONS[l]}</option>
+                <option key={l} value={l}>
+                  {l}: {AUTONOMY_DESCRIPTIONS[l]}
+                </option>
               ))}
             </select>
           </div>
@@ -354,7 +423,9 @@ export function DiscoveryWizardClient({
         <div className="space-y-4">
           <h2 className="font-medium text-slate-900">Step 3: Data & Risk Profile</h2>
           <div>
-            <label className="block text-sm font-medium text-slate-700">What data will it process?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              What data will it process?
+            </label>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
               {DATA_TYPES.map((d) => (
                 <label key={d} className="flex shrink-0 items-center gap-2">
@@ -364,16 +435,23 @@ export function DiscoveryWizardClient({
                     onChange={() => toggleDataType(d)}
                     className="shrink-0 rounded border-slate-300"
                   />
-                  <span className="whitespace-nowrap text-sm">{d}</span>
+                  <span className="text-sm whitespace-nowrap">{d}</span>
                 </label>
               ))}
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Does it process data about EU residents?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Does it process data about EU residents?
+            </label>
             <select
               value={inputs.euResidentsData}
-              onChange={(e) => setInputs((p) => ({ ...p, euResidentsData: e.target.value as "Yes" | "No" | "Unknown" | "" }))}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  euResidentsData: e.target.value as "Yes" | "No" | "Unknown" | ""
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="">— Select —</option>
@@ -386,12 +464,19 @@ export function DiscoveryWizardClient({
             <label className="block text-sm font-medium text-slate-700">Expected risk level?</label>
             <select
               value={inputs.expectedRiskLevel}
-              onChange={(e) => setInputs((p) => ({ ...p, expectedRiskLevel: e.target.value as (typeof RISK_LEVELS)[number] | "" }))}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  expectedRiskLevel: e.target.value as (typeof RISK_LEVELS)[number] | ""
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="">— Select risk level —</option>
               {RISK_LEVELS.map((r) => (
-                <option key={r} value={r}>{r}</option>
+                <option key={r} value={r}>
+                  {r}
+                </option>
               ))}
             </select>
           </div>
@@ -400,10 +485,14 @@ export function DiscoveryWizardClient({
               <input
                 type="checkbox"
                 checked={inputs.vulnerablePopulations}
-                onChange={(e) => setInputs((p) => ({ ...p, vulnerablePopulations: e.target.checked }))}
+                onChange={(e) =>
+                  setInputs((p) => ({ ...p, vulnerablePopulations: e.target.checked }))
+                }
                 className="rounded border-slate-300"
               />
-              <span className="text-sm text-slate-700">Will vulnerable populations be affected?</span>
+              <span className="text-sm text-slate-700">
+                Will vulnerable populations be affected?
+              </span>
             </label>
           </div>
         </div>
@@ -419,16 +508,16 @@ export function DiscoveryWizardClient({
           )}
           {isGuest ? (
             <>
-              <div className="rounded-lg border border-navy-200 bg-navy-50/50 p-4">
-                <h3 className="font-medium text-navy-900">Save your results</h3>
-                <p className="mt-1 text-sm text-navy-700">
-                  Create a free account to save your assessment, get your full maturity score, and see your
-                  personalized governance roadmap.
+              <div className="border-navy-200 bg-navy-50/50 rounded-lg border p-4">
+                <h3 className="text-navy-900 font-medium">Save your results</h3>
+                <p className="text-navy-700 mt-1 text-sm">
+                  Create a free account to save your assessment, get your full maturity score, and
+                  see your personalized governance roadmap.
                 </p>
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                   <Link
                     href="/login?callbackUrl=/discover/wizard"
-                    className="inline-flex items-center justify-center rounded-lg bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500"
+                    className="bg-navy-600 hover:bg-navy-500 inline-flex items-center justify-center rounded-lg px-4 py-3 text-sm font-medium text-white"
                   >
                     Create free account to save
                   </Link>
@@ -448,22 +537,23 @@ export function DiscoveryWizardClient({
                     )}
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-navy-600">
-                  As a guest, you&apos;ll see partial results. Create an account for the full control list,
-                  evidence requirements, and implementation roadmap.
+                <p className="text-navy-600 mt-2 text-xs">
+                  As a guest, you&apos;ll see partial results. Create an account for the full
+                  control list, evidence requirements, and implementation roadmap.
                 </p>
               </div>
             </>
           ) : (
             <>
               <p className="text-sm text-slate-600">
-                Click below to run the discovery engine and see applicable regulations. Results will be saved.
+                Click below to run the discovery engine and see applicable regulations. Results will
+                be saved.
               </p>
               <button
                 type="button"
                 onClick={runDiscoveryHandler}
                 disabled={saving}
-                className="flex w-full items-center justify-center gap-2 rounded bg-navy-600 px-4 py-3 text-sm font-medium text-white hover:bg-navy-500 disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 flex w-full items-center justify-center gap-2 rounded px-4 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {saving ? (
                   <>
@@ -492,7 +582,7 @@ export function DiscoveryWizardClient({
           <button
             type="button"
             onClick={() => setStep((s) => Math.min(4, s + 1))}
-            className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+            className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
           >
             Next
           </button>
@@ -501,4 +591,3 @@ export function DiscoveryWizardClient({
     </div>
   );
 }
-

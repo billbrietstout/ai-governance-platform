@@ -44,7 +44,8 @@ export function calculateResidualRisk(
   maxReduction = 0.9
 ): number {
   if (controls.length === 0) return riskScore;
-  const combinedMitigation = 1 - controls.reduce((acc, c) => acc * (1 - Math.max(0, Math.min(1, c.effectiveness))), 1);
+  const combinedMitigation =
+    1 - controls.reduce((acc, c) => acc * (1 - Math.max(0, Math.min(1, c.effectiveness))), 1);
   const reduction = Math.min(maxReduction, combinedMitigation);
-  return Math.round((riskScore * (1 - reduction)) * 10) / 10;
+  return Math.round(riskScore * (1 - reduction) * 10) / 10;
 }

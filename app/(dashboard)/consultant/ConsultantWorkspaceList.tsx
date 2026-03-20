@@ -36,11 +36,11 @@ export function ConsultantWorkspaceList({ workspaces }: { workspaces: Workspace[
           placeholder="Search workspaces by client name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 max-w-xs rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:ring-1 focus:outline-none"
         />
         <Link
           href="/consultant/new"
-          className="inline-flex items-center rounded-lg bg-navy-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-white"
         >
           New client +
         </Link>

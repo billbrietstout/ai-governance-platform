@@ -27,11 +27,14 @@ export function getUserDisplayName(user: {
   persona?: string | null;
   role?: string | null;
 }): string {
-  const name = user.email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const name = user.email
+    .split("@")[0]
+    .replace(/[._]/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
   const title = user.persona?.length
-    ? PERSONA_DISPLAY[user.persona] ?? user.persona
+    ? (PERSONA_DISPLAY[user.persona] ?? user.persona)
     : user.role?.length
-      ? ROLE_DISPLAY[user.role] ?? user.role
+      ? (ROLE_DISPLAY[user.role] ?? user.role)
       : null;
   return title ? `${name} (${title})` : name;
 }

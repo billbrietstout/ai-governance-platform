@@ -19,14 +19,15 @@ export default async function ProvenancePage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-8 px-6 py-10">
       <div>
-        <Link href="/layer5-supply-chain" className="text-sm text-navy-600 hover:underline">
+        <Link href="/layer5-supply-chain" className="text-navy-600 text-sm hover:underline">
           ← Supply Chain
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           Model Provenance
         </h1>
         <p className="mt-1 text-slate-600">
-          Training data lineage, fine-tuning chain, and cryptographic attestation for foundation models.
+          Training data lineage, fine-tuning chain, and cryptographic attestation for foundation
+          models.
         </p>
       </div>
 

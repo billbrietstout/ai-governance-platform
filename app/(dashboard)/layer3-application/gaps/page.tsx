@@ -81,7 +81,10 @@ export default async function GapsPage() {
         {gapReports.map(({ asset, report }) => (
           <div key={asset.id} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
             <h2 className="mb-3 font-medium text-gray-900">
-              <Link href={`/layer3-application/assets/${asset.id}`} className="text-navy-600 hover:underline">
+              <Link
+                href={`/layer3-application/assets/${asset.id}`}
+                className="text-navy-600 hover:underline"
+              >
                 {asset.name}
               </Link>
             </h2>
@@ -94,10 +97,13 @@ export default async function GapsPage() {
                 <div className="space-y-3">
                   {Object.entries(report.byFramework).map(([code, v]) => {
                     if (v.gaps.length === 0) return null;
-                    const fwColor = FRAMEWORK_COLORS[code] ?? "bg-gray-100 text-gray-700 border-gray-200";
+                    const fwColor =
+                      FRAMEWORK_COLORS[code] ?? "bg-gray-100 text-gray-700 border-gray-200";
                     return (
                       <div key={code} className="rounded border border-gray-200 bg-gray-50 p-3">
-                        <span className={`inline-block rounded border px-2 py-0.5 text-xs font-medium ${fwColor}`}>
+                        <span
+                          className={`inline-block rounded border px-2 py-0.5 text-xs font-medium ${fwColor}`}
+                        >
                           {code.replace(/_/g, " ")}
                         </span>
                         <ul className="mt-2 space-y-2">
@@ -109,7 +115,9 @@ export default async function GapsPage() {
                               <div>
                                 <span className="font-medium text-gray-900">{g.controlId}</span>
                                 <span className="ml-2 text-gray-500">— {g.title}</span>
-                                <span className="ml-2 text-xs text-gray-500">({g.cosaiLayer ?? "—"})</span>
+                                <span className="ml-2 text-xs text-gray-500">
+                                  ({g.cosaiLayer ?? "—"})
+                                </span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="rounded bg-red-100 px-2 py-0.5 text-xs text-red-700">
@@ -117,7 +125,7 @@ export default async function GapsPage() {
                                 </span>
                                 <Link
                                   href={`/layer3-application/assets/${asset.id}`}
-                                  className="text-xs text-navy-600 hover:underline"
+                                  className="text-navy-600 text-xs hover:underline"
                                 >
                                   View →
                                 </Link>

@@ -59,17 +59,19 @@ export function EvidenceWorkbookClient() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    Promise.all([
-      getEvidenceWorkbook(layer),
-      getEvidenceCompleteness()
-    ]).then(([workbookData, completenessData]) => {
-      if (cancelled) return;
-      setItems(workbookData as WorkbookItem[]);
-      setCompleteness(completenessData as Completeness);
-    }).catch(console.error).finally(() => {
-      if (!cancelled) setLoading(false);
-    });
-    return () => { cancelled = true; };
+    Promise.all([getEvidenceWorkbook(layer), getEvidenceCompleteness()])
+      .then(([workbookData, completenessData]) => {
+        if (cancelled) return;
+        setItems(workbookData as WorkbookItem[]);
+        setCompleteness(completenessData as Completeness);
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [layer]);
 
   const handleExport = async () => {
@@ -101,7 +103,9 @@ export function EvidenceWorkbookClient() {
                   <span className="text-sm text-slate-600">
                     {d.complete} / {d.total}
                   </span>
-                  <span className={`text-xs font-medium ${d.pct >= 80 ? "text-emerald-600" : d.pct >= 50 ? "text-amber-600" : "text-red-600"}`}>
+                  <span
+                    className={`text-xs font-medium ${d.pct >= 80 ? "text-emerald-600" : d.pct >= 50 ? "text-amber-600" : "text-red-600"}`}
+                  >
                     ({d.pct}%)
                   </span>
                 </div>
@@ -111,17 +115,20 @@ export function EvidenceWorkbookClient() {
           <div className="flex items-center gap-3">
             <div className="rounded bg-slate-100 px-3 py-1.5">
               <span className="text-sm font-medium text-slate-700">Overall: </span>
-              <span className={`font-bold ${completeness.overallPct >= 80 ? "text-emerald-600" : completeness.overallPct >= 50 ? "text-amber-600" : "text-red-600"}`}>
+              <span
+                className={`font-bold ${completeness.overallPct >= 80 ? "text-emerald-600" : completeness.overallPct >= 50 ? "text-amber-600" : "text-red-600"}`}
+              >
                 {completeness.overallPct}%
               </span>
               <span className="text-sm text-slate-600">
-                {" "}({completeness.totalComplete} / {completeness.totalItems} items)
+                {" "}
+                ({completeness.totalComplete} / {completeness.totalItems} items)
               </span>
             </div>
             <button
               type="button"
               onClick={handleExport}
-              className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+              className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white"
             >
               <FileDown className="h-4 w-4" />
               Export workbook
@@ -158,12 +165,24 @@ export function EvidenceWorkbookClient() {
           <table className="min-w-full divide-y divide-slate-200">
             <thead>
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Evidence item</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Category</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Required for</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Last updated</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-slate-500">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                  Evidence item
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                  Category
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                  Required for
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                  Last updated
+                </th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
@@ -171,7 +190,9 @@ export function EvidenceWorkbookClient() {
                 <tr key={item.id} className="hover:bg-slate-50">
                   <td className="px-4 py-3 text-sm font-medium text-slate-900">{item.name}</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[item.category] ?? "bg-slate-100 text-slate-700"}`}>
+                    <span
+                      className={`rounded px-2 py-0.5 text-xs font-medium ${CATEGORY_COLORS[item.category] ?? "bg-slate-100 text-slate-700"}`}
+                    >
                       {item.category}
                     </span>
                   </td>
@@ -182,7 +203,11 @@ export function EvidenceWorkbookClient() {
                     <span className="flex items-center gap-1.5">
                       <StatusIcon status={item.status} />
                       <span className="text-sm">
-                        {item.status === "present" ? "Present" : item.status === "partial" ? "Partial" : "Missing"}
+                        {item.status === "present"
+                          ? "Present"
+                          : item.status === "partial"
+                            ? "Partial"
+                            : "Missing"}
                       </span>
                     </span>
                   </td>
@@ -193,7 +218,7 @@ export function EvidenceWorkbookClient() {
                     {item.status === "missing" ? (
                       <Link
                         href={item.link}
-                        className="text-sm font-medium text-navy-600 hover:underline"
+                        className="text-navy-600 text-sm font-medium hover:underline"
                       >
                         Add evidence →
                       </Link>

@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (token) {
     const user = await prisma.user.findUnique({
       where: { unsubscribeToken: token },
-      select: { id: true, email: true },
+      select: { id: true, email: true }
     });
 
     if (!user) {
@@ -19,12 +19,12 @@ export async function GET(req: NextRequest) {
     await prisma.$transaction([
       prisma.notificationPreference.updateMany({
         where: { userId: user.id },
-        data: { emailEnabled: true },
+        data: { emailEnabled: true }
       }),
       prisma.user.update({
         where: { id: user.id },
-        data: { unsubscribedAt: null },
-      }),
+        data: { unsubscribedAt: null }
+      })
     ]);
 
     return NextResponse.redirect(
@@ -39,19 +39,19 @@ export async function GET(req: NextRequest) {
   if (email) {
     const user = await prisma.user.findFirst({
       where: { email },
-      select: { id: true },
+      select: { id: true }
     });
 
     if (user) {
       await prisma.$transaction([
         prisma.notificationPreference.updateMany({
           where: { userId: user.id },
-          data: { emailEnabled: true },
+          data: { emailEnabled: true }
         }),
         prisma.user.update({
           where: { id: user.id },
-          data: { unsubscribedAt: null },
-        }),
+          data: { unsubscribedAt: null }
+        })
       ]);
     }
 

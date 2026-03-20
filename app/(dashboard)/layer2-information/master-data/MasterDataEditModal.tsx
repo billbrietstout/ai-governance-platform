@@ -99,7 +99,7 @@ export function MasterDataEditModal({ entity, users = [], onClose, onSaved }: Pr
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+            className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save"}
           </button>

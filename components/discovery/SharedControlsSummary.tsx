@@ -33,7 +33,9 @@ export function SharedControlsSummary({ regulations }: Props) {
     return (
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-2 text-sm font-medium text-slate-700">Shared control domains</h3>
-        <p className="text-sm text-slate-500">No control domains are shared across 2+ regulations.</p>
+        <p className="text-sm text-slate-500">
+          No control domains are shared across 2+ regulations.
+        </p>
       </div>
     );
   }
@@ -64,7 +66,8 @@ export function SharedControlsSummary({ regulations }: Props) {
               ))}
             </div>
             <p className="mt-1 text-xs text-emerald-600">
-              Satisfies {regs.length} regulation{regs.length !== 1 ? "s" : ""} with one implementation
+              Satisfies {regs.length} regulation{regs.length !== 1 ? "s" : ""} with one
+              implementation
             </p>
           </li>
         ))}

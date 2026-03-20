@@ -73,14 +73,78 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
     qualityScore?: number;
     sourceSystem?: string;
   }> = [
-    { name: "Customer Master", entityType: "CUSTOMER", classification: "RESTRICTED", aiAccessPolicy: "GOVERNED", recordCount: 125000, qualityScore: 92, sourceSystem: "SAP CRM" },
-    { name: "Product Catalog", entityType: "PRODUCT", classification: "INTERNAL", aiAccessPolicy: "OPEN", recordCount: 45000, qualityScore: 98, sourceSystem: "SAP MDM" },
-    { name: "Vendor Registry", entityType: "VENDOR", classification: "CONFIDENTIAL", aiAccessPolicy: "GOVERNED", recordCount: 3200, qualityScore: 88, sourceSystem: "SAP SRM" },
-    { name: "Employee Records", entityType: "EMPLOYEE", classification: "RESTRICTED", aiAccessPolicy: "PROHIBITED", recordCount: 8500, qualityScore: 95, sourceSystem: "SAP SuccessFactors" },
-    { name: "Finance Master", entityType: "FINANCE", classification: "CONFIDENTIAL", aiAccessPolicy: "RESTRICTED", recordCount: 210000, qualityScore: 89, sourceSystem: "SAP FI" },
-    { name: "Plant Locations", entityType: "LOCATION", classification: "INTERNAL", aiAccessPolicy: "OPEN", recordCount: 42, qualityScore: 100, sourceSystem: "SAP EAM" },
-    { name: "Distribution Centers", entityType: "LOCATION", classification: "INTERNAL", aiAccessPolicy: "OPEN", recordCount: 18, qualityScore: 97, sourceSystem: "SAP EWM" },
-    { name: "HR Services Data", entityType: "OTHER", classification: "RESTRICTED", aiAccessPolicy: "RESTRICTED", recordCount: 12000, qualityScore: 85, sourceSystem: "SAP HCM" }
+    {
+      name: "Customer Master",
+      entityType: "CUSTOMER",
+      classification: "RESTRICTED",
+      aiAccessPolicy: "GOVERNED",
+      recordCount: 125000,
+      qualityScore: 92,
+      sourceSystem: "SAP CRM"
+    },
+    {
+      name: "Product Catalog",
+      entityType: "PRODUCT",
+      classification: "INTERNAL",
+      aiAccessPolicy: "OPEN",
+      recordCount: 45000,
+      qualityScore: 98,
+      sourceSystem: "SAP MDM"
+    },
+    {
+      name: "Vendor Registry",
+      entityType: "VENDOR",
+      classification: "CONFIDENTIAL",
+      aiAccessPolicy: "GOVERNED",
+      recordCount: 3200,
+      qualityScore: 88,
+      sourceSystem: "SAP SRM"
+    },
+    {
+      name: "Employee Records",
+      entityType: "EMPLOYEE",
+      classification: "RESTRICTED",
+      aiAccessPolicy: "PROHIBITED",
+      recordCount: 8500,
+      qualityScore: 95,
+      sourceSystem: "SAP SuccessFactors"
+    },
+    {
+      name: "Finance Master",
+      entityType: "FINANCE",
+      classification: "CONFIDENTIAL",
+      aiAccessPolicy: "RESTRICTED",
+      recordCount: 210000,
+      qualityScore: 89,
+      sourceSystem: "SAP FI"
+    },
+    {
+      name: "Plant Locations",
+      entityType: "LOCATION",
+      classification: "INTERNAL",
+      aiAccessPolicy: "OPEN",
+      recordCount: 42,
+      qualityScore: 100,
+      sourceSystem: "SAP EAM"
+    },
+    {
+      name: "Distribution Centers",
+      entityType: "LOCATION",
+      classification: "INTERNAL",
+      aiAccessPolicy: "OPEN",
+      recordCount: 18,
+      qualityScore: 97,
+      sourceSystem: "SAP EWM"
+    },
+    {
+      name: "HR Services Data",
+      entityType: "OTHER",
+      classification: "RESTRICTED",
+      aiAccessPolicy: "RESTRICTED",
+      recordCount: 12000,
+      qualityScore: 85,
+      sourceSystem: "SAP HCM"
+    }
   ];
 
   const entityByName = new Map<string, string>();
@@ -113,12 +177,42 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
     pipelineType: string;
     refreshFrequency: string;
   }> = [
-    { sourceEntity: "Customer Master", targetAsset: "Customer Churn Predictor", pipelineType: "ETL", refreshFrequency: "DAILY" },
-    { sourceEntity: "Product Catalog", targetAsset: "Production Schedule Optimizer", pipelineType: "API", refreshFrequency: "REALTIME" },
-    { sourceEntity: "Employee Records", targetAsset: "CV Screening Assistant", pipelineType: "BATCH", refreshFrequency: "WEEKLY" },
-    { sourceEntity: "Finance Master", targetAsset: "Cash Flow Predictor", pipelineType: "ETL", refreshFrequency: "DAILY" },
-    { sourceEntity: "Plant Locations", targetAsset: "Equipment Failure Predictor", pipelineType: "STREAM", refreshFrequency: "REALTIME" },
-    { sourceEntity: "Vendor Registry", targetAsset: "Supplier Risk Scorer", pipelineType: "API", refreshFrequency: "DAILY" }
+    {
+      sourceEntity: "Customer Master",
+      targetAsset: "Customer Churn Predictor",
+      pipelineType: "ETL",
+      refreshFrequency: "DAILY"
+    },
+    {
+      sourceEntity: "Product Catalog",
+      targetAsset: "Production Schedule Optimizer",
+      pipelineType: "API",
+      refreshFrequency: "REALTIME"
+    },
+    {
+      sourceEntity: "Employee Records",
+      targetAsset: "CV Screening Assistant",
+      pipelineType: "BATCH",
+      refreshFrequency: "WEEKLY"
+    },
+    {
+      sourceEntity: "Finance Master",
+      targetAsset: "Cash Flow Predictor",
+      pipelineType: "ETL",
+      refreshFrequency: "DAILY"
+    },
+    {
+      sourceEntity: "Plant Locations",
+      targetAsset: "Equipment Failure Predictor",
+      pipelineType: "STREAM",
+      refreshFrequency: "REALTIME"
+    },
+    {
+      sourceEntity: "Vendor Registry",
+      targetAsset: "Supplier Risk Scorer",
+      pipelineType: "API",
+      refreshFrequency: "DAILY"
+    }
   ];
 
   for (const lr of lineageRecords) {
@@ -156,9 +250,15 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
     {
       name: "PII Handling Policy",
       policyType: "PRIVACY",
-      description: "Governs collection, storage, and use of personally identifiable information in AI systems",
+      description:
+        "Governs collection, storage, and use of personally identifiable information in AI systems",
       appliesTo: ["RESTRICTED", "CONFIDENTIAL"],
-      controls: ["Data minimization", "Consent documentation", "Retention limits", "Access logging"],
+      controls: [
+        "Data minimization",
+        "Consent documentation",
+        "Retention limits",
+        "Access logging"
+      ],
       status: "APPROVED"
     },
     {
@@ -217,9 +317,30 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
   };
   const creditScoringResults = {
     mandatory: [
-      { code: "EU_AI_ACT", name: "EU AI Act", jurisdiction: "EU", applicability: "MANDATORY", keyRequirements: "High-risk AI system obligations", implementationEffort: "High" as const },
-      { code: "SR_11_7", name: "SR 11-7", jurisdiction: "US", applicability: "MANDATORY", keyRequirements: "Model risk management", implementationEffort: "Medium" as const },
-      { code: "DORA", name: "DORA", jurisdiction: "EU", applicability: "MANDATORY", keyRequirements: "ICT risk management", implementationEffort: "Medium" as const }
+      {
+        code: "EU_AI_ACT",
+        name: "EU AI Act",
+        jurisdiction: "EU",
+        applicability: "MANDATORY",
+        keyRequirements: "High-risk AI system obligations",
+        implementationEffort: "High" as const
+      },
+      {
+        code: "SR_11_7",
+        name: "SR 11-7",
+        jurisdiction: "US",
+        applicability: "MANDATORY",
+        keyRequirements: "Model risk management",
+        implementationEffort: "Medium" as const
+      },
+      {
+        code: "DORA",
+        name: "DORA",
+        jurisdiction: "EU",
+        applicability: "MANDATORY",
+        keyRequirements: "ICT risk management",
+        implementationEffort: "Medium" as const
+      }
     ],
     likelyApplicable: [],
     recommended: [],
@@ -246,8 +367,22 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
   const equipmentResults = {
     mandatory: [],
     likelyApplicable: [
-      { code: "EU_AI_ACT", name: "EU AI Act", jurisdiction: "EU", applicability: "LIKELY_APPLICABLE", keyRequirements: "Limited risk obligations", implementationEffort: "Medium" as const },
-      { code: "ISO_42001", name: "ISO 42001", jurisdiction: "International", applicability: "LIKELY_APPLICABLE", keyRequirements: "AI management system", implementationEffort: "High" as const }
+      {
+        code: "EU_AI_ACT",
+        name: "EU AI Act",
+        jurisdiction: "EU",
+        applicability: "LIKELY_APPLICABLE",
+        keyRequirements: "Limited risk obligations",
+        implementationEffort: "Medium" as const
+      },
+      {
+        code: "ISO_42001",
+        name: "ISO 42001",
+        jurisdiction: "International",
+        applicability: "LIKELY_APPLICABLE",
+        keyRequirements: "AI management system",
+        implementationEffort: "High" as const
+      }
     ],
     recommended: [],
     requiredControls: [],
@@ -290,8 +425,16 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
     overallScore: number;
     layerScores: { L1: number; L2: number; L3: number; L4: number; L5: number };
   }> = [
-    { createdAt: new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), overallScore: 28, layerScores: { L1: 32, L2: 18, L3: 25, L4: 38, L5: 30 } },
-    { createdAt: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), overallScore: 35, layerScores: { L1: 38, L2: 25, L3: 32, L4: 42, L5: 36 } },
+    {
+      createdAt: new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000),
+      overallScore: 28,
+      layerScores: { L1: 32, L2: 18, L3: 25, L4: 38, L5: 30 }
+    },
+    {
+      createdAt: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+      overallScore: 35,
+      layerScores: { L1: 38, L2: 25, L3: 32, L4: 42, L5: 36 }
+    },
     { createdAt: now, overallScore: 40, layerScores: { L1: 42, L2: 32, L3: 38, L4: 45, L5: 40 } }
   ];
 
@@ -300,7 +443,10 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
     const existing = await prisma.complianceSnapshot.findFirst({
       where: {
         orgId,
-        createdAt: { gte: new Date(s.createdAt.getTime() - 86400000), lte: new Date(s.createdAt.getTime() + 86400000) }
+        createdAt: {
+          gte: new Date(s.createdAt.getTime() - 86400000),
+          lte: new Date(s.createdAt.getTime() + 86400000)
+        }
       }
     });
     if (!existing) {
@@ -388,5 +534,7 @@ export async function seedDemoPhases48(prisma: PrismaClient): Promise<void> {
   });
 
   // eslint-disable-next-line no-console
-  console.log("Phases 4–8 demo seeded: MaturityAssessment, MasterDataEntity, DataLineageRecord, DataGovernancePolicy, RegulationDiscovery, ComplianceSnapshot, ProvenanceRecord.");
+  console.log(
+    "Phases 4–8 demo seeded: MaturityAssessment, MasterDataEntity, DataLineageRecord, DataGovernancePolicy, RegulationDiscovery, ComplianceSnapshot, ProvenanceRecord."
+  );
 }

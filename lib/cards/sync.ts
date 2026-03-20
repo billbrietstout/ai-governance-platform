@@ -38,7 +38,11 @@ export async function scheduleCardSync(
   });
 }
 
-export function detectCardChanges(assetId: string, newCard: NormalizedCard, existing: NormalizedCard | null): ChangeReport {
+export function detectCardChanges(
+  assetId: string,
+  newCard: NormalizedCard,
+  existing: NormalizedCard | null
+): ChangeReport {
   const addedFields: string[] = [];
   const removedFields: string[] = [];
   const modifiedFields: string[] = [];

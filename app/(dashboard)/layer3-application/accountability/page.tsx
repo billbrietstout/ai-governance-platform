@@ -33,7 +33,7 @@ export default async function AccountabilityPage({
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Accountability Matrix</h1>
-        <p className="mt-1 text-slatePro-300">
+        <p className="text-slatePro-300 mt-1">
           Cross-asset RACI matrix. Filter by CoSAI layer to see ownership at each layer.
         </p>
       </div>
@@ -42,11 +42,16 @@ export default async function AccountabilityPage({
 
       {data.gaps.length > 0 && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-          <h2 className="text-sm font-medium text-amber-400">Gaps — components without accountable party</h2>
+          <h2 className="text-sm font-medium text-amber-400">
+            Gaps — components without accountable party
+          </h2>
           <ul className="mt-2 space-y-1">
             {data.gaps.map((g) => (
               <li key={g.assetId}>
-                <Link href={`/layer3-application/assets/${g.assetId}`} className="text-navy-400 hover:underline">
+                <Link
+                  href={`/layer3-application/assets/${g.assetId}`}
+                  className="text-navy-400 hover:underline"
+                >
                   {g.assetName}
                 </Link>
               </li>
@@ -62,19 +67,27 @@ export default async function AccountabilityPage({
           const showLayers = layer ? [layer] : [...new Set(assignments.map((a) => a.cosaiLayer))];
           if (filtered.length === 0 && !layer) return null;
           return (
-            <div key={asset.id} className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
-              <h2 className="mb-2 font-medium text-slatePro-200">
-                <Link href={`/layer3-application/assets/${asset.id}`} className="text-navy-400 hover:underline">
+            <div
+              key={asset.id}
+              className="border-slatePro-700 bg-slatePro-900/30 rounded-lg border p-4"
+            >
+              <h2 className="text-slatePro-200 mb-2 font-medium">
+                <Link
+                  href={`/layer3-application/assets/${asset.id}`}
+                  className="text-navy-400 hover:underline"
+                >
                   {asset.name}
                 </Link>
               </h2>
               {filtered.length === 0 ? (
-                <p className="text-amber-400 text-sm">No assignments for this layer</p>
+                <p className="text-sm text-amber-400">No assignments for this layer</p>
               ) : (
                 <AccountabilityMatrix
                   assignments={filtered.map((a) => ({
                     ...a,
-                    supportingParties: Array.isArray(a.supportingParties) ? (a.supportingParties as string[]) : undefined
+                    supportingParties: Array.isArray(a.supportingParties)
+                      ? (a.supportingParties as string[])
+                      : undefined
                   }))}
                   layers={showLayers}
                 />

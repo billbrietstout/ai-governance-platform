@@ -6,7 +6,12 @@ import { TRPCError } from "@trpc/server";
 
 import { prisma } from "@/lib/prisma";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { PERSONA_CONFIGS, PERSONA_IDS, getPersonaConfig, type PersonaId } from "@/lib/personas/config";
+import {
+  PERSONA_CONFIGS,
+  PERSONA_IDS,
+  getPersonaConfig,
+  type PersonaId
+} from "@/lib/personas/config";
 
 const personaSchema = z.enum([
   "CEO",

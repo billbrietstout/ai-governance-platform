@@ -14,10 +14,20 @@ export type RequirementCoverage = {
   value: string;
 };
 
-const ARTICLE_MAP: { article: string; title: string; field: keyof NormalizedCard; requiredForHigh: boolean }[] = [
+const ARTICLE_MAP: {
+  article: string;
+  title: string;
+  field: keyof NormalizedCard;
+  requiredForHigh: boolean;
+}[] = [
   { article: "Art. 10", title: "Data governance", field: "trainingData", requiredForHigh: true },
   { article: "Art. 11", title: "Data governance", field: "trainingData", requiredForHigh: true },
-  { article: "Art. 12", title: "Technical documentation", field: "trainingData", requiredForHigh: true },
+  {
+    article: "Art. 12",
+    title: "Technical documentation",
+    field: "trainingData",
+    requiredForHigh: true
+  },
   { article: "Art. 13", title: "Transparency", field: "intendedUse", requiredForHigh: true },
   { article: "Art. 14", title: "Human oversight", field: "intendedUse", requiredForHigh: true },
   { article: "Art. 15", title: "Accuracy", field: "evaluations", requiredForHigh: true }

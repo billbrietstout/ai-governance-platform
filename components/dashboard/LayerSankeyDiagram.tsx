@@ -49,12 +49,7 @@ function lightenColor(hex: string, factor: number): string {
   return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
 }
 
-
-export function LayerSankeyDiagram({
-  layerData,
-  links,
-  layerLinks = DEFAULT_LAYER_LINKS
-}: Props) {
+export function LayerSankeyDiagram({ layerData, links, layerLinks = DEFAULT_LAYER_LINKS }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
 

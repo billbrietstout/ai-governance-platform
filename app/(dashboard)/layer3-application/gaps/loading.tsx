@@ -17,7 +17,10 @@ export default function GapsLoading() {
 
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-32 animate-pulse rounded-lg border border-gray-200 bg-white shadow-sm" />
+          <div
+            key={i}
+            className="h-32 animate-pulse rounded-lg border border-gray-200 bg-white shadow-sm"
+          />
         ))}
       </div>
     </main>

@@ -71,7 +71,14 @@ export async function getCurrentTenant(session: Session | null): Promise<{
  * Organization is scoped by id (current org only). All other models by orgId.
  * Note: $use was removed in Prisma 5; tenant filtering must be applied at query level.
  */
-export function createTenantMiddleware(): (params: { model?: string; action: string; args: Record<string, unknown> }, next: (params: { model?: string; action: string; args: Record<string, unknown> }) => Promise<unknown>) => Promise<unknown> {
+export function createTenantMiddleware(): (
+  params: { model?: string; action: string; args: Record<string, unknown> },
+  next: (params: {
+    model?: string;
+    action: string;
+    args: Record<string, unknown>;
+  }) => Promise<unknown>
+) => Promise<unknown> {
   const orgIdModels = new Set([
     "User",
     "AIAsset",
@@ -99,7 +106,17 @@ export function createTenantMiddleware(): (params: { model?: string; action: str
     } else if (orgIdModels.has(model)) {
       if (args.where) {
         args.where = { ...args.where, orgId } as Record<string, unknown>;
-      } else if (["findMany", "findFirst", "findUnique", "update", "updateMany", "delete", "deleteMany"].includes(params.action)) {
+      } else if (
+        [
+          "findMany",
+          "findFirst",
+          "findUnique",
+          "update",
+          "updateMany",
+          "delete",
+          "deleteMany"
+        ].includes(params.action)
+      ) {
         args.where = { ...(args.where ?? {}), orgId } as Record<string, unknown>;
       }
       if (params.action === "create" && args.data) {

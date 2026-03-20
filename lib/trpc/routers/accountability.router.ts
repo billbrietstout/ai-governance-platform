@@ -23,7 +23,19 @@ export const accountabilityRouter = createTRPCRouter({
       });
 
       const assignments = await prisma.accountabilityAssignment.findMany({
-        where: { assetId: { in: assets.map((a) => a.id) }, ...(input.cosaiLayer ? { cosaiLayer: input.cosaiLayer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" } : {}) },
+        where: {
+          assetId: { in: assets.map((a) => a.id) },
+          ...(input.cosaiLayer
+            ? {
+                cosaiLayer: input.cosaiLayer as
+                  | "LAYER_1_BUSINESS"
+                  | "LAYER_2_INFORMATION"
+                  | "LAYER_3_APPLICATION"
+                  | "LAYER_4_PLATFORM"
+                  | "LAYER_5_SUPPLY_CHAIN"
+              }
+            : {})
+        },
         orderBy: [{ cosaiLayer: "asc" }, { componentName: "asc" }]
       });
 
@@ -53,7 +65,9 @@ export const accountabilityRouter = createTRPCRouter({
   getAccountabilityMatrix: protectedProcedure
     .input(z.object({ assetId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
 
       const assignments = await prisma.accountabilityAssignment.findMany({
@@ -81,7 +95,9 @@ export const accountabilityRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
 
       const prev = await prisma.accountabilityAssignment.findUnique({
@@ -137,7 +153,8 @@ export const accountabilityRouter = createTRPCRouter({
         if (msg.includes("Unique constraint") || msg.includes("unique") || msg.includes("P2002")) {
           throw new TRPCError({
             code: "CONFLICT",
-            message: "One accountable party only per (asset, component, layer). Unique constraint violation."
+            message:
+              "One accountable party only per (asset, component, layer). Unique constraint violation."
           });
         }
         throw e;
@@ -183,9 +200,11 @@ export const accountabilityRouter = createTRPCRouter({
           const asset = assetById.get(assetId);
           if (!asset) continue;
           const email = userEmailById.get(userId) ?? userId;
-          const cosaiLayer = (asset.cosaiLayer && COSAI_LAYERS.includes(asset.cosaiLayer as (typeof COSAI_LAYERS)[number]))
-            ? (asset.cosaiLayer as (typeof COSAI_LAYERS)[number])
-            : defaultLayer;
+          const cosaiLayer =
+            asset.cosaiLayer &&
+            COSAI_LAYERS.includes(asset.cosaiLayer as (typeof COSAI_LAYERS)[number])
+              ? (asset.cosaiLayer as (typeof COSAI_LAYERS)[number])
+              : defaultLayer;
 
           await tx.accountabilityAssignment.upsert({
             where: {

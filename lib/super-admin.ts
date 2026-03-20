@@ -7,7 +7,9 @@ type Session = { user?: { id?: string; orgId?: string; isSuperAdmin?: boolean } 
  * Guard for API routes / Server Actions.
  * Returns typed success or error result.
  */
-export function requireSuperAdmin(session: Session):
+export function requireSuperAdmin(
+  session: Session
+):
   | { ok: false; status: 401 | 403; body: { error: string } }
   | { ok: true; userId: string; orgId: string } {
   if (!session?.user) {

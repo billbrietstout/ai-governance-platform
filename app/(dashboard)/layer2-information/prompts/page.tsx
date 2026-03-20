@@ -7,13 +7,31 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 
 const POLICIES = [
   { name: "No PII in System Prompts", status: "ACTIVE", scope: "ALL assets" },
-  { name: "Employment Decision Prompts Require Legal Review", status: "ACTIVE", scope: "HIGH risk HR assets" },
-  { name: "Agent Planning Prompts Require Security Review", status: "ACTIVE", scope: "AGENT type assets" }
+  {
+    name: "Employment Decision Prompts Require Legal Review",
+    status: "ACTIVE",
+    scope: "HIGH risk HR assets"
+  },
+  {
+    name: "Agent Planning Prompts Require Security Review",
+    status: "ACTIVE",
+    scope: "AGENT type assets"
+  }
 ];
 
 const VIOLATIONS = [
-  { asset: "CV Screening Assistant", issue: "System prompt contains candidate name references", status: "OPEN", daysAgo: 3 },
-  { asset: "Dynamic Pricing Model", issue: "Prompt lacks transparency disclosure", status: "OPEN", daysAgo: 7 }
+  {
+    asset: "CV Screening Assistant",
+    issue: "System prompt contains candidate name references",
+    status: "OPEN",
+    daysAgo: 3
+  },
+  {
+    asset: "Dynamic Pricing Model",
+    issue: "Prompt lacks transparency disclosure",
+    status: "OPEN",
+    daysAgo: 7
+  }
 ];
 
 const STATUS_BADGES: Record<string, string> = {
@@ -37,18 +55,20 @@ export default async function PromptGovernancePage() {
   return (
     <main className="flex flex-col gap-6">
       <div>
-        <Link href="/layer2-information" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer2-information" className="text-navy-400 text-sm hover:underline">
           ← Layer 2: Information
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Prompt Governance</h1>
-        <p className="mt-1 text-slatePro-300">Registry of prompt templates and governance policies.</p>
+        <p className="text-slatePro-300 mt-1">
+          Registry of prompt templates and governance policies.
+        </p>
       </div>
 
       {/* Summary bar */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <FileText className="h-4 w-4 text-navy-500" />
+            <FileText className="text-navy-500 h-4 w-4" />
             <span className="text-sm font-medium text-slate-600">Total Prompts</span>
           </div>
           <p className="mt-1 text-2xl font-semibold text-gray-900">{summary.total}</p>
@@ -91,7 +111,9 @@ export default async function PromptGovernancePage() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Status</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Risk</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Owner</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Last Reviewed</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Last Reviewed
+                </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-slate-600">Action</th>
               </tr>
             </thead>
@@ -100,19 +122,21 @@ export default async function PromptGovernancePage() {
                 <tr key={t.id} className="border-b border-slate-100 hover:bg-slate-50/50">
                   <td className="px-4 py-3">
                     <span className="font-medium text-gray-900">{t.templateName}</span>
-                    {t.riskFlag && (
-                      <p className="mt-0.5 text-xs text-amber-600">{t.riskFlag}</p>
-                    )}
+                    {t.riskFlag && <p className="mt-0.5 text-xs text-amber-600">{t.riskFlag}</p>}
                   </td>
                   <td className="px-4 py-3 text-sm text-slate-600">{t.assetName}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{t.type}</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGES[t.status] ?? STATUS_BADGES.DRAFT}`}>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGES[t.status] ?? STATUS_BADGES.DRAFT}`}
+                    >
                       {t.status}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${RISK_BADGES[t.riskLevel] ?? RISK_BADGES.LOW}`}>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${RISK_BADGES[t.riskLevel] ?? RISK_BADGES.LOW}`}
+                    >
                       {t.riskLevel}
                     </span>
                   </td>
@@ -123,7 +147,7 @@ export default async function PromptGovernancePage() {
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/layer3-application/assets/${t.assetId}`}
-                      className="text-sm font-medium text-navy-600 hover:underline"
+                      className="text-navy-600 text-sm font-medium hover:underline"
                     >
                       View
                     </Link>
@@ -141,7 +165,10 @@ export default async function PromptGovernancePage() {
           <h2 className="mb-3 text-sm font-medium text-slate-700">Prompt Policy Panel</h2>
           <ul className="space-y-2">
             {POLICIES.map((p) => (
-              <li key={p.name} className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
+              <li
+                key={p.name}
+                className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2"
+              >
                 <div>
                   <span className="font-medium text-gray-900">{p.name}</span>
                   <p className="text-xs text-slate-500">Applies to: {p.scope}</p>
@@ -159,7 +186,10 @@ export default async function PromptGovernancePage() {
           <h2 className="mb-3 text-sm font-medium text-slate-700">Recent Policy Violations</h2>
           <ul className="space-y-2">
             {VIOLATIONS.map((v) => (
-              <li key={`${v.asset}-${v.issue}`} className="flex items-center justify-between rounded border border-red-100 bg-red-50/50 px-3 py-2">
+              <li
+                key={`${v.asset}-${v.issue}`}
+                className="flex items-center justify-between rounded border border-red-100 bg-red-50/50 px-3 py-2"
+              >
                 <div>
                   <span className="font-medium text-gray-900">{v.asset}</span>
                   <p className="text-xs text-slate-600">{v.issue}</p>

@@ -49,9 +49,14 @@ export function AddPipelineForm({ entities, assets }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+    >
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Pipeline Name *</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Pipeline Name *
+        </label>
         <input
           type="text"
           value={form.name}
@@ -61,7 +66,9 @@ export function AddPipelineForm({ entities, assets }: Props) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Pipeline Type *</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Pipeline Type *
+        </label>
         <select
           value={form.pipelineType}
           onChange={(e) => setForm((f) => ({ ...f, pipelineType: e.target.value }))}
@@ -75,7 +82,9 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Source Entity</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Source Entity
+        </label>
         <select
           value={form.sourceEntityId}
           onChange={(e) => setForm((f) => ({ ...f, sourceEntityId: e.target.value }))}
@@ -90,7 +99,9 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Target AI Asset</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Target AI Asset
+        </label>
         <select
           value={form.targetAssetId}
           onChange={(e) => setForm((f) => ({ ...f, targetAssetId: e.target.value }))}
@@ -105,7 +116,9 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Transformation Description</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Transformation Description
+        </label>
         <textarea
           value={form.transformations}
           onChange={(e) => setForm((f) => ({ ...f, transformations: e.target.value }))}
@@ -114,7 +127,9 @@ export function AddPipelineForm({ entities, assets }: Props) {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Refresh Frequency</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Refresh Frequency
+        </label>
         <select
           value={form.refreshFrequency}
           onChange={(e) => setForm((f) => ({ ...f, refreshFrequency: e.target.value }))}
@@ -129,10 +144,14 @@ export function AddPipelineForm({ entities, assets }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>Data Classification</label>
+        <label className="block text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>
+          Data Classification
+        </label>
         <select
           value={form.dataClassification}
-          onChange={(e) => setForm((f) => ({ ...f, dataClassification: e.target.value as "INTERNAL" }))}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, dataClassification: e.target.value as "INTERNAL" }))
+          }
           className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
         >
           {["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"].map((c) => (
@@ -146,7 +165,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {saving ? "Saving..." : "Add Pipeline"}
         </button>

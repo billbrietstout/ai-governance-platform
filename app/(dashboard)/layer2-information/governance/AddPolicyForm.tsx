@@ -26,7 +26,9 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
   const toggleClassification = (c: Classification) => {
     setForm((f) => ({
       ...f,
-      appliesTo: f.appliesTo.includes(c) ? f.appliesTo.filter((x) => x !== c) : ([...f.appliesTo, c] as Classification[])
+      appliesTo: f.appliesTo.includes(c)
+        ? f.appliesTo.filter((x) => x !== c)
+        : ([...f.appliesTo, c] as Classification[])
     }));
   };
 
@@ -39,10 +41,22 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
         policyType: form.policyType,
         description: form.description,
         appliesTo: form.appliesTo,
-        controls: form.controls ? form.controls.split(",").map((s) => s.trim()).filter(Boolean) : [],
+        controls: form.controls
+          ? form.controls
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
         ownerId: form.ownerId || undefined
       });
-      setForm({ name: "", policyType: "CLASSIFICATION", description: "", appliesTo: [], controls: "", ownerId: "" });
+      setForm({
+        name: "",
+        policyType: "CLASSIFICATION",
+        description: "",
+        appliesTo: [],
+        controls: "",
+        ownerId: ""
+      });
       setExpanded(false);
       router.refresh();
     } finally {
@@ -76,7 +90,12 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
             <label className="block text-sm font-medium text-slate-700">Policy Type *</label>
             <select
               value={form.policyType}
-              onChange={(e) => setForm((f) => ({ ...f, policyType: e.target.value as (typeof POLICY_TYPES)[number] }))}
+              onChange={(e) =>
+                setForm((f) => ({
+                  ...f,
+                  policyType: e.target.value as (typeof POLICY_TYPES)[number]
+                }))
+              }
               className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
             >
               {POLICY_TYPES.map((t) => (
@@ -97,7 +116,9 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Applies to (classification levels)</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Applies to (classification levels)
+            </label>
             <div className="mt-2 flex flex-wrap gap-2">
               {CLASSIFICATIONS.map((c) => (
                 <label key={c} className="flex items-center gap-1.5">
@@ -113,7 +134,9 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Required controls (comma-separated)</label>
+            <label className="block text-sm font-medium text-slate-700">
+              Required controls (comma-separated)
+            </label>
             <input
               type="text"
               value={form.controls}
@@ -141,7 +164,7 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
             <button
               type="submit"
               disabled={saving}
-              className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+              className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               {saving ? "Saving..." : "Add Policy"}
             </button>

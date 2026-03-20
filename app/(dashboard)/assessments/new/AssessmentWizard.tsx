@@ -66,22 +66,24 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
 
       {step === 1 && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-slatePro-300">Select asset</label>
+          <label className="text-slatePro-300 block text-sm font-medium">Select asset</label>
           <select
             value={assetId}
             onChange={(e) => setAssetId(e.target.value)}
-            className="w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+            className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 w-full rounded border px-3 py-2"
           >
             <option value="">—</option>
             {assets.map((a) => (
-              <option key={a.id} value={a.id}>{a.name}</option>
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
             ))}
           </select>
           <button
             type="button"
             onClick={() => setStep(2)}
             disabled={!assetId}
-            className="rounded bg-navy-600 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+            className="bg-navy-600 rounded px-3 py-1.5 text-sm text-white disabled:opacity-50"
           >
             Next
           </button>
@@ -90,7 +92,9 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
 
       {step === 2 && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-slatePro-300">Select frameworks (vertical-applicable first)</label>
+          <label className="text-slatePro-300 block text-sm font-medium">
+            Select frameworks (vertical-applicable first)
+          </label>
           <div className="space-y-1">
             {frameworks.map((f) => (
               <label key={f.id} className="flex items-center gap-2">
@@ -100,7 +104,9 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
                   onChange={() => toggleFramework(f.id)}
                   className="rounded"
                 />
-                <span className="text-slatePro-200">{f.name} ({f.code})</span>
+                <span className="text-slatePro-200">
+                  {f.name} ({f.code})
+                </span>
               </label>
             ))}
           </div>
@@ -108,7 +114,7 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
             type="button"
             onClick={() => setStep(3)}
             disabled={frameworkIds.length === 0}
-            className="rounded bg-navy-600 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+            className="bg-navy-600 rounded px-3 py-1.5 text-sm text-white disabled:opacity-50"
           >
             Next
           </button>
@@ -117,7 +123,9 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
 
       {step === 3 && (
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-slatePro-300">Select CoSAI layers in scope</label>
+          <label className="text-slatePro-300 block text-sm font-medium">
+            Select CoSAI layers in scope
+          </label>
           <div className="space-y-1">
             {LAYERS.map((l) => (
               <label key={l} className="flex items-center gap-2">
@@ -127,7 +135,9 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
                   onChange={() => toggleLayer(l)}
                   className="rounded"
                 />
-                <span className="text-slatePro-200">{l.replace("LAYER_", "L").replace(/_/g, " ")}</span>
+                <span className="text-slatePro-200">
+                  {l.replace("LAYER_", "L").replace(/_/g, " ")}
+                </span>
               </label>
             ))}
           </div>
@@ -135,7 +145,7 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
             type="button"
             onClick={() => setStep(4)}
             disabled={layersInScope.length === 0}
-            className="rounded bg-navy-600 px-3 py-1.5 text-sm text-white disabled:opacity-50"
+            className="bg-navy-600 rounded px-3 py-1.5 text-sm text-white disabled:opacity-50"
           >
             Next
           </button>
@@ -145,7 +155,9 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
       {step === 4 && (
         <form action={formAction} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slatePro-300">Assessment name</label>
+            <label htmlFor="name" className="text-slatePro-300 block text-sm font-medium">
+              Assessment name
+            </label>
             <input
               id="name"
               name="name"
@@ -153,14 +165,16 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
               onChange={(e) => setName(e.target.value)}
               required
               placeholder="e.g. Q1 2025 EU AI Act Assessment"
-              className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+              className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
             />
           </div>
-          <p className="text-xs text-slatePro-500">Reviewers can be assigned per layer in the assessment workflow.</p>
+          <p className="text-slatePro-500 text-xs">
+            Reviewers can be assigned per layer in the assessment workflow.
+          </p>
           {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
           <button
             type="submit"
-            className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+            className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
           >
             Create Assessment
           </button>

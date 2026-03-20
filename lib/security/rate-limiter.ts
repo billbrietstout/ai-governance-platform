@@ -86,11 +86,11 @@ export function rateLimit(context: RateLimitContext): {
   return { limited, retryAfter, headers };
 }
 
-export function rateLimitResponse(headers: Record<string, string>, retryAfter?: number): NextResponse {
-  const res = NextResponse.json(
-    { error: "Too Many Requests", retryAfter },
-    { status: 429 }
-  );
+export function rateLimitResponse(
+  headers: Record<string, string>,
+  retryAfter?: number
+): NextResponse {
+  const res = NextResponse.json({ error: "Too Many Requests", retryAfter }, { status: 429 });
   for (const [k, v] of Object.entries(headers)) {
     res.headers.set(k, v);
   }

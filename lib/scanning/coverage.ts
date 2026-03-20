@@ -47,13 +47,23 @@ const ALL_SCANS: RequiredScan[] = [
 const QUARTERLY_DAYS = 92;
 const ANNUAL_DAYS = 365;
 
-export async function getScanCoverage(prisma: PrismaClient, orgId: string): Promise<CoverageMatrix> {
+export async function getScanCoverage(
+  prisma: PrismaClient,
+  orgId: string
+): Promise<CoverageMatrix> {
   const assets = await prisma.aIAsset.findMany({
     where: { orgId, deletedAt: null },
     select: { id: true, name: true }
   });
 
-  const scanTypes: string[] = ["SBOM", "SBOM_DEPENDENCY", "VULN", "MODEL_SCAN", "DATASET_PII", "RED_TEAM"];
+  const scanTypes: string[] = [
+    "SBOM",
+    "SBOM_DEPENDENCY",
+    "VULN",
+    "MODEL_SCAN",
+    "DATASET_PII",
+    "RED_TEAM"
+  ];
   const rows: CoverageRow[] = [];
 
   for (const asset of assets) {
@@ -92,7 +102,10 @@ export async function getScanCoverage(prisma: PrismaClient, orgId: string): Prom
   return { assets: rows, scanTypes };
 }
 
-export async function getScanPolicy(prisma: PrismaClient, assetId: string): Promise<RequiredScan[]> {
+export async function getScanPolicy(
+  prisma: PrismaClient,
+  assetId: string
+): Promise<RequiredScan[]> {
   const asset = await prisma.aIAsset.findFirst({
     where: { id: assetId },
     select: { euRiskLevel: true }
@@ -105,7 +118,10 @@ export async function getScanPolicy(prisma: PrismaClient, assetId: string): Prom
   return required;
 }
 
-export async function checkScanCompliance(prisma: PrismaClient, assetId: string): Promise<ComplianceResult> {
+export async function checkScanCompliance(
+  prisma: PrismaClient,
+  assetId: string
+): Promise<ComplianceResult> {
   const required = await getScanPolicy(prisma, assetId);
   const records = await prisma.scanRecord.findMany({
     where: { assetId, status: "COMPLETED" },
@@ -115,7 +131,10 @@ export async function checkScanCompliance(prisma: PrismaClient, assetId: string)
   const byType = new Map<string, { completedAt: Date; pass: boolean }>();
   for (const r of records) {
     const dt = r.completedAt ?? r.startedAt;
-    if (!byType.has(r.scanType) || (byType.get(r.scanType)?.completedAt.getTime() ?? 0) < dt.getTime()) {
+    if (
+      !byType.has(r.scanType) ||
+      (byType.get(r.scanType)?.completedAt.getTime() ?? 0) < dt.getTime()
+    ) {
       byType.set(r.scanType, { completedAt: dt, pass: r.policyPassed ?? false });
     }
   }

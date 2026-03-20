@@ -40,7 +40,7 @@ export function RegulatoryProfileForm({ currentVertical, verticalOptions }: Prop
         id="vertical"
         name="verticalMarket"
         defaultValue={currentVertical}
-        className="mt-1 w-full rounded border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+        className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:ring-1 focus:outline-none"
       >
         {verticalOptions.map((o) => (
           <option key={o.value} value={o.value}>
@@ -52,7 +52,7 @@ export function RegulatoryProfileForm({ currentVertical, verticalOptions }: Prop
       {state?.success && <p className="mt-2 text-sm text-emerald-600">Saved.</p>}
       <button
         type="submit"
-        className="mt-3 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 mt-3 rounded px-4 py-2 text-sm font-medium text-white"
       >
         Save
       </button>

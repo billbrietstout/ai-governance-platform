@@ -6,7 +6,9 @@ import type { Organization } from "@prisma/client";
 import { getStepUrl } from "./steps";
 
 /** Returns true if the org should see the onboarding wizard (not yet complete). */
-export function shouldShowOnboarding(org: Pick<Organization, "onboardingComplete"> | null): boolean {
+export function shouldShowOnboarding(
+  org: Pick<Organization, "onboardingComplete"> | null
+): boolean {
   return org != null && !org.onboardingComplete;
 }
 

@@ -17,10 +17,26 @@ export type OnboardingStep = {
 
 /** Operating model options – CoSAI shared responsibility matrix applies per selection */
 export const OPERATING_MODELS = [
-  { value: "IAAS", label: "IaaS (Infrastructure as a Service)", description: "You manage models, data, and applications on vendor infrastructure" },
-  { value: "PAAS", label: "PaaS (Platform as a Service)", description: "You build on vendor ML platform; they manage infra" },
-  { value: "AGENT_PAAS", label: "Agent-PaaS", description: "You deploy agents on vendor agent platform" },
-  { value: "SAAS", label: "SaaS (Software as a Service)", description: "Vendor provides end-to-end AI application" },
+  {
+    value: "IAAS",
+    label: "IaaS (Infrastructure as a Service)",
+    description: "You manage models, data, and applications on vendor infrastructure"
+  },
+  {
+    value: "PAAS",
+    label: "PaaS (Platform as a Service)",
+    description: "You build on vendor ML platform; they manage infra"
+  },
+  {
+    value: "AGENT_PAAS",
+    label: "Agent-PaaS",
+    description: "You deploy agents on vendor agent platform"
+  },
+  {
+    value: "SAAS",
+    label: "SaaS (Software as a Service)",
+    description: "Vendor provides end-to-end AI application"
+  },
   { value: "MIXED", label: "Mixed", description: "Combination of models across delivery types" }
 ] as const;
 
@@ -37,10 +53,12 @@ export const ORG_SIZES = [
 export type OrgSizeValue = (typeof ORG_SIZES)[number]["value"];
 
 /** Vertical keys for Step 2 – from VERTICAL_REGULATIONS */
-export const VERTICAL_OPTIONS: { value: VerticalKey; label: string }[] = ALL_VERTICAL_KEYS.map((key) => ({
-  value: key,
-  label: VERTICAL_REGULATIONS[key]?.label ?? key.replace(/_/g, " ")
-}));
+export const VERTICAL_OPTIONS: { value: VerticalKey; label: string }[] = ALL_VERTICAL_KEYS.map(
+  (key) => ({
+    value: key,
+    label: VERTICAL_REGULATIONS[key]?.label ?? key.replace(/_/g, " ")
+  })
+);
 
 /** Quick maturity check – one question per layer (L1-1, L2-1, L3-1, L4-1, L5-1) */
 export const QUICK_MATURITY_QUESTION_IDS = ["L1-1", "L2-1", "L3-1", "L4-1", "L5-1"] as const;
@@ -56,14 +74,16 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
   {
     id: 2,
     title: "Vertical & Regulatory Scope",
-    description: "Select the verticals you serve. Applicable regulations will be shown in real time.",
+    description:
+      "Select the verticals you serve. Applicable regulations will be shown in real time.",
     estimatedMinutes: 3,
     requiredFields: ["clientVerticals"]
   },
   {
     id: 3,
     title: "Operating Model",
-    description: "Choose your AI delivery model. The CoSAI shared responsibility matrix will be shown for your selection.",
+    description:
+      "Choose your AI delivery model. The CoSAI shared responsibility matrix will be shown for your selection.",
     estimatedMinutes: 2,
     requiredFields: ["operatingModel"]
   },

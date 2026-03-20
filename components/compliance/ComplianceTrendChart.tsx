@@ -97,8 +97,14 @@ export function ComplianceTrendChart({
     svg.selectAll("*").remove();
 
     const xExtent = d3.extent(snapshots, (d) => d.date) as [Date, Date];
-    const xScale = d3.scaleTime().domain(xExtent).range([margin.left, width - margin.right]);
-    const yScale = d3.scaleLinear().domain([0, 100]).range([height - margin.bottom, margin.top]);
+    const xScale = d3
+      .scaleTime()
+      .domain(xExtent)
+      .range([margin.left, width - margin.right]);
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, 100])
+      .range([height - margin.bottom, margin.top]);
 
     const g = svg.append("g");
 
@@ -197,7 +203,12 @@ export function ComplianceTrendChart({
 
       g.append("g")
         .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(yScale).tickValues([0, 25, 50, 75, 100]).tickFormat((d) => `${d}`))
+        .call(
+          d3
+            .axisLeft(yScale)
+            .tickValues([0, 25, 50, 75, 100])
+            .tickFormat((d) => `${d}`)
+        )
         .selectAll("text")
         .attr("font-size", 10);
 
@@ -282,7 +293,9 @@ export function ComplianceTrendChart({
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 py-12 text-center">
         <Camera className="mx-auto h-10 w-10 text-slate-400" />
-        <p className="mt-2 text-sm text-slate-600">Take your first two snapshots to see trend data</p>
+        <p className="mt-2 text-sm text-slate-600">
+          Take your first two snapshots to see trend data
+        </p>
         {emptyStateAction && <div className="mt-3">{emptyStateAction}</div>}
       </div>
     );
@@ -302,14 +315,7 @@ export function ComplianceTrendChart({
           {(["L1", "L2", "L3", "L4", "L5"] as const).map((l) => (
             <div key={l} className="flex items-center gap-1.5 text-xs">
               <svg width="24" height="4" className="shrink-0">
-                <line
-                  x1="0"
-                  y1="2"
-                  x2="24"
-                  y2="2"
-                  stroke={LAYER_COLORS[l]}
-                  strokeWidth="2"
-                />
+                <line x1="0" y1="2" x2="24" y2="2" stroke={LAYER_COLORS[l]} strokeWidth="2" />
               </svg>
               <span className="text-slate-600">{LAYER_LABELS[l]}</span>
             </div>

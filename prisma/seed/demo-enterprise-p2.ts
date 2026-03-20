@@ -67,11 +67,7 @@ const ARTIFACT_CARDS: Array<{
       euAiActRiskLevel: "MINIMAL",
       benchmarks: { MMLU: 79.2 }
     },
-    linkedAssets: [
-      "Network Anomaly Detector",
-      "Log Analysis Agent",
-      "Vulnerability Prioritizer"
-    ]
+    linkedAssets: ["Network Anomaly Detector", "Log Analysis Agent", "Vulnerability Prioritizer"]
   },
   {
     modelName: "Meridian-QualityVision-v2.1",
@@ -163,7 +159,8 @@ const VENDORS: Array<{
     contractAligned: false,
     lastReviewedAt: new Date("2026-01-10"),
     evidenceLinks: {
-      notes: "Open source — contract alignment not applicable, but license compliance review pending"
+      notes:
+        "Open source — contract alignment not applicable, but license compliance review pending"
     }
   },
   {
@@ -217,28 +214,157 @@ const VENDORS: Array<{
 
 const SCANS: Array<{
   assetName: string;
-  scanType: "SBOM" | "SBOM_DEPENDENCY" | "VULN" | "SECRETS" | "POLICY" | "LICENSE" | "MODEL_SCAN" | "DATASET_PII" | "RED_TEAM";
+  scanType:
+    | "SBOM"
+    | "SBOM_DEPENDENCY"
+    | "VULN"
+    | "SECRETS"
+    | "POLICY"
+    | "LICENSE"
+    | "MODEL_SCAN"
+    | "DATASET_PII"
+    | "RED_TEAM";
   status: string;
   policyPassed: boolean;
   findingsCount: number;
   criticalFindings: number;
   completedAt: Date;
 }> = [
-  { assetName: "Quality Inspection Vision System", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-15") },
-  { assetName: "Quality Inspection Vision System", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: false, findingsCount: 3, criticalFindings: 3, completedAt: new Date("2026-02-15") },
-  { assetName: "CV Screening Assistant", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-20") },
-  { assetName: "CV Screening Assistant", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: false, findingsCount: 5, criticalFindings: 5, completedAt: new Date("2026-02-20") },
-  { assetName: "Fraud Detection System", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-18") },
-  { assetName: "Fraud Detection System", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-18") },
-  { assetName: "Log Analysis Agent", scanType: "SECRETS", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-03-01") },
-  { assetName: "Log Analysis Agent", scanType: "RED_TEAM", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-03-01") },
-  { assetName: "Predictive Maintenance AI", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-10") },
-  { assetName: "Dynamic Pricing Model", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 2, criticalFindings: 0, completedAt: new Date("2026-02-25") },
-  { assetName: "Network Anomaly Detector", scanType: "MODEL_SCAN", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-03-02") },
-  { assetName: "Network Anomaly Detector", scanType: "SECRETS", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-03-02") },
-  { assetName: "Inventory Reorder Agent", scanType: "RED_TEAM", status: "COMPLETED", policyPassed: false, findingsCount: 1, criticalFindings: 1, completedAt: new Date("2026-02-28") },
-  { assetName: "Employee Sentiment Monitor", scanType: "DATASET_PII", status: "COMPLETED", policyPassed: false, findingsCount: 4, criticalFindings: 4, completedAt: new Date("2026-02-22") },
-  { assetName: "Supplier Risk Scorer", scanType: "SBOM_DEPENDENCY", status: "COMPLETED", policyPassed: true, findingsCount: 0, criticalFindings: 0, completedAt: new Date("2026-02-12") }
+  {
+    assetName: "Quality Inspection Vision System",
+    scanType: "MODEL_SCAN",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-15")
+  },
+  {
+    assetName: "Quality Inspection Vision System",
+    scanType: "DATASET_PII",
+    status: "COMPLETED",
+    policyPassed: false,
+    findingsCount: 3,
+    criticalFindings: 3,
+    completedAt: new Date("2026-02-15")
+  },
+  {
+    assetName: "CV Screening Assistant",
+    scanType: "MODEL_SCAN",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-20")
+  },
+  {
+    assetName: "CV Screening Assistant",
+    scanType: "DATASET_PII",
+    status: "COMPLETED",
+    policyPassed: false,
+    findingsCount: 5,
+    criticalFindings: 5,
+    completedAt: new Date("2026-02-20")
+  },
+  {
+    assetName: "Fraud Detection System",
+    scanType: "MODEL_SCAN",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-18")
+  },
+  {
+    assetName: "Fraud Detection System",
+    scanType: "DATASET_PII",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-18")
+  },
+  {
+    assetName: "Log Analysis Agent",
+    scanType: "SECRETS",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-03-01")
+  },
+  {
+    assetName: "Log Analysis Agent",
+    scanType: "RED_TEAM",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-03-01")
+  },
+  {
+    assetName: "Predictive Maintenance AI",
+    scanType: "MODEL_SCAN",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-10")
+  },
+  {
+    assetName: "Dynamic Pricing Model",
+    scanType: "MODEL_SCAN",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 2,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-25")
+  },
+  {
+    assetName: "Network Anomaly Detector",
+    scanType: "MODEL_SCAN",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-03-02")
+  },
+  {
+    assetName: "Network Anomaly Detector",
+    scanType: "SECRETS",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-03-02")
+  },
+  {
+    assetName: "Inventory Reorder Agent",
+    scanType: "RED_TEAM",
+    status: "COMPLETED",
+    policyPassed: false,
+    findingsCount: 1,
+    criticalFindings: 1,
+    completedAt: new Date("2026-02-28")
+  },
+  {
+    assetName: "Employee Sentiment Monitor",
+    scanType: "DATASET_PII",
+    status: "COMPLETED",
+    policyPassed: false,
+    findingsCount: 4,
+    criticalFindings: 4,
+    completedAt: new Date("2026-02-22")
+  },
+  {
+    assetName: "Supplier Risk Scorer",
+    scanType: "SBOM_DEPENDENCY",
+    status: "COMPLETED",
+    policyPassed: true,
+    findingsCount: 0,
+    criticalFindings: 0,
+    completedAt: new Date("2026-02-12")
+  }
 ];
 
 export async function seedDemoEnterpriseP2(prisma: PrismaClient): Promise<void> {

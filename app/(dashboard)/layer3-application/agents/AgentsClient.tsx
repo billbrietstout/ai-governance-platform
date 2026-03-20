@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  Settings2,
-  Wrench,
-  UserCheck,
-  AlertTriangle,
-  X,
-  Check
-} from "lucide-react";
+import { Settings2, Wrench, UserCheck, AlertTriangle, X, Check } from "lucide-react";
 import { updateAgentConfig } from "./actions";
 
 type Asset = {
@@ -90,14 +83,18 @@ export function AgentsClient({ initialAssets }: Props) {
     return true;
   });
 
-  const byAutonomy = assets.reduce((acc, a) => {
-    const l = AUTONOMY_TO_L[a.autonomyLevel ?? ""] ?? "L0";
-    acc[l] = (acc[l] ?? 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const byAutonomy = assets.reduce(
+    (acc, a) => {
+      const l = AUTONOMY_TO_L[a.autonomyLevel ?? ""] ?? "L0";
+      acc[l] = (acc[l] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
   const humanOversightCount = assets.filter((a) => a.humanOversightRequired).length;
   const noOverrideCount = assets.filter(
-    (a) => (a.autonomyLevel === "SEMI_AUTONOMOUS" || a.autonomyLevel === "AUTONOMOUS") && !a.overrideTier
+    (a) =>
+      (a.autonomyLevel === "SEMI_AUTONOMOUS" || a.autonomyLevel === "AUTONOMOUS") && !a.overrideTier
   ).length;
 
   const openConfig = (a: Asset) => {
@@ -181,7 +178,9 @@ export function AgentsClient({ initialAssets }: Props) {
         {noOverrideCount > 0 && (
           <div className="flex items-center gap-1 rounded bg-amber-50 px-2 py-1 text-amber-800">
             <AlertTriangle className="h-4 w-4" />
-            <span className="text-sm font-medium">{noOverrideCount} with no override tier (risk)</span>
+            <span className="text-sm font-medium">
+              {noOverrideCount} with no override tier (risk)
+            </span>
           </div>
         )}
       </div>
@@ -255,7 +254,10 @@ export function AgentsClient({ initialAssets }: Props) {
               className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
             >
               <div className="flex items-start justify-between">
-                <Link href={`/layer3-application/assets/${a.id}`} className="font-medium text-slate-900 hover:underline">
+                <Link
+                  href={`/layer3-application/assets/${a.id}`}
+                  className="font-medium text-slate-900 hover:underline"
+                >
                   {a.name}
                 </Link>
                 <span
@@ -275,9 +277,13 @@ export function AgentsClient({ initialAssets }: Props) {
                     {a.overrideTier}
                   </span>
                 ) : (
-                  <span className="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">No override</span>
+                  <span className="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">
+                    No override
+                  </span>
                 )}
-                <span className={`rounded px-2 py-0.5 text-xs ${STAGE_COLORS[a.lifecycleStage] ?? "bg-slate-100 text-slate-700"}`}>
+                <span
+                  className={`rounded px-2 py-0.5 text-xs ${STAGE_COLORS[a.lifecycleStage] ?? "bg-slate-100 text-slate-700"}`}
+                >
                   {a.lifecycleStage}
                 </span>
                 {a.humanOversightRequired && (
@@ -294,7 +300,7 @@ export function AgentsClient({ initialAssets }: Props) {
                 <button
                   type="button"
                   onClick={() => openConfig(a)}
-                  className="flex items-center gap-1.5 rounded bg-navy-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-navy-500"
+                  className="bg-navy-600 hover:bg-navy-500 flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium text-white"
                 >
                   <Settings2 className="h-3.5 w-3.5" />
                   Configure Override
@@ -323,7 +329,7 @@ export function AgentsClient({ initialAssets }: Props) {
           {assets.length === 0 && (
             <Link
               href="/layer3-application/assets"
-              className="mt-3 inline-block rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500"
+              className="bg-navy-600 hover:bg-navy-500 mt-3 inline-block rounded px-4 py-2 text-sm text-white"
             >
               View AI Assets
             </Link>
@@ -336,8 +342,14 @@ export function AgentsClient({ initialAssets }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-medium text-slate-900">Configure Override — {configAsset.name}</h3>
-              <button type="button" onClick={() => setConfigAsset(null)} className="text-slate-500 hover:text-slate-700">
+              <h3 className="font-medium text-slate-900">
+                Configure Override — {configAsset.name}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setConfigAsset(null)}
+                className="text-slate-500 hover:text-slate-700"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -369,14 +381,18 @@ export function AgentsClient({ initialAssets }: Props) {
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-2">
-              <button type="button" onClick={() => setConfigAsset(null)} className="rounded border px-4 py-2 text-sm">
+              <button
+                type="button"
+                onClick={() => setConfigAsset(null)}
+                className="rounded border px-4 py-2 text-sm"
+              >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={saveConfig}
                 disabled={saving}
-                className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm text-white disabled:opacity-50"
               >
                 <Check className="h-4 w-4" />
                 {saving ? "Saving…" : "Save"}
@@ -391,8 +407,14 @@ export function AgentsClient({ initialAssets }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-medium text-slate-900">Manage Tool Authorizations — {toolsAsset.name}</h3>
-              <button type="button" onClick={() => setToolsAsset(null)} className="text-slate-500 hover:text-slate-700">
+              <h3 className="font-medium text-slate-900">
+                Manage Tool Authorizations — {toolsAsset.name}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setToolsAsset(null)}
+                className="text-slate-500 hover:text-slate-700"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -405,14 +427,18 @@ export function AgentsClient({ initialAssets }: Props) {
               placeholder="api.openai.com&#10;slack-api&#10;..."
             />
             <div className="mt-6 flex justify-end gap-2">
-              <button type="button" onClick={() => setToolsAsset(null)} className="rounded border px-4 py-2 text-sm">
+              <button
+                type="button"
+                onClick={() => setToolsAsset(null)}
+                className="rounded border px-4 py-2 text-sm"
+              >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={saveTools}
                 disabled={saving}
-                className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm text-white disabled:opacity-50"
               >
                 <Check className="h-4 w-4" />
                 {saving ? "Saving…" : "Save"}

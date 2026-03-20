@@ -35,11 +35,7 @@ function getRiskColor(score: number): string {
   return RISK_COLORS.green;
 }
 
-export function RiskTreemap({
-  vendors,
-  compact = false,
-  onVendorClick
-}: Props) {
+export function RiskTreemap({ vendors, compact = false, onVendorClick }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [tooltip, setTooltip] = useState<{
     x: number;
@@ -71,86 +67,88 @@ export function RiskTreemap({
         .padding(3)
         .round(true);
 
-    const hierarchy = d3
-      .hierarchy(root)
-      .sum((d) => ("children" in d && d.children ? 0 : ((d as { value?: number }).value ?? 1)));
+      const hierarchy = d3
+        .hierarchy(root)
+        .sum((d) => ("children" in d && d.children ? 0 : ((d as { value?: number }).value ?? 1)));
 
-    const tree = treemap(hierarchy as d3.HierarchyNode<{ value?: number; name?: string; children?: unknown[] }>);
-    const leaves = tree.leaves().filter((d) => d.data && "id" in d.data);
+      const tree = treemap(
+        hierarchy as d3.HierarchyNode<{ value?: number; name?: string; children?: unknown[] }>
+      );
+      const leaves = tree.leaves().filter((d) => d.data && "id" in d.data);
 
-    const g = svg.append("g");
+      const g = svg.append("g");
 
-    leaves.forEach((node, i) => {
-      const d = node.data as VendorTreemapNode & { value: number };
-      const v = displayVendors.find((x) => x.id === d.id);
-      if (!v) return;
+      leaves.forEach((node, i) => {
+        const d = node.data as VendorTreemapNode & { value: number };
+        const v = displayVendors.find((x) => x.id === d.id);
+        if (!v) return;
 
-      const color = getRiskColor(v.overallScore);
-      const { x0, y0, x1, y1 } = node;
-      let w = x1 - x0;
-      let h = y1 - y0;
-      if (w < 1 || h < 1) {
-        console.warn("[RiskTreemap] Zero-size rect for vendor", v.vendorName, { w, h });
-        w = Math.max(10, w);
-        h = Math.max(10, h);
-      }
-      const showLabels = h >= 40;
+        const color = getRiskColor(v.overallScore);
+        const { x0, y0, x1, y1 } = node;
+        let w = x1 - x0;
+        let h = y1 - y0;
+        if (w < 1 || h < 1) {
+          console.warn("[RiskTreemap] Zero-size rect for vendor", v.vendorName, { w, h });
+          w = Math.max(10, w);
+          h = Math.max(10, h);
+        }
+        const showLabels = h >= 40;
 
-      const cell = g
-        .append("g")
-        .attr("transform", `translate(${x0},${y0})`)
-        .attr("class", "treemap-cell")
-        .style("opacity", 0)
-        .attr("cursor", "pointer")
-        .on("click", () => {
-          if (onVendorClick) onVendorClick(v.id);
-          else window.location.href = `/layer5-supply-chain/vendors/${v.id}?improve=1`;
-        })
-        .on("mouseenter", (event) => {
-          setTooltip({
-            x: event.clientX + 12,
-            y: event.clientY + 12,
-            vendor: v
-          });
-        })
-        .on("mouseleave", () => setTooltip(null));
+        const cell = g
+          .append("g")
+          .attr("transform", `translate(${x0},${y0})`)
+          .attr("class", "treemap-cell")
+          .style("opacity", 0)
+          .attr("cursor", "pointer")
+          .on("click", () => {
+            if (onVendorClick) onVendorClick(v.id);
+            else window.location.href = `/layer5-supply-chain/vendors/${v.id}?improve=1`;
+          })
+          .on("mouseenter", (event) => {
+            setTooltip({
+              x: event.clientX + 12,
+              y: event.clientY + 12,
+              vendor: v
+            });
+          })
+          .on("mouseleave", () => setTooltip(null));
 
-      cell
-        .append("rect")
-        .attr("width", w)
-        .attr("height", h)
-        .attr("fill", color)
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1)
-        .attr("rx", 2);
-
-      if (showLabels) {
         cell
-          .append("text")
-          .attr("x", w / 2)
-          .attr("y", 14)
-          .attr("text-anchor", "middle")
-          .attr("font-size", 11)
-          .attr("fill", "#fff")
-          .attr("font-weight", 500)
-          .text(v.vendorName.length > 16 ? v.vendorName.slice(0, 14) + "…" : v.vendorName);
-        cell
-          .append("text")
-          .attr("x", w / 2)
-          .attr("y", h / 2 + 6)
-          .attr("text-anchor", "middle")
-          .attr("font-size", 20)
-          .attr("fill", "#fff")
-          .attr("font-weight", 700)
-          .text(v.overallScore);
-      }
+          .append("rect")
+          .attr("width", w)
+          .attr("height", h)
+          .attr("fill", color)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 1)
+          .attr("rx", 2);
 
-      cell
-        .transition()
-        .delay(i * 30)
-        .duration(300)
-        .style("opacity", 1);
-    });
+        if (showLabels) {
+          cell
+            .append("text")
+            .attr("x", w / 2)
+            .attr("y", 14)
+            .attr("text-anchor", "middle")
+            .attr("font-size", 11)
+            .attr("fill", "#fff")
+            .attr("font-weight", 500)
+            .text(v.vendorName.length > 16 ? v.vendorName.slice(0, 14) + "…" : v.vendorName);
+          cell
+            .append("text")
+            .attr("x", w / 2)
+            .attr("y", h / 2 + 6)
+            .attr("text-anchor", "middle")
+            .attr("font-size", 20)
+            .attr("fill", "#fff")
+            .attr("font-weight", 700)
+            .text(v.overallScore);
+        }
+
+        cell
+          .transition()
+          .delay(i * 30)
+          .duration(300)
+          .style("opacity", 1);
+      });
     } catch (err) {
       console.error("[RiskTreemap] D3 rendering error:", err);
     }
@@ -184,24 +182,15 @@ export function RiskTreemap({
 
       <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
         <span className="flex items-center gap-1.5">
-          <span
-            className="h-3 w-3 rounded"
-            style={{ backgroundColor: RISK_COLORS.red }}
-          />
+          <span className="h-3 w-3 rounded" style={{ backgroundColor: RISK_COLORS.red }} />
           &lt;40 At risk
         </span>
         <span className="flex items-center gap-1.5">
-          <span
-            className="h-3 w-3 rounded"
-            style={{ backgroundColor: RISK_COLORS.amber }}
-          />
+          <span className="h-3 w-3 rounded" style={{ backgroundColor: RISK_COLORS.amber }} />
           40–70 Needs attention
         </span>
         <span className="flex items-center gap-1.5">
-          <span
-            className="h-3 w-3 rounded"
-            style={{ backgroundColor: RISK_COLORS.green }}
-          />
+          <span className="h-3 w-3 rounded" style={{ backgroundColor: RISK_COLORS.green }} />
           &gt;70 Healthy
         </span>
       </div>

@@ -19,9 +19,7 @@ function mapClientVerticalToBusinessFunction(
   return "Operations";
 }
 
-function mapAutonomyToL(
-  a: AutonomyLevel | null
-): "L0" | "L1" | "L2" | "L3" | "L4" | "L5" {
+function mapAutonomyToL(a: AutonomyLevel | null): "L0" | "L1" | "L2" | "L3" | "L4" | "L5" {
   switch (a) {
     case "HUMAN_ONLY":
       return "L0";
@@ -39,7 +37,15 @@ function mapAutonomyToL(
 const discoveryInputsSchema = z.object({
   assetType: z.enum(["MODEL", "AGENT", "APPLICATION", "PIPELINE"]),
   description: z.string().max(200).optional(),
-  businessFunction: z.enum(["HR", "Finance", "Operations", "Customer Service", "Healthcare", "Legal", "Other"]),
+  businessFunction: z.enum([
+    "HR",
+    "Finance",
+    "Operations",
+    "Customer Service",
+    "Healthcare",
+    "Legal",
+    "Other"
+  ]),
   decisionsAffectingPeople: z.boolean(),
   interactsWithEndUsers: z.boolean(),
   deployment: z.enum(["EU_market", "US_only", "Global", "Internal_only"]),
@@ -136,7 +142,12 @@ export const discoveryRouter = createTRPCRouter({
         autonomyLevel: mapAutonomyToL(asset.autonomyLevel),
         dataTypes: ["Proprietary"],
         euResidentsData: "Unknown",
-        expectedRiskLevel: asset.euRiskLevel === "HIGH" ? "High" : asset.euRiskLevel === "LIMITED" ? "Medium" : "Low",
+        expectedRiskLevel:
+          asset.euRiskLevel === "HIGH"
+            ? "High"
+            : asset.euRiskLevel === "LIMITED"
+              ? "Medium"
+              : "Low",
         vulnerablePopulations: false
       };
 
@@ -159,7 +170,8 @@ export const discoveryRouter = createTRPCRouter({
       if (!prisma?.regulationDiscovery) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Database client not ready. Run 'npx prisma generate' and restart the dev server."
+          message:
+            "Database client not ready. Run 'npx prisma generate' and restart the dev server."
         });
       }
       const limit = input?.limit ?? 10;

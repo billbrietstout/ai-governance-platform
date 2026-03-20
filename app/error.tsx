@@ -16,12 +16,12 @@ export default function Error({
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-slatePro-100">500</h1>
-      <p className="mt-2 text-slatePro-400">Something went wrong</p>
+      <h1 className="text-slatePro-100 text-4xl font-bold">500</h1>
+      <p className="text-slatePro-400 mt-2">Something went wrong</p>
       <button
         type="button"
         onClick={reset}
-        className="mt-4 rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 mt-4 rounded px-4 py-2 text-sm text-white"
       >
         Try again
       </button>

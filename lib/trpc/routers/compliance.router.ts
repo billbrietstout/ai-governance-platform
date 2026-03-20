@@ -9,15 +9,13 @@ import * as verticalCascade from "@/lib/compliance/vertical-cascade";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const complianceRouter = createTRPCRouter({
-  getFrameworks: protectedProcedure
-    .input(z.object({}).optional())
-    .query(async ({ ctx }) => {
-      const list = await prisma.complianceFramework.findMany({
-        where: { orgId: ctx.orgId, isActive: true },
-        include: { _count: { select: { controls: true } } }
-      });
-      return { data: list.map((f) => ({ ...f, controlCount: f._count.controls })), meta: {} };
-    }),
+  getFrameworks: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
+    const list = await prisma.complianceFramework.findMany({
+      where: { orgId: ctx.orgId, isActive: true },
+      include: { _count: { select: { controls: true } } }
+    });
+    return { data: list.map((f) => ({ ...f, controlCount: f._count.controls })), meta: {} };
+  }),
 
   getControls: protectedProcedure
     .input(z.object({ frameworkId: z.string().optional() }))
@@ -25,17 +23,25 @@ export const complianceRouter = createTRPCRouter({
       const where = input.frameworkId
         ? { frameworkId: input.frameworkId, framework: { orgId: ctx.orgId } }
         : { framework: { orgId: ctx.orgId } };
-      const list = await prisma.control.findMany({ where, include: { framework: { select: { code: true, name: true } } } });
+      const list = await prisma.control.findMany({
+        where,
+        include: { framework: { select: { code: true, name: true } } }
+      });
       return { data: list, meta: {} };
     }),
 
   getAttestation: protectedProcedure
     .input(z.object({ assetId: z.string(), controlId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
       const list = await prisma.controlAttestation.findMany({
-        where: { assetId: input.assetId, ...(input.controlId ? { controlId: input.controlId } : {}) },
+        where: {
+          assetId: input.assetId,
+          ...(input.controlId ? { controlId: input.controlId } : {})
+        },
         include: { control: { select: { controlId: true, title: true } } }
       });
       return { data: list, meta: {} };
@@ -53,7 +59,9 @@ export const complianceRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
 
       const prev = await prisma.controlAttestation.findFirst({
@@ -105,16 +113,24 @@ export const complianceRouter = createTRPCRouter({
   getComplianceScore: protectedProcedure
     .input(z.object({ assetId: z.string(), frameworkId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
-      const result = await engine.calculateComplianceScore(prisma, input.assetId, input.frameworkId);
+      const result = await engine.calculateComplianceScore(
+        prisma,
+        input.assetId,
+        input.frameworkId
+      );
       return { data: result, meta: {} };
     }),
 
   getGapAnalysis: protectedProcedure
     .input(z.object({ assetId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
       const result = await engine.getGapAnalysis(prisma, input.assetId);
       return { data: result, meta: {} };

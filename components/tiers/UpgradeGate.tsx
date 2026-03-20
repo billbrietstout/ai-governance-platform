@@ -25,7 +25,8 @@ export function UpgradeGate({
     return <>{children}</>;
   }
 
-  const tierLabel = requiredTier === "PRO" ? "Pro" : requiredTier === "CONSULTANT" ? "Consultant" : "Enterprise";
+  const tierLabel =
+    requiredTier === "PRO" ? "Pro" : requiredTier === "CONSULTANT" ? "Consultant" : "Enterprise";
 
   return (
     <div className="flex min-h-[400px] items-center justify-center p-8">
@@ -41,11 +42,13 @@ export function UpgradeGate({
           Available in {tierLabel} plan
         </span>
         <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50/50 p-4 text-left">
-          <p className="text-xs font-medium uppercase tracking-wider text-slate-500">What you unlock:</p>
+          <p className="text-xs font-medium tracking-wider text-slate-500 uppercase">
+            What you unlock:
+          </p>
           <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
             {unlockedBy.slice(0, 3).map((item) => (
               <li key={item} className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-navy-400" />
+                <span className="bg-navy-400 h-1.5 w-1.5 shrink-0 rounded-full" />
                 {item}
               </li>
             ))}
@@ -54,7 +57,7 @@ export function UpgradeGate({
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/pricing"
-            className="inline-flex items-center justify-center rounded-lg bg-navy-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-500"
+            className="bg-navy-600 hover:bg-navy-500 inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-white"
           >
             Upgrade to {tierLabel}
           </Link>

@@ -46,7 +46,7 @@ export function MaturityRadarSection({ scores, targetLevel, previousScores }: Pr
           <Link
             key={layer}
             href={`/maturity/${layer}`}
-            className="text-xs text-navy-600 hover:underline"
+            className="text-navy-600 text-xs hover:underline"
           >
             {LAYER_LABELS[layer]} →
           </Link>

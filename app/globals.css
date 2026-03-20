@@ -51,7 +51,9 @@ body {
   background: var(--color-navy-500) !important;
 }
 #nprogress .peg {
-  box-shadow: 0 0 10px var(--color-navy-500), 0 0 5px var(--color-navy-500) !important;
+  box-shadow:
+    0 0 10px var(--color-navy-500),
+    0 0 5px var(--color-navy-500) !important;
 }
 
 /* Page transition fade-in */

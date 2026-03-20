@@ -6,7 +6,13 @@ import { runDiscoveryForAsset } from "./actions";
 
 type Asset = { id: string; name: string; assetType: string };
 
-export function DiscoverClient({ assets, className = "" }: { assets: Asset[]; className?: string }) {
+export function DiscoverClient({
+  assets,
+  className = ""
+}: {
+  assets: Asset[];
+  className?: string;
+}) {
   const router = useRouter();
   const [assetId, setAssetId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,7 +50,7 @@ export function DiscoverClient({ assets, className = "" }: { assets: Asset[]; cl
         type="button"
         onClick={handleRun}
         disabled={!assetId || loading}
-        className="mt-2 w-full rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+        className="bg-navy-600 hover:bg-navy-500 mt-2 w-full rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {loading ? "Running…" : "Run discovery"}
       </button>

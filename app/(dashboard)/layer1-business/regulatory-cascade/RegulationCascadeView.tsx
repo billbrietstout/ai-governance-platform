@@ -15,7 +15,13 @@ type Step = {
   controls: { id: string; controlId: string; title: string; frameworkCode: string }[];
 };
 
-type Unmet = { controlId: string; title: string; owner: string; assetId: string; assetName: string };
+type Unmet = {
+  controlId: string;
+  title: string;
+  owner: string;
+  assetId: string;
+  assetName: string;
+};
 
 type Props = {
   regulation: string;
@@ -29,7 +35,8 @@ export function RegulationCascadeView({ regulation, steps, unmetByLayer }: Props
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <h2 className="text-sm font-medium text-gray-600">Regulation flow</h2>
         <p className="mt-1 text-gray-900">
-          {regulation} requirements cascade from Business (L1) through Supply Chain (L5). Each layer has controls that satisfy the regulation.
+          {regulation} requirements cascade from Business (L1) through Supply Chain (L5). Each layer
+          has controls that satisfy the regulation.
         </p>
       </div>
 
@@ -39,9 +46,7 @@ export function RegulationCascadeView({ regulation, steps, unmetByLayer }: Props
           className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
         >
           <div className="border-b border-gray-200 bg-gray-50 px-4 py-2">
-            <h3 className="font-medium text-gray-900">
-              {LAYER_LABELS[step.layer] ?? step.layer}
-            </h3>
+            <h3 className="font-medium text-gray-900">{LAYER_LABELS[step.layer] ?? step.layer}</h3>
           </div>
           <div className="p-4">
             {step.controls.length === 0 ? (
@@ -54,7 +59,7 @@ export function RegulationCascadeView({ regulation, steps, unmetByLayer }: Props
                     className="flex items-start justify-between rounded border border-gray-200 bg-white px-3 py-2"
                   >
                     <div>
-                      <span className="font-mono text-sm text-navy-600">{c.controlId}</span>
+                      <span className="text-navy-600 font-mono text-sm">{c.controlId}</span>
                       <span className="ml-2 text-gray-900">{c.title}</span>
                     </div>
                     <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">
@@ -82,7 +87,7 @@ export function RegulationCascadeView({ regulation, steps, unmetByLayer }: Props
                         <span className="text-sm text-gray-600">Owner: {u.owner}</span>
                         <Link
                           href={`/layer3-application/assets/${u.assetId}`}
-                          className="text-sm text-navy-600 hover:underline"
+                          className="text-navy-600 text-sm hover:underline"
                         >
                           {u.assetName} →
                         </Link>

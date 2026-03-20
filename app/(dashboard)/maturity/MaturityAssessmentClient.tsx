@@ -22,16 +22,11 @@ type Props = {
 
 const LAYERS: MaturityLayer[] = ["L1", "L2", "L3", "L4", "L5"];
 
-export function MaturityAssessmentClient({
-  latestAssessment,
-  lastAssessedAt
-}: Props) {
+export function MaturityAssessmentClient({ latestAssessment, lastAssessedAt }: Props) {
   const router = useRouter();
   const [activeLayer, setActiveLayer] = useState<MaturityLayer>("L1");
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswerState[]>(
-    latestAssessment?.answers ?? []
-  );
+  const [answers, setAnswers] = useState<AnswerState[]>(latestAssessment?.answers ?? []);
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,9 +87,7 @@ export function MaturityAssessmentClient({
   useEffect(() => {
     if (lastAssessedAt) {
       setDaysAgo(
-        Math.floor(
-          (Date.now() - new Date(lastAssessedAt).getTime()) / (24 * 60 * 60 * 1000)
-        )
+        Math.floor((Date.now() - new Date(lastAssessedAt).getTime()) / (24 * 60 * 60 * 1000))
       );
     }
   }, [lastAssessedAt]);
@@ -149,7 +142,7 @@ export function MaturityAssessmentClient({
                   key={index}
                   className={`flex cursor-pointer items-start gap-3 rounded border px-3 py-2.5 transition ${
                     isSelected
-                      ? "border-navy-500 bg-navy-50 ring-1 ring-navy-500"
+                      ? "border-navy-500 bg-navy-50 ring-navy-500 ring-1"
                       : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                   }`}
                 >
@@ -162,7 +155,7 @@ export function MaturityAssessmentClient({
                       setAnswer(currentQ.id, score);
                       if (!isLastQuestionOverall) advanceToNext();
                     }}
-                    className="mt-1 h-4 w-4 shrink-0 border-slate-300 text-navy-600 focus:ring-navy-500"
+                    className="text-navy-600 focus:ring-navy-500 mt-1 h-4 w-4 shrink-0 border-slate-300"
                   />
                   <span className="text-sm text-slate-800">{optionText}</span>
                 </label>
@@ -175,7 +168,7 @@ export function MaturityAssessmentClient({
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full rounded-lg bg-navy-600 px-4 py-3 text-base font-semibold text-white hover:bg-navy-500 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 w-full rounded-lg px-4 py-3 text-base font-semibold text-white disabled:opacity-50"
               >
                 {isSubmitting ? "Submitting…" : "Submit Assessment"}
               </button>
@@ -189,7 +182,7 @@ export function MaturityAssessmentClient({
               <button
                 type="button"
                 onClick={() => setQuestionIndex((i) => i - 1)}
-                className="text-sm text-navy-600 hover:underline"
+                className="text-navy-600 text-sm hover:underline"
               >
                 ← Previous
               </button>
@@ -198,7 +191,7 @@ export function MaturityAssessmentClient({
               <button
                 type="button"
                 onClick={() => setQuestionIndex((i) => i + 1)}
-                className="text-sm text-navy-600 hover:underline"
+                className="text-navy-600 text-sm hover:underline"
               >
                 Next →
               </button>
@@ -210,7 +203,7 @@ export function MaturityAssessmentClient({
                   setActiveLayer(LAYERS[currentLayerIndex + 1]!);
                   setQuestionIndex(0);
                 }}
-                className="text-sm text-navy-600 hover:underline"
+                className="text-navy-600 text-sm hover:underline"
               >
                 Next layer →
               </button>
@@ -241,7 +234,7 @@ export function MaturityAssessmentClient({
         type="button"
         onClick={handleSubmit}
         disabled={isSubmitting}
-        className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+        className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {isSubmitting ? "Submitting…" : "Submit Assessment"}
       </button>

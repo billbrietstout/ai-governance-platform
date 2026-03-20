@@ -64,7 +64,9 @@ export async function calculateComplianceScore(
   });
 
   const attestedMap = new Map(
-    attestations.filter((a) => a.status === "COMPLIANT" || a.status === "NOT_APPLICABLE").map((a) => [a.controlId, a.status])
+    attestations
+      .filter((a) => a.status === "COMPLIANT" || a.status === "NOT_APPLICABLE")
+      .map((a) => [a.controlId, a.status])
   );
 
   const gaps: Gap[] = [];
@@ -115,7 +117,8 @@ export async function getGapAnalysis(prisma: PrismaClient, assetId: string): Pro
   const byLayer: Record<string, { attested: number; total: number; gaps: Gap[] }> = {};
 
   for (const g of result.gaps) {
-    if (!byFramework[g.frameworkCode]) byFramework[g.frameworkCode] = { attested: 0, total: 0, gaps: [] };
+    if (!byFramework[g.frameworkCode])
+      byFramework[g.frameworkCode] = { attested: 0, total: 0, gaps: [] };
     byFramework[g.frameworkCode].gaps.push(g);
     const layer = g.cosaiLayer ?? "UNSPECIFIED";
     if (!byLayer[layer]) byLayer[layer] = { attested: 0, total: 0, gaps: [] };
@@ -144,7 +147,9 @@ export async function getGapAnalysis(prisma: PrismaClient, assetId: string): Pro
     byLayer[layer].attested = layerTotal - byLayer[layer].gaps.length;
   }
 
-  const criticalGaps = result.gaps.filter((g) => g.status === "PENDING" || g.status === "NON_COMPLIANT");
+  const criticalGaps = result.gaps.filter(
+    (g) => g.status === "PENDING" || g.status === "NON_COMPLIANT"
+  );
   const recommendations = criticalGaps.length
     ? [
         `Address ${criticalGaps.length} unattested or non-compliant control(s).`,

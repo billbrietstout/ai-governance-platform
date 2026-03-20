@@ -79,7 +79,11 @@ const GATED_SECTIONS: GatedSection[] = [
       { href: "/layer2-information/lineage", label: "Data Lineage", icon: GitBranch },
       { href: "/layer2-information/governance", label: "Data Governance", icon: FileText },
       { href: "/layer2-information/classification", label: "Data Classification", icon: Shield },
-      { href: "/layer2-information/prompts", label: "Prompt Governance", icon: MessageSquareWarning },
+      {
+        href: "/layer2-information/prompts",
+        label: "Prompt Governance",
+        icon: MessageSquareWarning
+      },
       { href: "/layer2-information/data-catalog", label: "Data Catalog", icon: BookOpen },
       { href: "/layer2-information/shadow-ai", label: "Shadow AI Detection", icon: Eye }
     ]
@@ -137,13 +141,20 @@ const GOVERNANCE_OVERVIEW_ITEMS: NavItem[] = [
   { href: "/audit", label: "Audit Log", icon: ScrollText }
 ];
 
-const PERSONA_FIRST_ITEM: Record<PersonaId, { href: string; label: string; icon: React.ComponentType<{ className?: string }> }> = {
+const PERSONA_FIRST_ITEM: Record<
+  PersonaId,
+  { href: string; label: string; icon: React.ComponentType<{ className?: string }> }
+> = {
   CEO: { href: "/dashboard/executive", label: "AI Risk Briefing", icon: Newspaper },
   CFO: { href: "/dashboard/executive", label: "AI Risk Briefing", icon: Newspaper },
   COO: { href: "/dashboard/executive", label: "AI Risk Briefing", icon: Newspaper },
   CAIO: { href: "/dashboard/caio", label: "CAIO View", icon: LayoutDashboard },
   CISO: { href: "/dashboard/ciso", label: "Security Overview", icon: LayoutDashboard },
-  LEGAL: { href: "/dashboard/compliance-officer", label: "Compliance Status", icon: LayoutDashboard },
+  LEGAL: {
+    href: "/dashboard/compliance-officer",
+    label: "Compliance Status",
+    icon: LayoutDashboard
+  },
   DATA_OWNER: { href: "/dashboard/data-steward", label: "Data Governance", icon: LayoutDashboard },
   DEV_LEAD: { href: "/dashboard/developer", label: "Developer Checklist", icon: LayoutDashboard },
   PLATFORM_ENG: { href: "/dashboard/platform", label: "Platform & Ops", icon: LayoutDashboard },
@@ -398,14 +409,14 @@ export function Sidebar({
     });
   }, []);
 
-  const initials = userEmail
+  const initials = userEmail ? userEmail.split("@")[0].slice(0, 2).toUpperCase() : "?";
+
+  const displayName = userEmail
     ? userEmail
         .split("@")[0]
-        .slice(0, 2)
-        .toUpperCase()
-    : "?";
-
-  const displayName = userEmail ? userEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : "User";
+        .replace(/[._]/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase())
+    : "User";
 
   const personaConfig = persona ? getPersonaConfig(persona) : null;
   const sidebarConfig = persona ? getPersonaSidebarConfig(persona) : null;
@@ -429,25 +440,25 @@ export function Sidebar({
   if (isFocused) {
     return (
       <aside
-        className="flex w-12 shrink-0 flex-col border-r border-slatePro-800 bg-slatePro-950"
+        className="border-slatePro-800 bg-slatePro-950 flex w-12 shrink-0 flex-col border-r"
         role="navigation"
         aria-label="Main navigation"
       >
         {/* Banner */}
-        <div className="border-b border-slatePro-800 px-2 py-2">
+        <div className="border-slatePro-800 border-b px-2 py-2">
           <button
             type="button"
             onClick={onExpandToFull}
-            className="w-full rounded px-1 py-1 text-[10px] leading-tight text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300"
+            className="text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300 w-full rounded px-1 py-1 text-[10px] leading-tight"
           >
             {personaConfig?.label ?? persona} view · Show all →
           </button>
         </div>
 
         {/* Logo */}
-        <div className="flex h-12 items-center justify-center border-b border-slatePro-800">
+        <div className="border-slatePro-800 flex h-12 items-center justify-center border-b">
           <Link href={getPersonaDashboardPath(persona ?? null) ?? "/dashboard"}>
-            <ShieldLogo className="h-6 w-6 text-navy-400" />
+            <ShieldLogo className="text-navy-400 h-6 w-6" />
           </Link>
         </div>
 
@@ -462,7 +473,9 @@ export function Sidebar({
                 <Link
                   href={mainHref}
                   className={`flex h-10 w-full items-center justify-center ${
-                    active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200"
+                    active
+                      ? "bg-navy-500/20 text-navy-300"
+                      : "text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200"
                   }`}
                   aria-current={active ? "page" : undefined}
                 >
@@ -474,12 +487,12 @@ export function Sidebar({
         </div>
 
         {/* Expand button */}
-        <div className="border-t border-slatePro-800 p-2">
+        <div className="border-slatePro-800 border-t p-2">
           <Tooltip content="Show full navigation" side="right">
             <button
               type="button"
               onClick={onExpandToFull}
-              className="flex h-10 w-full items-center justify-center rounded text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300"
+              className="text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300 flex h-10 w-full items-center justify-center rounded"
             >
               <Maximize2 className="h-5 w-5" />
             </button>
@@ -487,27 +500,31 @@ export function Sidebar({
         </div>
 
         {/* User avatar */}
-        <div className="relative border-t border-slatePro-800 p-2">
+        <div className="border-slatePro-800 relative border-t p-2">
           <button
             type="button"
             onClick={() => setUserMenuOpen((o) => !o)}
-            className="flex h-10 w-full items-center justify-center rounded-lg hover:bg-slatePro-800/50"
+            className="hover:bg-slatePro-800/50 flex h-10 w-full items-center justify-center rounded-lg"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-navy-500/30 text-sm font-medium text-navy-300">
+            <div className="bg-navy-500/30 text-navy-300 flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium">
               {initials}
             </div>
           </button>
           {userMenuOpen && (
             <>
-              <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} aria-hidden />
-              <div className="absolute bottom-full left-12 z-50 mb-1 w-48 rounded-lg border border-slatePro-700 bg-slatePro-900 shadow-xl">
-                <div className="border-b border-slatePro-700 px-3 py-2">
-                  <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
-                  <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setUserMenuOpen(false)}
+                aria-hidden
+              />
+              <div className="border-slatePro-700 bg-slatePro-900 absolute bottom-full left-12 z-50 mb-1 w-48 rounded-lg border shadow-xl">
+                <div className="border-slatePro-700 border-b px-3 py-2">
+                  <p className="text-slatePro-200 text-sm font-medium">{displayName}</p>
+                  <p className="text-slatePro-500 text-xs">{orgName ?? "Organization"}</p>
                 </div>
                 <Link
                   href={getPersonaDashboardPath(persona ?? null) ?? "/persona-select"}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
                   onClick={() => setUserMenuOpen(false)}
                 >
                   <LayoutDashboard className="h-4 w-4" />
@@ -520,7 +537,7 @@ export function Sidebar({
                       onResetToPersonaView();
                       setUserMenuOpen(false);
                     }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                    className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
                   >
                     <RotateCcw className="h-4 w-4" />
                     Reset to my view
@@ -528,7 +545,7 @@ export function Sidebar({
                 )}
                 <Link
                   href="/settings/billing"
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex items-center gap-2 px-3 py-2 text-sm"
                   onClick={() => setUserMenuOpen(false)}
                 >
                   <Settings className="h-4 w-4" />
@@ -537,7 +554,7 @@ export function Sidebar({
                 {role === "ADMIN" && (
                   <Link
                     href="/settings/admin"
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                    className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex items-center gap-2 px-3 py-2 text-sm"
                     onClick={() => setUserMenuOpen(false)}
                   >
                     Admin
@@ -546,7 +563,7 @@ export function Sidebar({
                 {isSuperAdmin && (
                   <Link
                     href="/super-admin"
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:bg-slatePro-800 hover:text-amber-300"
+                    className="hover:bg-slatePro-800 flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:text-amber-300"
                     onClick={() => setUserMenuOpen(false)}
                   >
                     <Shield className="h-4 w-4" />
@@ -556,7 +573,7 @@ export function Sidebar({
                 <button
                   type="button"
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="w-full px-3 py-2 text-left text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 w-full px-3 py-2 text-left text-sm"
                 >
                   Sign out
                 </button>
@@ -570,23 +587,25 @@ export function Sidebar({
 
   return (
     <aside
-      className={`relative flex shrink-0 flex-col overflow-hidden border-r border-slatePro-800 bg-slatePro-950 transition-[width] ${
+      className={`border-slatePro-800 bg-slatePro-950 relative flex shrink-0 flex-col overflow-hidden border-r transition-[width] ${
         collapsed ? "w-16" : "w-64"
       }`}
       role="navigation"
       aria-label="Main navigation"
     >
       {/* Logo / search / collapse */}
-      <div className="flex h-14 items-center justify-between gap-2 border-b border-slatePro-800 px-3">
+      <div className="border-slatePro-800 flex h-14 items-center justify-between gap-2 border-b px-3">
         {!collapsed && (
           <Link
             href={getPersonaDashboardPath(persona ?? null) ?? "/dashboard"}
             className="flex min-w-0 flex-1 items-center gap-2"
           >
-            <ShieldLogo className="h-8 w-8 shrink-0 text-navy-400" />
+            <ShieldLogo className="text-navy-400 h-8 w-8 shrink-0" />
             <div className="min-w-0">
-              <span className="block truncate text-sm font-semibold text-slatePro-100">AI Readiness</span>
-              <span className="block text-[10px] text-slatePro-500">Readiness & Governance</span>
+              <span className="text-slatePro-100 block truncate text-sm font-semibold">
+                AI Readiness
+              </span>
+              <span className="text-slatePro-500 block text-[10px]">Readiness & Governance</span>
             </div>
           </Link>
         )}
@@ -594,7 +613,7 @@ export function Sidebar({
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-slatePro-600 bg-slatePro-900/50 text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200"
+            className="border-slatePro-600 bg-slatePro-900/50 text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200 flex h-8 w-8 shrink-0 items-center justify-center rounded border"
             title="Search (Cmd+K)"
           >
             <Search className="h-4 w-4" />
@@ -603,7 +622,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="rounded p-2 text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200"
+          className="text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200 rounded p-2"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <ChevronRight className={`h-5 w-5 ${collapsed ? "" : "rotate-180"}`} />
@@ -617,7 +636,7 @@ export function Sidebar({
       )}
 
       {consultantOrgId && !activeWorkspaceOrgId && !collapsed && consultantOrgName && (
-        <div className="relative overflow-visible border-b border-slatePro-800 px-3 py-2">
+        <div className="border-slatePro-800 relative overflow-visible border-b px-3 py-2">
           <WorkspaceSwitcher
             consultantOrgId={consultantOrgId}
             consultantOrgName={consultantOrgName}
@@ -641,10 +660,10 @@ export function Sidebar({
               <button
                 type="button"
                 onClick={() => toggleSection(section.title)}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-slatePro-500 hover:bg-slatePro-800/50 hover:text-slatePro-400"
+                className="text-slatePro-500 hover:bg-slatePro-800/50 hover:text-slatePro-400 flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium tracking-wider uppercase"
               >
                 {collapsed ? (
-                  <span className="mx-auto text-slatePro-500">•••</span>
+                  <span className="text-slatePro-500 mx-auto">•••</span>
                 ) : (
                   <>
                     {isExpanded ? (
@@ -673,7 +692,7 @@ export function Sidebar({
                         key={item.href}
                         className={`flex items-center gap-2 px-3 py-2 text-sm ${
                           collapsed ? "justify-center pl-2" : "pl-6"
-                        } cursor-not-allowed text-slatePro-600`}
+                        } text-slatePro-600 cursor-not-allowed`}
                         title="Available via module"
                       >
                         {showLock && <LockKeyhole className="h-4 w-4 shrink-0 text-amber-500/70" />}
@@ -709,12 +728,11 @@ export function Sidebar({
                         {!collapsed && (
                           <>
                             <span className="truncate">{item.label}</span>
-                            {item.href === "/consultant" &&
-                              consultantWorkspaces.length > 0 && (
-                                <span className="shrink-0 rounded bg-navy-500/30 px-1.5 py-0.5 text-[10px] text-navy-300">
-                                  {consultantWorkspaces.length}
-                                </span>
-                              )}
+                            {item.href === "/consultant" && consultantWorkspaces.length > 0 && (
+                              <span className="bg-navy-500/30 text-navy-300 shrink-0 rounded px-1.5 py-0.5 text-[10px]">
+                                {consultantWorkspaces.length}
+                              </span>
+                            )}
                             {isTierLocked && (
                               <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
                                 Pro
@@ -724,7 +742,7 @@ export function Sidebar({
                         )}
                       </Link>
                       {hasSubtitle && (
-                        <div className="px-3 pl-6 text-[10px] text-slatePro-500">
+                        <div className="text-slatePro-500 px-3 pl-6 text-[10px]">
                           {item.subtitle}
                           <Link
                             href={item.changeHref!}
@@ -744,15 +762,17 @@ export function Sidebar({
 
       {/* Tier indicator */}
       {!collapsed && tier === "FREE" && (
-        <div className="border-t border-slatePro-800 p-3">
-          <div className="rounded-lg bg-slatePro-800 p-3">
+        <div className="border-slatePro-800 border-t p-3">
+          <div className="bg-slatePro-800 rounded-lg p-3">
             <div className="mb-1 flex items-center justify-between">
-              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">Free Plan</span>
+              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">
+                Free Plan
+              </span>
               <span className="text-xs text-amber-400">
                 {assetCount}/{getAssetLimit(tier)} assets
               </span>
             </div>
-            <div className="h-1.5 rounded-full bg-slatePro-700">
+            <div className="bg-slatePro-700 h-1.5 rounded-full">
               <div
                 className="h-1.5 rounded-full bg-amber-400 transition-all"
                 style={{ width: `${Math.min(100, (assetCount / getAssetLimit(tier)) * 100)}%` }}
@@ -760,7 +780,7 @@ export function Sidebar({
             </div>
             <Link
               href="/pricing"
-              className="mt-2 flex w-full items-center justify-center rounded-md bg-navy-600 py-1.5 text-xs font-medium text-white hover:bg-navy-500 transition-colors"
+              className="bg-navy-600 hover:bg-navy-500 mt-2 flex w-full items-center justify-center rounded-md py-1.5 text-xs font-medium text-white transition-colors"
             >
               Upgrade to Pro →
             </Link>
@@ -768,7 +788,7 @@ export function Sidebar({
         </div>
       )}
       {!collapsed && tier !== "FREE" && (
-        <div className="border-t border-slatePro-800 p-3">
+        <div className="border-slatePro-800 border-t p-3">
           <div className="flex flex-col gap-1.5">
             <span
               className={`inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -779,9 +799,13 @@ export function Sidebar({
                     : "bg-green-500/20 text-green-400"
               }`}
             >
-              {tier === "PRO" ? "Pro Plan" : tier === "CONSULTANT" ? "Consultant Plan" : "Enterprise Plan"}
+              {tier === "PRO"
+                ? "Pro Plan"
+                : tier === "CONSULTANT"
+                  ? "Consultant Plan"
+                  : "Enterprise Plan"}
             </span>
-            <span className="text-xs text-slatePro-400">
+            <span className="text-slatePro-400 text-xs">
               {(TIER_LIMITS[tier?.toUpperCase() as keyof typeof TIER_LIMITS]?.assetLimit ?? 0) === 0
                 ? "No asset limit"
                 : `Up to ${TIER_LIMITS[tier?.toUpperCase() as keyof typeof TIER_LIMITS]?.assetLimit ?? 0} assets`}
@@ -792,14 +816,14 @@ export function Sidebar({
 
       {/* Persona indicator */}
       {!collapsed && persona && (
-        <div className="border-t border-slatePro-800 px-3 py-2">
+        <div className="border-slatePro-800 border-t px-3 py-2">
           <div className="flex items-center justify-between gap-2">
-            <span className="rounded bg-navy-500/30 px-2 py-0.5 text-xs font-medium text-navy-300">
+            <span className="bg-navy-500/30 text-navy-300 rounded px-2 py-0.5 text-xs font-medium">
               {personaConfig?.label ?? persona}
             </span>
             <Link
               href="/persona-select"
-              className="text-xs text-navy-400 hover:text-navy-300 hover:underline"
+              className="text-navy-400 hover:text-navy-300 text-xs hover:underline"
             >
               Switch view
             </Link>
@@ -809,8 +833,8 @@ export function Sidebar({
 
       {/* Active frameworks */}
       {!collapsed && frameworks.length > 0 && (
-        <div className="border-t border-slatePro-800 px-3 py-2">
-          <div className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-slatePro-500">
+        <div className="border-slatePro-800 border-t px-3 py-2">
+          <div className="text-slatePro-500 mb-1.5 text-[10px] font-medium tracking-wider uppercase">
             Active Frameworks
           </div>
           <div className="flex flex-wrap gap-1">
@@ -818,7 +842,8 @@ export function Sidebar({
               <span
                 key={f.code}
                 className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
-                  FRAMEWORK_COLORS[f.code] ?? "bg-slatePro-700/50 text-slatePro-400 border-slatePro-600"
+                  FRAMEWORK_COLORS[f.code] ??
+                  "bg-slatePro-700/50 text-slatePro-400 border-slatePro-600"
                 }`}
               >
                 {f.code.replace(/_/g, " ")}
@@ -829,36 +854,40 @@ export function Sidebar({
       )}
 
       {/* User avatar + dropdown */}
-      <div className="relative border-t border-slatePro-800 p-3">
+      <div className="border-slatePro-800 relative border-t p-3">
         <button
           type="button"
           onClick={() => setUserMenuOpen((o) => !o)}
-          className="flex w-full items-center gap-3 rounded-lg p-2 hover:bg-slatePro-800/50"
+          className="hover:bg-slatePro-800/50 flex w-full items-center gap-3 rounded-lg p-2"
         >
           <div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-navy-500/30 text-sm font-medium text-navy-300"
+            className="bg-navy-500/30 text-navy-300 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-medium"
             aria-hidden
           >
             {initials}
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1 text-left">
-              <p className="truncate text-sm font-medium text-slatePro-200">{displayName}</p>
-              <p className="truncate text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
+              <p className="text-slatePro-200 truncate text-sm font-medium">{displayName}</p>
+              <p className="text-slatePro-500 truncate text-xs">{orgName ?? "Organization"}</p>
             </div>
           )}
         </button>
         {userMenuOpen && (
           <>
-            <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} aria-hidden />
-            <div className="absolute bottom-full left-3 right-3 z-50 mb-1 rounded-lg border border-slatePro-700 bg-slatePro-900 shadow-xl">
-              <div className="border-b border-slatePro-700 px-3 py-2">
-                <p className="text-sm font-medium text-slatePro-200">{displayName}</p>
-                <p className="text-xs text-slatePro-500">{orgName ?? "Organization"}</p>
+            <div
+              className="fixed inset-0 z-40"
+              onClick={() => setUserMenuOpen(false)}
+              aria-hidden
+            />
+            <div className="border-slatePro-700 bg-slatePro-900 absolute right-3 bottom-full left-3 z-50 mb-1 rounded-lg border shadow-xl">
+              <div className="border-slatePro-700 border-b px-3 py-2">
+                <p className="text-slatePro-200 text-sm font-medium">{displayName}</p>
+                <p className="text-slatePro-500 text-xs">{orgName ?? "Organization"}</p>
               </div>
               <Link
                 href={getPersonaDashboardPath(persona ?? null) ?? "/persona-select"}
-                className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
                 onClick={() => setUserMenuOpen(false)}
               >
                 <LayoutDashboard className="h-4 w-4" />
@@ -871,7 +900,7 @@ export function Sidebar({
                     onResetToPersonaView();
                     setUserMenuOpen(false);
                   }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Reset to my view
@@ -879,7 +908,7 @@ export function Sidebar({
               )}
               <Link
                 href="/settings/billing"
-                className="flex items-center gap-2 px-3 py-2 text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex items-center gap-2 px-3 py-2 text-sm"
                 onClick={() => setUserMenuOpen(false)}
               >
                 <Settings className="h-4 w-4" />
@@ -888,7 +917,7 @@ export function Sidebar({
               {isSuperAdmin && (
                 <Link
                   href="/super-admin"
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:bg-slatePro-800 hover:text-amber-300"
+                  className="hover:bg-slatePro-800 flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:text-amber-300"
                   onClick={() => setUserMenuOpen(false)}
                 >
                   <Shield className="h-4 w-4" />
@@ -898,7 +927,7 @@ export function Sidebar({
               <button
                 type="button"
                 onClick={() => signOut({ callbackUrl: "/login" })}
-                className="w-full px-3 py-2 text-left text-sm text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100"
+                className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 w-full px-3 py-2 text-left text-sm"
               >
                 Sign out
               </button>
@@ -908,7 +937,7 @@ export function Sidebar({
         {!collapsed && role === "ADMIN" && (
           <Link
             href="/settings/admin"
-            className="mt-2 flex justify-center px-3 py-1 text-xs text-slatePro-600 hover:text-slatePro-400"
+            className="text-slatePro-600 hover:text-slatePro-400 mt-2 flex justify-center px-3 py-1 text-xs"
           >
             Admin
           </Link>

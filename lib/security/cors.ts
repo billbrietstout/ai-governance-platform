@@ -19,7 +19,7 @@ export function corsHeaders(origin: string | null): Record<string, string> {
       ? origin
       : process.env.NODE_ENV === "production"
         ? ""
-        : ALLOWED_ORIGINS[0] ?? "";
+        : (ALLOWED_ORIGINS[0] ?? "");
 
   return {
     "Access-Control-Allow-Origin": allowedOrigin,

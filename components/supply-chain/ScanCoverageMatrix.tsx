@@ -52,7 +52,10 @@ export function ScanCoverageMatrix({
         </thead>
         <tbody>
           {assets.map((row) => (
-            <tr key={row.assetId} className="border-b border-gray-200 last:border-0 hover:bg-gray-50">
+            <tr
+              key={row.assetId}
+              className="border-b border-gray-200 last:border-0 hover:bg-gray-50"
+            >
               <td className="px-4 py-2 font-medium text-gray-900">{row.assetName}</td>
               {row.scans.map((cell) => {
                 const status = getStatus(cell);

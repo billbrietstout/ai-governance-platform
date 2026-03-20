@@ -20,12 +20,19 @@ const TIER_COLORS: Record<string, string> = {
   ENTERPRISE: "bg-green-100 text-green-700"
 };
 
-export function SuperAdminOrgList({ orgs, deletedOrgCount = 0 }: { orgs: Org[]; deletedOrgCount?: number }) {
+export function SuperAdminOrgList({
+  orgs,
+  deletedOrgCount = 0
+}: {
+  orgs: Org[];
+  deletedOrgCount?: number;
+}) {
   const [search, setSearch] = useState("");
 
-  const filtered = orgs.filter((org) =>
-    org.name.toLowerCase().includes(search.toLowerCase()) ||
-    org.slug.toLowerCase().includes(search.toLowerCase())
+  const filtered = orgs.filter(
+    (org) =>
+      org.name.toLowerCase().includes(search.toLowerCase()) ||
+      org.slug.toLowerCase().includes(search.toLowerCase())
   );
 
   const totalUsers = orgs.reduce((sum, o) => sum + o._count.users, 0);
@@ -37,9 +44,7 @@ export function SuperAdminOrgList({ orgs, deletedOrgCount = 0 }: { orgs: Org[]; 
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Platform Administration
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Manage all organizations across the platform.
-        </p>
+        <p className="mt-1 text-sm text-slate-600">Manage all organizations across the platform.</p>
       </div>
 
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
@@ -78,7 +83,7 @@ export function SuperAdminOrgList({ orgs, deletedOrgCount = 0 }: { orgs: Org[]; 
           placeholder="Search organizations..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-sm rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 w-full max-w-sm rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:ring-1 focus:outline-none"
         />
       </div>
 
@@ -87,25 +92,25 @@ export function SuperAdminOrgList({ orgs, deletedOrgCount = 0 }: { orgs: Org[]; 
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Name
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Slug
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Tier
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Users
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Assets
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Vertical
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+              <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                 Created
               </th>
             </tr>
@@ -113,34 +118,32 @@ export function SuperAdminOrgList({ orgs, deletedOrgCount = 0 }: { orgs: Org[]; 
           <tbody className="divide-y divide-slate-200">
             {filtered.map((org) => (
               <tr key={org.id} className="hover:bg-slate-50">
-                <td className="whitespace-nowrap px-4 py-3 text-sm">
+                <td className="px-4 py-3 text-sm whitespace-nowrap">
                   <Link
                     href={`/super-admin/orgs/${org.id}`}
-                    className="font-medium text-navy-600 hover:text-navy-500 hover:underline"
+                    className="text-navy-600 hover:text-navy-500 font-medium hover:underline"
                   >
                     {org.name}
                   </Link>
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-500">
-                  {org.slug}
-                </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm">
+                <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-500">{org.slug}</td>
+                <td className="px-4 py-3 text-sm whitespace-nowrap">
                   <span
                     className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${TIER_COLORS[org.tier] ?? "bg-slate-100 text-slate-700"}`}
                   >
                     {org.tier}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-700">
+                <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-700">
                   {org._count.users}
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-700">
+                <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-700">
                   {org._count.aiAssets}
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-500">
+                <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-500">
                   {org.verticalMarket}
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-500">
+                <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-500">
                   {new Date(org.createdAt).toLocaleDateString()}
                 </td>
               </tr>

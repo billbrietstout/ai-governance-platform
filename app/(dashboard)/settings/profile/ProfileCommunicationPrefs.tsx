@@ -39,16 +39,11 @@ export function ProfileCommunicationPrefs({ emailEnabled, userEmail }: Props) {
             {enabled ? `Receiving at ${userEmail ?? "your email"}` : "Disabled"}
           </p>
         </div>
-        <Toggle
-          checked={enabled}
-          onChange={handleToggle}
-          size="default"
-          disabled={saving}
-        />
+        <Toggle checked={enabled} onChange={handleToggle} size="default" disabled={saving} />
       </div>
       <Link
         href="/settings/notifications"
-        className="mt-4 inline-block text-sm text-navy-600 hover:underline"
+        className="text-navy-600 mt-4 inline-block text-sm hover:underline"
       >
         Manage all notification settings →
       </Link>

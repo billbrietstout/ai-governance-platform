@@ -70,10 +70,7 @@ export const notificationsRouter = createTRPCRouter({
       select: { email: true }
     });
     if (user) {
-      await sendWeeklyDigestToUser(
-        { id: ctx.userId, email: user.email },
-        orgId
-      );
+      await sendWeeklyDigestToUser({ id: ctx.userId, email: user.email }, orgId);
     }
     return { sent: true };
   }),
@@ -144,7 +141,8 @@ export const notificationsRouter = createTRPCRouter({
         email: u.email,
         emailEnabled: prefMap.get(u.id) ?? true,
         lastDigestDaysAgo: daysAgo,
-        lastDigestLabel: daysAgo === null ? "Never" : daysAgo === 0 ? "Today" : `${daysAgo} days ago`
+        lastDigestLabel:
+          daysAgo === null ? "Never" : daysAgo === 0 ? "Today" : `${daysAgo} days ago`
       };
     });
   }),

@@ -5,7 +5,12 @@
 
 export type CosaiLayer = "L1" | "L2" | "L3" | "L4" | "L5";
 
-export type EvidenceCategory = "Governance" | "Technical" | "Operational" | "Assessment" | "Attestation";
+export type EvidenceCategory =
+  | "Governance"
+  | "Technical"
+  | "Operational"
+  | "Assessment"
+  | "Attestation";
 
 export type EvidenceItem = {
   id: string;

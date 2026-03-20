@@ -160,10 +160,7 @@ export async function GET(req: Request) {
     : (await prisma.organization.findMany({ select: { id: true } })).map((o) => o.id);
 
   if (orgIds.length === 0) {
-    return NextResponse.json(
-      { error: "No organizations found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "No organizations found" }, { status: 404 });
   }
 
   const weekStart = new Date();

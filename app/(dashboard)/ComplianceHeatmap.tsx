@@ -29,9 +29,14 @@ export function ComplianceHeatmap({ data }: Props) {
       <table className="min-w-full text-xs">
         <thead>
           <tr className="border-b border-slate-200">
-            <th className="py-1.5 pr-2 text-left text-xs font-medium uppercase tracking-wide text-slate-500">Framework</th>
+            <th className="py-1.5 pr-2 text-left text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Framework
+            </th>
             {types.map((t) => (
-              <th key={t} className="px-2 py-1.5 text-center text-xs font-medium uppercase tracking-wide text-slate-500">
+              <th
+                key={t}
+                className="px-2 py-1.5 text-center text-xs font-medium tracking-wide text-slate-500 uppercase"
+              >
                 {t}
               </th>
             ))}

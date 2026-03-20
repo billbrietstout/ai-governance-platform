@@ -18,7 +18,9 @@ const PatchDomainBody = z.object({
   autoJoinRole: z.enum(["VIEWER", "ANALYST"]).optional()
 });
 
-function requireAdmin(session: { user?: { orgId?: string; id?: string; role?: string } } | null):
+function requireAdmin(
+  session: { user?: { orgId?: string; id?: string; role?: string } } | null
+):
   | { ok: false; status: 401 | 403; body: { error: string } }
   | { ok: true; orgId: string; userId: string } {
   if (!session?.user) {
@@ -64,7 +66,11 @@ export async function PATCH(req: NextRequest) {
   const { claimedDomain, autoJoinRole } = parsed.data;
 
   const domainToValidate =
-    claimedDomain === undefined ? null : claimedDomain === null || claimedDomain === "" ? null : claimedDomain;
+    claimedDomain === undefined
+      ? null
+      : claimedDomain === null || claimedDomain === ""
+        ? null
+        : claimedDomain;
   if (domainToValidate) {
     const normalized = domainToValidate.trim().toLowerCase();
     if (!DOMAIN_REGEX.test(normalized)) {

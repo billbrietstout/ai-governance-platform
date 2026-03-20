@@ -34,7 +34,10 @@ export function CardSyncStatus({ status, lastSyncedAt, staleThresholdDays = 30 }
         : "bg-amber-500/20 text-amber-400";
 
   return (
-    <span className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${color}`} suppressHydrationWarning>
+    <span
+      className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${color}`}
+      suppressHydrationWarning
+    >
       {label}
     </span>
   );

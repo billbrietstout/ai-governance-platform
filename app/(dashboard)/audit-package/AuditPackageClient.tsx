@@ -43,7 +43,7 @@ function ExportPDFButton() {
       type="button"
       onClick={handleExport}
       disabled={loading}
-      className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+      className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
     >
       <FileDown className="h-4 w-4" />
       {loading ? "Generating PDF…" : "Export as PDF"}
@@ -112,13 +112,18 @@ export function AuditPackageClient({ assets, regulations }: Props) {
       <div className="grid gap-4 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => { setMode("asset"); setPreview(null); }}
+          onClick={() => {
+            setMode("asset");
+            setPreview(null);
+          }}
           className={`flex items-center gap-4 rounded-lg border p-6 text-left shadow-sm transition ${
-            mode === "asset" ? "border-navy-500 bg-navy-50 ring-2 ring-navy-500" : "border-slate-200 bg-white hover:border-slate-300"
+            mode === "asset"
+              ? "border-navy-500 bg-navy-50 ring-navy-500 ring-2"
+              : "border-slate-200 bg-white hover:border-slate-300"
           }`}
         >
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-navy-100">
-            <Package className="h-7 w-7 text-navy-600" />
+          <div className="bg-navy-100 flex h-14 w-14 shrink-0 items-center justify-center rounded-lg">
+            <Package className="text-navy-600 h-7 w-7" />
           </div>
           <div>
             <h2 className="font-semibold text-slate-900">By Asset</h2>
@@ -129,9 +134,14 @@ export function AuditPackageClient({ assets, regulations }: Props) {
         </button>
         <button
           type="button"
-          onClick={() => { setMode("regulation"); setPreview(null); }}
+          onClick={() => {
+            setMode("regulation");
+            setPreview(null);
+          }}
           className={`flex items-center gap-4 rounded-lg border p-6 text-left shadow-sm transition ${
-            mode === "regulation" ? "border-navy-500 bg-navy-50 ring-2 ring-navy-500" : "border-slate-200 bg-white hover:border-slate-300"
+            mode === "regulation"
+              ? "border-navy-500 bg-navy-50 ring-navy-500 ring-2"
+              : "border-slate-200 bg-white hover:border-slate-300"
           }`}
         >
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-slate-100">
@@ -156,7 +166,10 @@ export function AuditPackageClient({ assets, regulations }: Props) {
             <select
               id="asset-select"
               value={assetId}
-              onChange={(e) => { setAssetId(e.target.value); setPreview(null); }}
+              onChange={(e) => {
+                setAssetId(e.target.value);
+                setPreview(null);
+              }}
               className="mt-1 min-w-[280px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
             >
               <option value="">— Select an asset —</option>
@@ -176,12 +189,17 @@ export function AuditPackageClient({ assets, regulations }: Props) {
             <select
               id="regulation-select"
               value={regulationCode}
-              onChange={(e) => { setRegulationCode(e.target.value); setPreview(null); }}
+              onChange={(e) => {
+                setRegulationCode(e.target.value);
+                setPreview(null);
+              }}
               className="mt-1 min-w-[280px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
             >
               <option value="">— Select regulation —</option>
               {regulations.map((r) => (
-                <option key={r.value} value={r.value}>{r.label}</option>
+                <option key={r.value} value={r.value}>
+                  {r.label}
+                </option>
               ))}
             </select>
           </div>
@@ -190,7 +208,7 @@ export function AuditPackageClient({ assets, regulations }: Props) {
           type="button"
           onClick={loadPreview}
           disabled={!canLoadPreview || loading}
-          className="mt-4 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 mt-4 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {loading ? "Loading…" : "Preview evidence"}
         </button>
@@ -203,46 +221,65 @@ export function AuditPackageClient({ assets, regulations }: Props) {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Control attestations</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.controlAttestations}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.controlAttestations}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Scan records</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.scanRecords}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.scanRecords}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Accountability assignments</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.accountabilityAssignments}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.accountabilityAssignments}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Vendor assurance</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.vendorAssurances}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.vendorAssurances}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Artifact / model cards</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.artifactCards}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.artifactCards}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Governance policies</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.governancePolicies}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.governancePolicies}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Maturity assessment</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.maturityAssessment ? "Yes" : "No"}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.maturityAssessment ? "Yes" : "No"}
+              </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
               <span className="text-xs text-slate-500">Data lineage records</span>
-              <p className="text-lg font-semibold text-slate-900">{preview.evidenceCounts.lineageRecords}</p>
+              <p className="text-lg font-semibold text-slate-900">
+                {preview.evidenceCounts.lineageRecords}
+              </p>
             </div>
           </div>
 
           {/* Coverage score */}
           <div className="rounded border border-slate-200 bg-slate-50 px-4 py-3">
             <span className="text-sm font-medium text-slate-700">Coverage score: </span>
-            <span className={`text-lg font-bold ${preview.coverageScore >= 80 ? "text-emerald-600" : preview.coverageScore >= 50 ? "text-amber-600" : "text-red-600"}`}>
+            <span
+              className={`text-lg font-bold ${preview.coverageScore >= 80 ? "text-emerald-600" : preview.coverageScore >= 50 ? "text-amber-600" : "text-red-600"}`}
+            >
               {preview.coverageScore}%
             </span>
             <span className="text-sm text-slate-600">
-              {" "}({preview.presentCount} of {preview.totalRequired} required items present)
+              {" "}
+              ({preview.presentCount} of {preview.totalRequired} required items present)
             </span>
           </div>
 
@@ -252,7 +289,10 @@ export function AuditPackageClient({ assets, regulations }: Props) {
               <h4 className="mb-2 text-sm font-medium text-slate-700">Missing evidence</h4>
               <ul className="space-y-2">
                 {preview.missingItems.map((m) => (
-                  <li key={m.id} className="flex items-center justify-between gap-2 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
+                  <li
+                    key={m.id}
+                    className="flex items-center justify-between gap-2 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-sm"
+                  >
                     <span className="font-medium text-slate-900">{m.name}</span>
                     <span className="text-xs text-slate-500">L{m.layer.slice(1)}</span>
                     <Link href={m.link} className="text-navy-600 hover:underline">

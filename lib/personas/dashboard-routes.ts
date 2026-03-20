@@ -23,5 +23,7 @@ export function getPersonaDashboardPath(persona: string | null): string | null {
 }
 
 export function isPersonaDashboardPath(pathname: string): boolean {
-  return Object.values(PERSONA_DASHBOARD_MAP).some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return Object.values(PERSONA_DASHBOARD_MAP).some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
 }

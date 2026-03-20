@@ -17,7 +17,7 @@ export function VerticalRegulationBadge({ asset, verticalKey }: Props) {
       {regulations.map((r) => (
         <span
           key={r.code}
-          className="rounded bg-navy-100 px-1.5 py-0.5 text-[10px] font-medium text-navy-700"
+          className="bg-navy-100 text-navy-700 rounded px-1.5 py-0.5 text-[10px] font-medium"
           title={r.name}
         >
           {r.code}

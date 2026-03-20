@@ -12,31 +12,31 @@ export async function GET() {
   }
 
   let pref = await prisma.notificationPreference.findUnique({
-    where: { userId: user.id },
+    where: { userId: user.id }
   });
 
   if (!pref) {
     pref = await prisma.notificationPreference.create({
-      data: { userId: user.id, orgId: user.orgId, weeklyDigest: true, emailEnabled: true },
+      data: { userId: user.id, orgId: user.orgId, weeklyDigest: true, emailEnabled: true }
     });
   }
 
   // Ensure user has an unsubscribe token
   const dbUser = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { unsubscribeToken: true },
+    select: { unsubscribeToken: true }
   });
   if (!dbUser?.unsubscribeToken) {
     await prisma.user.update({
       where: { id: user.id },
-      data: { unsubscribeToken: crypto.randomBytes(32).toString("hex") },
+      data: { unsubscribeToken: crypto.randomBytes(32).toString("hex") }
     });
   }
 
   // Include org-level settings
   const org = await prisma.organization.findUnique({
     where: { id: user.orgId },
-    select: { notificationsEnabled: true, slackEnabled: true, slackWebhookUrl: true },
+    select: { notificationsEnabled: true, slackEnabled: true, slackWebhookUrl: true }
   });
 
   return NextResponse.json({
@@ -44,8 +44,8 @@ export async function GET() {
     org: {
       notificationsEnabled: org?.notificationsEnabled ?? true,
       slackEnabled: org?.slackEnabled ?? false,
-      slackConfigured: !!org?.slackWebhookUrl,
-    },
+      slackConfigured: !!org?.slackWebhookUrl
+    }
   });
 }
 
@@ -65,7 +65,7 @@ const PREF_KEYS = [
   "newUnownedHighRisk",
   "failedScanAlert",
   "emailEnabled",
-  "slackWebhookUrl",
+  "slackWebhookUrl"
 ] as const;
 
 export async function PATCH(req: NextRequest) {
@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest) {
   if (data.emailEnabled === true) {
     await prisma.user.update({
       where: { id: user.id },
-      data: { unsubscribedAt: null },
+      data: { unsubscribedAt: null }
     });
   }
 
@@ -95,9 +95,9 @@ export async function PATCH(req: NextRequest) {
     create: {
       userId: user.id,
       orgId: user.orgId,
-      ...data,
+      ...data
     } as Parameters<typeof prisma.notificationPreference.upsert>[0]["create"],
-    update: data as Parameters<typeof prisma.notificationPreference.upsert>[0]["update"],
+    update: data as Parameters<typeof prisma.notificationPreference.upsert>[0]["update"]
   });
 
   // Org-level updates — admin/owner only
@@ -118,7 +118,7 @@ export async function PATCH(req: NextRequest) {
     if (Object.keys(orgUpdates).length > 0) {
       await prisma.organization.update({
         where: { id: user.orgId },
-        data: orgUpdates,
+        data: orgUpdates
       });
     }
 
@@ -126,7 +126,7 @@ export async function PATCH(req: NextRequest) {
     if (body.testSlack === true) {
       const org = await prisma.organization.findUnique({
         where: { id: user.orgId },
-        select: { name: true, slackWebhookUrl: true },
+        select: { name: true, slackWebhookUrl: true }
       });
       const webhookUrl = (body.orgSlackWebhookUrl as string) || org?.slackWebhookUrl;
       if (!webhookUrl) {

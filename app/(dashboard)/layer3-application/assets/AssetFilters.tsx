@@ -4,7 +4,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const TYPES = ["MODEL", "PROMPT", "AGENT", "DATASET", "APPLICATION", "TOOL", "PIPELINE"];
 const EU_RISKS = ["MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"];
-const LAYERS = ["LAYER_1_BUSINESS", "LAYER_2_INFORMATION", "LAYER_3_APPLICATION", "LAYER_4_PLATFORM", "LAYER_5_SUPPLY_CHAIN"];
+const LAYERS = [
+  "LAYER_1_BUSINESS",
+  "LAYER_2_INFORMATION",
+  "LAYER_3_APPLICATION",
+  "LAYER_4_PLATFORM",
+  "LAYER_5_SUPPLY_CHAIN"
+];
 const STATUSES = ["DRAFT", "ACTIVE", "DEPRECATED", "ARCHIVED"];
 
 export function AssetFilters() {

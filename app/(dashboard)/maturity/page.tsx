@@ -11,10 +11,10 @@ import { LAYER_LABELS, MATURITY_LEVEL_LABELS } from "@/lib/maturity/questions";
 /** Color for a given score (1.0–5.0) based on maturity level thresholds */
 function getScoreColor(score: number): string {
   if (score >= 5) return "#10b981"; // M5 Optimised
-  if (score >= 4) return "#8b5cf6";  // M4 Measured
-  if (score >= 3) return "#3b82f6";  // M3 Implemented
-  if (score >= 2) return "#f97316";  // M2 Documented
-  return "#fbbf24";                  // M1 Aware
+  if (score >= 4) return "#8b5cf6"; // M4 Measured
+  if (score >= 3) return "#3b82f6"; // M3 Implemented
+  if (score >= 2) return "#f97316"; // M2 Documented
+  return "#fbbf24"; // M1 Aware
 }
 
 const MATURITY_LEVEL_COLORS: Record<number, string> = {
@@ -35,13 +35,22 @@ export default async function MaturityPage() {
 
   const { scores, maturityLevel, progressToNext, nextSteps, lastAssessedAt } = scoreRes.data;
   const latest = latestRes.data;
-  const previousScores = (prevRes.data?.scores as { L1: number; L2: number; L3: number; L4: number; L5: number } | null) ?? null;
+  const previousScores =
+    (prevRes.data?.scores as {
+      L1: number;
+      L2: number;
+      L3: number;
+      L4: number;
+      L5: number;
+    } | null) ?? null;
   const targetLevel = Math.min(maturityLevel + 1, 5);
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">AI Readiness Assessment</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          AI Readiness Assessment
+        </h1>
         <p className="mt-1 text-slate-600">
           Measure your organization&apos;s AI governance maturity across the five CoSAI layers.
         </p>
@@ -60,7 +69,9 @@ export default async function MaturityPage() {
         <div className="flex items-center gap-4">
           <div
             className="rounded-lg px-3 py-1.5 text-sm font-semibold text-white"
-            style={{ backgroundColor: MATURITY_LEVEL_COLORS[maturityLevel] ?? MATURITY_LEVEL_COLORS[1] }}
+            style={{
+              backgroundColor: MATURITY_LEVEL_COLORS[maturityLevel] ?? MATURITY_LEVEL_COLORS[1]
+            }}
           >
             {MATURITY_LEVEL_LABELS[maturityLevel]}
           </div>
@@ -70,7 +81,10 @@ export default async function MaturityPage() {
                 className="h-full rounded-full transition-all"
                 style={{
                   width: `${progressToNext}%`,
-                  backgroundColor: maturityLevel >= 5 ? "#10b981" : MATURITY_LEVEL_COLORS[maturityLevel + 1] ?? "#3b82f6"
+                  backgroundColor:
+                    maturityLevel >= 5
+                      ? "#10b981"
+                      : (MATURITY_LEVEL_COLORS[maturityLevel + 1] ?? "#3b82f6")
                 }}
               />
             </div>
@@ -126,8 +140,8 @@ export default async function MaturityPage() {
         <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-6">
           <h2 className="mb-2 text-lg font-semibold text-slate-900">Path to M5 Certification</h2>
           <p className="mb-4 text-sm text-slate-600">
-            You&apos;re at M4 or higher. Complete these steps to reach M5 Optimised and achieve
-            full certification readiness.
+            You&apos;re at M4 or higher. Complete these steps to reach M5 Optimised and achieve full
+            certification readiness.
           </p>
           <ul className="space-y-3">
             <li className="flex items-center gap-3">
@@ -152,15 +166,13 @@ export default async function MaturityPage() {
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-xs font-bold text-emerald-800">
                 3
               </span>
-              <span>CE marking readiness</span>
-              — Technical documentation and declaration
+              <span>CE marking readiness</span>— Technical documentation and declaration
             </li>
             <li className="flex items-center gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-xs font-bold text-emerald-800">
                 4
               </span>
-              <span>Independent model validation</span>
-              — Third-party assessment of critical systems
+              <span>Independent model validation</span>— Third-party assessment of critical systems
             </li>
           </ul>
           <p className="mt-4 text-xs text-slate-500">

@@ -23,10 +23,34 @@ export default async function AssetsPage({
   const caller = await createServerCaller();
   const [assetsRes, org] = await Promise.all([
     caller.assets.list({
-      assetType: params.type as "MODEL" | "PROMPT" | "AGENT" | "DATASET" | "APPLICATION" | "TOOL" | "PIPELINE" | undefined,
+      assetType: params.type as
+        | "MODEL"
+        | "PROMPT"
+        | "AGENT"
+        | "DATASET"
+        | "APPLICATION"
+        | "TOOL"
+        | "PIPELINE"
+        | undefined,
       euRiskLevel: params.euRisk as "MINIMAL" | "LIMITED" | "HIGH" | "UNACCEPTABLE" | undefined,
-      cosaiLayer: params.layer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" | undefined,
-      verticalMarket: params.vertical as "GENERAL" | "HEALTHCARE" | "FINANCIAL" | "INSURANCE" | "AUTOMOTIVE" | "RETAIL" | "MANUFACTURING" | "PUBLIC_SECTOR" | "ENERGY" | undefined,
+      cosaiLayer: params.layer as
+        | "LAYER_1_BUSINESS"
+        | "LAYER_2_INFORMATION"
+        | "LAYER_3_APPLICATION"
+        | "LAYER_4_PLATFORM"
+        | "LAYER_5_SUPPLY_CHAIN"
+        | undefined,
+      verticalMarket: params.vertical as
+        | "GENERAL"
+        | "HEALTHCARE"
+        | "FINANCIAL"
+        | "INSURANCE"
+        | "AUTOMOTIVE"
+        | "RETAIL"
+        | "MANUFACTURING"
+        | "PUBLIC_SECTOR"
+        | "ENERGY"
+        | undefined,
       operatingModel: params.operatingModel as "IN_HOUSE" | "VENDOR" | "HYBRID" | undefined,
       status: params.status as "DRAFT" | "ACTIVE" | "DEPRECATED" | "ARCHIVED" | undefined
     }),
@@ -70,7 +94,7 @@ export default async function AssetsPage({
         </div>
         <Link
           href="/layer3-application/assets/new"
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
         >
           New Asset
         </Link>
@@ -113,8 +137,10 @@ export default async function AssetsPage({
             <tbody>
               {data.map((a) => {
                 const ownerEmail = a.owner?.email ?? "—";
-                const ownerInitials = ownerEmail !== "—" ? ownerEmail.slice(0, 2).toUpperCase() : "—";
-                const compliance = (a as { compliancePercentage?: number }).compliancePercentage ?? 0;
+                const ownerInitials =
+                  ownerEmail !== "—" ? ownerEmail.slice(0, 2).toUpperCase() : "—";
+                const compliance =
+                  (a as { compliancePercentage?: number }).compliancePercentage ?? 0;
                 return (
                   <tr
                     key={a.id}
@@ -128,18 +154,24 @@ export default async function AssetsPage({
                         <div>
                           <Link
                             href={`/layer3-application/assets/${a.id}`}
-                            className="font-medium text-navy-600 hover:underline"
+                            className="text-navy-600 font-medium hover:underline"
                           >
                             {a.name}
                           </Link>
-                          <div className="text-xs text-gray-500">{a.assetType} · {a.status}</div>
+                          <div className="text-xs text-gray-500">
+                            {a.assetType} · {a.status}
+                          </div>
                           {a.clientVertical && (
-                            <span className="mt-1 inline-block rounded bg-navy-100 px-1.5 py-0.5 text-[10px] font-medium text-navy-700">
+                            <span className="bg-navy-100 text-navy-700 mt-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-medium">
                               {a.clientVertical.replace(/_/g, " ")}
                             </span>
                           )}
                           <VerticalRegulationBadge
-                            asset={{ name: a.name, assetType: a.assetType, description: a.description }}
+                            asset={{
+                              name: a.name,
+                              assetType: a.assetType,
+                              description: a.description
+                            }}
                             verticalKey={verticalKey}
                           />
                         </div>

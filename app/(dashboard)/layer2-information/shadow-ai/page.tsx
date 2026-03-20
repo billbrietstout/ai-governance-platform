@@ -22,18 +22,18 @@ export default async function ShadowAIDetectionPage() {
   return (
     <main className="flex flex-col gap-6">
       <div>
-        <Link href="/layer2-information" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer2-information" className="text-navy-400 text-sm hover:underline">
           ← Layer 2: Information
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Shadow AI Detection</h1>
-        <p className="mt-1 text-slatePro-300">Discover and govern ungoverned AI systems.</p>
+        <p className="text-slatePro-300 mt-1">Discover and govern ungoverned AI systems.</p>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <Bot className="h-4 w-4 text-navy-500" />
+            <Bot className="text-navy-500 h-4 w-4" />
             <span className="text-sm font-medium text-slate-600">Ungoverned AI</span>
           </div>
           <p className="mt-1 text-2xl font-semibold text-gray-900">{summary.ungovernedCount}</p>
@@ -64,17 +64,25 @@ export default async function ShadowAIDetectionPage() {
       {/* Shadow AI Registry */}
       <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 px-4 py-3">
-          <h2 className="text-sm font-medium text-slate-700">Shadow AI Registry — Discovered Ungoverned</h2>
+          <h2 className="text-sm font-medium text-slate-700">
+            Shadow AI Registry — Discovered Ungoverned
+          </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50/80">
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Asset</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Department</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Discovery Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Department
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Discovery Date
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">EU Risk</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Days Ungoverned</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Days Ungoverned
+                </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-slate-600">Action</th>
               </tr>
             </thead>
@@ -87,7 +95,9 @@ export default async function ShadowAIDetectionPage() {
                     {a.discoveryDate ? new Date(a.discoveryDate).toLocaleDateString() : "—"}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${RISK_BADGES[a.euRiskLevel ?? "LIMITED"] ?? RISK_BADGES.LIMITED}`}>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${RISK_BADGES[a.euRiskLevel ?? "LIMITED"] ?? RISK_BADGES.LIMITED}`}
+                    >
                       {a.euRiskLevel ?? "—"}
                     </span>
                   </td>
@@ -95,7 +105,7 @@ export default async function ShadowAIDetectionPage() {
                   <td className="px-4 py-3 text-right">
                     <Link
                       href={`/layer3-application/assets/${a.id}`}
-                      className="inline-flex items-center gap-1 rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500"
+                      className="bg-navy-600 hover:bg-navy-500 inline-flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium text-white"
                     >
                       Begin Assessment
                       <ArrowRight className="h-3 w-3" />
@@ -114,12 +124,20 @@ export default async function ShadowAIDetectionPage() {
           <h2 className="mb-3 text-sm font-medium text-slate-700">Coverage Gap Analysis</h2>
           <div className="space-y-2">
             {deptOrder
-              .filter((d) => coverageByDept[d] && (coverageByDept[d].governed > 0 || coverageByDept[d].ungoverned > 0))
+              .filter(
+                (d) =>
+                  coverageByDept[d] &&
+                  (coverageByDept[d].governed > 0 || coverageByDept[d].ungoverned > 0)
+              )
               .map((dept) => (
-                <div key={dept} className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
+                <div
+                  key={dept}
+                  className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2"
+                >
                   <span className="font-medium text-gray-900">{dept}</span>
                   <span className="text-sm text-slate-600">
-                    {coverageByDept[dept].governed} governed, {coverageByDept[dept].ungoverned} ungoverned
+                    {coverageByDept[dept].governed} governed, {coverageByDept[dept].ungoverned}{" "}
+                    ungoverned
                   </span>
                 </div>
               ))}

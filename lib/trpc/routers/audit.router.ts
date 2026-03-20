@@ -7,12 +7,14 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export const auditRouter = createTRPCRouter({
   getAuditPackagePreview: protectedProcedure
     .input(
-      z.object({
-        assetId: z.string().optional(),
-        regulationCode: z.string().optional()
-      }).refine((d) => d.assetId != null || d.regulationCode != null, {
-        message: "Either assetId or regulationCode required"
-      })
+      z
+        .object({
+          assetId: z.string().optional(),
+          regulationCode: z.string().optional()
+        })
+        .refine((d) => d.assetId != null || d.regulationCode != null, {
+          message: "Either assetId or regulationCode required"
+        })
     )
     .query(async ({ ctx, input }) => {
       const orgId = ctx.orgId;
@@ -20,7 +22,9 @@ export const auditRouter = createTRPCRouter({
       const regulationCode = input.regulationCode;
 
       const baseWhere = assetId ? { orgId, assetId } : { orgId };
-      const assetWhere = assetId ? { orgId, id: assetId, deletedAt: null } : { orgId, deletedAt: null };
+      const assetWhere = assetId
+        ? { orgId, id: assetId, deletedAt: null }
+        : { orgId, deletedAt: null };
 
       const [
         controlAttestations,
@@ -107,7 +111,13 @@ export const auditRouter = createTRPCRouter({
         : EVIDENCE_ITEMS;
       const totalRequired = requiredItems.length;
       let presentCount = 0;
-      const missingItems: { id: string; name: string; layer: string; howToCollect: string; link: string }[] = [];
+      const missingItems: {
+        id: string;
+        name: string;
+        layer: string;
+        howToCollect: string;
+        link: string;
+      }[] = [];
       for (const item of requiredItems) {
         const count = modelCounts[item.prismaModel] ?? 0;
         if (count > 0) {
@@ -122,7 +132,8 @@ export const auditRouter = createTRPCRouter({
           });
         }
       }
-      const coverageScore = totalRequired > 0 ? Math.round((presentCount / totalRequired) * 100) : 100;
+      const coverageScore =
+        totalRequired > 0 ? Math.round((presentCount / totalRequired) * 100) : 100;
 
       return {
         data: {
@@ -139,12 +150,14 @@ export const auditRouter = createTRPCRouter({
 
   generateAuditPackage: protectedProcedure
     .input(
-      z.object({
-        assetId: z.string().optional(),
-        regulationCode: z.string().optional()
-      }).refine((d) => d.assetId != null || d.regulationCode != null, {
-        message: "Either assetId or regulationCode required"
-      })
+      z
+        .object({
+          assetId: z.string().optional(),
+          regulationCode: z.string().optional()
+        })
+        .refine((d) => d.assetId != null || d.regulationCode != null, {
+          message: "Either assetId or regulationCode required"
+        })
     )
     .query(async ({ ctx, input }) => {
       const orgId = ctx.orgId;
@@ -181,7 +194,11 @@ export const auditRouter = createTRPCRouter({
           where: assetId ? { assetId } : { orgId }
         }),
         prisma.dataGovernancePolicy.findMany({ where: { orgId } }),
-        prisma.maturityAssessment.findMany({ where: { orgId }, orderBy: { createdAt: "desc" }, take: 1 }),
+        prisma.maturityAssessment.findMany({
+          where: { orgId },
+          orderBy: { createdAt: "desc" },
+          take: 1
+        }),
         prisma.dataLineageRecord.findMany({
           where: assetId ? { targetAssetId: assetId } : { orgId }
         }),
@@ -476,8 +493,20 @@ export const auditRouter = createTRPCRouter({
       }));
       return {
         data: {
-          snapshot1: { id: s1.id, createdAt: s1.createdAt, overallScore: s1.overallScore, gapCount: s1.gapCount, assetCount: s1.assetCount },
-          snapshot2: { id: s2.id, createdAt: s2.createdAt, overallScore: s2.overallScore, gapCount: s2.gapCount, assetCount: s2.assetCount },
+          snapshot1: {
+            id: s1.id,
+            createdAt: s1.createdAt,
+            overallScore: s1.overallScore,
+            gapCount: s1.gapCount,
+            assetCount: s1.assetCount
+          },
+          snapshot2: {
+            id: s2.id,
+            createdAt: s2.createdAt,
+            overallScore: s2.overallScore,
+            gapCount: s2.gapCount,
+            assetCount: s2.assetCount
+          },
           overallDelta: s2.overallScore - s1.overallScore,
           gapCountDelta: s2.gapCount - s1.gapCount,
           assetCountDelta: s2.assetCount - s1.assetCount,
@@ -563,7 +592,8 @@ async function computeSnapshotData(
           if (count > 0 || (item.prismaModel === "Organization" && org)) complete++;
         }
         totalComplete += complete;
-        byLayer[layer] = layerItems.length > 0 ? Math.round((complete / layerItems.length) * 100) : 100;
+        byLayer[layer] =
+          layerItems.length > 0 ? Math.round((complete / layerItems.length) * 100) : 100;
       }
       const totalItems = EVIDENCE_ITEMS.length;
       const overallPct = totalItems > 0 ? Math.round((totalComplete / totalItems) * 100) : 100;
@@ -589,7 +619,17 @@ async function computeSnapshotData(
     where: {
       orgId,
       isActive: true,
-      ...(frameworkCode ? { code: frameworkCode as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF" | "ISO_42001" | "CUSTOM" } : {})
+      ...(frameworkCode
+        ? {
+            code: frameworkCode as
+              | "NIST_AI_RMF"
+              | "EU_AI_ACT"
+              | "COSAI_SRF"
+              | "NIST_CSF"
+              | "ISO_42001"
+              | "CUSTOM"
+          }
+        : {})
     },
     select: { id: true }
   });
@@ -627,7 +667,9 @@ function getLinkForEvidence(
   switch (item.prismaModel) {
     case "ControlAttestation":
     case "AccountabilityAssignment":
-      return assetId ? `/layer3-application/assets/${assetId}` : "/layer3-application/accountability";
+      return assetId
+        ? `/layer3-application/assets/${assetId}`
+        : "/layer3-application/accountability";
     case "ScanRecord":
       return "/layer5-supply-chain/scanning";
     case "VendorAssurance":

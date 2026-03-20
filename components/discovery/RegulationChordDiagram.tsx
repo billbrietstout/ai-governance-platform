@@ -35,13 +35,23 @@ export function RegulationChordDiagram({ regulations, showMoreNote = true }: Pro
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredChord, setHoveredChord] = useState<{ source: number; target: number } | null>(null);
   const [hoveredArc, setHoveredArc] = useState<number | null>(null);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; shared: number; regA: string; regB: string } | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    x: number;
+    y: number;
+    shared: number;
+    regA: string;
+    regB: string;
+  } | null>(null);
 
   // 7+ regulations: reduce to top 6 by mandatory status (mandatory first, then likely, then recommended)
   const displayRegs = useMemo(() => {
     const sorted = [...regulations].sort((a, b) => {
       const order = (r: RegulationForChord) =>
-        r.mandatory || r.applicability === "MANDATORY" ? 0 : r.applicability === "LIKELY_APPLICABLE" ? 1 : 2;
+        r.mandatory || r.applicability === "MANDATORY"
+          ? 0
+          : r.applicability === "LIKELY_APPLICABLE"
+            ? 1
+            : 2;
       return order(a) - order(b);
     });
     return sorted.length > 6 ? sorted.slice(0, 6) : sorted;
@@ -61,19 +71,11 @@ export function RegulationChordDiagram({ regulations, showMoreNote = true }: Pro
 
     const { matrix, sharedByPair } = buildChordMatrix(displayRegs);
 
-    const chord = d3
-      .chord()
-      .padAngle(0.04)
-      .sortSubgroups(d3.descending);
+    const chord = d3.chord().padAngle(0.04).sortSubgroups(d3.descending);
 
-    const arc = d3
-      .arc<d3.ChordGroup>()
-      .innerRadius(innerRadius)
-      .outerRadius(outerRadius);
+    const arc = d3.arc<d3.ChordGroup>().innerRadius(innerRadius).outerRadius(outerRadius);
 
-    const ribbon = d3
-      .ribbon<d3.Chord, d3.ChordSubgroup>()
-      .radius(innerRadius - 1);
+    const ribbon = d3.ribbon<d3.Chord, d3.ChordSubgroup>().radius(innerRadius - 1);
 
     const chordData = chord(matrix);
 
@@ -90,7 +92,14 @@ export function RegulationChordDiagram({ regulations, showMoreNote = true }: Pro
     arcGroups
       .append("path")
       .attr("fill", (d) => getJurisdictionColor(displayRegs[d.index]?.jurisdiction ?? ""))
-      .attr("stroke", (d) => d3.color(getJurisdictionColor(displayRegs[d.index]?.jurisdiction ?? ""))?.darker(0.5)?.toString() ?? "#333")
+      .attr(
+        "stroke",
+        (d) =>
+          d3
+            .color(getJurisdictionColor(displayRegs[d.index]?.jurisdiction ?? ""))
+            ?.darker(0.5)
+            ?.toString() ?? "#333"
+      )
       .attr("stroke-width", 1)
       .attr("d", arc as (d: d3.ChordGroup) => string)
       .style("opacity", (d) => {
@@ -140,8 +149,7 @@ export function RegulationChordDiagram({ regulations, showMoreNote = true }: Pro
           ((d.source.index === hoveredChord.source && d.target.index === hoveredChord.target) ||
             (d.source.index === hoveredChord.target && d.target.index === hoveredChord.source));
         const isHoveredArc =
-          hoveredArc !== null &&
-          (d.source.index === hoveredArc || d.target.index === hoveredArc);
+          hoveredArc !== null && (d.source.index === hoveredArc || d.target.index === hoveredArc);
         if (isHoveredChord || isHoveredArc) return 0.8;
         if (hoveredArc !== null || hoveredChord !== null) return 0.15;
         return 0.4;
@@ -234,13 +242,16 @@ export function RegulationChordDiagram({ regulations, showMoreNote = true }: Pro
               {tooltip.shared} controls shared
             </span>
             <span style={{ color: "var(--color-text-primary)" }}>
-              {" "}between {tooltip.regA} and {tooltip.regB}
+              {" "}
+              between {tooltip.regA} and {tooltip.regB}
             </span>
           </div>
         )}
       </div>
-      {(moreCount > 0 && showMoreNote) && (
-        <p className="text-xs text-slate-500">+ {moreCount} more regulation{moreCount !== 1 ? "s" : ""}</p>
+      {moreCount > 0 && showMoreNote && (
+        <p className="text-xs text-slate-500">
+          + {moreCount} more regulation{moreCount !== 1 ? "s" : ""}
+        </p>
       )}
       <div className="flex flex-wrap justify-center gap-4 text-xs">
         {jurisdictions.map((j) => (

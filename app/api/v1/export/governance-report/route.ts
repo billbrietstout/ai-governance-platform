@@ -77,8 +77,7 @@ export async function GET() {
   const topRisks = risks.map((r) => ({
     title: r.title,
     layer: layerMap[r.cosaiLayer ?? ""] ?? "L3",
-    severity:
-      (r.riskScore ?? 0) >= 4 ? "Critical" : (r.riskScore ?? 0) >= 3 ? "High" : "Medium",
+    severity: (r.riskScore ?? 0) >= 4 ? "Critical" : (r.riskScore ?? 0) >= 3 ? "High" : "Medium",
     status: r.status,
     owner: r.owner ?? undefined
   }));
@@ -91,7 +90,11 @@ export async function GET() {
 
   const nextSteps = [
     { action: "Complete data classification for AI assets", effort: "Medium", impact: "High" },
-    { action: "Document accountability matrix for high-risk systems", effort: "Low", impact: "High" },
+    {
+      action: "Document accountability matrix for high-risk systems",
+      effort: "Low",
+      impact: "High"
+    },
     { action: "Implement drift detection for production models", effort: "High", impact: "Medium" }
   ];
 

@@ -15,10 +15,7 @@ const mockPrisma = {
 describe("calculateComplianceScore", () => {
   it("returns zero score when asset not found", async () => {
     mockPrisma.aIAsset.findFirst.mockResolvedValue(null);
-    const result = await calculateComplianceScore(
-      mockPrisma as never,
-      "asset-1"
-    );
+    const result = await calculateComplianceScore(mockPrisma as never, "asset-1");
     expect(result.score).toBe(0);
     expect(result.total).toBe(0);
     expect(result.percentage).toBe(0);
@@ -32,8 +29,20 @@ describe("calculateComplianceScore", () => {
       { id: "fw-1", code: "NIST_AI_RMF" }
     ]);
     mockPrisma.control.findMany.mockResolvedValue([
-      { id: "c1", controlId: "GOV-1", frameworkId: "fw-1", title: "Governance", cosaiLayer: "LAYER_1_BUSINESS" },
-      { id: "c2", controlId: "MAP-1", frameworkId: "fw-1", title: "Mapping", cosaiLayer: "LAYER_2_INFORMATION" }
+      {
+        id: "c1",
+        controlId: "GOV-1",
+        frameworkId: "fw-1",
+        title: "Governance",
+        cosaiLayer: "LAYER_1_BUSINESS"
+      },
+      {
+        id: "c2",
+        controlId: "MAP-1",
+        frameworkId: "fw-1",
+        title: "Mapping",
+        cosaiLayer: "LAYER_2_INFORMATION"
+      }
     ]);
     mockPrisma.controlAttestation.findMany.mockResolvedValue([
       { controlId: "c1", status: "COMPLIANT" }
@@ -57,11 +66,15 @@ describe("getGapAnalysis", () => {
     ]);
     mockPrisma.control.findMany
       .mockResolvedValueOnce([
-        { id: "c1", controlId: "GOV-1", frameworkId: "fw-1", title: "G", cosaiLayer: "LAYER_1_BUSINESS" }
+        {
+          id: "c1",
+          controlId: "GOV-1",
+          frameworkId: "fw-1",
+          title: "G",
+          cosaiLayer: "LAYER_1_BUSINESS"
+        }
       ])
-      .mockResolvedValueOnce([
-        { id: "c1", frameworkId: "fw-1", cosaiLayer: "LAYER_1_BUSINESS" }
-      ]);
+      .mockResolvedValueOnce([{ id: "c1", frameworkId: "fw-1", cosaiLayer: "LAYER_1_BUSINESS" }]);
     mockPrisma.controlAttestation.findMany.mockResolvedValue([]);
 
     const result = await getGapAnalysis(mockPrisma as never, "asset-1");

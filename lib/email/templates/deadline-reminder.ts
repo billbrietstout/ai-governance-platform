@@ -16,8 +16,7 @@ export function deadlineReminderTemplate({
   complianceScore,
   actionUrl
 }: DeadlineReminderData): string {
-  const urgencyColor =
-    daysRemaining <= 7 ? "#dc2626" : daysRemaining <= 30 ? "#f97316" : "#f59e0b";
+  const urgencyColor = daysRemaining <= 7 ? "#dc2626" : daysRemaining <= 30 ? "#f97316" : "#f59e0b";
 
   return `
 <!DOCTYPE html>

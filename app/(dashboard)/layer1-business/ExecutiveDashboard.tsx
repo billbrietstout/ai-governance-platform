@@ -2,15 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  Landmark,
-  HeartPulse,
-  Shield,
-  Factory,
-  Building2,
-  Zap,
-  Users
-} from "lucide-react";
+import { Landmark, HeartPulse, Shield, Factory, Building2, Zap, Users } from "lucide-react";
 import { ComplianceRing } from "@/components/assets/ComplianceRing";
 import { ComplianceTrendChart } from "@/components/compliance/ComplianceTrendChart";
 import { RiskTreemap } from "@/components/supply-chain/RiskTreemap";
@@ -71,7 +63,10 @@ type LegalData = {
 type PortfolioVertical = {
   verticalKey: string;
   label: string;
-  regulations: { regulation: { code: string; name: string; jurisdiction: string }; status: string }[];
+  regulations: {
+    regulation: { code: string; name: string; jurisdiction: string };
+    status: string;
+  }[];
   assetCount: number;
   complianceScore: number;
 };
@@ -172,7 +167,11 @@ const MATURITY_COLORS: Record<number, string> = {
 
 function CEOView({ data: d }: { data: CEOData }) {
   const postureColor =
-    d.posture === "green" ? "bg-emerald-500" : d.posture === "amber" ? "bg-amber-500" : "bg-red-500";
+    d.posture === "green"
+      ? "bg-emerald-500"
+      : d.posture === "amber"
+        ? "bg-amber-500"
+        : "bg-red-500";
 
   return (
     <div className="space-y-6">
@@ -192,11 +191,12 @@ function CEOView({ data: d }: { data: CEOData }) {
                 M{d.maturityLevel}
               </span>
             )}
-            {d.maturitySummary && (
-              <p className="text-sm text-slate-600">{d.maturitySummary}</p>
-            )}
+            {d.maturitySummary && <p className="text-sm text-slate-600">{d.maturitySummary}</p>}
           </div>
-          <Link href="/maturity" className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline">
+          <Link
+            href="/maturity"
+            className="text-navy-600 mt-2 inline-block text-sm font-medium hover:underline"
+          >
             View maturity assessment →
           </Link>
         </div>
@@ -204,7 +204,11 @@ function CEOView({ data: d }: { data: CEOData }) {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MetricCard label="Ungoverned High-Risk AI" value={d.aiRiskExposure} />
-        <MetricCard label="Reputational Risk" value={d.reputationalRisk} sub="autonomous without oversight" />
+        <MetricCard
+          label="Reputational Risk"
+          value={d.reputationalRisk}
+          sub="autonomous without oversight"
+        />
         <MetricCard label="Regulatory Exposure" value={d.regulatoryExposure} />
         <MetricCard label="AI Incidents (90d)" value={d.aiIncidents} />
         <MetricCard label="Governance Coverage" value={`${d.governanceCoverage}%`} />
@@ -213,7 +217,13 @@ function CEOView({ data: d }: { data: CEOData }) {
   );
 }
 
-function CFOView({ data: d, recentSnapshots }: { data: CFOData; recentSnapshots: SnapshotForChart[] }) {
+function CFOView({
+  data: d,
+  recentSnapshots
+}: {
+  data: CFOData;
+  recentSnapshots: SnapshotForChart[];
+}) {
   const chartSnapshots = recentSnapshots.slice(0, 5).reverse();
 
   return (
@@ -224,7 +234,7 @@ function CFOView({ data: d, recentSnapshots }: { data: CFOData; recentSnapshots:
           <ComplianceTrendChart snapshots={chartSnapshots} compact />
           <Link
             href="/compliance/snapshots"
-            className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-2 inline-block text-sm font-medium hover:underline"
           >
             View full history →
           </Link>
@@ -234,19 +244,27 @@ function CFOView({ data: d, recentSnapshots }: { data: CFOData; recentSnapshots:
         {d.complianceCostExposure && (
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <h4 className="text-sm font-medium text-slate-600">Compliance Cost Exposure</h4>
-            <p className="mt-1 text-2xl font-bold text-slate-900">{d.complianceCostExposure.range}</p>
+            <p className="mt-1 text-2xl font-bold text-slate-900">
+              {d.complianceCostExposure.range}
+            </p>
           </div>
         )}
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <h4 className="text-sm font-medium text-slate-600">Assets by Autonomy</h4>
           <div className="mt-2 space-y-1 text-sm text-slate-700">
             {Object.entries(d.assetsByAutonomy).map(([k, v]) => (
-              <div key={k}>{k === "UNSET" ? "—" : k}: {v}</div>
+              <div key={k}>
+                {k === "UNSET" ? "—" : k}: {v}
+              </div>
             ))}
           </div>
         </div>
         <MetricCard label="Audit Risk" value={d.auditRisk} sub="HIGH risk, no attestation" />
-        <MetricCard label="AI Spend Governance" value={`${d.aiSpendGovernance}%`} sub="contracts aligned" />
+        <MetricCard
+          label="AI Spend Governance"
+          value={`${d.aiSpendGovernance}%`}
+          sub="contracts aligned"
+        />
         <MetricCard label="Failed Scan Policies" value={d.failedScanCount} />
       </div>
     </div>
@@ -258,7 +276,11 @@ function COOView({ data: d }: { data: COOData }) {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <MetricCard label="Shadow AI Risk" value={d.shadowAiRisk} sub="DRAFT, no accountability" />
-        <MetricCard label="Human Oversight Gaps" value={d.humanOversightGaps} sub="autonomous without review" />
+        <MetricCard
+          label="Human Oversight Gaps"
+          value={d.humanOversightGaps}
+          sub="autonomous without review"
+        />
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
@@ -291,7 +313,9 @@ function COOView({ data: d }: { data: COOData }) {
         <h4 className="mb-2 text-sm font-medium text-slate-700">Autonomy Distribution</h4>
         <div className="flex flex-wrap gap-4 text-sm text-slate-700">
           {Object.entries(d.autonomyDistribution).map(([k, v]) => (
-            <span key={k}>{k === "UNSET" ? "—" : k}: {v}</span>
+            <span key={k}>
+              {k === "UNSET" ? "—" : k}: {v}
+            </span>
           ))}
         </div>
       </div>
@@ -306,18 +330,16 @@ function CISOView({
   data: CISOData;
   vendorRiskScores?: VendorRiskScore[];
 }) {
-  const treemapVendors = vendorRiskScores
-    .slice(0, 8)
-    .map((v) => ({
-      id: v.vendorId,
-      vendorName: v.vendorName,
-      overallScore: v.overallScore,
-      evidenceCurrency: v.evidenceCurrency,
-      contractAligned: v.contractAligned,
-      scanCoverage: v.scanCoverage,
-      modelCount: v.modelCount ?? 1,
-      cosaiLayer: v.cosaiLayer ?? null
-    }));
+  const treemapVendors = vendorRiskScores.slice(0, 8).map((v) => ({
+    id: v.vendorId,
+    vendorName: v.vendorName,
+    overallScore: v.overallScore,
+    evidenceCurrency: v.evidenceCurrency,
+    contractAligned: v.contractAligned,
+    scanCoverage: v.scanCoverage,
+    modelCount: v.modelCount ?? 1,
+    cosaiLayer: v.cosaiLayer ?? null
+  }));
 
   return (
     <div className="space-y-6">
@@ -327,7 +349,7 @@ function CISOView({
           <RiskTreemap vendors={treemapVendors} compact />
           <Link
             href="/layer5-supply-chain/risk-score"
-            className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-2 inline-block text-sm font-medium hover:underline"
           >
             View full supply chain →
           </Link>
@@ -388,11 +410,14 @@ function LegalCLOView({ data: d }: { data: LegalData }) {
           <h4 className="mb-3 text-sm font-medium text-slate-700">EU AI Act Annex III Assets</h4>
           <ul className="space-y-2">
             {d.annexIIIAssets.map((a) => (
-              <li key={a.id} className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
+              <li
+                key={a.id}
+                className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2"
+              >
                 <div>
                   <Link
                     href={`/layer3-application/assets/${a.id}`}
-                    className="font-medium text-navy-600 hover:underline"
+                    className="text-navy-600 font-medium hover:underline"
                   >
                     {a.name}
                   </Link>
@@ -451,7 +476,7 @@ function VerticalPortfolioView({ data }: { data: PortfolioData }) {
       <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
         <p className="text-sm text-slate-600">
           No client verticals configured. Add verticals in{" "}
-          <Link href="/settings/organization" className="font-medium text-navy-600 hover:underline">
+          <Link href="/settings/organization" className="text-navy-600 font-medium hover:underline">
             Settings → Organization
           </Link>{" "}
           to see compliance by vertical.
@@ -484,10 +509,7 @@ function VerticalPortfolioView({ data }: { data: PortfolioData }) {
               </div>
               <ul className="mt-3 space-y-1">
                 {v.regulations.slice(0, 3).map((r) => (
-                  <li
-                    key={r.regulation.code}
-                    className="flex items-center justify-between text-xs"
-                  >
+                  <li key={r.regulation.code} className="flex items-center justify-between text-xs">
                     <span className="text-slate-600">{r.regulation.code}</span>
                     <span
                       className={`rounded px-1.5 py-0.5 ${
@@ -507,7 +529,7 @@ function VerticalPortfolioView({ data }: { data: PortfolioData }) {
               </ul>
               <Link
                 href={`/layer1-business/verticals/${v.verticalKey.toLowerCase().replace(/_/g, "-")}`}
-                className="mt-3 block text-sm font-medium text-navy-600 hover:underline"
+                className="text-navy-600 mt-3 block text-sm font-medium hover:underline"
               >
                 View Details →
               </Link>

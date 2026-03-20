@@ -3,7 +3,16 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
-const ENTITY_TYPES = ["ALL", "CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"] as const;
+const ENTITY_TYPES = [
+  "ALL",
+  "CUSTOMER",
+  "PRODUCT",
+  "VENDOR",
+  "EMPLOYEE",
+  "FINANCE",
+  "LOCATION",
+  "OTHER"
+] as const;
 const CLASSIFICATIONS = ["ALL", "PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] as const;
 const AI_ACCESS = ["ALL", "OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"] as const;
 

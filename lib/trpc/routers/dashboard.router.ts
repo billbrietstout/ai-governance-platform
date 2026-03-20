@@ -2,11 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { prisma } from "@/lib/prisma";
-import {
-  calculateKPI,
-  calculateEUPenaltyExposure,
-  type KpiName
-} from "@/lib/value/kpi-engine";
+import { calculateKPI, calculateEUPenaltyExposure, type KpiName } from "@/lib/value/kpi-engine";
 import * as engine from "@/lib/compliance/engine";
 import * as verticalCascade from "@/lib/compliance/vertical-cascade";
 import { getExecutiveBriefingData } from "@/lib/executive-briefing";
@@ -149,7 +145,9 @@ export const dashboardRouter = createTRPCRouter({
 
     const rows: { framework: string; [assetType: string]: string | number }[] = [];
     for (const fw of frameworks) {
-      const row: { framework: string; [assetType: string]: string | number } = { framework: fw.code };
+      const row: { framework: string; [assetType: string]: string | number } = {
+        framework: fw.code
+      };
       const byType: Record<string, number[]> = {};
       for (const a of assets) {
         const r = await engine.calculateComplianceScore(prisma, a.id, fw.id);
@@ -226,7 +224,13 @@ export const dashboardRouter = createTRPCRouter({
         select: { id: true, name: true }
       });
 
-      const allGaps: { assetId: string; assetName: string; controlId: string; title: string; cosaiLayer: string | null }[] = [];
+      const allGaps: {
+        assetId: string;
+        assetName: string;
+        controlId: string;
+        title: string;
+        cosaiLayer: string | null;
+      }[] = [];
       for (const a of assets) {
         const report = await engine.getGapAnalysis(prisma, a.id);
         for (const g of report.criticalGaps) {
@@ -250,7 +254,8 @@ export const dashboardRouter = createTRPCRouter({
     const vendors = await prisma.vendorAssurance.findMany({
       where: { orgId: ctx.orgId }
     });
-    const { assessVendorPosture, checkEvidenceCurrency } = await import("@/lib/supply-chain/assurance");
+    const { assessVendorPosture, checkEvidenceCurrency } =
+      await import("@/lib/supply-chain/assurance");
 
     const withScores = await Promise.all(
       vendors.map(async (v) => {
@@ -296,7 +301,10 @@ export const dashboardRouter = createTRPCRouter({
 
   getEUPenaltyExposure: protectedProcedure.query(async ({ ctx }) => {
     if (ctx.role !== "CAIO" && ctx.role !== "ADMIN") {
-      throw new TRPCError({ code: "FORBIDDEN", message: "EU penalty exposure requires CAIO or ADMIN role" });
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "EU penalty exposure requires CAIO or ADMIN role"
+      });
     }
     const exp = await calculateEUPenaltyExposure(prisma, ctx.orgId);
     return { data: exp, meta: {} };

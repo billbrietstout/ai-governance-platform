@@ -55,7 +55,7 @@ export default async function DeveloperDashboardPage() {
                       <Bot className="h-4 w-4 text-slate-500" />
                       <Link
                         href={`/layer3-application/assets/${a.id}`}
-                        className="font-medium text-navy-600 hover:underline"
+                        className="text-navy-600 font-medium hover:underline"
                       >
                         {a.name}
                       </Link>
@@ -75,9 +75,7 @@ export default async function DeveloperDashboardPage() {
                       <span className="text-slate-600">
                         {missingCount} missing control{missingCount !== 1 ? "s" : ""}
                       </span>
-                      <span className="text-slate-500">
-                        Last reviewed: —
-                      </span>
+                      <span className="text-slate-500">Last reviewed: —</span>
                     </div>
                   </li>
                 );
@@ -89,9 +87,7 @@ export default async function DeveloperDashboardPage() {
         {/* Section 2 – Deployment readiness */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-sm font-medium text-slate-700">Deployment readiness</h3>
-          <p className="mb-4 text-sm text-slate-600">
-            Required controls vs implemented per asset
-          </p>
+          <p className="mb-4 text-sm text-slate-600">Required controls vs implemented per asset</p>
           {myAssets.length === 0 ? (
             <p className="text-sm text-slate-500">No assets to assess</p>
           ) : (
@@ -135,7 +131,7 @@ export default async function DeveloperDashboardPage() {
           </div>
           <Link
             href="/layer3-application/agents"
-            className="mt-4 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-4 inline-block text-sm font-medium hover:underline"
           >
             View agentic registry →
           </Link>

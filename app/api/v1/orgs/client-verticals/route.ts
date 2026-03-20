@@ -24,7 +24,9 @@ const ClientVerticalsBody = z.object({
   clientVerticals: z.array(verticalSchema)
 });
 
-function requireAdmin(session: { user?: { orgId?: string; id?: string; role?: string } } | null):
+function requireAdmin(
+  session: { user?: { orgId?: string; id?: string; role?: string } } | null
+):
   | { ok: false; status: 401 | 403; body: { error: string } }
   | { ok: true; orgId: string; userId: string } {
   if (!session?.user) {

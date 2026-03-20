@@ -21,7 +21,9 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const user = session?.user as { email?: string | null; orgId?: string; role?: string } | undefined;
+  const user = session?.user as
+    | { email?: string | null; orgId?: string; role?: string }
+    | undefined;
   const consultantOrgId = user?.orgId ?? null;
   const userId = (user as { id?: string } | undefined)?.id;
 

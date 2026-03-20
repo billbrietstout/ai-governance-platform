@@ -111,7 +111,13 @@ export function getFeatureTier(feature: GatedFeature): Tier {
 /** Tier limits. 0 = no limit (custom/negotiated). */
 export const TIER_LIMITS = {
   FREE: { assetLimit: 10, usersLimit: 3, snapshotLimit: 0, savedDiscoveries: 3, workspaceLimit: 1 },
-  PRO: { assetLimit: 500, usersLimit: 25, snapshotLimit: 100, savedDiscoveries: 10, workspaceLimit: 1 },
+  PRO: {
+    assetLimit: 500,
+    usersLimit: 25,
+    snapshotLimit: 100,
+    savedDiscoveries: 10,
+    workspaceLimit: 1
+  },
   CONSULTANT: {
     assetLimit: 500,
     usersLimit: 25,
@@ -119,7 +125,13 @@ export const TIER_LIMITS = {
     savedDiscoveries: Infinity,
     workspaceLimit: 50
   },
-  ENTERPRISE: { assetLimit: 0, usersLimit: 0, snapshotLimit: 0, savedDiscoveries: 0, workspaceLimit: 0 }
+  ENTERPRISE: {
+    assetLimit: 0,
+    usersLimit: 0,
+    snapshotLimit: 0,
+    savedDiscoveries: 0,
+    workspaceLimit: 0
+  }
 } as const;
 
 export function getAssetLimit(tier: string): number {

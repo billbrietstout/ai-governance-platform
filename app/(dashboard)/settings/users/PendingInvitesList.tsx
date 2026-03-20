@@ -34,7 +34,8 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
   return (
     <ul className="mt-3 space-y-2">
       {invites.map((inv) => {
-        const expiresAt = typeof inv.expiresAt === "string" ? new Date(inv.expiresAt) : inv.expiresAt;
+        const expiresAt =
+          typeof inv.expiresAt === "string" ? new Date(inv.expiresAt) : inv.expiresAt;
         const expired = expiresAt < new Date();
         return (
           <li
@@ -46,9 +47,7 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
               <span className="ml-2 rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                 {inv.role}
               </span>
-              {expired && (
-                <span className="ml-2 text-xs text-amber-600">(expired)</span>
-              )}
+              {expired && <span className="ml-2 text-xs text-amber-600">(expired)</span>}
             </div>
             {!expired && (
               <button

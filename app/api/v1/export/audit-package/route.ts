@@ -79,13 +79,39 @@ export async function GET() {
   }> = [];
   for (const d of discoveries) {
     const r = d.results as {
-      mandatory?: Array<{ code: string; name: string; jurisdiction: string; applicability: string; keyRequirements?: string; deadline?: string }>;
-      likelyApplicable?: Array<{ code: string; name: string; jurisdiction: string; applicability: string; keyRequirements?: string; deadline?: string }>;
-      recommended?: Array<{ code: string; name: string; jurisdiction: string; applicability: string; keyRequirements?: string; deadline?: string }>;
+      mandatory?: Array<{
+        code: string;
+        name: string;
+        jurisdiction: string;
+        applicability: string;
+        keyRequirements?: string;
+        deadline?: string;
+      }>;
+      likelyApplicable?: Array<{
+        code: string;
+        name: string;
+        jurisdiction: string;
+        applicability: string;
+        keyRequirements?: string;
+        deadline?: string;
+      }>;
+      recommended?: Array<{
+        code: string;
+        name: string;
+        jurisdiction: string;
+        applicability: string;
+        keyRequirements?: string;
+        deadline?: string;
+      }>;
     };
-    if (r?.mandatory) regulations.push(...r.mandatory.map((x) => ({ ...x, applicability: "MANDATORY" })));
-    if (r?.likelyApplicable) regulations.push(...r.likelyApplicable.map((x) => ({ ...x, applicability: "LIKELY_APPLICABLE" })));
-    if (r?.recommended) regulations.push(...r.recommended.map((x) => ({ ...x, applicability: "RECOMMENDED" })));
+    if (r?.mandatory)
+      regulations.push(...r.mandatory.map((x) => ({ ...x, applicability: "MANDATORY" })));
+    if (r?.likelyApplicable)
+      regulations.push(
+        ...r.likelyApplicable.map((x) => ({ ...x, applicability: "LIKELY_APPLICABLE" }))
+      );
+    if (r?.recommended)
+      regulations.push(...r.recommended.map((x) => ({ ...x, applicability: "RECOMMENDED" })));
   }
 
   const assetIds = new Set(assets.map((a) => a.id));
@@ -120,7 +146,12 @@ export async function GET() {
     const ls = latestSnapshot.layerScores as Record<string, number>;
     ["L1", "L2", "L3", "L4", "L5"].forEach((l, i) => {
       layerCompliance[i]!.score = Math.round((ls[l] ?? 0) * 20);
-      layerCompliance[i]!.status = layerCompliance[i]!.score >= 80 ? "Compliant" : layerCompliance[i]!.score >= 50 ? "Partial" : "Gaps";
+      layerCompliance[i]!.status =
+        layerCompliance[i]!.score >= 80
+          ? "Compliant"
+          : layerCompliance[i]!.score >= 50
+            ? "Partial"
+            : "Gaps";
     });
   }
 
@@ -133,9 +164,27 @@ export async function GET() {
   ];
 
   const recommendations = [
-    { priority: "P1", layer: "L2", action: "Complete data classification for AI training data", effort: "Medium", deadline: "30 days" },
-    { priority: "P2", layer: "L3", action: "Document accountability matrix for high-risk assets", effort: "Low", deadline: "14 days" },
-    { priority: "P3", layer: "L4", action: "Implement drift detection for production models", effort: "High", deadline: "60 days" }
+    {
+      priority: "P1",
+      layer: "L2",
+      action: "Complete data classification for AI training data",
+      effort: "Medium",
+      deadline: "30 days"
+    },
+    {
+      priority: "P2",
+      layer: "L3",
+      action: "Document accountability matrix for high-risk assets",
+      effort: "Low",
+      deadline: "14 days"
+    },
+    {
+      priority: "P3",
+      layer: "L4",
+      action: "Implement drift detection for production models",
+      effort: "High",
+      deadline: "60 days"
+    }
   ];
 
   const keyFindings: string[] = [];

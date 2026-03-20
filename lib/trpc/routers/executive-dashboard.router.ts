@@ -24,27 +24,34 @@ const NINETY_DAYS_AGO = (() => {
 
 export const executiveDashboardRouter = createTRPCRouter({
   getCEOView: protectedProcedure.query(async ({ ctx }) => {
-    const [ungovernedHighRisk, reputationalRisk, penaltyRes, incidents, governancePct, org, latestAssessment] =
-      await Promise.all([
-        getUngovernedHighRisk(prisma, ctx.orgId),
-        getReputationalRisk(prisma, ctx.orgId),
-        ctx.role === "CAIO" || ctx.role === "ADMIN"
-          ? calculateEUPenaltyExposure(prisma, ctx.orgId).catch(() => null)
-          : Promise.resolve(null),
-        prisma.securityEvent.count({
-          where: { orgId: ctx.orgId, createdAt: { gte: NINETY_DAYS_AGO } }
-        }),
-        getGovernanceCoverage(prisma, ctx.orgId),
-        prisma.organization.findUnique({
-          where: { id: ctx.orgId },
-          select: { maturityLevel: true }
-        }),
-        prisma.maturityAssessment.findFirst({
-          where: { orgId: ctx.orgId },
-          orderBy: { createdAt: "desc" },
-          select: { scores: true }
-        })
-      ]);
+    const [
+      ungovernedHighRisk,
+      reputationalRisk,
+      penaltyRes,
+      incidents,
+      governancePct,
+      org,
+      latestAssessment
+    ] = await Promise.all([
+      getUngovernedHighRisk(prisma, ctx.orgId),
+      getReputationalRisk(prisma, ctx.orgId),
+      ctx.role === "CAIO" || ctx.role === "ADMIN"
+        ? calculateEUPenaltyExposure(prisma, ctx.orgId).catch(() => null)
+        : Promise.resolve(null),
+      prisma.securityEvent.count({
+        where: { orgId: ctx.orgId, createdAt: { gte: NINETY_DAYS_AGO } }
+      }),
+      getGovernanceCoverage(prisma, ctx.orgId),
+      prisma.organization.findUnique({
+        where: { id: ctx.orgId },
+        select: { maturityLevel: true }
+      }),
+      prisma.maturityAssessment.findFirst({
+        where: { orgId: ctx.orgId },
+        orderBy: { createdAt: "desc" },
+        select: { scores: true }
+      })
+    ]);
 
     const assets = await prisma.aIAsset.findMany({
       where: { orgId: ctx.orgId, deletedAt: null },
@@ -194,19 +201,25 @@ export const executiveDashboardRouter = createTRPCRouter({
   }),
 
   getCISOView: protectedProcedure.query(async ({ ctx }) => {
-    const [failedScansByType, vendorsExpired, highRiskNoScan, promptInjectionFindings, securityEvents, externalFacing] =
-      await Promise.all([
-        getFailedScansByType(prisma, ctx.orgId),
-        getVendorsExpiredCerts(prisma, ctx.orgId),
-        getHighRiskNoScan90d(prisma, ctx.orgId),
-        getPromptInjectionFindings(prisma, ctx.orgId),
-        prisma.securityEvent.findMany({
-          where: { orgId: ctx.orgId },
-          orderBy: { createdAt: "desc" },
-          take: 20
-        }),
-        getExternalFacingCount(prisma, ctx.orgId)
-      ]);
+    const [
+      failedScansByType,
+      vendorsExpired,
+      highRiskNoScan,
+      promptInjectionFindings,
+      securityEvents,
+      externalFacing
+    ] = await Promise.all([
+      getFailedScansByType(prisma, ctx.orgId),
+      getVendorsExpiredCerts(prisma, ctx.orgId),
+      getHighRiskNoScan90d(prisma, ctx.orgId),
+      getPromptInjectionFindings(prisma, ctx.orgId),
+      prisma.securityEvent.findMany({
+        where: { orgId: ctx.orgId },
+        orderBy: { createdAt: "desc" },
+        take: 20
+      }),
+      getExternalFacingCount(prisma, ctx.orgId)
+    ]);
 
     return {
       data: {
@@ -234,8 +247,10 @@ export const executiveDashboardRouter = createTRPCRouter({
     const clientVerticals = (org?.clientVerticals as string[] | null) ?? [];
     const verticals: VerticalKey[] =
       clientVerticals.length > 0
-      ? (clientVerticals.filter((v) => Object.keys(VERTICAL_REGULATIONS).includes(v)) as VerticalKey[])
-      : [orgVerticalToKey(org?.verticalMarket ?? null)];
+        ? (clientVerticals.filter((v) =>
+            Object.keys(VERTICAL_REGULATIONS).includes(v)
+          ) as VerticalKey[])
+        : [orgVerticalToKey(org?.verticalMarket ?? null)];
 
     const assets = await prisma.aIAsset.findMany({
       where: { orgId: ctx.orgId, deletedAt: null, assetType: { not: "DATASET" } },
@@ -256,7 +271,9 @@ export const executiveDashboardRouter = createTRPCRouter({
         return { assetId: a.id, compliant };
       })
     );
-    const assetHasCompliant = new Map(attestationCounts.map((c, i) => [assets[i].id, c.compliant > 0]));
+    const assetHasCompliant = new Map(
+      attestationCounts.map((c, i) => [assets[i].id, c.compliant > 0])
+    );
 
     const portfolio = verticals.map((vk) => {
       const profile = VERTICAL_REGULATIONS[vk];
@@ -270,8 +287,9 @@ export const executiveDashboardRouter = createTRPCRouter({
       );
 
       const regStatuses = profile.regulations.map((r) => {
-        const inScope = assets.filter((a) =>
-          (a.clientVertical === vk || a.clientVertical == null) && assetAppliesToRegulation(a, r)
+        const inScope = assets.filter(
+          (a) =>
+            (a.clientVertical === vk || a.clientVertical == null) && assetAppliesToRegulation(a, r)
         );
         if (inScope.length === 0) {
           return { regulation: r, status: "NOT_APPLICABLE" as const };
@@ -287,8 +305,7 @@ export const executiveDashboardRouter = createTRPCRouter({
 
       const compliantRegs = regStatuses.filter((s) => s.status === "COMPLIANT").length;
       const applicableRegs = regStatuses.filter((s) => s.status !== "NOT_APPLICABLE").length;
-      const score =
-        applicableRegs > 0 ? Math.round((compliantRegs / applicableRegs) * 100) : 100;
+      const score = applicableRegs > 0 ? Math.round((compliantRegs / applicableRegs) * 100) : 100;
 
       return {
         verticalKey: vk,
@@ -442,9 +459,27 @@ function inferBusinessFunctions(
   assignedIds: Set<string>
 ): Record<string, { total: number; governed: number; autonomous: number }> {
   const keywords: Record<string, string[]> = {
-    Operations: ["production", "maintenance", "schedule", "inventory", "supply", "equipment", "quality"],
+    Operations: [
+      "production",
+      "maintenance",
+      "schedule",
+      "inventory",
+      "supply",
+      "equipment",
+      "quality"
+    ],
     Finance: ["fraud", "cash", "audit", "payable", "contract", "accounts"],
-    HR: ["employee", "workforce", "training", "payroll", "screening", "cv", "resume", "hiring", "recruit"],
+    HR: [
+      "employee",
+      "workforce",
+      "training",
+      "payroll",
+      "screening",
+      "cv",
+      "resume",
+      "hiring",
+      "recruit"
+    ],
     Supply_Chain: ["supplier", "demand", "reorder", "inventory"],
     Retail: ["customer", "churn", "recommendation", "pricing", "store", "returns"],
     IT: ["network", "helpdesk", "vulnerability", "log"],
@@ -522,7 +557,6 @@ async function getVendorsExpiredCerts(
   return result;
 }
 
-
 async function getHighRiskNoScan90d(prisma: PrismaClient, orgId: string): Promise<number> {
   const highRisk = await prisma.aIAsset.findMany({
     where: { orgId, deletedAt: null, euRiskLevel: "HIGH" },
@@ -554,8 +588,12 @@ async function getPromptInjectionFindings(prisma: PrismaClient, orgId: string): 
         (f) =>
           typeof f === "object" &&
           f !== null &&
-          (String((f as Record<string, unknown>).type ?? "").toLowerCase().includes("prompt") ||
-            String((f as Record<string, unknown>).category ?? "").toLowerCase().includes("prompt"))
+          (String((f as Record<string, unknown>).type ?? "")
+            .toLowerCase()
+            .includes("prompt") ||
+            String((f as Record<string, unknown>).category ?? "")
+              .toLowerCase()
+              .includes("prompt"))
       ).length;
     }
   }

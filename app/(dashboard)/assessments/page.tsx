@@ -14,24 +14,24 @@ export default async function AssessmentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Assessments</h1>
-          <p className="mt-1 text-slatePro-300">Compliance assessment workflow.</p>
+          <p className="text-slatePro-300 mt-1">Compliance assessment workflow.</p>
         </div>
         <Link
           href="/assessments/new"
-          className="rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-3 py-1.5 text-sm font-medium text-white"
         >
           New Assessment
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slatePro-700">
+      <div className="border-slatePro-700 overflow-x-auto rounded-lg border">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-slatePro-700 bg-slatePro-900/50">
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Name</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Asset</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Status</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Created</th>
+            <tr className="border-slatePro-700 bg-slatePro-900/50 border-b">
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Name</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Asset</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Status</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Created</th>
             </tr>
           </thead>
           <tbody>
@@ -50,14 +50,20 @@ export default async function AssessmentsPage() {
               </tr>
             ) : (
               data.map((a) => (
-                <tr key={a.id} className="border-b border-slatePro-800 last:border-0">
+                <tr key={a.id} className="border-slatePro-800 border-b last:border-0">
                   <td className="px-4 py-2">
-                    <Link href={`/assessments/${a.id}`} className="font-medium text-navy-400 hover:underline">
+                    <Link
+                      href={`/assessments/${a.id}`}
+                      className="text-navy-400 font-medium hover:underline"
+                    >
                       {a.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-slatePro-200">
-                    <Link href={`/layer3-application/assets/${a.asset.id}`} className="text-navy-400 hover:underline">
+                  <td className="text-slatePro-200 px-4 py-2">
+                    <Link
+                      href={`/layer3-application/assets/${a.asset.id}`}
+                      className="text-navy-400 hover:underline"
+                    >
                       {a.asset.name}
                     </Link>
                   </td>
@@ -74,7 +80,9 @@ export default async function AssessmentsPage() {
                       {a.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-4 py-2 text-slatePro-400">{new Date(a.createdAt).toLocaleDateString()}</td>
+                  <td className="text-slatePro-400 px-4 py-2">
+                    {new Date(a.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
               ))
             )}

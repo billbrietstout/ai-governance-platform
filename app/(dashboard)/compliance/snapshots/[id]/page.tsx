@@ -5,11 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 
-export default async function SnapshotDetailPage({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function SnapshotDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const caller = await createServerCaller();
   const { data: snapshot } = await caller.audit.getSnapshot({ id });
@@ -20,7 +16,7 @@ export default async function SnapshotDetailPage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/compliance/snapshots" className="text-sm text-navy-600 hover:underline">
+        <Link href="/compliance/snapshots" className="text-navy-600 text-sm hover:underline">
           ← Snapshots
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">

@@ -8,13 +8,43 @@ import * as engine from "@/lib/compliance/engine";
 import { classifyEURiskLevel } from "@/lib/compliance/eu-ai-act";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-const assetTypeSchema = z.enum(["MODEL", "PROMPT", "AGENT", "DATASET", "APPLICATION", "TOOL", "PIPELINE"]);
+const assetTypeSchema = z.enum([
+  "MODEL",
+  "PROMPT",
+  "AGENT",
+  "DATASET",
+  "APPLICATION",
+  "TOOL",
+  "PIPELINE"
+]);
 const euRiskSchema = z.enum(["MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"]).nullable();
 const operatingModelSchema = z.enum(["IN_HOUSE", "VENDOR", "HYBRID"]).nullable();
-const cosaiLayerSchema = z.enum(["LAYER_1_BUSINESS", "LAYER_2_INFORMATION", "LAYER_3_APPLICATION", "LAYER_4_PLATFORM", "LAYER_5_SUPPLY_CHAIN"]).nullable();
-const autonomySchema = z.enum(["HUMAN_ONLY", "ASSISTED", "SEMI_AUTONOMOUS", "AUTONOMOUS"]).nullable();
+const cosaiLayerSchema = z
+  .enum([
+    "LAYER_1_BUSINESS",
+    "LAYER_2_INFORMATION",
+    "LAYER_3_APPLICATION",
+    "LAYER_4_PLATFORM",
+    "LAYER_5_SUPPLY_CHAIN"
+  ])
+  .nullable();
+const autonomySchema = z
+  .enum(["HUMAN_ONLY", "ASSISTED", "SEMI_AUTONOMOUS", "AUTONOMOUS"])
+  .nullable();
 const statusSchema = z.enum(["DRAFT", "ACTIVE", "DEPRECATED", "ARCHIVED"]);
-const verticalSchema = z.enum(["GENERAL", "HEALTHCARE", "FINANCIAL", "INSURANCE", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR", "ENERGY"]).nullable();
+const verticalSchema = z
+  .enum([
+    "GENERAL",
+    "HEALTHCARE",
+    "FINANCIAL",
+    "INSURANCE",
+    "AUTOMOTIVE",
+    "RETAIL",
+    "MANUFACTURING",
+    "PUBLIC_SECTOR",
+    "ENERGY"
+  ])
+  .nullable();
 
 export const assetsRouter = createTRPCRouter({
   list: protectedProcedure
@@ -55,16 +85,14 @@ export const assetsRouter = createTRPCRouter({
       return { data: withCompliance, meta: {} };
     }),
 
-  get: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({
-        where: { id: input.id, orgId: ctx.orgId, deletedAt: null },
-        include: { owner: { select: { id: true, email: true } } }
-      });
-      if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
-      return { data: asset, meta: {} };
-    }),
+  get: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const asset = await prisma.aIAsset.findFirst({
+      where: { id: input.id, orgId: ctx.orgId, deletedAt: null },
+      include: { owner: { select: { id: true, email: true } } }
+    });
+    if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
+    return { data: asset, meta: {} };
+  }),
 
   create: protectedProcedure
     .input(
@@ -241,9 +269,13 @@ export const assetsRouter = createTRPCRouter({
         where: { id },
         data: {
           ...(data.overrideTier !== undefined && { overrideTier: data.overrideTier }),
-          ...(data.toolAuthorizations !== undefined && { toolAuthorizations: data.toolAuthorizations }),
+          ...(data.toolAuthorizations !== undefined && {
+            toolAuthorizations: data.toolAuthorizations
+          }),
           ...(data.oversightPolicy !== undefined && { oversightPolicy: data.oversightPolicy }),
-          ...(data.humanOversightRequired !== undefined && { humanOversightRequired: data.humanOversightRequired })
+          ...(data.humanOversightRequired !== undefined && {
+            humanOversightRequired: data.humanOversightRequired
+          })
         },
         include: { owner: { select: { id: true, email: true } } }
       });
@@ -277,7 +309,8 @@ export const assetsRouter = createTRPCRouter({
         if (!hasAttestation || !hasAccountability) {
           throw new TRPCError({
             code: "PRECONDITION_FAILED",
-            message: "HIGH risk assets require control attestation and accountability assignment before production"
+            message:
+              "HIGH risk assets require control attestation and accountability assignment before production"
           });
         }
       }
@@ -388,11 +421,19 @@ export const assetsRouter = createTRPCRouter({
             score += 20;
             reason = reason || "AI governance officer";
           }
-          if (user.persona === "DATA_OWNER" && asset.cosaiLayer && L2_LAYERS.includes(asset.cosaiLayer)) {
+          if (
+            user.persona === "DATA_OWNER" &&
+            asset.cosaiLayer &&
+            L2_LAYERS.includes(asset.cosaiLayer)
+          ) {
             score += 25;
             reason = reason || "Data owner";
           }
-          if (user.persona === "PLATFORM_ENG" && asset.cosaiLayer && L4_LAYERS.includes(asset.cosaiLayer)) {
+          if (
+            user.persona === "PLATFORM_ENG" &&
+            asset.cosaiLayer &&
+            L4_LAYERS.includes(asset.cosaiLayer)
+          ) {
             score += 25;
             reason = reason || "Platform engineer";
           }

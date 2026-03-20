@@ -7,7 +7,11 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 import { prisma } from "@/lib/prisma";
 import { AssessmentWorkflow } from "./AssessmentWorkflow";
 
-export default async function AssessmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AssessmentDetailPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const caller = await createServerCaller();
   const { data: assessment } = await caller.assessment.get({ id });
@@ -21,7 +25,17 @@ export default async function AssessmentDetailPage({ params }: { params: Promise
     where: {
       frameworkId: { in: frameworkIds },
       ...(layersInScope.length > 0
-        ? { cosaiLayer: { in: layersInScope as ("LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN")[] } }
+        ? {
+            cosaiLayer: {
+              in: layersInScope as (
+                | "LAYER_1_BUSINESS"
+                | "LAYER_2_INFORMATION"
+                | "LAYER_3_APPLICATION"
+                | "LAYER_4_PLATFORM"
+                | "LAYER_5_SUPPLY_CHAIN"
+              )[]
+            }
+          }
         : {})
     },
     include: { framework: { select: { code: true, name: true } } },
@@ -60,21 +74,17 @@ export default async function AssessmentDetailPage({ params }: { params: Promise
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/assessments" className="text-sm text-navy-400 hover:underline">
+          <Link href="/assessments" className="text-navy-400 text-sm hover:underline">
             ← Assessments
           </Link>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight">{assessment.name}</h1>
-          <p className="mt-1 text-slatePro-300">
+          <p className="text-slatePro-300 mt-1">
             {assessment.asset.name} · {assessment.status}
           </p>
         </div>
         <div className="flex gap-2">
-          {assessment.status === "DRAFT" && (
-            <SubmitForReviewButton assessmentId={id} />
-          )}
-          {assessment.status === "PENDING_REVIEW" && (
-            <ApproveButton assessmentId={id} />
-          )}
+          {assessment.status === "DRAFT" && <SubmitForReviewButton assessmentId={id} />}
+          {assessment.status === "PENDING_REVIEW" && <ApproveButton assessmentId={id} />}
         </div>
       </div>
 

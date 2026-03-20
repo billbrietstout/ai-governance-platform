@@ -22,18 +22,18 @@ export default async function DataCatalogPage() {
   return (
     <main className="flex flex-col gap-6">
       <div>
-        <Link href="/layer2-information" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer2-information" className="text-navy-400 text-sm hover:underline">
           ← Layer 2: Information
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Data Catalog</h1>
-        <p className="mt-1 text-slatePro-300">AI training and inference data sources.</p>
+        <p className="text-slatePro-300 mt-1">AI training and inference data sources.</p>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2">
-            <Database className="h-4 w-4 text-navy-500" />
+            <Database className="text-navy-500 h-4 w-4" />
             <span className="text-sm font-medium text-slate-600">Total Datasets</span>
           </div>
           <p className="mt-1 text-2xl font-semibold text-gray-900">{summary.total}</p>
@@ -72,12 +72,22 @@ export default async function DataCatalogPage() {
               <tr className="border-b border-slate-200 bg-slate-50/80">
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Dataset</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Type</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Classification</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Classification
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">PII</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Asset Count</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Data Steward</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Last Audited</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Compliance</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Asset Count
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Data Steward
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Last Audited
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">
+                  Compliance
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -86,14 +96,16 @@ export default async function DataCatalogPage() {
                   <td className="px-4 py-3">
                     <Link
                       href={`/layer3-application/assets/${d.id}`}
-                      className="font-medium text-navy-600 hover:underline"
+                      className="text-navy-600 font-medium hover:underline"
                     >
                       {d.name}
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-sm text-slate-600">{d.type}</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${CLASSIFICATION_BADGES[d.classification] ?? CLASSIFICATION_BADGES.INTERNAL}`}>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${CLASSIFICATION_BADGES[d.classification] ?? CLASSIFICATION_BADGES.INTERNAL}`}
+                    >
                       {d.classification}
                     </span>
                   </td>
@@ -104,7 +116,9 @@ export default async function DataCatalogPage() {
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        d.complianceStatus === "COMPLIANT" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                        d.complianceStatus === "COMPLIANT"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
                       }`}
                     >
                       {d.complianceStatus}
@@ -123,11 +137,14 @@ export default async function DataCatalogPage() {
           <h2 className="mb-3 text-sm font-medium text-slate-700">Data Issues Panel</h2>
           <ul className="space-y-2">
             {datasetsWithIssues.map((d) => (
-              <li key={d.id} className="flex items-center justify-between rounded border border-amber-200 bg-white px-3 py-2">
+              <li
+                key={d.id}
+                className="flex items-center justify-between rounded border border-amber-200 bg-white px-3 py-2"
+              >
                 <div>
                   <Link
                     href={`/layer3-application/assets/${d.id}`}
-                    className="font-medium text-navy-600 hover:underline"
+                    className="text-navy-600 font-medium hover:underline"
                   >
                     {d.name}
                   </Link>
@@ -135,7 +152,9 @@ export default async function DataCatalogPage() {
                 </div>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    d.issues?.toLowerCase().includes("consent") ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                    d.issues?.toLowerCase().includes("consent")
+                      ? "bg-red-100 text-red-700"
+                      : "bg-amber-100 text-amber-700"
                   }`}
                 >
                   {d.issues?.toLowerCase().includes("consent") ? "CRITICAL" : "HIGH"}

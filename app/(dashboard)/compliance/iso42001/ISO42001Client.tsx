@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { Check, Circle, Loader2 } from "lucide-react";
 import { updateClauseStatus } from "./actions";
 
-type Clause = { id: string; label: string; evidenceLink: string; status: string; notes: string | null };
+type Clause = {
+  id: string;
+  label: string;
+  evidenceLink: string;
+  status: string;
+  notes: string | null;
+};
 type Group = { title: string; clauses: Clause[] };
 
 type Props = { initialScore: number; groups: Group[] };
@@ -47,9 +53,7 @@ export function ISO42001Client({ initialScore, groups }: Props) {
             <path
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
               fill="none"
-              stroke={
-                displayScore >= 80 ? "#10b981" : displayScore >= 50 ? "#f59e0b" : "#ef4444"
-              }
+              stroke={displayScore >= 80 ? "#10b981" : displayScore >= 50 ? "#f59e0b" : "#ef4444"}
               strokeWidth="2"
               strokeDasharray={`${displayScore}, 100`}
               strokeLinecap="round"
@@ -95,7 +99,10 @@ export function ISO42001Client({ initialScore, groups }: Props) {
                             });
                             setClauses((prev) => ({
                               ...prev,
-                              [c.id]: { ...prev[c.id]!, status: isComplete ? "NOT_STARTED" : "COMPLETE" }
+                              [c.id]: {
+                                ...prev[c.id]!,
+                                status: isComplete ? "NOT_STARTED" : "COMPLETE"
+                              }
                             }));
                             router.refresh();
                           } finally {
@@ -120,7 +127,7 @@ export function ISO42001Client({ initialScore, groups }: Props) {
                         </span>
                         <Link
                           href={c.evidenceLink}
-                          className="ml-2 text-xs text-navy-600 hover:underline"
+                          className="text-navy-600 ml-2 text-xs hover:underline"
                         >
                           Evidence →
                         </Link>

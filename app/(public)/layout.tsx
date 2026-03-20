@@ -38,7 +38,7 @@ export default async function PublicLayout({
                 href="https://coalitionforsecureai.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-navy-600 hover:underline"
+                className="text-navy-600 font-medium hover:underline"
               >
                 CoSAI Shared Responsibility Framework
               </a>

@@ -18,20 +18,14 @@ export async function sendWeeklyDigests() {
 
   for (const pref of prefs) {
     try {
-      await sendWeeklyDigestToUser(
-        { id: pref.user.id, email: pref.user.email },
-        pref.orgId
-      );
+      await sendWeeklyDigestToUser({ id: pref.user.id, email: pref.user.email }, pref.orgId);
     } catch (err) {
       console.error(`Digest failed for ${pref.user.email}:`, err);
     }
   }
 }
 
-export async function sendWeeklyDigestToUser(
-  user: { id?: string; email: string },
-  orgId: string
-) {
+export async function sendWeeklyDigestToUser(user: { id?: string; email: string }, orgId: string) {
   const [org, assets, snapshots, discoveries] = await Promise.all([
     prisma.organization.findUnique({
       where: { id: orgId },
@@ -59,8 +53,7 @@ export async function sendWeeklyDigestToUser(
   }
 
   const highRiskUnowned = assets.filter(
-    (a) =>
-      (a.euRiskLevel === "HIGH" || a.euRiskLevel === "UNACCEPTABLE") && !a.ownerId
+    (a) => (a.euRiskLevel === "HIGH" || a.euRiskLevel === "UNACCEPTABLE") && !a.ownerId
   ).length;
 
   const overallScore = snapshots?.overallScore ?? 0;
@@ -69,21 +62,12 @@ export async function sendWeeklyDigestToUser(
     (discoveries?.results as { mandatory?: unknown[] } | null)?.mandatory?.length ?? 0;
 
   const regulatoryLight =
-    mandatoryRegs > 0 && overallScore < 60
-      ? "RED"
-      : mandatoryRegs > 0
-        ? "AMBER"
-        : "GREEN";
+    mandatoryRegs > 0 && overallScore < 60 ? "RED" : mandatoryRegs > 0 ? "AMBER" : "GREEN";
 
   const operationalLight =
-    highRiskUnowned > 0
-      ? "RED"
-      : assets.filter((a) => !a.ownerId).length > 5
-        ? "AMBER"
-        : "GREEN";
+    highRiskUnowned > 0 ? "RED" : assets.filter((a) => !a.ownerId).length > 5 ? "AMBER" : "GREEN";
 
-  const readinessLight =
-    maturityLevel < 2 ? "RED" : maturityLevel < 3 ? "AMBER" : "GREEN";
+  const readinessLight = maturityLevel < 2 ? "RED" : maturityLevel < 3 ? "AMBER" : "GREEN";
 
   const regulatoryText =
     mandatoryRegs > 0 && overallScore < 60

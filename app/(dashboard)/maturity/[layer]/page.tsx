@@ -47,7 +47,7 @@ export default async function MaturityLayerPage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/maturity" className="text-sm text-navy-600 hover:underline">
+        <Link href="/maturity" className="text-navy-600 text-sm hover:underline">
           ← Maturity Assessment
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
@@ -62,7 +62,7 @@ export default async function MaturityLayerPage({
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="mb-2 text-sm font-medium text-slate-700">Current Score</h2>
         <div className="flex items-center gap-3">
-          <div className="flex-1 h-8 overflow-hidden rounded-full bg-slate-200">
+          <div className="h-8 flex-1 overflow-hidden rounded-full bg-slate-200">
             <div
               className="h-full rounded-full transition-all"
               style={{
@@ -116,7 +116,7 @@ export default async function MaturityLayerPage({
             <li key={c.id}>
               <Link
                 href={c.href}
-                className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-navy-600 hover:bg-slate-100 hover:underline"
+                className="text-navy-600 flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium hover:bg-slate-100 hover:underline"
               >
                 <span>{c.title}</span>
                 <span className="text-xs text-slate-500">→</span>
@@ -150,7 +150,7 @@ export default async function MaturityLayerPage({
 
       <Link
         href="/maturity"
-        className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
       >
         Back to Assessment
       </Link>

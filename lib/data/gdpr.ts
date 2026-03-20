@@ -26,7 +26,10 @@ export async function handleErasureRequest(prisma: PrismaClient, userId: string)
 /**
  * Export all user data as JSON (portability).
  */
-export async function handlePortabilityRequest(prisma: PrismaClient, userId: string): Promise<Record<string, unknown>> {
+export async function handlePortabilityRequest(
+  prisma: PrismaClient,
+  userId: string
+): Promise<Record<string, unknown>> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {

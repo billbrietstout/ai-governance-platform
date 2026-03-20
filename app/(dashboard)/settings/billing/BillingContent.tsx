@@ -121,11 +121,11 @@ export function BillingContent({
             ref={proCardRef}
             className={`relative rounded-xl border p-6 ${
               upgradePro
-                ? "animate-pulse border-navy-500 bg-navy-50/50 shadow-lg ring-2 ring-navy-400 ring-offset-2"
+                ? "border-navy-500 bg-navy-50/50 ring-navy-400 animate-pulse shadow-lg ring-2 ring-offset-2"
                 : "border-navy-200 bg-white shadow-sm"
             }`}
           >
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-navy-600 px-3 py-0.5 text-xs font-medium text-white">
+            <span className="bg-navy-600 absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-xs font-medium text-white">
               Most popular
             </span>
             <h3 className="text-base font-semibold text-gray-900">Pro</h3>
@@ -145,13 +145,11 @@ export function BillingContent({
               <button
                 type="button"
                 onClick={handleUpgradePro}
-                className="w-full rounded-lg bg-navy-600 py-2.5 text-sm font-medium text-white transition hover:bg-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-500 focus:ring-offset-2"
+                className="bg-navy-600 hover:bg-navy-500 focus:ring-navy-500 w-full rounded-lg py-2.5 text-sm font-medium text-white transition focus:ring-2 focus:ring-offset-2 focus:outline-none"
               >
                 Upgrade to Pro
               </button>
-              <p className="mt-2 text-center text-xs text-gray-500">
-                or $490/year — save 2 months
-              </p>
+              <p className="mt-2 text-center text-xs text-gray-500">or $490/year — save 2 months</p>
             </div>
           </div>
 
@@ -217,25 +215,23 @@ export function BillingContent({
             onClick={() => setShowUpgradeModal(false)}
             aria-hidden
           />
-          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-gray-200 bg-white p-6 shadow-xl">
+          <div className="fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-gray-200 bg-white p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-gray-900">Upgrade to Pro</h3>
             <p className="mt-2 text-sm text-gray-600">
               Payment processing coming soon. Contact us at{" "}
               <a
                 href="mailto:hello@aiposture.io?subject=Upgrade%20to%20Pro"
-                className="font-medium text-navy-600 hover:underline"
+                className="text-navy-600 font-medium hover:underline"
               >
                 hello@aiposture.io
               </a>{" "}
               to upgrade.
             </p>
-            <p className="mt-2 text-sm text-gray-600">
-              We&apos;ll get you set up within 24 hours.
-            </p>
+            <p className="mt-2 text-sm text-gray-600">We&apos;ll get you set up within 24 hours.</p>
             <button
               type="button"
               onClick={() => setShowUpgradeModal(false)}
-              className="mt-6 w-full rounded-lg bg-navy-600 py-2.5 text-sm font-medium text-white hover:bg-navy-500"
+              className="bg-navy-600 hover:bg-navy-500 mt-6 w-full rounded-lg py-2.5 text-sm font-medium text-white"
             >
               Got it
             </button>

@@ -41,11 +41,11 @@ export default async function ReportsPage() {
         orgTier={orgTier}
       >
         <ReportCardsClient
-        maturityLevel={maturityLevel}
-        scores={scores}
-        snapshots={snapshots}
-        gaps={gaps}
-      />
+          maturityLevel={maturityLevel}
+          scores={scores}
+          snapshots={snapshots}
+          gaps={gaps}
+        />
       </UpgradeGate>
     </main>
   );

@@ -21,7 +21,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+      className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
     >
       {pending ? "Saving…" : "Next"}
     </button>
@@ -31,9 +31,7 @@ function SubmitButton() {
 export function Step1Profile({ completedData, onNext, isPending }: Props) {
   const [name, setName] = useState(completedData.name || "");
   const [orgSize, setOrgSize] = useState(completedData.orgSize || "");
-  const [primaryUseCase, setPrimaryUseCase] = useState(
-    completedData.primaryUseCase || ""
-  );
+  const [primaryUseCase, setPrimaryUseCase] = useState(completedData.primaryUseCase || "");
 
   return (
     <form
@@ -58,22 +56,20 @@ export function Step1Profile({ completedData, onNext, isPending }: Props) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
-          className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:ring-1 focus:outline-none"
           placeholder="Acme Inc"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700">
-          Organization size
-        </label>
+        <label className="block text-sm font-medium text-slate-700">Organization size</label>
         <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {ORG_SIZES.map((s) => (
             <label
               key={s.value}
               className={`flex cursor-pointer flex-col rounded-lg border p-3 transition ${
                 orgSize === s.value
-                  ? "border-navy-500 bg-navy-50 ring-1 ring-navy-500"
+                  ? "border-navy-500 bg-navy-50 ring-navy-500 ring-1"
                   : "border-slate-200 bg-white hover:border-slate-300"
               }`}
             >
@@ -92,10 +88,7 @@ export function Step1Profile({ completedData, onNext, isPending }: Props) {
       </div>
 
       <div>
-        <label
-          htmlFor="primaryUseCase"
-          className="block text-sm font-medium text-slate-700"
-        >
+        <label htmlFor="primaryUseCase" className="block text-sm font-medium text-slate-700">
           Primary AI use case
         </label>
         <input
@@ -105,7 +98,7 @@ export function Step1Profile({ completedData, onNext, isPending }: Props) {
           value={primaryUseCase}
           onChange={(e) => setPrimaryUseCase(e.target.value)}
           required
-          className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:ring-1 focus:outline-none"
           placeholder="e.g. Customer service chatbot, Fraud detection"
         />
       </div>

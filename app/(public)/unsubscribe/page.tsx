@@ -14,7 +14,7 @@ const NOTIFICATION_TYPES = [
   "Regulatory deadline reminders",
   "New high-risk AI system alerts",
   "Vendor evidence expiry notices",
-  "Shadow AI detection alerts",
+  "Shadow AI detection alerts"
 ];
 
 function UnsubscribeContent() {
@@ -32,7 +32,7 @@ function UnsubscribeContent() {
       const res = await fetch("/api/v1/notifications/unsubscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ token })
       });
       if (res.ok) {
         setStatus("resubscribed");
@@ -50,7 +50,8 @@ function UnsubscribeContent() {
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-6">
           <h1 className="text-xl font-semibold text-emerald-900">You&apos;re back!</h1>
           <p className="mt-2 text-emerald-800">
-            Email notifications have been re-enabled for <strong>{email}</strong>. You&apos;ll start receiving updates again.
+            Email notifications have been re-enabled for <strong>{email}</strong>. You&apos;ll start
+            receiving updates again.
           </p>
           <Link
             href="/settings/notifications"
@@ -69,7 +70,8 @@ function UnsubscribeContent() {
         <div className="rounded-lg border border-red-200 bg-red-50 p-6">
           <h1 className="text-xl font-semibold text-red-900">Invalid unsubscribe link</h1>
           <p className="mt-2 text-red-800">
-            This unsubscribe link is invalid or has expired. Please use the link from your most recent email.
+            This unsubscribe link is invalid or has expired. Please use the link from your most
+            recent email.
           </p>
           <Link
             href="/settings/notifications"
@@ -153,9 +155,7 @@ function UnsubscribeContent() {
         </Link>
       </div>
 
-      <p className="mt-8 text-xs text-slate-400">
-        AI Readiness Platform · Built on CoSAI SRF v0.7
-      </p>
+      <p className="mt-8 text-xs text-slate-400">AI Readiness Platform · Built on CoSAI SRF v0.7</p>
     </main>
   );
 }

@@ -8,10 +8,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import Link from "next/link";
 import { LayoutGrid } from "lucide-react";
 import { Tooltip } from "@/components/ui/Tooltip";
-import {
-  getPersonaSidebarConfig,
-  type SidebarMode
-} from "@/lib/personas/sidebar-config";
+import { getPersonaSidebarConfig, type SidebarMode } from "@/lib/personas/sidebar-config";
 import { isPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { SessionExpiryWarning } from "@/components/auth/SessionExpiryWarning";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
@@ -83,9 +80,7 @@ export function DashboardShell({
     }
   }, []);
 
-  const effectiveMode = mounted
-    ? getEffectiveMode(persona ?? null, pathname, storedMode)
-    : "full";
+  const effectiveMode = mounted ? getEffectiveMode(persona ?? null, pathname, storedMode) : "full";
 
   const expandToFull = useCallback(() => {
     try {
@@ -110,11 +105,7 @@ export function DashboardShell({
   if (effectiveMode === "hidden") {
     return (
       <div className="flex min-h-dvh flex-col">
-        <TopBar
-          userEmail={userEmail}
-          orgName={orgName}
-          persona={persona}
-        />
+        <TopBar userEmail={userEmail} orgName={orgName} persona={persona} />
         <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
           <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">
             <div className="mb-4">
@@ -157,7 +148,7 @@ export function DashboardShell({
               <Tooltip content="Switch to your focused view" side="bottom">
                 <Link
                   href={personaDashboardPath ?? "/persona-select"}
-                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 hover:text-navy-600"
+                  className="hover:text-navy-600 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200"
                 >
                   <LayoutGrid className="h-4 w-4" />
                   My view

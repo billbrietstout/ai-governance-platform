@@ -40,7 +40,7 @@ export default async function RegulatoryProfilePage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/settings" className="text-sm text-navy-600 hover:underline">
+        <Link href="/settings" className="text-navy-600 text-sm hover:underline">
           ← Settings
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
@@ -58,9 +58,7 @@ export default async function RegulatoryProfilePage() {
 
       {profile && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-medium text-slate-700">
-            Regulations for {profile.label}
-          </h2>
+          <h2 className="text-sm font-medium text-slate-700">Regulations for {profile.label}</h2>
           <p className="mt-1 text-xs text-slate-500">{profile.description}</p>
           <ul className="mt-3 space-y-2">
             {profile.regulations.map((r) => (

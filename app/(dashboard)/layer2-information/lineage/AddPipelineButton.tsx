@@ -7,7 +7,7 @@ export function AddPipelineButton() {
   return (
     <Link
       href="/layer2-information/lineage/new"
-      className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+      className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
     >
       Add Pipeline
     </Link>

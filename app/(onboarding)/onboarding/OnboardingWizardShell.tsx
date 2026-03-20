@@ -65,7 +65,7 @@ export function OnboardingWizardShell({
       {/* Progress bar */}
       <div className="h-1 overflow-hidden rounded-full bg-slate-200">
         <div
-          className="h-full rounded-full bg-navy-500 transition-all duration-300"
+          className="bg-navy-500 h-full rounded-full transition-all duration-300"
           style={{ width: `${progressPct}%` }}
         />
       </div>
@@ -138,14 +138,11 @@ export function OnboardingWizardShell({
         )}
         {currentStep === 5 && (
           <Step5QuickAssessment
-            onComplete={() =>
-              startTransition(() => router.replace("/?welcome=1"))
-            }
+            onComplete={() => startTransition(() => router.replace("/?welcome=1"))}
             isPending={isPending}
           />
         )}
       </div>
-
     </div>
   );
 }

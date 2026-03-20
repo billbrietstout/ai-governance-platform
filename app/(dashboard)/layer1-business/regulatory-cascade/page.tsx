@@ -49,8 +49,14 @@ export default async function RegulatoryCascadePage({
   const framework = map.frameworks.find((f) => f.code === regulation);
   const frameworkId = framework?.id;
 
-  const cascadeSteps: { layer: string; controls: { id: string; controlId: string; title: string; frameworkCode: string }[] }[] = [];
-  const unmetByLayer: Record<string, { controlId: string; title: string; owner: string; assetId: string; assetName: string }[]> = {};
+  const cascadeSteps: {
+    layer: string;
+    controls: { id: string; controlId: string; title: string; frameworkCode: string }[];
+  }[] = [];
+  const unmetByLayer: Record<
+    string,
+    { controlId: string; title: string; owner: string; assetId: string; assetName: string }[]
+  > = {};
 
   if (frameworkId && orgId) {
     const controls = await prisma.control.findMany({
@@ -78,14 +84,28 @@ export default async function RegulatoryCascadePage({
     });
 
     for (const layer of COSAI_LAYERS) {
-      const gaps: { controlId: string; title: string; owner: string; assetId: string; assetName: string }[] = [];
+      const gaps: {
+        controlId: string;
+        title: string;
+        owner: string;
+        assetId: string;
+        assetName: string;
+      }[] = [];
 
       for (const asset of orgAssets) {
         const report = await engine.getGapAnalysis(prisma, asset.id);
         for (const g of report.criticalGaps) {
           if (g.frameworkId === frameworkId && g.cosaiLayer === layer) {
             const assignment = await prisma.accountabilityAssignment.findFirst({
-              where: { assetId: asset.id, cosaiLayer: layer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" }
+              where: {
+                assetId: asset.id,
+                cosaiLayer: layer as
+                  | "LAYER_1_BUSINESS"
+                  | "LAYER_2_INFORMATION"
+                  | "LAYER_3_APPLICATION"
+                  | "LAYER_4_PLATFORM"
+                  | "LAYER_5_SUPPLY_CHAIN"
+              }
             });
             gaps.push({
               controlId: g.controlId,
@@ -113,13 +133,16 @@ export default async function RegulatoryCascadePage({
     return (
       <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
         <div>
-          <Link href="/layer1-business" className="text-sm text-navy-600 hover:underline">
+          <Link href="/layer1-business" className="text-navy-600 text-sm hover:underline">
             ← Layer 1: Business
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Regulatory Cascade</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+            Regulatory Cascade
+          </h1>
         </div>
         <p className="rounded-lg border border-gray-200 bg-white p-4 text-gray-600 shadow-sm">
-          {regName} framework not configured for this organization. Seed compliance frameworks to enable this view.
+          {regName} framework not configured for this organization. Seed compliance frameworks to
+          enable this view.
         </p>
       </main>
     );
@@ -128,12 +151,15 @@ export default async function RegulatoryCascadePage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer1-business" className="text-sm text-navy-600 hover:underline">
+        <Link href="/layer1-business" className="text-navy-600 text-sm hover:underline">
           ← Layer 1: Business
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Regulatory Cascade</h1>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+          Regulatory Cascade
+        </h1>
         <p className="mt-1 text-gray-600">
-          How {regName} flows through CoSAI layers. Controls at each layer. Unmet requirements with owner and remediation.
+          How {regName} flows through CoSAI layers. Controls at each layer. Unmet requirements with
+          owner and remediation.
         </p>
       </div>
 
@@ -158,7 +184,9 @@ export default async function RegulatoryCascadePage({
             key={r.id}
             href={`/layer1-business/regulatory-cascade?regulation=${r.code}`}
             className={`rounded px-3 py-1.5 text-sm font-medium ${
-              regulation === r.code ? "bg-navy-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              regulation === r.code
+                ? "bg-navy-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
             {r.name}

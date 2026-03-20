@@ -37,16 +37,14 @@ export const supplyChainRouter = createTRPCRouter({
       return { data: list, meta: {} };
     }),
 
-  getCard: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const card = await prisma.artifactCard.findFirst({
-        where: { id: input.id, orgId: ctx.orgId },
-        include: { asset: { select: { id: true, name: true, euRiskLevel: true } } }
-      });
-      if (!card) throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
-      return { data: card, meta: {} };
-    }),
+  getCard: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const card = await prisma.artifactCard.findFirst({
+      where: { id: input.id, orgId: ctx.orgId },
+      include: { asset: { select: { id: true, name: true, euRiskLevel: true } } }
+    });
+    if (!card) throw new TRPCError({ code: "NOT_FOUND", message: "Card not found" });
+    return { data: card, meta: {} };
+  }),
 
   getCardEUCoverage: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -146,12 +144,18 @@ export const supplyChainRouter = createTRPCRouter({
         sourceFormat = "API";
       } else {
         const cards = await fetchRepoCards(input.source);
-        if (cards.length === 0) throw new TRPCError({ code: "BAD_REQUEST", message: "No cards found in repo" });
+        if (cards.length === 0)
+          throw new TRPCError({ code: "BAD_REQUEST", message: "No cards found in repo" });
         const first = cards[0];
         raw = { content: first.content, markdown: first.content };
         sourceRepo = input.source;
         sourceFormat = "REPO";
-        cardType = first.type === "MODEL_CARD" ? "MODEL_CARD" : first.type === "DATASHEET" ? "DATA_CARD" : "APP_CARD";
+        cardType =
+          first.type === "MODEL_CARD"
+            ? "MODEL_CARD"
+            : first.type === "DATASHEET"
+              ? "DATA_CARD"
+              : "APP_CARD";
       }
 
       const normalized = normalizeCard(raw, input.type === "GITHUB" ? "GITHUB" : "HUGGINGFACE");
@@ -251,7 +255,11 @@ export const supplyChainRouter = createTRPCRouter({
       euRiskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
       assetType?: string;
     };
-    type TopologyEdge = { from: string; to: string; type: "lineage" | "platform" | "model" | "governance" };
+    type TopologyEdge = {
+      from: string;
+      to: string;
+      type: "lineage" | "platform" | "model" | "governance";
+    };
 
     function mapEuRiskToTopology(
       level: string | null | undefined
@@ -315,8 +323,7 @@ export const supplyChainRouter = createTRPCRouter({
         v.vendorType === "DATA_PROVIDER"
     );
     const otherVendors = vendors.filter(
-      (v) =>
-        !l4Vendors.some((l4) => l4.id === v.id) && !l5Vendors.some((l5) => l5.id === v.id)
+      (v) => !l4Vendors.some((l4) => l4.id === v.id) && !l5Vendors.some((l5) => l5.id === v.id)
     );
     const assigned = new Set<string>();
     for (const v of l4Vendors) {
@@ -562,7 +569,15 @@ export const supplyChainRouter = createTRPCRouter({
       const evidenceCurrency = expired.length > 0 ? Math.max(0, 100 - expired.length * 20) : 100;
       const contractAlignment = v.contractAligned ? 100 : 0;
       const scanCoverage = 50;
-      total += Math.min(100, Math.round(assurance.total * 30 + evidenceCurrency * 0.25 + contractAlignment * 0.2 + scanCoverage * 0.25));
+      total += Math.min(
+        100,
+        Math.round(
+          assurance.total * 30 +
+            evidenceCurrency * 0.25 +
+            contractAlignment * 0.2 +
+            scanCoverage * 0.25
+        )
+      );
     }
     const avg = total / vendors.length;
     const rating = avg >= 70 ? "LOW" : avg >= 40 ? "MEDIUM" : "HIGH";

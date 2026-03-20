@@ -63,9 +63,7 @@ export default function PricingPage() {
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-10 px-6 py-12">
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Plans & Pricing</h1>
-        <p className="mt-2 text-slate-600">
-          Choose the plan that fits your AI governance needs.
-        </p>
+        <p className="mt-2 text-slate-600">Choose the plan that fits your AI governance needs.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -79,7 +77,7 @@ export default function PricingPage() {
             }`}
           >
             {tier.highlighted && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-navy-600 px-3 py-0.5 text-xs font-medium text-white">
+              <span className="bg-navy-600 absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-xs font-medium text-white">
                 Most Popular
               </span>
             )}
@@ -98,7 +96,7 @@ export default function PricingPage() {
             <ul className="mt-4 flex-1 space-y-2 text-sm text-slate-700">
               {tier.features.map((f) => (
                 <li key={f} className="flex items-start gap-2">
-                  <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-navy-400" />
+                  <span className="bg-navy-400 mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full" />
                   {f}
                 </li>
               ))}
@@ -109,7 +107,7 @@ export default function PricingPage() {
                   href={tier.ctaHref}
                   className={`block w-full rounded-lg py-2.5 text-center text-sm font-medium transition-colors ${
                     tier.highlighted
-                      ? "bg-navy-600 text-white hover:bg-navy-500"
+                      ? "bg-navy-600 hover:bg-navy-500 text-white"
                       : "border border-slate-300 text-slate-700 hover:bg-slate-50"
                   }`}
                 >

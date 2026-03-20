@@ -127,7 +127,7 @@ export function GuestResultsView({ results, onStartOver }: Props) {
           <p className="mt-1 text-xs text-white/70">Create a free account to unlock</p>
           <Link
             href="/login?callbackUrl=/discover/wizard"
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+            className="bg-navy-600 hover:bg-navy-500 mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white"
           >
             <Unlock className="h-4 w-4" />
             Unlock full results — free forever for up to 10 assets

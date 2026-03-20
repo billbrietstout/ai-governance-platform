@@ -53,7 +53,11 @@ export function PersonaShortcutBanner({ persona }: Props) {
           href={path}
           className="inline-flex items-center gap-1 font-medium text-blue-700 hover:text-blue-800 hover:underline"
         >
-          {isExecutive ? <Newspaper className="h-4 w-4" /> : <LayoutDashboard className="h-4 w-4" />}
+          {isExecutive ? (
+            <Newspaper className="h-4 w-4" />
+          ) : (
+            <LayoutDashboard className="h-4 w-4" />
+          )}
           Switch to your focused view → {linkLabel}
         </Link>
       </p>

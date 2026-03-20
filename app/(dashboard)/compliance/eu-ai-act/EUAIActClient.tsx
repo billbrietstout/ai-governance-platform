@@ -5,12 +5,32 @@ import { Clock, Check, Minus } from "lucide-react";
 
 const ARTICLES = [
   { id: "art9", label: "Article 9 — Risk Management", evidenceLink: "/layer3-application/gaps" },
-  { id: "art10", label: "Article 10 — Data Governance", evidenceLink: "/layer2-information/governance" },
-  { id: "art11", label: "Article 11 — Technical Documentation", evidenceLink: "/layer5-supply-chain/cards" },
+  {
+    id: "art10",
+    label: "Article 10 — Data Governance",
+    evidenceLink: "/layer2-information/governance"
+  },
+  {
+    id: "art11",
+    label: "Article 11 — Technical Documentation",
+    evidenceLink: "/layer5-supply-chain/cards"
+  },
   { id: "art13", label: "Article 13 — Transparency", evidenceLink: "/layer3-application/assets" },
-  { id: "art14", label: "Article 14 — Human Oversight", evidenceLink: "/layer3-application/agents" },
-  { id: "art15", label: "Article 15 — Accuracy & Robustness", evidenceLink: "/layer4-platform/telemetry" },
-  { id: "art72", label: "Article 72 — Post-market Surveillance", evidenceLink: "/layer4-platform/telemetry" }
+  {
+    id: "art14",
+    label: "Article 14 — Human Oversight",
+    evidenceLink: "/layer3-application/agents"
+  },
+  {
+    id: "art15",
+    label: "Article 15 — Accuracy & Robustness",
+    evidenceLink: "/layer4-platform/telemetry"
+  },
+  {
+    id: "art72",
+    label: "Article 72 — Post-market Surveillance",
+    evidenceLink: "/layer4-platform/telemetry"
+  }
 ];
 
 type Asset = { id: string; name: string; euRiskLevel?: string | null };
@@ -21,11 +41,7 @@ type Props = {
   daysUntilDeadline: number;
 };
 
-export function EUAIActClient({
-  highRiskAssets,
-  minimalLimitedCount,
-  daysUntilDeadline
-}: Props) {
+export function EUAIActClient({ highRiskAssets, minimalLimitedCount, daysUntilDeadline }: Props) {
   return (
     <div className="space-y-8">
       {/* Enforcement deadline */}
@@ -47,8 +63,8 @@ export function EUAIActClient({
       {minimalLimitedCount > 0 && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
           <p className="text-sm text-slate-700">
-            <span className="rounded bg-slate-200 px-2 py-0.5 font-medium">Not yet applicable</span> —{" "}
-            {minimalLimitedCount} asset(s) with MINIMAL or LIMITED risk are not subject to full
+            <span className="rounded bg-slate-200 px-2 py-0.5 font-medium">Not yet applicable</span>{" "}
+            — {minimalLimitedCount} asset(s) with MINIMAL or LIMITED risk are not subject to full
             conformity assessment.
           </p>
         </div>
@@ -88,10 +104,7 @@ export function EUAIActClient({
         ) : (
           <div className="mt-4 space-y-4">
             {highRiskAssets.map((asset) => (
-              <div
-                key={asset.id}
-                className="rounded border border-slate-200 bg-slate-50/50 p-4"
-              >
+              <div key={asset.id} className="rounded border border-slate-200 bg-slate-50/50 p-4">
                 <div className="flex items-center justify-between">
                   <Link
                     href={`/layer3-application/assets/${asset.id}`}
@@ -122,10 +135,7 @@ export function EUAIActClient({
                             </span>
                           </td>
                           <td className="py-2">
-                            <Link
-                              href={art.evidenceLink}
-                              className="text-navy-600 hover:underline"
-                            >
+                            <Link href={art.evidenceLink} className="text-navy-600 hover:underline">
                               View evidence →
                             </Link>
                           </td>

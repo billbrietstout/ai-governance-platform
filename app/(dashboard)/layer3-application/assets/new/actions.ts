@@ -19,12 +19,41 @@ export async function createAsset(formData: FormData) {
     const { data: asset } = await caller.assets.create({
       name: name.trim(),
       description: (formData.get("description") as string) || undefined,
-      assetType: assetType as "MODEL" | "PROMPT" | "AGENT" | "DATASET" | "APPLICATION" | "TOOL" | "PIPELINE",
-      euRiskLevel: (formData.get("euRiskLevel") as "MINIMAL" | "LIMITED" | "HIGH" | "UNACCEPTABLE") || undefined,
-      operatingModel: (formData.get("operatingModel") as "IN_HOUSE" | "VENDOR" | "HYBRID") || undefined,
-      cosaiLayer: (cosaiLayer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN") || undefined,
-      autonomyLevel: (formData.get("autonomyLevel") as "HUMAN_ONLY" | "ASSISTED" | "SEMI_AUTONOMOUS" | "AUTONOMOUS") || undefined,
-      verticalMarket: (formData.get("verticalMarket") as "GENERAL" | "HEALTHCARE" | "FINANCIAL" | "AUTOMOTIVE" | "RETAIL" | "MANUFACTURING" | "PUBLIC_SECTOR") || undefined,
+      assetType: assetType as
+        | "MODEL"
+        | "PROMPT"
+        | "AGENT"
+        | "DATASET"
+        | "APPLICATION"
+        | "TOOL"
+        | "PIPELINE",
+      euRiskLevel:
+        (formData.get("euRiskLevel") as "MINIMAL" | "LIMITED" | "HIGH" | "UNACCEPTABLE") ||
+        undefined,
+      operatingModel:
+        (formData.get("operatingModel") as "IN_HOUSE" | "VENDOR" | "HYBRID") || undefined,
+      cosaiLayer:
+        (cosaiLayer as
+          | "LAYER_1_BUSINESS"
+          | "LAYER_2_INFORMATION"
+          | "LAYER_3_APPLICATION"
+          | "LAYER_4_PLATFORM"
+          | "LAYER_5_SUPPLY_CHAIN") || undefined,
+      autonomyLevel:
+        (formData.get("autonomyLevel") as
+          | "HUMAN_ONLY"
+          | "ASSISTED"
+          | "SEMI_AUTONOMOUS"
+          | "AUTONOMOUS") || undefined,
+      verticalMarket:
+        (formData.get("verticalMarket") as
+          | "GENERAL"
+          | "HEALTHCARE"
+          | "FINANCIAL"
+          | "AUTOMOTIVE"
+          | "RETAIL"
+          | "MANUFACTURING"
+          | "PUBLIC_SECTOR") || undefined,
       ownerId: (formData.get("ownerId") as string) || undefined,
       createAccountability: createAccountability && !!cosaiLayer
     });

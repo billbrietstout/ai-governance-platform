@@ -14,7 +14,15 @@ import { MATURITY_QUESTIONS } from "@/lib/maturity/questions";
 
 const operatingModelSchema = z.enum(["IAAS", "PAAS", "AGENT_PAAS", "SAAS", "MIXED"]);
 const orgSizeSchema = z.enum(["SMALL", "MEDIUM", "LARGE", "ENTERPRISE"]);
-const assetTypeSchema = z.enum(["MODEL", "PROMPT", "AGENT", "DATASET", "APPLICATION", "TOOL", "PIPELINE"]);
+const assetTypeSchema = z.enum([
+  "MODEL",
+  "PROMPT",
+  "AGENT",
+  "DATASET",
+  "APPLICATION",
+  "TOOL",
+  "PIPELINE"
+]);
 const euRiskSchema = z.enum(["MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"]);
 const autonomySchema = z.enum(["HUMAN_ONLY", "ASSISTED", "SEMI_AUTONOMOUS", "AUTONOMOUS"]);
 const verticalKeySchema = z.string(); // VerticalKey from VERTICAL_REGULATIONS
@@ -43,7 +51,8 @@ export const onboardingRouter = createTRPCRouter({
     if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
 
     const currentStep = org.onboardingStep >= 6 ? 6 : org.onboardingStep + 1;
-    const stepDef = currentStep <= 5 ? ONBOARDING_STEPS.find((s) => s.id === currentStep) ?? null : null;
+    const stepDef =
+      currentStep <= 5 ? (ONBOARDING_STEPS.find((s) => s.id === currentStep) ?? null) : null;
 
     return {
       data: {
@@ -160,11 +169,14 @@ export const onboardingRouter = createTRPCRouter({
           score: a.score
         }));
         const validIds = new Set(QUICK_MATURITY_QUESTION_IDS);
-        const filtered = answers.filter((a) => validIds.has(a.questionId as (typeof QUICK_MATURITY_QUESTION_IDS)[number]));
+        const filtered = answers.filter((a) =>
+          validIds.has(a.questionId as (typeof QUICK_MATURITY_QUESTION_IDS)[number])
+        );
         if (filtered.length !== 5) {
           throw new TRPCError({
             code: "BAD_REQUEST",
-            message: "Quick maturity check requires exactly 5 answers (L1-1, L2-1, L3-1, L4-1, L5-1)"
+            message:
+              "Quick maturity check requires exactly 5 answers (L1-1, L2-1, L3-1, L4-1, L5-1)"
           });
         }
         const scores = scoreAssessment(filtered);
@@ -272,7 +284,17 @@ export const onboardingRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1),
-        verticalMarket: z.enum(["GENERAL", "HEALTHCARE", "FINANCIAL", "INSURANCE", "AUTOMOTIVE", "RETAIL", "MANUFACTURING", "PUBLIC_SECTOR", "ENERGY"]),
+        verticalMarket: z.enum([
+          "GENERAL",
+          "HEALTHCARE",
+          "FINANCIAL",
+          "INSURANCE",
+          "AUTOMOTIVE",
+          "RETAIL",
+          "MANUFACTURING",
+          "PUBLIC_SECTOR",
+          "ENERGY"
+        ]),
         plan: z.enum(["FREE", "TEAM", "ENTERPRISE"])
       })
     )
@@ -280,7 +302,10 @@ export const onboardingRouter = createTRPCRouter({
       const org = await prisma.organization.findUnique({ where: { id: ctx.orgId } });
       if (!org) throw new TRPCError({ code: "NOT_FOUND", message: "Organization not found" });
 
-      const baseSlug = input.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+      const baseSlug = input.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
       const slug = baseSlug ? `${baseSlug}-${ctx.orgId.slice(0, 8)}` : org.slug;
       await prisma.organization.update({
         where: { id: ctx.orgId },

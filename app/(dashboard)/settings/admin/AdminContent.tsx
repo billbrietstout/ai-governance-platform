@@ -25,11 +25,7 @@ type Props = {
   orgNotificationsEnabled: boolean;
 };
 
-export function AdminContent({
-  currentTier,
-  notificationStatus,
-  orgNotificationsEnabled
-}: Props) {
+export function AdminContent({ currentTier, notificationStatus, orgNotificationsEnabled }: Props) {
   const [selectedTier, setSelectedTier] = useState<string>(currentTier);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [pending, setPending] = useState(false);
@@ -80,7 +76,7 @@ export function AdminContent({
                 value={tier}
                 checked={selectedTier === tier}
                 onChange={() => setSelectedTier(tier)}
-                className="rounded-full border-slate-300 text-navy-600 focus:ring-navy-500"
+                className="text-navy-600 focus:ring-navy-500 rounded-full border-slate-300"
               />
               <span className="text-sm font-medium text-slate-700">{tier}</span>
             </label>
@@ -91,7 +87,7 @@ export function AdminContent({
           type="button"
           onClick={handleApply}
           disabled={pending || selectedTier === currentTier}
-          className="mt-4 rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 mt-4 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? "Applying…" : "Apply tier"}
         </button>
@@ -99,7 +95,9 @@ export function AdminContent({
         {message && (
           <div
             className={`mt-4 rounded-lg p-3 text-sm ${
-              message.type === "success" ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"
+              message.type === "success"
+                ? "bg-emerald-50 text-emerald-800"
+                : "bg-red-50 text-red-800"
             }`}
           >
             {message.text}
@@ -149,7 +147,9 @@ export function AdminContent({
                   setOrgNotifEnabled(!killSwitch);
                   setMessage({
                     type: "success",
-                    text: killSwitch ? "All org notifications disabled." : "Org notifications re-enabled."
+                    text: killSwitch
+                      ? "All org notifications disabled."
+                      : "Org notifications re-enabled."
                   });
                   setTimeout(() => window.location.reload(), 1000);
                 } catch (err) {
@@ -174,7 +174,9 @@ export function AdminContent({
                 <tr>
                   <th className="px-4 py-2 text-left font-medium text-slate-700">Name/email</th>
                   <th className="px-4 py-2 text-left font-medium text-slate-700">Email enabled</th>
-                  <th className="px-4 py-2 text-left font-medium text-slate-700">Last digest sent</th>
+                  <th className="px-4 py-2 text-left font-medium text-slate-700">
+                    Last digest sent
+                  </th>
                   <th className="px-4 py-2 text-left font-medium text-slate-700">Action</th>
                 </tr>
               </thead>

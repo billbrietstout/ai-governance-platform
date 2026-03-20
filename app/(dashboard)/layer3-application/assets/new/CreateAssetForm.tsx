@@ -22,7 +22,12 @@ type Props = {
   defaults?: Defaults;
 };
 
-export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities = [], defaults }: Props) {
+export function CreateAssetForm({
+  euRequiredArticles,
+  users,
+  masterDataEntities = [],
+  defaults
+}: Props) {
   const [state, formAction] = useActionState(
     async (_prev: { error?: string } | null, formData: FormData) => {
       const result = await createAsset(formData);
@@ -32,35 +37,44 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
   );
 
   return (
-    <form action={formAction} className="space-y-6 rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-6">
+    <form
+      action={formAction}
+      className="border-slatePro-700 bg-slatePro-900/30 space-y-6 rounded-lg border p-6"
+    >
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-slatePro-300">Name</label>
+        <label htmlFor="name" className="text-slatePro-300 block text-sm font-medium">
+          Name
+        </label>
         <input
           id="name"
           name="name"
           required
           defaultValue={defaults?.name}
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         />
       </div>
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-slatePro-300">Description</label>
+        <label htmlFor="description" className="text-slatePro-300 block text-sm font-medium">
+          Description
+        </label>
         <textarea
           id="description"
           name="description"
           rows={3}
           defaultValue={defaults?.description}
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         />
       </div>
       <div>
-        <label htmlFor="assetType" className="block text-sm font-medium text-slatePro-300">Asset Type</label>
+        <label htmlFor="assetType" className="text-slatePro-300 block text-sm font-medium">
+          Asset Type
+        </label>
         <select
           id="assetType"
           name="assetType"
           required
           defaultValue={defaults?.assetType}
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="MODEL">Model</option>
           <option value="PROMPT">Prompt</option>
@@ -72,12 +86,14 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         </select>
       </div>
       <div>
-        <label htmlFor="euRiskLevel" className="block text-sm font-medium text-slatePro-300">EU Risk Level</label>
+        <label htmlFor="euRiskLevel" className="text-slatePro-300 block text-sm font-medium">
+          EU Risk Level
+        </label>
         <select
           id="euRiskLevel"
           name="euRiskLevel"
           defaultValue={defaults?.euRiskLevel}
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="">—</option>
           <option value="MINIMAL">Minimal</option>
@@ -90,11 +106,13 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         )}
       </div>
       <div>
-        <label htmlFor="operatingModel" className="block text-sm font-medium text-slatePro-300">Operating Model</label>
+        <label htmlFor="operatingModel" className="text-slatePro-300 block text-sm font-medium">
+          Operating Model
+        </label>
         <select
           id="operatingModel"
           name="operatingModel"
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="">—</option>
           <option value="IN_HOUSE">In House</option>
@@ -103,11 +121,13 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         </select>
       </div>
       <div>
-        <label htmlFor="cosaiLayer" className="block text-sm font-medium text-slatePro-300">CoSAI Layer</label>
+        <label htmlFor="cosaiLayer" className="text-slatePro-300 block text-sm font-medium">
+          CoSAI Layer
+        </label>
         <select
           id="cosaiLayer"
           name="cosaiLayer"
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="">—</option>
           <option value="LAYER_1_BUSINESS">Layer 1: Business</option>
@@ -118,12 +138,14 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         </select>
       </div>
       <div>
-        <label htmlFor="autonomyLevel" className="block text-sm font-medium text-slatePro-300">Autonomy Level</label>
+        <label htmlFor="autonomyLevel" className="text-slatePro-300 block text-sm font-medium">
+          Autonomy Level
+        </label>
         <select
           id="autonomyLevel"
           name="autonomyLevel"
           defaultValue={defaults?.autonomyLevel}
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="">—</option>
           <option value="HUMAN_ONLY">Human Only</option>
@@ -133,12 +155,14 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         </select>
       </div>
       <div>
-        <label htmlFor="verticalMarket" className="block text-sm font-medium text-slatePro-300">Vertical Market</label>
+        <label htmlFor="verticalMarket" className="text-slatePro-300 block text-sm font-medium">
+          Vertical Market
+        </label>
         <select
           id="verticalMarket"
           name="verticalMarket"
           defaultValue={defaults?.verticalMarket}
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="">—</option>
           <option value="GENERAL">General</option>
@@ -151,15 +175,19 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
         </select>
       </div>
       <div>
-        <label htmlFor="ownerId" className="block text-sm font-medium text-slatePro-300">Owner</label>
+        <label htmlFor="ownerId" className="text-slatePro-300 block text-sm font-medium">
+          Owner
+        </label>
         <select
           id="ownerId"
           name="ownerId"
-          className="mt-1 w-full rounded border border-slatePro-600 bg-slatePro-900 px-3 py-2 text-slatePro-100"
+          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 mt-1 w-full rounded border px-3 py-2"
         >
           <option value="">—</option>
           {users.map((u) => (
-            <option key={u.id} value={u.id}>{u.email}</option>
+            <option key={u.id} value={u.id}>
+              {u.email}
+            </option>
           ))}
         </select>
       </div>
@@ -169,21 +197,19 @@ export function CreateAssetForm({ euRequiredArticles, users, masterDataEntities 
           name="createAccountability"
           type="checkbox"
           value="on"
-          className="rounded border-slatePro-600"
+          className="border-slatePro-600 rounded"
         />
-        <label htmlFor="createAccountability" className="text-sm text-slatePro-300">
+        <label htmlFor="createAccountability" className="text-slatePro-300 text-sm">
           Auto-create AccountabilityAssignment on save
         </label>
       </div>
 
-      {masterDataEntities.length > 0 && (
-        <DataSourcesSection entities={masterDataEntities} />
-      )}
+      {masterDataEntities.length > 0 && <DataSourcesSection entities={masterDataEntities} />}
 
       {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
       <button
         type="submit"
-        className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
       >
         Create Asset
       </button>

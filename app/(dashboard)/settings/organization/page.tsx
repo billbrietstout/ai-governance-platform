@@ -35,12 +35,10 @@ export default async function OrganizationSettingsPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/settings" className="text-sm text-navy-600 hover:underline">
+        <Link href="/settings" className="text-navy-600 text-sm hover:underline">
           ← Settings
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
-          Organization
-        </h1>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Organization</h1>
         <p className="mt-1 text-slate-600">
           Configure your organization&apos;s client verticals and regulatory scope.
         </p>

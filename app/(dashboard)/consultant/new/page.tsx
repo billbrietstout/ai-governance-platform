@@ -19,7 +19,9 @@ export default async function ConsultantNewPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">New Client Workspace</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          New Client Workspace
+        </h1>
         <p className="mt-1 text-slate-600">
           Create a new client organization and assessment workspace.
         </p>

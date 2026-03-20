@@ -65,10 +65,7 @@ const ROW_GAP = 16;
 
 const COL_X = [80, 260, 480, 720] as const;
 
-function getDownstreamIds(
-  lineageRecords: LineageRecordNode[],
-  entityId: string
-): Set<string> {
+function getDownstreamIds(lineageRecords: LineageRecordNode[], entityId: string): Set<string> {
   const ids = new Set<string>([entityId]);
   const queue = [entityId];
   const visited = new Set<string>();
@@ -198,7 +195,7 @@ export function DataLineageDAG({
     const getSourceColor = (sourceEntityId: string | null) => {
       if (!sourceEntityId) return "#94a3b8";
       const ent = entities.find((e) => e.id === sourceEntityId);
-      return ent ? CLASSIFICATION_COLORS[ent.classification] ?? "#64748b" : "#94a3b8";
+      return ent ? (CLASSIFICATION_COLORS[ent.classification] ?? "#64748b") : "#94a3b8";
     };
 
     filteredRecords.forEach((lr) => {
@@ -266,8 +263,7 @@ export function DataLineageDAG({
       const p = getPos(0, i);
       const color = CLASSIFICATION_COLORS[e.classification] ?? "#64748b";
       const isRestricted = e.classification === "RESTRICTED" || e.classification === "CONFIDENTIAL";
-      const isHighlighted =
-        highlightedDownstream.size === 0 || highlightedDownstream.has(e.id);
+      const isHighlighted = highlightedDownstream.size === 0 || highlightedDownstream.has(e.id);
 
       const node = g
         .append("g")
@@ -315,7 +311,9 @@ export function DataLineageDAG({
         .attr("stroke-width", 1);
       node
         .append("title")
-        .text(`${e.name}\nClassification: ${e.classification}${e.aiAccessPolicy ? `\nAI Access: ${e.aiAccessPolicy}` : ""}`);
+        .text(
+          `${e.name}\nClassification: ${e.classification}${e.aiAccessPolicy ? `\nAI Access: ${e.aiAccessPolicy}` : ""}`
+        );
       node
         .append("foreignObject")
         .attr("width", NODE_WIDTH - 8)
@@ -341,8 +339,7 @@ export function DataLineageDAG({
     col2.forEach((l, i) => {
       const p = getPos(1, i);
       const isHighlighted =
-        highlightedDownstream.size === 0 ||
-        highlightedDownstream.has(`pipeline-${l.id}`);
+        highlightedDownstream.size === 0 || highlightedDownstream.has(`pipeline-${l.id}`);
 
       const node = g
         .append("g")
@@ -363,9 +360,7 @@ export function DataLineageDAG({
         .attr("fill", "#e2e8f0")
         .attr("stroke", "#94a3b8")
         .attr("stroke-width", 1);
-      node
-        .append("title")
-        .text(l.name);
+      node.append("title").text(l.name);
       node
         .append("text")
         .attr("x", NODE_WIDTH / 2)
@@ -404,9 +399,7 @@ export function DataLineageDAG({
         })
         .on("mouseleave", () => setTooltip(null));
 
-      node
-        .append("title")
-        .text(`${a.name}${a.euRiskLevel ? `\nEU Risk: ${a.euRiskLevel}` : ""}`);
+      node.append("title").text(`${a.name}${a.euRiskLevel ? `\nEU Risk: ${a.euRiskLevel}` : ""}`);
       node
         .append("rect")
         .attr("width", ASSET_NODE_WIDTH)
@@ -456,9 +449,7 @@ export function DataLineageDAG({
         .attr("font-size", 16)
         .attr("fill", "#94a3b8")
         .text("☁");
-      node
-        .append("title")
-        .text(pl.name);
+      node.append("title").text(pl.name);
       node
         .append("foreignObject")
         .attr("width", PLATFORM_NODE_WIDTH - 32)
@@ -485,15 +476,7 @@ export function DataLineageDAG({
     return () => {
       svg.selectAll("*").remove();
     };
-  }, [
-    col1,
-    col2,
-    col3,
-    col4,
-    filteredRecords,
-    entities,
-    highlightedDownstream
-  ]);
+  }, [col1, col2, col3, col4, filteredRecords, entities, highlightedDownstream]);
 
   if (col1.length === 0 && col3.length === 0) {
     return (
@@ -512,9 +495,7 @@ export function DataLineageDAG({
               id="restricted-filter"
               type="checkbox"
               checked={classificationFilter === "RESTRICTED"}
-              onChange={(e) =>
-                setClassificationFilter(e.target.checked ? "RESTRICTED" : null)
-              }
+              onChange={(e) => setClassificationFilter(e.target.checked ? "RESTRICTED" : null)}
               style={{ width: "16px", height: "16px", cursor: "pointer", flexShrink: 0 }}
             />
             <label htmlFor="restricted-filter" style={{ cursor: "pointer" }}>
@@ -556,12 +537,7 @@ export function DataLineageDAG({
         className="overflow-x-auto rounded-lg border border-slate-200 bg-white p-4"
         onMouseLeave={() => setTooltip(null)}
       >
-        <svg
-          ref={svgRef}
-          width={width}
-          height={height}
-          className="min-w-full"
-        />
+        <svg ref={svgRef} width={width} height={height} className="min-w-full" />
       </div>
 
       {tooltip && (

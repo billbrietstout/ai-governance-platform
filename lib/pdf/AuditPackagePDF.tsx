@@ -1,13 +1,7 @@
 /**
  * AI Governance Audit Package – PDF document for @react-pdf/renderer.
  */
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet
-} from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 const styles = StyleSheet.create({
   page: {
@@ -211,8 +205,7 @@ export function AuditPackagePDF({
   const maturityLabel = `M${org.maturityLevel}`;
   const latestSnapshot = snapshots[0];
   const overallScore = latestSnapshot?.overallScore ?? 0;
-  const totalRisks =
-    riskSummary.critical + riskSummary.high + riskSummary.medium + riskSummary.low;
+  const totalRisks = riskSummary.critical + riskSummary.high + riskSummary.medium + riskSummary.low;
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return styles.scoreGreen;
@@ -266,17 +259,13 @@ export function AuditPackagePDF({
           Risk summary: {riskSummary.critical} critical, {riskSummary.high} high,{" "}
           {riskSummary.medium} medium, {riskSummary.low} low ({totalRisks} total).
         </Text>
-        <Text style={{ marginBottom: 12 }}>
-          Active regulations: {regulations.length}
-        </Text>
+        <Text style={{ marginBottom: 12 }}>Active regulations: {regulations.length}</Text>
         <Text style={{ marginBottom: 8, fontWeight: "bold" }}>Key findings</Text>
-        {(keyFindings.length > 0 ? keyFindings.slice(0, 3) : ["No gaps identified"]).map(
-          (f, i) => (
-            <View key={i} style={styles.listItem}>
-              <Text>{f}</Text>
-            </View>
-          )
-        )}
+        {(keyFindings.length > 0 ? keyFindings.slice(0, 3) : ["No gaps identified"]).map((f, i) => (
+          <View key={i} style={styles.listItem}>
+            <Text>{f}</Text>
+          </View>
+        ))}
         <PDFFooter pageNumber={2} totalPages={7} />
       </Page>
 
@@ -304,13 +293,9 @@ export function AuditPackagePDF({
             <View key={i} style={styles.tableRow}>
               <Text style={styles.tableCell}>{LAYER_NAMES[row.layer] ?? row.layer}</Text>
               <Text style={styles.tableCell}>{row.owner}</Text>
-              <Text style={[styles.tableCellSmall, getScoreColor(row.score)]}>
-                {row.score}%
-              </Text>
+              <Text style={[styles.tableCellSmall, getScoreColor(row.score)]}>{row.score}%</Text>
               <Text style={styles.tableCellSmall}>{row.status}</Text>
-              <Text style={styles.tableCell}>
-                {row.keyGaps?.slice(0, 2).join(", ") || "—"}
-              </Text>
+              <Text style={styles.tableCell}>{row.keyGaps?.slice(0, 2).join(", ") || "—"}</Text>
             </View>
           ))}
         </View>
@@ -352,7 +337,9 @@ export function AuditPackagePDF({
             <Text style={{ fontWeight: "bold", marginBottom: 6 }}>Mandatory</Text>
             {mandatoryRegs.map((r, i) => (
               <View key={i} style={{ marginBottom: 10 }}>
-                <Text>{r.name} ({r.jurisdiction})</Text>
+                <Text>
+                  {r.name} ({r.jurisdiction})
+                </Text>
                 <Text style={{ fontSize: 9, color: "#64748b" }}>
                   Applicability: {r.applicability} • Key requirements: {r.keyRequirements ?? "—"}
                   {r.deadline ? ` • Deadline: ${r.deadline}` : ""}
@@ -368,7 +355,9 @@ export function AuditPackagePDF({
             </Text>
             {likelyRegs.map((r, i) => (
               <View key={i} style={{ marginBottom: 10 }}>
-                <Text>{r.name} ({r.jurisdiction})</Text>
+                <Text>
+                  {r.name} ({r.jurisdiction})
+                </Text>
                 <Text style={{ fontSize: 9, color: "#64748b" }}>
                   {r.keyRequirements ?? "—"}
                   {r.deadline ? ` • Deadline: ${r.deadline}` : ""}
@@ -379,12 +368,12 @@ export function AuditPackagePDF({
         )}
         {recommendedRegs.length > 0 && (
           <>
-            <Text style={{ fontWeight: "bold", marginTop: 12, marginBottom: 6 }}>
-              Recommended
-            </Text>
+            <Text style={{ fontWeight: "bold", marginTop: 12, marginBottom: 6 }}>Recommended</Text>
             {recommendedRegs.map((r, i) => (
               <View key={i} style={{ marginBottom: 10 }}>
-                <Text>{r.name} ({r.jurisdiction})</Text>
+                <Text>
+                  {r.name} ({r.jurisdiction})
+                </Text>
                 <Text style={{ fontSize: 9, color: "#64748b" }}>{r.keyRequirements ?? "—"}</Text>
               </View>
             ))}
@@ -408,11 +397,31 @@ export function AuditPackagePDF({
           {(evidenceRequirements.length > 0
             ? evidenceRequirements
             : [
-                { layer: "L1", artifact: "Business case & risk assessment", status: "Partial" as const },
-                { layer: "L2", artifact: "Data classification & lineage", status: "Missing" as const },
-                { layer: "L3", artifact: "Model card & accountability matrix", status: "Partial" as const },
-                { layer: "L4", artifact: "Monitoring & drift detection", status: "Missing" as const },
-                { layer: "L5", artifact: "Vendor assurance & provenance", status: "Missing" as const }
+                {
+                  layer: "L1",
+                  artifact: "Business case & risk assessment",
+                  status: "Partial" as const
+                },
+                {
+                  layer: "L2",
+                  artifact: "Data classification & lineage",
+                  status: "Missing" as const
+                },
+                {
+                  layer: "L3",
+                  artifact: "Model card & accountability matrix",
+                  status: "Partial" as const
+                },
+                {
+                  layer: "L4",
+                  artifact: "Monitoring & drift detection",
+                  status: "Missing" as const
+                },
+                {
+                  layer: "L5",
+                  artifact: "Vendor assurance & provenance",
+                  status: "Missing" as const
+                }
               ]
           ).map((e, i) => (
             <View key={i} style={styles.tableRow}>
@@ -421,7 +430,11 @@ export function AuditPackagePDF({
               <Text
                 style={[
                   styles.tableCellSmall,
-                  e.status === "Collected" ? styles.scoreGreen : e.status === "Partial" ? styles.scoreAmber : styles.scoreRed
+                  e.status === "Collected"
+                    ? styles.scoreGreen
+                    : e.status === "Partial"
+                      ? styles.scoreAmber
+                      : styles.scoreRed
                 ]}
               >
                 {e.status}
@@ -435,11 +448,32 @@ export function AuditPackagePDF({
       {/* Page 7 – Recommendations */}
       <Page size="A4" style={styles.page}>
         <Text style={styles.sectionTitle}>Recommendations</Text>
-        {(recommendations.length > 0 ? recommendations : [
-          { priority: "P1", layer: "L2", action: "Complete data classification for AI training data", effort: "Medium", deadline: "30 days" },
-          { priority: "P2", layer: "L3", action: "Document accountability matrix for high-risk assets", effort: "Low", deadline: "14 days" },
-          { priority: "P3", layer: "L4", action: "Implement drift detection for production models", effort: "High", deadline: "60 days" }
-        ]).map((r, i) => (
+        {(recommendations.length > 0
+          ? recommendations
+          : [
+              {
+                priority: "P1",
+                layer: "L2",
+                action: "Complete data classification for AI training data",
+                effort: "Medium",
+                deadline: "30 days"
+              },
+              {
+                priority: "P2",
+                layer: "L3",
+                action: "Document accountability matrix for high-risk assets",
+                effort: "Low",
+                deadline: "14 days"
+              },
+              {
+                priority: "P3",
+                layer: "L4",
+                action: "Implement drift detection for production models",
+                effort: "High",
+                deadline: "60 days"
+              }
+            ]
+        ).map((r, i) => (
           <View key={i} style={styles.listItem}>
             <Text>
               [{r.priority}] {LAYER_NAMES[r.layer] ?? r.layer}: {r.action} — {r.effort} effort

@@ -81,9 +81,7 @@ export default async function DataStewardDashboardPage() {
             <span className="rounded bg-slate-100 px-2 py-1 text-xs text-slate-600">
               Restricted: 0
             </span>
-            <span className="rounded bg-slate-100 px-2 py-1 text-xs text-slate-600">
-              Public: 0
-            </span>
+            <span className="rounded bg-slate-100 px-2 py-1 text-xs text-slate-600">Public: 0</span>
           </div>
         </div>
 
@@ -92,9 +90,7 @@ export default async function DataStewardDashboardPage() {
           <h3 className="mb-4 text-sm font-medium text-slate-700">Governance gaps</h3>
           <ul className="space-y-2">
             <li className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
-              <span className="text-sm text-slate-700">
-                Entities without data steward assigned
-              </span>
+              <span className="text-sm text-slate-700">Entities without data steward assigned</span>
               <span className="font-medium text-slate-900">{withoutSteward}</span>
             </li>
             <li className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
@@ -105,13 +101,13 @@ export default async function DataStewardDashboardPage() {
           <div className="mt-4 flex gap-3">
             <Link
               href="/layer2-information/lineage"
-              className="text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 text-sm font-medium hover:underline"
             >
               View full lineage →
             </Link>
             <Link
               href="/layer2-information/master-data"
-              className="text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 text-sm font-medium hover:underline"
             >
               Manage data →
             </Link>

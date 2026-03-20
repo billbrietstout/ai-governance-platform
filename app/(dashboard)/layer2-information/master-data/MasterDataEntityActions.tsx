@@ -16,7 +16,13 @@ type Entity = {
 
 type User = { id: string; email: string };
 
-export function MasterDataEntityActions({ entity, users = [] }: { entity: Entity; users?: User[] }) {
+export function MasterDataEntityActions({
+  entity,
+  users = []
+}: {
+  entity: Entity;
+  users?: User[];
+}) {
   const router = useRouter();
   const [showEdit, setShowEdit] = useState(false);
 

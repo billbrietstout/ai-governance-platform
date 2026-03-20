@@ -7,9 +7,27 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
 
 const REGULATIONS = [
-  { code: "EU_AI_ACT", name: "EU AI Act", jurisdiction: "EU", deadline: "Aug 2026", status: "ON TRACK" as const },
-  { code: "ISO_42001", name: "ISO 42001", jurisdiction: "International", deadline: "—", status: "ON TRACK" as const },
-  { code: "NIST_AI_RMF", name: "NIST AI RMF", jurisdiction: "US", deadline: "—", status: "AT RISK" as const }
+  {
+    code: "EU_AI_ACT",
+    name: "EU AI Act",
+    jurisdiction: "EU",
+    deadline: "Aug 2026",
+    status: "ON TRACK" as const
+  },
+  {
+    code: "ISO_42001",
+    name: "ISO 42001",
+    jurisdiction: "International",
+    deadline: "—",
+    status: "ON TRACK" as const
+  },
+  {
+    code: "NIST_AI_RMF",
+    name: "NIST AI RMF",
+    jurisdiction: "US",
+    deadline: "—",
+    status: "AT RISK" as const
+  }
 ];
 
 export default async function ComplianceOfficerDashboardPage() {
@@ -22,7 +40,8 @@ export default async function ComplianceOfficerDashboardPage() {
 
   const cascade = cascadeRes.data;
   const snapshots = Array.isArray(snapshotsRes?.data) ? snapshotsRes.data : [];
-  const compliancePct = cascade.totalRequirements > 0 ? Math.round((cascade.met / cascade.totalRequirements) * 100) : 0;
+  const compliancePct =
+    cascade.totalRequirements > 0 ? Math.round((cascade.met / cascade.totalRequirements) * 100) : 0;
 
   return (
     <PersonaDashboardShell
@@ -35,17 +54,12 @@ export default async function ComplianceOfficerDashboardPage() {
           <h3 className="mb-4 text-sm font-medium text-slate-700">Regulation dashboard</h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {REGULATIONS.map((r) => (
-              <div
-                key={r.code}
-                className="rounded-lg border border-slate-200 bg-slate-50 p-4"
-              >
+              <div key={r.code} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-medium text-slate-900">{r.name}</p>
                     <p className="text-xs text-slate-500">{r.jurisdiction}</p>
-                    <p className="mt-1 text-xs text-amber-600">
-                      Deadline: {r.deadline}
-                    </p>
+                    <p className="mt-1 text-xs text-amber-600">Deadline: {r.deadline}</p>
                   </div>
                   <span
                     className={`rounded px-2 py-0.5 text-xs font-medium ${
@@ -61,7 +75,7 @@ export default async function ComplianceOfficerDashboardPage() {
                 </div>
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
                   <div
-                    className="h-full rounded-full bg-navy-500"
+                    className="bg-navy-500 h-full rounded-full"
                     style={{
                       width: `${r.status === "ON TRACK" ? 75 : r.status === "AT RISK" ? 45 : 20}%`
                     }}
@@ -85,7 +99,7 @@ export default async function ComplianceOfficerDashboardPage() {
             <div className="flex-1">
               <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                 <div
-                  className="h-full rounded-full bg-navy-500"
+                  className="bg-navy-500 h-full rounded-full"
                   style={{ width: `${compliancePct}%` }}
                 />
               </div>
@@ -97,7 +111,7 @@ export default async function ComplianceOfficerDashboardPage() {
           </p>
           <Link
             href="/audit-package/evidence-workbook"
-            className="mt-2 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-2 inline-block text-sm font-medium hover:underline"
           >
             View evidence workbook →
           </Link>
@@ -112,7 +126,7 @@ export default async function ComplianceOfficerDashboardPage() {
           <div className="mt-4 flex gap-3">
             <a
               href="/api/v1/export/audit-package"
-              className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+              className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white"
             >
               <FileDown className="h-4 w-4" />
               Generate audit package →

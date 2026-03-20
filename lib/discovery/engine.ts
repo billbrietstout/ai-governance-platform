@@ -10,7 +10,14 @@ import { VERTICAL_REGULATIONS, assetAppliesToRegulation } from "@/lib/vertical-r
 export type DiscoveryInputs = {
   assetType: "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE";
   description?: string;
-  businessFunction: "HR" | "Finance" | "Operations" | "Customer Service" | "Healthcare" | "Legal" | "Other";
+  businessFunction:
+    | "HR"
+    | "Finance"
+    | "Operations"
+    | "Customer Service"
+    | "Healthcare"
+    | "Legal"
+    | "Other";
   decisionsAffectingPeople: boolean;
   interactsWithEndUsers: boolean;
   deployment: "EU_market" | "US_only" | "Global" | "Internal_only";
@@ -38,7 +45,12 @@ export type DiscoveredRegulation = {
 export type RequiredControl = {
   controlId: string;
   title: string;
-  cosaiLayer: "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN";
+  cosaiLayer:
+    | "LAYER_1_BUSINESS"
+    | "LAYER_2_INFORMATION"
+    | "LAYER_3_APPLICATION"
+    | "LAYER_4_PLATFORM"
+    | "LAYER_5_SUPPLY_CHAIN";
   complianceStatus?: "compliant" | "non_compliant" | "pending" | "not_applicable";
 };
 
@@ -89,7 +101,8 @@ function isAnnexIIIHighRisk(inputs: DiscoveryInputs): boolean {
   const bf = inputs.businessFunction;
   const triggers = EU_AI_ACT_ANNEX_III_USE_CASES[bf] ?? [];
   if (triggers.some((t) => desc.includes(t))) return true;
-  if (inputs.decisionsAffectingPeople && (bf === "HR" || bf === "Finance" || bf === "Healthcare")) return true;
+  if (inputs.decisionsAffectingPeople && (bf === "HR" || bf === "Finance" || bf === "Healthcare"))
+    return true;
   return false;
 }
 
@@ -139,17 +152,16 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
   const usMarket = inputs.deployment === "US_only" || inputs.deployment === "Global";
   const annexIII = isAnnexIIIHighRisk(inputs);
   const autonomyL3Plus = ["L3", "L4", "L5"].includes(inputs.autonomyLevel);
-  const gdprRelevant = inputs.euResidentsData === "Yes" && inputs.dataTypes.some((d) => d === "PII");
+  const gdprRelevant =
+    inputs.euResidentsData === "Yes" && inputs.dataTypes.some((d) => d === "PII");
   const hrRelevant = inputs.businessFunction === "HR" || inputs.dataTypes.includes("Employment");
   const decisionsAboutPeople = inputs.decisionsAffectingPeople;
 
   // EU AI Act – only applies when EU jurisdiction or EU residents' data
   // MANDATORY: EU market deployment OR processing EU residents' data
-  const euJurisdiction =
-    inputs.deployment === "EU_market" || inputs.euResidentsData === "Yes";
+  const euJurisdiction = inputs.deployment === "EU_market" || inputs.euResidentsData === "Yes";
   // LIKELY: Global deployment (may reach EU) OR unknown if EU data
-  const euPossible =
-    inputs.euResidentsData === "Unknown" || inputs.deployment === "Global";
+  const euPossible = inputs.euResidentsData === "Unknown" || inputs.deployment === "Global";
 
   // When euResidentsData=No AND deployment is US_only or Internal_only, do NOT add EU AI Act
   if (euJurisdiction) {
@@ -160,7 +172,8 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
         name: "EU AI Act – High-Risk (Annex III)",
         jurisdiction: "EU",
         applicability: "MANDATORY",
-        keyRequirements: "Conformity assessment, risk management, data governance, human oversight, transparency",
+        keyRequirements:
+          "Conformity assessment, risk management, data governance, human oversight, transparency",
         deadline: "Aug 2026 (high-risk systems)",
         implementationEffort: "High"
       });
@@ -192,7 +205,8 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
         name: "EU AI Act – High-Risk (Annex III)",
         jurisdiction: "EU",
         applicability: "LIKELY_APPLICABLE",
-        keyRequirements: "Conformity assessment, risk management, data governance, human oversight, transparency",
+        keyRequirements:
+          "Conformity assessment, risk management, data governance, human oversight, transparency",
         deadline: "Aug 2026 (high-risk systems)",
         implementationEffort: "High"
       });
@@ -225,7 +239,8 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
       name: "GDPR – AI Data Processing",
       jurisdiction: "EU",
       applicability: "MANDATORY",
-      keyRequirements: "Lawful basis, data minimization, purpose limitation, rights to explanation, DPIAs for automated decision-making",
+      keyRequirements:
+        "Lawful basis, data minimization, purpose limitation, rights to explanation, DPIAs for automated decision-making",
       implementationEffort: "High"
     });
   }
@@ -269,7 +284,8 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
       name: "Enhanced Protections for Vulnerable Populations",
       jurisdiction: "INTERNATIONAL",
       applicability: "LIKELY_APPLICABLE",
-      keyRequirements: "Additional safeguards, consent, monitoring for children, elderly, or at-risk groups",
+      keyRequirements:
+        "Additional safeguards, consent, monitoring for children, elderly, or at-risk groups",
       implementationEffort: "Medium"
     });
   }
@@ -327,7 +343,8 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
   let riskScore = 20;
   if (annexIII) riskScore += 35;
   if (gdprRelevant) riskScore += 20;
-  if (inputs.expectedRiskLevel === "High" || inputs.expectedRiskLevel === "Critical") riskScore += 15;
+  if (inputs.expectedRiskLevel === "High" || inputs.expectedRiskLevel === "Critical")
+    riskScore += 15;
   if (inputs.vulnerablePopulations) riskScore += 10;
   riskScore = Math.min(100, riskScore);
 

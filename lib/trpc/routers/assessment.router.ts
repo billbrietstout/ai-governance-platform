@@ -24,16 +24,14 @@ export const assessmentRouter = createTRPCRouter({
       return { data: list, meta: {} };
     }),
 
-  get: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const a = await prisma.assessment.findFirst({
-        where: { id: input.id, orgId: ctx.orgId },
-        include: { asset: { select: { id: true, name: true } } }
-      });
-      if (!a) throw new TRPCError({ code: "NOT_FOUND", message: "Assessment not found" });
-      return { data: a, meta: {} };
-    }),
+  get: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const a = await prisma.assessment.findFirst({
+      where: { id: input.id, orgId: ctx.orgId },
+      include: { asset: { select: { id: true, name: true } } }
+    });
+    if (!a) throw new TRPCError({ code: "NOT_FOUND", message: "Assessment not found" });
+    return { data: a, meta: {} };
+  }),
 
   create: protectedProcedure
     .input(

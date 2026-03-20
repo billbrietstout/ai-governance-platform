@@ -25,22 +25,22 @@ export default async function CardsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Card Library</h1>
-          <p className="mt-1 text-slatePro-300">
+          <p className="text-slatePro-300 mt-1">
             Model, data, and app cards with sync status and EU AI Act coverage.
           </p>
         </div>
         <CardImportForm assets={assets} importCardAction={importCard} />
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slatePro-700">
+      <div className="border-slatePro-700 overflow-x-auto rounded-lg border">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-slatePro-700 bg-slatePro-900/50">
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Type</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Source</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Asset</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Sync</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">EU Coverage</th>
+            <tr className="border-slatePro-700 bg-slatePro-900/50 border-b">
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Type</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Source</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Asset</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Sync</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">EU Coverage</th>
             </tr>
           </thead>
           <tbody>
@@ -59,12 +59,15 @@ export default async function CardsPage() {
               </tr>
             ) : (
               cards.map((card) => (
-                <tr key={card.id} className="border-b border-slatePro-800 last:border-0">
-                  <td className="px-4 py-2 text-slatePro-200">{card.cardType}</td>
-                  <td className="px-4 py-2 text-slatePro-200">
+                <tr key={card.id} className="border-slatePro-800 border-b last:border-0">
+                  <td className="text-slatePro-200 px-4 py-2">{card.cardType}</td>
+                  <td className="text-slatePro-200 px-4 py-2">
                     {card.sourceFormat ?? "—"}
                     {card.sourceRepo && (
-                      <span className="ml-1 text-xs text-slatePro-500 truncate max-w-[120px] inline-block" title={card.sourceRepo}>
+                      <span
+                        className="text-slatePro-500 ml-1 inline-block max-w-[120px] truncate text-xs"
+                        title={card.sourceRepo}
+                      >
                         {card.sourceRepo}
                       </span>
                     )}
@@ -78,10 +81,7 @@ export default async function CardsPage() {
                     </Link>
                   </td>
                   <td className="px-4 py-2">
-                    <CardSyncStatus
-                      status={card.syncStatus}
-                      lastSyncedAt={card.lastSyncedAt}
-                    />
+                    <CardSyncStatus status={card.syncStatus} lastSyncedAt={card.lastSyncedAt} />
                   </td>
                   <td className="px-4 py-2">
                     <EUCoverageCell card={card} />
@@ -96,9 +96,16 @@ export default async function CardsPage() {
   );
 }
 
-function EUCoverageCell({ card }: { card: { normalizedContent: unknown; asset: { euRiskLevel: string | null } } }) {
+function EUCoverageCell({
+  card
+}: {
+  card: { normalizedContent: unknown; asset: { euRiskLevel: string | null } };
+}) {
   const normalized = card.normalizedContent as NormalizedCard | null;
   if (!normalized) return <span className="text-slatePro-500">—</span>;
-  const coverage = mapCardToEURequirements(normalized, card.asset.euRiskLevel as "HIGH" | "MINIMAL" | "LIMITED" | "UNACCEPTABLE" | null);
+  const coverage = mapCardToEURequirements(
+    normalized,
+    card.asset.euRiskLevel as "HIGH" | "MINIMAL" | "LIMITED" | "UNACCEPTABLE" | null
+  );
   return <EUCoverageBadge coverage={coverage} />;
 }

@@ -17,12 +17,15 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ i
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer5-supply-chain/vendors" className="text-sm text-navy-600 hover:underline">
+        <Link href="/layer5-supply-chain/vendors" className="text-navy-600 text-sm hover:underline">
           ← Vendor Registry
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">{v.vendorName}</h1>
         <div className="mt-2 flex items-center gap-4">
-          <VendorAssuranceScore total={v.assuranceScore.total} breakdown={v.assuranceScore.breakdown} />
+          <VendorAssuranceScore
+            total={v.assuranceScore.total}
+            breakdown={v.assuranceScore.breakdown}
+          />
           <span className="text-sm text-gray-600">{v.vendorType ?? "—"}</span>
         </div>
       </div>
@@ -50,9 +53,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ i
               <li key={i} className="text-sm text-gray-900">
                 <span className="font-medium">{e.type}</span>: {e.message}
                 {e.expiredAt && (
-                  <span className="ml-1 text-gray-500">
-                    ({e.expiredAt.toLocaleDateString()})
-                  </span>
+                  <span className="ml-1 text-gray-500">({e.expiredAt.toLocaleDateString()})</span>
                 )}
               </li>
             ))}
@@ -75,8 +76,8 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ i
       </section>
 
       {v.evidenceLinks && typeof v.evidenceLinks === "object" && Array.isArray(v.evidenceLinks) && (
-      <section>
-        <h2 className="mb-2 text-lg font-medium text-gray-900">Evidence Links</h2>
+        <section>
+          <h2 className="mb-2 text-lg font-medium text-gray-900">Evidence Links</h2>
           <ul className="space-y-1">
             {(v.evidenceLinks as string[]).map((link, i) => (
               <li key={i}>

@@ -30,7 +30,7 @@ export function GDPRRequests() {
         type="button"
         onClick={handleExport}
         disabled={loading}
-        className="mt-3 rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+        className="bg-navy-600 hover:bg-navy-500 mt-3 rounded px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
       >
         {loading ? "Exporting…" : "Export my data"}
       </button>

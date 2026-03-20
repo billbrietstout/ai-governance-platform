@@ -132,10 +132,10 @@ export function PersonaModal({ onDismiss }: Props) {
                   isDisabled
                     ? "pointer-events-none cursor-not-allowed opacity-50"
                     : state === "loading"
-                      ? "border-2 border-blue-500 bg-blue-50/50 animate-pulse"
+                      ? "animate-pulse border-2 border-blue-500 bg-blue-50/50"
                       : state === "saved"
                         ? "border-2 border-emerald-500 bg-emerald-50/50"
-                        : "border border-slate-200 hover:border-navy-300 hover:bg-navy-50/50"
+                        : "hover:border-navy-300 hover:bg-navy-50/50 border border-slate-200"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -144,11 +144,11 @@ export function PersonaModal({ onDismiss }: Props) {
                   ) : state === "saved" ? (
                     <Check className="h-5 w-5 text-emerald-600" />
                   ) : (
-                    <Icon className="h-5 w-5 text-navy-600" />
+                    <Icon className="text-navy-600 h-5 w-5" />
                   )}
                   <span className="font-medium text-slate-900">{config.label}</span>
                 </div>
-                <span className="text-xs text-slate-500 line-clamp-2">{config.description}</span>
+                <span className="line-clamp-2 text-xs text-slate-500">{config.description}</span>
               </button>
             );
           })}
@@ -161,9 +161,7 @@ export function PersonaModal({ onDismiss }: Props) {
           </p>
         )}
 
-        {error && (
-          <p className="mt-3 text-sm text-red-600">{error}</p>
-        )}
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
         <div className="mt-4 flex justify-between border-t border-slate-200 pt-4">
           <button

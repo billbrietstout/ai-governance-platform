@@ -58,7 +58,7 @@ export function ClientVerticalsForm({ currentVerticals, verticalOptions }: Props
                 name="vertical"
                 value={opt.key}
                 defaultChecked={currentVerticals.includes(opt.key)}
-                className="mt-1 h-4 w-4 rounded border-slate-300 text-navy-600 focus:ring-navy-500"
+                className="text-navy-600 focus:ring-navy-500 mt-1 h-4 w-4 rounded border-slate-300"
               />
               <div className="flex-1">
                 <span className="font-medium text-slate-900">{opt.label}</span>
@@ -91,7 +91,7 @@ export function ClientVerticalsForm({ currentVerticals, verticalOptions }: Props
         {state?.success && <p className="mt-3 text-sm text-emerald-600">Saved.</p>}
         <button
           type="submit"
-          className="mt-4 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 mt-4 rounded px-4 py-2 text-sm font-medium text-white"
         >
           Save
         </button>

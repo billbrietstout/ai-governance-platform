@@ -27,9 +27,19 @@ export const OPERATING_MODELS: OperatingModelDef[] = [
   {
     key: "IAAS",
     name: "IaaS",
-    description: "Infrastructure as a Service — you run AI workloads on provider infrastructure. Full control over models, data, and application logic.",
-    examples: ["AWS EC2 + self-hosted Llama 3", "Azure VMs + custom ML stack", "GCP Compute + Vertex AI models"],
-    bestFor: ["Custom model training", "Sensitive data that cannot leave your control", "Heavy customization", "Regulatory isolation"],
+    description:
+      "Infrastructure as a Service — you run AI workloads on provider infrastructure. Full control over models, data, and application logic.",
+    examples: [
+      "AWS EC2 + self-hosted Llama 3",
+      "Azure VMs + custom ML stack",
+      "GCP Compute + Vertex AI models"
+    ],
+    bestFor: [
+      "Custom model training",
+      "Sensitive data that cannot leave your control",
+      "Heavy customization",
+      "Regulatory isolation"
+    ],
     matrix: [
       { layer: "L1", label: "L1 Business", customer: true, shared: false, provider: false },
       { layer: "L2", label: "L2 Information", customer: true, shared: false, provider: false },
@@ -49,9 +59,14 @@ export const OPERATING_MODELS: OperatingModelDef[] = [
   {
     key: "PAAS",
     name: "AI-PaaS",
-    description: "AI Platform as a Service — provider supplies models and APIs; you build applications and manage data.",
+    description:
+      "AI Platform as a Service — provider supplies models and APIs; you build applications and manage data.",
     examples: ["Azure OpenAI Service", "Google Vertex AI", "AWS Bedrock", "Anthropic API"],
-    bestFor: ["Rapid application development", "LLM-powered apps", "When you need scale without infra management"],
+    bestFor: [
+      "Rapid application development",
+      "LLM-powered apps",
+      "When you need scale without infra management"
+    ],
     matrix: [
       { layer: "L1", label: "L1 Business", customer: true, shared: false, provider: false },
       { layer: "L2", label: "L2 Information", customer: true, shared: true, provider: false },
@@ -71,9 +86,20 @@ export const OPERATING_MODELS: OperatingModelDef[] = [
   {
     key: "AGENT_PAAS",
     name: "Agent-PaaS",
-    description: "Agent Platform as a Service — provider supplies agentic AI capabilities; you configure agents and integrate with your systems.",
-    examples: ["OpenAI Assistants API", "Microsoft Copilot Studio", "Google Agent Builder", "Custom agent frameworks on PaaS"],
-    bestFor: ["Autonomous workflows", "Multi-step reasoning", "Agentic assistants", "When agents need tool use"],
+    description:
+      "Agent Platform as a Service — provider supplies agentic AI capabilities; you configure agents and integrate with your systems.",
+    examples: [
+      "OpenAI Assistants API",
+      "Microsoft Copilot Studio",
+      "Google Agent Builder",
+      "Custom agent frameworks on PaaS"
+    ],
+    bestFor: [
+      "Autonomous workflows",
+      "Multi-step reasoning",
+      "Agentic assistants",
+      "When agents need tool use"
+    ],
     matrix: [
       { layer: "L1", label: "L1 Business", customer: true, shared: true, provider: false },
       { layer: "L2", label: "L2 Information", customer: true, shared: true, provider: false },
@@ -93,7 +119,8 @@ export const OPERATING_MODELS: OperatingModelDef[] = [
   {
     key: "SAAS",
     name: "AI-SaaS",
-    description: "AI Software as a Service — fully managed AI application. Provider owns most of the stack.",
+    description:
+      "AI Software as a Service — fully managed AI application. Provider owns most of the stack.",
     examples: ["Salesforce Einstein", "HubSpot AI", "Gong", "Grammarly", "ChatGPT Team"],
     bestFor: ["Off-the-shelf AI features", "Minimal customization", "Quick time-to-value"],
     matrix: [

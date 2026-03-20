@@ -8,7 +8,10 @@ export type ThresholdAlertData = {
   baseUrl: string;
 };
 
-const alertColors: Record<"CRITICAL" | "HIGH" | "MEDIUM", { bg: string; border: string; title: string }> = {
+const alertColors: Record<
+  "CRITICAL" | "HIGH" | "MEDIUM",
+  { bg: string; border: string; title: string }
+> = {
   CRITICAL: { bg: "#fef2f2", border: "#fecaca", title: "#dc2626" },
   HIGH: { bg: "#fff7ed", border: "#fed7aa", title: "#ea580c" },
   MEDIUM: { bg: "#fefce8", border: "#fde68a", title: "#ca8a04" }

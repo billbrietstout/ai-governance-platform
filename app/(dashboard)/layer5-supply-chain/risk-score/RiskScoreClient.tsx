@@ -107,7 +107,9 @@ export function RiskScoreClient({ scores, overall }: Props) {
               <th className="px-4 py-3 text-right font-medium text-slate-700">Evidence currency</th>
               <th className="px-4 py-3 text-center font-medium text-slate-700">Contract aligned</th>
               <th className="px-4 py-3 text-right font-medium text-slate-700">Scan coverage</th>
-              <th className="px-4 py-3 text-right font-medium text-slate-700">Disclosure history</th>
+              <th className="px-4 py-3 text-right font-medium text-slate-700">
+                Disclosure history
+              </th>
               <th className="px-4 py-3 text-right font-medium text-slate-700">Overall score</th>
               <th className="px-4 py-3 text-center font-medium text-slate-700">Actions</th>
             </tr>
@@ -169,7 +171,7 @@ export function RiskScoreClient({ scores, overall }: Props) {
                 <td className="px-4 py-3 text-center">
                   <Link
                     href={`/layer5-supply-chain/vendors/${row.vendorId}?improve=1`}
-                    className="inline-flex items-center gap-1 text-navy-600 hover:underline"
+                    className="text-navy-600 inline-flex items-center gap-1 hover:underline"
                   >
                     Improve score
                     <ExternalLink className="h-3 w-3" />
@@ -191,7 +193,8 @@ export function RiskScoreClient({ scores, overall }: Props) {
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
           <h3 className="font-medium text-amber-800">Missing or expired evidence</h3>
           <p className="mt-1 text-sm text-amber-700">
-            Some vendors have expired evidence. Use &quot;Improve score&quot; to see what evidence is missing or expired.
+            Some vendors have expired evidence. Use &quot;Improve score&quot; to see what evidence
+            is missing or expired.
           </p>
         </div>
       )}

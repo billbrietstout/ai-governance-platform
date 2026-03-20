@@ -153,7 +153,10 @@ export async function seedDemoEnterpriseP3(prisma: PrismaClient): Promise<void> 
               attestedAt = new Date();
             }
           } else {
-            status = pickStatus(["COMPLIANT", "NON_COMPLIANT", "PENDING"] as AttestationStatus[], hash);
+            status = pickStatus(
+              ["COMPLIANT", "NON_COMPLIANT", "PENDING"] as AttestationStatus[],
+              hash
+            );
             if (status === "COMPLIANT") {
               evidenceRef = `SharePoint/AI-Governance/Evidence/${assetName.replace(/\s+/g, "-")}`;
               attestedAt = new Date();
@@ -172,7 +175,18 @@ export async function seedDemoEnterpriseP3(prisma: PrismaClient): Promise<void> 
             );
           } else if (frameworkCode === "EU_AI_ACT") {
             status = pickStatus(
-              ["COMPLIANT", "COMPLIANT", "COMPLIANT", "COMPLIANT", "COMPLIANT", "COMPLIANT", "COMPLIANT", "PENDING", "PENDING", "NOT_APPLICABLE"] as AttestationStatus[],
+              [
+                "COMPLIANT",
+                "COMPLIANT",
+                "COMPLIANT",
+                "COMPLIANT",
+                "COMPLIANT",
+                "COMPLIANT",
+                "COMPLIANT",
+                "PENDING",
+                "PENDING",
+                "NOT_APPLICABLE"
+              ] as AttestationStatus[],
               hash
             );
           } else {
@@ -185,7 +199,14 @@ export async function seedDemoEnterpriseP3(prisma: PrismaClient): Promise<void> 
           }
         } else if (isMinimalSample) {
           status = pickStatus(
-            ["COMPLIANT", "COMPLIANT", "COMPLIANT", "COMPLIANT", "PENDING", "PENDING"] as AttestationStatus[],
+            [
+              "COMPLIANT",
+              "COMPLIANT",
+              "COMPLIANT",
+              "COMPLIANT",
+              "PENDING",
+              "PENDING"
+            ] as AttestationStatus[],
             hash
           );
           if (status === "COMPLIANT") {
@@ -222,19 +243,78 @@ export async function seedDemoEnterpriseP3(prisma: PrismaClient): Promise<void> 
   const RACI_ASSIGNMENTS: Array<{
     assetName: string;
     componentName: string;
-    cosaiLayer: "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN";
+    cosaiLayer:
+      | "LAYER_1_BUSINESS"
+      | "LAYER_2_INFORMATION"
+      | "LAYER_3_APPLICATION"
+      | "LAYER_4_PLATFORM"
+      | "LAYER_5_SUPPLY_CHAIN";
     accountableParty: string;
     responsibleParty: string;
   }> = [
-    { assetName: "Inventory Reorder Agent", componentName: "AI System", cosaiLayer: "LAYER_1_BUSINESS", accountableParty: "VP Operations", responsibleParty: "Business Owner" },
-    { assetName: "Inventory Reorder Agent", componentName: "Training Data", cosaiLayer: "LAYER_2_INFORMATION", accountableParty: "Chief Data Officer", responsibleParty: "Data Engineering" },
-    { assetName: "Inventory Reorder Agent", componentName: "AI Application", cosaiLayer: "LAYER_3_APPLICATION", accountableParty: "AI Product Manager", responsibleParty: "MLOps" },
-    { assetName: "Inventory Reorder Agent", componentName: "Platform", cosaiLayer: "LAYER_4_PLATFORM", accountableParty: "CISO", responsibleParty: "IT Security Team" },
-    { assetName: "Inventory Reorder Agent", componentName: "Model Provider", cosaiLayer: "LAYER_5_SUPPLY_CHAIN", accountableParty: "Procurement Lead", responsibleParty: "Supply Chain" },
-    { assetName: "Log Analysis Agent", componentName: "Platform", cosaiLayer: "LAYER_4_PLATFORM", accountableParty: "CISO", responsibleParty: "IT Security Team" },
-    { assetName: "Log Analysis Agent", componentName: "AI Application", cosaiLayer: "LAYER_3_APPLICATION", accountableParty: "AI Product Manager", responsibleParty: "MLOps" },
-    { assetName: "Production Schedule Optimizer", componentName: "AI Application", cosaiLayer: "LAYER_3_APPLICATION", accountableParty: "VP Operations", responsibleParty: "Compliance Team" },
-    { assetName: "Returns Classification Agent", componentName: "AI Application", cosaiLayer: "LAYER_3_APPLICATION", accountableParty: "Retail Division Lead", responsibleParty: "Compliance Team" }
+    {
+      assetName: "Inventory Reorder Agent",
+      componentName: "AI System",
+      cosaiLayer: "LAYER_1_BUSINESS",
+      accountableParty: "VP Operations",
+      responsibleParty: "Business Owner"
+    },
+    {
+      assetName: "Inventory Reorder Agent",
+      componentName: "Training Data",
+      cosaiLayer: "LAYER_2_INFORMATION",
+      accountableParty: "Chief Data Officer",
+      responsibleParty: "Data Engineering"
+    },
+    {
+      assetName: "Inventory Reorder Agent",
+      componentName: "AI Application",
+      cosaiLayer: "LAYER_3_APPLICATION",
+      accountableParty: "AI Product Manager",
+      responsibleParty: "MLOps"
+    },
+    {
+      assetName: "Inventory Reorder Agent",
+      componentName: "Platform",
+      cosaiLayer: "LAYER_4_PLATFORM",
+      accountableParty: "CISO",
+      responsibleParty: "IT Security Team"
+    },
+    {
+      assetName: "Inventory Reorder Agent",
+      componentName: "Model Provider",
+      cosaiLayer: "LAYER_5_SUPPLY_CHAIN",
+      accountableParty: "Procurement Lead",
+      responsibleParty: "Supply Chain"
+    },
+    {
+      assetName: "Log Analysis Agent",
+      componentName: "Platform",
+      cosaiLayer: "LAYER_4_PLATFORM",
+      accountableParty: "CISO",
+      responsibleParty: "IT Security Team"
+    },
+    {
+      assetName: "Log Analysis Agent",
+      componentName: "AI Application",
+      cosaiLayer: "LAYER_3_APPLICATION",
+      accountableParty: "AI Product Manager",
+      responsibleParty: "MLOps"
+    },
+    {
+      assetName: "Production Schedule Optimizer",
+      componentName: "AI Application",
+      cosaiLayer: "LAYER_3_APPLICATION",
+      accountableParty: "VP Operations",
+      responsibleParty: "Compliance Team"
+    },
+    {
+      assetName: "Returns Classification Agent",
+      componentName: "AI Application",
+      cosaiLayer: "LAYER_3_APPLICATION",
+      accountableParty: "Retail Division Lead",
+      responsibleParty: "Compliance Team"
+    }
   ];
 
   for (const raci of RACI_ASSIGNMENTS) {

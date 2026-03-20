@@ -13,10 +13,13 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 function SeverityBadge({ severity }: { severity: string }) {
   const colors =
-    severity === "CRITICAL" ? "bg-red-600 text-white" :
-    severity === "HIGH"     ? "bg-red-100 text-red-700" :
-    severity === "MEDIUM"   ? "bg-amber-100 text-amber-700" :
-    "bg-slate-100 text-slate-600";
+    severity === "CRITICAL"
+      ? "bg-red-600 text-white"
+      : severity === "HIGH"
+        ? "bg-red-100 text-red-700"
+        : severity === "MEDIUM"
+          ? "bg-amber-100 text-amber-700"
+          : "bg-slate-100 text-slate-600";
   return <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors}`}>{severity}</span>;
 }
 
@@ -28,7 +31,9 @@ function CategoryBadge({ category }: { category: string }) {
     SECURITY: "bg-red-100 text-red-700"
   };
   return (
-    <span className={`rounded px-2 py-0.5 text-xs font-medium ${colors[category] ?? "bg-slate-100 text-slate-600"}`}>
+    <span
+      className={`rounded px-2 py-0.5 text-xs font-medium ${colors[category] ?? "bg-slate-100 text-slate-600"}`}
+    >
       {CATEGORY_LABELS[category] ?? category}
     </span>
   );
@@ -41,12 +46,13 @@ export default async function AlertEnginePage() {
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer4-platform" className="text-sm text-navy-600 hover:underline">
+        <Link href="/layer4-platform" className="text-navy-600 text-sm hover:underline">
           ← Layer 4: Platform
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Alert Engine</h1>
         <p className="mt-1 text-slate-600">
-          Active alerts across scan policies, critical findings, governance gaps, and security events.
+          Active alerts across scan policies, critical findings, governance gaps, and security
+          events.
         </p>
       </div>
 
@@ -80,8 +86,11 @@ export default async function AlertEnginePage() {
             <h3 className="text-sm font-semibold text-slate-700">Active Alerts</h3>
           </div>
           <div className="divide-y divide-slate-50">
-            {data.alerts.map(alert => (
-              <div key={alert.id} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            {data.alerts.map((alert) => (
+              <div
+                key={alert.id}
+                className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <SeverityBadge severity={alert.severity} />

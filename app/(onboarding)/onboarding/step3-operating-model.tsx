@@ -21,23 +21,11 @@ function ResponsibilityBadge({ r }: { r: Responsibility }) {
     Provider: "bg-amber-100 text-amber-800",
     Shared: "bg-slate-100 text-slate-700"
   };
-  return (
-    <span
-      className={`rounded px-2 py-0.5 text-xs font-medium ${styles[r]}`}
-    >
-      {r}
-    </span>
-  );
+  return <span className={`rounded px-2 py-0.5 text-xs font-medium ${styles[r]}`}>{r}</span>;
 }
 
-export function Step3OperatingModel({
-  completedData,
-  onNext,
-  isPending
-}: Props) {
-  const [selected, setSelected] = useState<string | null>(
-    completedData.operatingModel
-  );
+export function Step3OperatingModel({ completedData, onNext, isPending }: Props) {
+  const [selected, setSelected] = useState<string | null>(completedData.operatingModel);
 
   const matrix = selected ? COSAI_RESPONSIBILITY_MATRIX[selected] : null;
 
@@ -60,13 +48,11 @@ export function Step3OperatingModel({
             onClick={() => setSelected(m.value)}
             className={`flex flex-col rounded-lg border p-4 text-left transition ${
               selected === m.value
-                ? "border-navy-500 bg-navy-50 ring-1 ring-navy-500"
+                ? "border-navy-500 bg-navy-50 ring-navy-500 ring-1"
                 : "border-slate-200 bg-white hover:border-slate-300"
             }`}
           >
-            <span className="text-sm font-semibold text-slate-900">
-              {m.label}
-            </span>
+            <span className="text-sm font-semibold text-slate-900">{m.label}</span>
             <span className="mt-1 text-xs text-slate-600">{m.description}</span>
           </button>
         ))}
@@ -74,9 +60,7 @@ export function Step3OperatingModel({
 
       {matrix && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-          <h3 className="text-sm font-medium text-slate-700">
-            CoSAI shared responsibility matrix
-          </h3>
+          <h3 className="text-sm font-medium text-slate-700">CoSAI shared responsibility matrix</h3>
           <p className="mt-1 text-xs text-slate-500">
             Who owns what at each layer for your selected model
           </p>
@@ -84,32 +68,19 @@ export function Step3OperatingModel({
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="px-3 py-2 text-left font-medium text-slate-700">
-                    Layer
-                  </th>
-                  <th className="px-3 py-2 text-left font-medium text-slate-700">
-                    Responsibility
-                  </th>
+                  <th className="px-3 py-2 text-left font-medium text-slate-700">Layer</th>
+                  <th className="px-3 py-2 text-left font-medium text-slate-700">Responsibility</th>
                 </tr>
               </thead>
               <tbody>
                 {COSAI_LAYERS.map((layer) => (
-                  <tr
-                    key={layer.id}
-                    className="border-b border-slate-100 last:border-0"
-                  >
+                  <tr key={layer.id} className="border-b border-slate-100 last:border-0">
                     <td className="px-3 py-2">
-                      <span className="font-medium text-slate-900">
-                        {layer.label}
-                      </span>
-                      <span className="ml-1 text-slate-500">
-                        — {layer.desc}
-                      </span>
+                      <span className="font-medium text-slate-900">{layer.label}</span>
+                      <span className="ml-1 text-slate-500">— {layer.desc}</span>
                     </td>
                     <td className="px-3 py-2">
-                      <ResponsibilityBadge
-                        r={matrix[layer.id] ?? "Shared"}
-                      />
+                      <ResponsibilityBadge r={matrix[layer.id] ?? "Shared"} />
                     </td>
                   </tr>
                 ))}
@@ -123,7 +94,7 @@ export function Step3OperatingModel({
         <button
           type="submit"
           disabled={!selected || isPending}
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {isPending ? "Saving…" : "Next"}
         </button>

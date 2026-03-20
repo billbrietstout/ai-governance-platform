@@ -6,7 +6,15 @@ import type { MasterDataEntityType, DataClassification, AiAccessPolicy } from "@
 import { prisma } from "@/lib/prisma";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-const entityTypeSchema = z.enum(["CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"]);
+const entityTypeSchema = z.enum([
+  "CUSTOMER",
+  "PRODUCT",
+  "VENDOR",
+  "EMPLOYEE",
+  "FINANCE",
+  "LOCATION",
+  "OTHER"
+]);
 const classificationSchema = z.enum(["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"]);
 const aiAccessSchema = z.enum(["OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"]);
 
@@ -42,7 +50,8 @@ export const layer2Router = createTRPCRouter({
     );
     const withSteward = entities.filter((e) => e.stewardId).length;
     const withClassification = entities.filter((e) => e.classification).length;
-    const stewardshipPct = entities.length > 0 ? Math.round((withSteward / entities.length) * 100) : 0;
+    const stewardshipPct =
+      entities.length > 0 ? Math.round((withSteward / entities.length) * 100) : 0;
     const governanceCoveragePct =
       entities.length > 0
         ? Math.round(
@@ -298,8 +307,7 @@ export const layer2Router = createTRPCRouter({
       (e) => e.classification === "CONFIDENTIAL" || e.classification === "RESTRICTED"
     );
     const applicablePolicies = policies.filter(
-      (p) =>
-        p.appliesTo.includes("CONFIDENTIAL") || p.appliesTo.includes("RESTRICTED")
+      (p) => p.appliesTo.includes("CONFIDENTIAL") || p.appliesTo.includes("RESTRICTED")
     );
     const coveredCount = confidentialRestricted.filter((e) =>
       applicablePolicies.some((p) => p.appliesTo.includes(e.classification))
@@ -333,7 +341,15 @@ export const layer2Router = createTRPCRouter({
       where: { orgId: ctx.orgId },
       select: { entityType: true, aiAccessPolicy: true }
     });
-    const entityTypes = ["CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"] as const;
+    const entityTypes = [
+      "CUSTOMER",
+      "PRODUCT",
+      "VENDOR",
+      "EMPLOYEE",
+      "FINANCE",
+      "LOCATION",
+      "OTHER"
+    ] as const;
     const assetTypes = ["MODEL", "AGENT", "APPLICATION"] as const;
     const matrix: Record<string, Record<string, string>> = {};
     for (const et of entityTypes) {
@@ -513,7 +529,8 @@ export const layer2Router = createTRPCRouter({
         datasets,
         summary: {
           total: datasets.length,
-          withDataCardsPct: datasets.length > 0 ? Math.round((withDataCards / datasets.length) * 100) : 0,
+          withDataCardsPct:
+            datasets.length > 0 ? Math.round((withDataCards / datasets.length) * 100) : 0,
           piiCount,
           pendingReview
         }
@@ -557,13 +574,80 @@ export const layer2Router = createTRPCRouter({
     function inferDepartment(name: string, email?: string | null): string {
       const n = name.toLowerCase();
       const e = (email ?? "").toLowerCase();
-      if (n.includes("sap pp") || n.includes("sap pm") || n.includes("sap qm") || n.includes("sap ehs") || n.includes("sap ps") || n.includes("production") || n.includes("maintenance") || n.includes("quality") || n.includes("equipment") || n.includes("energy") || n.includes("demand forecaster") || n.includes("schedule optimizer")) return "Operations";
-      if (n.includes("sap fi") || n.includes("sap co") || n.includes("fraud") || n.includes("cash") || n.includes("payable") || n.includes("audit risk")) return "Finance";
-      if (n.includes("sap hr") || n.includes("recruitment") || n.includes("workforce") || n.includes("recruit") || n.includes("screening") || n.includes("sentiment monitor") || n.includes("training recommendation") || n.includes("workforce planning") || n.includes("payroll")) return "HR";
-      if (n.includes("sap mm") || n.includes("sap ewm") || n.includes("supplier") || n.includes("inventory") || n.includes("procurement") || n.includes("reorder")) return "Supply Chain";
-      if (n.includes("sap sd") || n.includes("sap crm") || n.includes("sap tm") || n.includes("customer churn") || n.includes("product recommendation") || n.includes("dynamic pricing") || n.includes("sentiment analyzer") || n.includes("returns") || n.includes("store layout")) return "Retail";
-      if (n.includes("sap cs") || n.includes("sap grc") || n.includes("network") || n.includes("log") || n.includes("helpdesk") || n.includes("vulnerability") || e.includes("marco")) return "IT";
-      if (n.includes("board report") || n.includes("regulatory") || n.includes("contract") || n.includes("esg")) return "Corporate";
+      if (
+        n.includes("sap pp") ||
+        n.includes("sap pm") ||
+        n.includes("sap qm") ||
+        n.includes("sap ehs") ||
+        n.includes("sap ps") ||
+        n.includes("production") ||
+        n.includes("maintenance") ||
+        n.includes("quality") ||
+        n.includes("equipment") ||
+        n.includes("energy") ||
+        n.includes("demand forecaster") ||
+        n.includes("schedule optimizer")
+      )
+        return "Operations";
+      if (
+        n.includes("sap fi") ||
+        n.includes("sap co") ||
+        n.includes("fraud") ||
+        n.includes("cash") ||
+        n.includes("payable") ||
+        n.includes("audit risk")
+      )
+        return "Finance";
+      if (
+        n.includes("sap hr") ||
+        n.includes("recruitment") ||
+        n.includes("workforce") ||
+        n.includes("recruit") ||
+        n.includes("screening") ||
+        n.includes("sentiment monitor") ||
+        n.includes("training recommendation") ||
+        n.includes("workforce planning") ||
+        n.includes("payroll")
+      )
+        return "HR";
+      if (
+        n.includes("sap mm") ||
+        n.includes("sap ewm") ||
+        n.includes("supplier") ||
+        n.includes("inventory") ||
+        n.includes("procurement") ||
+        n.includes("reorder")
+      )
+        return "Supply Chain";
+      if (
+        n.includes("sap sd") ||
+        n.includes("sap crm") ||
+        n.includes("sap tm") ||
+        n.includes("customer churn") ||
+        n.includes("product recommendation") ||
+        n.includes("dynamic pricing") ||
+        n.includes("sentiment analyzer") ||
+        n.includes("returns") ||
+        n.includes("store layout")
+      )
+        return "Retail";
+      if (
+        n.includes("sap cs") ||
+        n.includes("sap grc") ||
+        n.includes("network") ||
+        n.includes("log") ||
+        n.includes("helpdesk") ||
+        n.includes("vulnerability") ||
+        e.includes("marco")
+      )
+        return "IT";
+      if (
+        n.includes("board report") ||
+        n.includes("regulatory") ||
+        n.includes("contract") ||
+        n.includes("esg")
+      )
+        return "Corporate";
       return "Other";
     }
 
@@ -593,8 +677,7 @@ export const layer2Router = createTRPCRouter({
     });
 
     const totalHighRisk = assets.filter((a) => a.euRiskLevel === "HIGH").length;
-    const exposurePct =
-      totalHighRisk > 0 ? Math.round((highRiskDraft / totalHighRisk) * 100) : 0;
+    const exposurePct = totalHighRisk > 0 ? Math.round((highRiskDraft / totalHighRisk) * 100) : 0;
 
     return {
       data: {

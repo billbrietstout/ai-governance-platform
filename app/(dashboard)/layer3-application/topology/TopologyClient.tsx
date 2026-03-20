@@ -1,6 +1,10 @@
 "use client";
 
-import { ForceTopologyGraph, type TopologyNode, type TopologyEdge } from "@/components/topology/ForceTopologyGraph";
+import {
+  ForceTopologyGraph,
+  type TopologyNode,
+  type TopologyEdge
+} from "@/components/topology/ForceTopologyGraph";
 
 type TopologyData = {
   nodes: TopologyNode[];
@@ -27,7 +31,5 @@ export function TopologyClient({ initialData }: { initialData: TopologyData }) {
     );
   }
 
-  return (
-    <ForceTopologyGraph nodes={initialData.nodes} edges={initialData.edges} height={500} />
-  );
+  return <ForceTopologyGraph nodes={initialData.nodes} edges={initialData.edges} height={500} />;
 }

@@ -34,19 +34,19 @@ export function DataSourcesSection({ entities }: Props) {
   const showRestrictedWarning = highestClassification === "RESTRICTED";
 
   return (
-    <div className="space-y-3 rounded-lg border border-slatePro-600 bg-slatePro-900/50 p-4">
-      <h3 className="flex items-center gap-2 text-sm font-medium text-slatePro-300">
+    <div className="border-slatePro-600 bg-slatePro-900/50 space-y-3 rounded-lg border p-4">
+      <h3 className="text-slatePro-300 flex items-center gap-2 text-sm font-medium">
         <Database className="h-4 w-4" />
         Data Sources
       </h3>
-      <p className="text-xs text-slatePro-400">
+      <p className="text-slatePro-400 text-xs">
         Link master data entities this asset will access. Used for lineage and classification.
       </p>
       <div className="max-h-40 space-y-2 overflow-y-auto">
         {entities.map((e) => (
           <label
             key={e.id}
-            className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-slatePro-800/50"
+            className="hover:bg-slatePro-800/50 flex cursor-pointer items-center gap-2 rounded px-2 py-1"
           >
             <input
               type="checkbox"
@@ -54,9 +54,9 @@ export function DataSourcesSection({ entities }: Props) {
               value={e.id}
               checked={selectedIds.has(e.id)}
               onChange={() => toggle(e.id)}
-              className="rounded border-slatePro-600"
+              className="border-slatePro-600 rounded"
             />
-            <span className="text-sm text-slatePro-200">{e.name}</span>
+            <span className="text-slatePro-200 text-sm">{e.name}</span>
             <span
               className={`rounded px-1.5 py-0.5 text-[10px] ${
                 e.classification === "RESTRICTED"

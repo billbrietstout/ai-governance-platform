@@ -51,13 +51,26 @@ export default async function CISODashboardPage() {
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-sm font-medium text-slate-700">Layer compliance scores</h3>
           <div className="grid grid-cols-5 gap-3">
-          {layers.map((l) => {
+            {layers.map((l) => {
               const label =
-                LAYER_LABELS[l.layer] ??
-                l.layer.replace("LAYER_", "L").replace("_", " ");
+                LAYER_LABELS[l.layer] ?? l.layer.replace("LAYER_", "L").replace("_", " ");
               const pct = l.compliancePct;
-              const bg = pct <= 30 ? "bg-red-50 border-red-200" : pct <= 60 ? "bg-amber-50 border-amber-200" : pct <= 80 ? "bg-blue-50 border-blue-200" : "bg-emerald-50 border-emerald-200";
-              const text = pct <= 30 ? "text-red-700" : pct <= 60 ? "text-amber-700" : pct <= 80 ? "text-blue-700" : "text-emerald-700";
+              const bg =
+                pct <= 30
+                  ? "bg-red-50 border-red-200"
+                  : pct <= 60
+                    ? "bg-amber-50 border-amber-200"
+                    : pct <= 80
+                      ? "bg-blue-50 border-blue-200"
+                      : "bg-emerald-50 border-emerald-200";
+              const text =
+                pct <= 30
+                  ? "text-red-700"
+                  : pct <= 60
+                    ? "text-amber-700"
+                    : pct <= 80
+                      ? "text-blue-700"
+                      : "text-emerald-700";
               return (
                 <div key={l.layer} className={`rounded-lg border p-4 text-center ${bg}`}>
                   <div className={`text-2xl font-bold ${text}`}>{pct}%</div>
@@ -69,18 +82,20 @@ export default async function CISODashboardPage() {
           <div className="mt-4 grid gap-4 sm:grid-cols-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-600" />
-              <span className="text-sm text-slate-600">Open security incidents: {openIncidents}</span>
+              <span className="text-sm text-slate-600">
+                Open security incidents: {openIncidents}
+              </span>
             </div>
             <Link
               href="/layer5-supply-chain/scanning"
-              className="flex items-center gap-2 text-sm text-slate-600 hover:text-navy-600"
+              className="hover:text-navy-600 flex items-center gap-2 text-sm text-slate-600"
             >
               <Server className="h-5 w-5 text-red-600" />
               Failed scans: {failedScans}
             </Link>
             <Link
               href="/layer5-supply-chain/vendors"
-              className="flex items-center gap-2 text-sm text-slate-600 hover:text-navy-600"
+              className="hover:text-navy-600 flex items-center gap-2 text-sm text-slate-600"
             >
               <Building className="h-5 w-5 text-amber-600" />
               Vendors with expired evidence: {vendorsExpired}
@@ -106,7 +121,7 @@ export default async function CISODashboardPage() {
           </p>
           <Link
             href="/maturity"
-            className="mt-2 block text-center text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-2 block text-center text-sm font-medium hover:underline"
           >
             View full assessment →
           </Link>
@@ -127,7 +142,7 @@ export default async function CISODashboardPage() {
                   <div>
                     <Link
                       href={`/layer3-application/assets/${g.assetId}`}
-                      className="font-medium text-navy-600 hover:underline"
+                      className="text-navy-600 font-medium hover:underline"
                     >
                       {g.assetName}
                     </Link>
@@ -144,7 +159,7 @@ export default async function CISODashboardPage() {
           )}
           <Link
             href="/audit-package"
-            className="mt-4 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-4 inline-block text-sm font-medium hover:underline"
           >
             View audit package →
           </Link>

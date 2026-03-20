@@ -12,7 +12,9 @@ async function handler(req: NextRequest) {
   const { limited, retryAfter, headers } = rateLimit({
     userId: user?.id,
     orgId: user?.orgId,
-    anonymousKey: !user ? (req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "trpc") : undefined
+    anonymousKey: !user
+      ? (req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "trpc")
+      : undefined
   });
   if (limited) {
     const res = rateLimitResponse(headers, retryAfter);
@@ -42,4 +44,3 @@ export async function OPTIONS(req: NextRequest) {
   const res = new NextResponse(null, { status: 204 });
   return withCors(res, req.headers.get("origin"));
 }
-

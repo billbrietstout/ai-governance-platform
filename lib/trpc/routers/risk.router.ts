@@ -41,7 +41,9 @@ export const riskRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const asset = await prisma.aIAsset.findFirst({ where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null } });
+      const asset = await prisma.aIAsset.findFirst({
+        where: { id: input.assetId, orgId: ctx.orgId, deletedAt: null }
+      });
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Asset not found" });
 
       const riskScore = calculateRiskScore(input.likelihood, input.impact);
@@ -58,7 +60,12 @@ export const riskRouter = createTRPCRouter({
             riskScore,
             owner: input.owner,
             cosaiLayer: input.cosaiLayer
-              ? (input.cosaiLayer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN")
+              ? (input.cosaiLayer as
+                  | "LAYER_1_BUSINESS"
+                  | "LAYER_2_INFORMATION"
+                  | "LAYER_3_APPLICATION"
+                  | "LAYER_4_PLATFORM"
+                  | "LAYER_5_SUPPLY_CHAIN")
               : null,
             status: "IDENTIFIED"
           }
@@ -99,7 +106,7 @@ export const riskRouter = createTRPCRouter({
       const riskScore =
         input.likelihood != null && input.impact != null
           ? calculateRiskScore(input.likelihood, input.impact)
-          : existing.riskScore ?? undefined;
+          : (existing.riskScore ?? undefined);
 
       const result = await prisma.$transaction(async (tx) => {
         const risk = await tx.riskRegister.update({
@@ -152,7 +159,9 @@ export const riskRouter = createTRPCRouter({
         data: {
           total: list.length,
           byRating,
-          averageScore: list.length ? list.reduce((s, r) => s + (r.riskScore ?? 0), 0) / list.length : 0
+          averageScore: list.length
+            ? list.reduce((s, r) => s + (r.riskScore ?? 0), 0) / list.length
+            : 0
         },
         meta: {}
       };

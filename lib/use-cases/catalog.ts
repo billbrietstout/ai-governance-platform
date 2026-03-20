@@ -27,7 +27,14 @@ export type UseCase = {
   templateInputs: {
     assetType: "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE";
     description: string;
-    businessFunction: "HR" | "Finance" | "Operations" | "Customer Service" | "Healthcare" | "Legal" | "Other";
+    businessFunction:
+      | "HR"
+      | "Finance"
+      | "Operations"
+      | "Customer Service"
+      | "Healthcare"
+      | "Legal"
+      | "Other";
     decisionsAffectingPeople: boolean;
     interactsWithEndUsers: boolean;
     deployment: "EU_market" | "US_only" | "Global" | "Internal_only";
@@ -45,7 +52,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "mfg-equipment-failure",
     name: "Equipment Failure Predictor",
-    description: "Predictive maintenance model that analyzes sensor data to forecast equipment failures before they occur.",
+    description:
+      "Predictive maintenance model that analyzes sensor data to forecast equipment failures before they occur.",
     vertical: "MANUFACTURING",
     assetType: "MODEL",
     euRiskLevel: "MINIMAL",
@@ -74,7 +82,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "mfg-production-schedule",
     name: "Production Schedule Optimizer",
-    description: "AI system that optimizes production schedules based on demand forecasts and resource availability.",
+    description:
+      "AI system that optimizes production schedules based on demand forecasts and resource availability.",
     vertical: "MANUFACTURING",
     assetType: "APPLICATION",
     euRiskLevel: "MINIMAL",
@@ -103,7 +112,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "mfg-quality-vision",
     name: "Quality Control Vision System",
-    description: "Computer vision system for automated defect detection in manufacturing quality control.",
+    description:
+      "Computer vision system for automated defect detection in manufacturing quality control.",
     vertical: "MANUFACTURING",
     assetType: "APPLICATION",
     euRiskLevel: "LIMITED",
@@ -132,7 +142,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "mfg-supply-chain",
     name: "Supply Chain Optimizer",
-    description: "Agent that optimizes inventory levels, supplier selection, and logistics based on demand and constraints.",
+    description:
+      "Agent that optimizes inventory levels, supplier selection, and logistics based on demand and constraints.",
     vertical: "MANUFACTURING",
     assetType: "AGENT",
     euRiskLevel: "MINIMAL",
@@ -162,7 +173,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "fin-credit-scoring",
     name: "Credit Scoring Model",
-    description: "Model that assesses creditworthiness for lending decisions. High-risk under EU AI Act Annex III.",
+    description:
+      "Model that assesses creditworthiness for lending decisions. High-risk under EU AI Act Annex III.",
     vertical: "FINANCIAL",
     assetType: "MODEL",
     euRiskLevel: "HIGH",
@@ -170,7 +182,13 @@ export const USE_CASES: UseCase[] = [
     businessFunction: "Finance",
     typicalDataTypes: ["Financial", "PII"],
     applicableRegulations: ["EU_AI_ACT_ANNEX_III", "SR_11_7", "GDPR_AI", "SEC_AI"],
-    requiredControls: ["Risk management", "Data governance", "Human oversight", "Transparency", "Conformity assessment"],
+    requiredControls: [
+      "Risk management",
+      "Data governance",
+      "Human oversight",
+      "Transparency",
+      "Conformity assessment"
+    ],
     estimatedMaturity: 5,
     governanceComplexity: "HIGH",
     templateInputs: {
@@ -191,7 +209,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "fin-fraud-detection",
     name: "Fraud Detection Agent",
-    description: "Real-time agent that flags suspicious transactions and blocks fraudulent activity.",
+    description:
+      "Real-time agent that flags suspicious transactions and blocks fraudulent activity.",
     vertical: "FINANCIAL",
     assetType: "AGENT",
     euRiskLevel: "HIGH",
@@ -220,7 +239,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "fin-aml-monitor",
     name: "AML Transaction Monitor",
-    description: "Anti-money laundering system that screens transactions and generates suspicious activity reports.",
+    description:
+      "Anti-money laundering system that screens transactions and generates suspicious activity reports.",
     vertical: "FINANCIAL",
     assetType: "APPLICATION",
     euRiskLevel: "HIGH",
@@ -249,7 +269,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "fin-algo-trading",
     name: "Algorithmic Trading System",
-    description: "Autonomous trading system that executes trades based on market signals and strategies.",
+    description:
+      "Autonomous trading system that executes trades based on market signals and strategies.",
     vertical: "FINANCIAL",
     assetType: "AGENT",
     euRiskLevel: "LIMITED",
@@ -287,7 +308,12 @@ export const USE_CASES: UseCase[] = [
     businessFunction: "Healthcare",
     typicalDataTypes: ["Health", "PII"],
     applicableRegulations: ["EU_AI_ACT_MEDICAL", "FDA_SAMD", "HIPAA_AI", "GDPR_AI"],
-    requiredControls: ["Risk management", "Data governance", "Human oversight", "Clinical validation"],
+    requiredControls: [
+      "Risk management",
+      "Data governance",
+      "Human oversight",
+      "Clinical validation"
+    ],
     estimatedMaturity: 5,
     governanceComplexity: "HIGH",
     templateInputs: {
@@ -316,7 +342,12 @@ export const USE_CASES: UseCase[] = [
     businessFunction: "Healthcare",
     typicalDataTypes: ["Health", "PII", "Biometric"],
     applicableRegulations: ["EU_AI_ACT_MEDICAL", "FDA_SAMD", "HIPAA_AI", "GDPR_AI"],
-    requiredControls: ["Risk management", "Data governance", "Human oversight", "Clinical validation"],
+    requiredControls: [
+      "Risk management",
+      "Data governance",
+      "Human oversight",
+      "Clinical validation"
+    ],
     estimatedMaturity: 5,
     governanceComplexity: "HIGH",
     templateInputs: {
@@ -337,7 +368,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "hc-patient-risk",
     name: "Patient Risk Stratification",
-    description: "Model that stratifies patients by risk level for care management and intervention prioritization.",
+    description:
+      "Model that stratifies patients by risk level for care management and intervention prioritization.",
     vertical: "HEALTHCARE",
     assetType: "MODEL",
     euRiskLevel: "HIGH",
@@ -396,7 +428,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "hr-resume-screening",
     name: "Resume Screening Tool",
-    description: "AI tool that screens resumes and ranks candidates for hiring. Subject to NYC LL144 and EU AI Act employment provisions.",
+    description:
+      "AI tool that screens resumes and ranks candidates for hiring. Subject to NYC LL144 and EU AI Act employment provisions.",
     vertical: "HR",
     assetType: "APPLICATION",
     euRiskLevel: "HIGH",
@@ -425,7 +458,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "hr-sentiment",
     name: "Employee Sentiment Analyzer",
-    description: "Model that analyzes employee feedback and survey responses to gauge sentiment and engagement.",
+    description:
+      "Model that analyzes employee feedback and survey responses to gauge sentiment and engagement.",
     vertical: "HR",
     assetType: "MODEL",
     euRiskLevel: "LIMITED",
@@ -513,7 +547,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "retail-recommendations",
     name: "Product Recommendation Engine",
-    description: "Recommendation system that suggests products based on browsing and purchase history.",
+    description:
+      "Recommendation system that suggests products based on browsing and purchase history.",
     vertical: "RETAIL",
     assetType: "APPLICATION",
     euRiskLevel: "LIMITED",
@@ -542,7 +577,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "retail-dynamic-pricing",
     name: "Dynamic Pricing Model",
-    description: "Model that adjusts prices in real time based on demand, inventory, and competitor data.",
+    description:
+      "Model that adjusts prices in real time based on demand, inventory, and competitor data.",
     vertical: "RETAIL",
     assetType: "MODEL",
     euRiskLevel: "MINIMAL",
@@ -630,7 +666,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "cs-ticket-classification",
     name: "Ticket Classification Agent",
-    description: "Agent that automatically classifies and routes support tickets to the right team.",
+    description:
+      "Agent that automatically classifies and routes support tickets to the right team.",
     vertical: "CUSTOMER_SERVICE",
     assetType: "AGENT",
     euRiskLevel: "LIMITED",
@@ -659,7 +696,8 @@ export const USE_CASES: UseCase[] = [
   {
     id: "cs-sentiment-pipeline",
     name: "Sentiment Analysis Pipeline",
-    description: "Pipeline that processes customer feedback and social media for sentiment insights.",
+    description:
+      "Pipeline that processes customer feedback and social media for sentiment insights.",
     vertical: "CUSTOMER_SERVICE",
     assetType: "PIPELINE",
     euRiskLevel: "LIMITED",

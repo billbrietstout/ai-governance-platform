@@ -3,13 +3,13 @@ name: Weekly Digest Email
 on:
   schedule:
     # Every Monday at 8:00 AM UTC
-    - cron: '0 8 * * 1'
+    - cron: "0 8 * * 1"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Dry run (log only, do not send emails)'
+        description: "Dry run (log only, do not send emails)"
         required: false
-        default: 'false'
+        default: "false"
         type: boolean
 
 jobs:
@@ -19,7 +19,6 @@ jobs:
     environment: staging
 
     steps:
-
       - name: Run weekly digest job
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}

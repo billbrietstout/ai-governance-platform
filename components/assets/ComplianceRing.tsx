@@ -7,18 +7,17 @@ type Props = {
   label?: string;
 };
 
-export function ComplianceRing({
-  percentage,
-  size = 40,
-  strokeWidth = 4,
-  label
-}: Props) {
+export function ComplianceRing({ percentage, size = 40, strokeWidth = 4, label }: Props) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
 
   const color =
-    percentage >= 80 ? "stroke-emerald-500" : percentage >= 50 ? "stroke-amber-500" : "stroke-red-500";
+    percentage >= 80
+      ? "stroke-emerald-500"
+      : percentage >= 50
+        ? "stroke-amber-500"
+        : "stroke-red-500";
 
   return (
     <div className="relative inline-flex items-center justify-center">

@@ -39,11 +39,14 @@ export function LayerPosturePanel({ layers, layerLinks }: Props) {
           const href = layerLinks[l.layer];
           const label = LAYER_LABELS[l.layer] ?? l.layer;
           const { bar, border } = scoreColor(l.compliancePct);
-          const riskBadgeColor = l.riskCount > 0 ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-500";
+          const riskBadgeColor =
+            l.riskCount > 0 ? "bg-red-100 text-red-700" : "bg-gray-100 text-gray-500";
 
           const content = (
-            <div className={`flex items-center justify-between rounded border border-slate-200 border-l-4 ${border} bg-slate-50 px-3 py-2`}>
-              <div className="flex-1 min-w-0">
+            <div
+              className={`flex items-center justify-between rounded border border-l-4 border-slate-200 ${border} bg-slate-50 px-3 py-2`}
+            >
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-slate-900">{label}</span>
                   <span className={`rounded px-2 py-0.5 text-xs font-medium ${riskBadgeColor}`}>

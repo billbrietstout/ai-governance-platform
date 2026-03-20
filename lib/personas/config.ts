@@ -143,11 +143,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "AI assets, accountability, and application layer",
     defaultLandingPage: "/dashboard/developer",
     visibleLayers: ["L3", "L4"],
-    visibleSections: [
-      "GOVERNANCE OVERVIEW",
-      "LAYER 3: APPLICATION",
-      "LAYER 4: PLATFORM"
-    ],
+    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 3: APPLICATION", "LAYER 4: PLATFORM"],
     primaryCapabilities: [
       "/layer3-application/assets",
       "/layer3-application/accountability",
@@ -179,11 +175,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Supply chain, vendors, and L1 compliance",
     defaultLandingPage: "/dashboard/supply-chain",
     visibleLayers: ["L5", "L1"],
-    visibleSections: [
-      "GOVERNANCE OVERVIEW",
-      "LAYER 1: BUSINESS",
-      "LAYER 5: SUPPLY CHAIN"
-    ],
+    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 1: BUSINESS", "LAYER 5: SUPPLY CHAIN"],
     primaryCapabilities: [
       "/layer5-supply-chain",
       "/layer5-supply-chain/vendors",

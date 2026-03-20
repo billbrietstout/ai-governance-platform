@@ -24,8 +24,8 @@ export function GovernancePolicyCard({ policy, policyTypeColors, classificationC
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow">
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-100">
-          <FileText className="h-5 w-5 text-navy-600" />
+        <div className="bg-navy-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+          <FileText className="text-navy-600 h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="font-medium text-slate-900">{policy.name}</h3>
@@ -37,7 +37,9 @@ export function GovernancePolicyCard({ policy, policyTypeColors, classificationC
         </div>
         <span
           className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
-            policy.status === "DRAFT" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+            policy.status === "DRAFT"
+              ? "bg-amber-100 text-amber-700"
+              : "bg-emerald-100 text-emerald-700"
           }`}
         >
           {policy.status}

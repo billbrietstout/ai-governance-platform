@@ -3,10 +3,7 @@
 import React from "react";
 import Link from "next/link";
 
-type MatrixData = Record<
-  string,
-  { count: number; risks: { id: string; title: string }[] }
->;
+type MatrixData = Record<string, { count: number; risks: { id: string; title: string }[] }>;
 
 type Props = { data: MatrixData };
 
@@ -25,22 +22,28 @@ export function RiskMatrix({ data }: Props) {
         ))}
         {likelihoods.map((l) => (
           <React.Fragment key={l}>
-            <div className="py-1 font-medium text-gray-600">
-              L{l}
-            </div>
+            <div className="py-1 font-medium text-gray-600">L{l}</div>
             {impacts.map((i) => {
               const key = `${l}-${i}`;
               const cell = data[key] ?? { count: 0, risks: [] };
               const score = l * i;
               const color =
-                score >= 20 ? "bg-red-500/50" : score >= 12 ? "bg-amber-500/50" : score >= 6 ? "bg-yellow-500/30" : "bg-gray-200";
+                score >= 20
+                  ? "bg-red-500/50"
+                  : score >= 12
+                    ? "bg-amber-500/50"
+                    : score >= 6
+                      ? "bg-yellow-500/30"
+                      : "bg-gray-200";
 
               return (
                 <Link
                   key={key}
                   href={cell.risks[0] ? `/layer3-application/assets` : "#"}
-                  className={`group relative rounded p-1 text-gray-900 ${color} hover:ring-1 hover:ring-navy-500`}
-                  title={cell.risks.length > 0 ? cell.risks.map((r) => r.title).join("\n") : "No risks"}
+                  className={`group relative rounded p-1 text-gray-900 ${color} hover:ring-navy-500 hover:ring-1`}
+                  title={
+                    cell.risks.length > 0 ? cell.risks.map((r) => r.title).join("\n") : "No risks"
+                  }
                 >
                   {cell.count}
                   {cell.risks.length > 0 && (

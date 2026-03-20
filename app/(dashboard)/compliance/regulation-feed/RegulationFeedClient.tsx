@@ -30,18 +30,33 @@ const JURISDICTION_COLORS: Record<string, string> = {
 
 // Placeholder: next 3 deadlines (mock data for "Your deadlines")
 const YOUR_DEADLINES = [
-  { id: "eu-ai-act-high-risk", name: "EU AI Act — High-risk requirements", daysRemaining: 140, impact: "HIGH" as const },
-  { id: "sr11-7", name: "SR 11-7 — Model risk guidance", daysRemaining: 180, impact: "HIGH" as const },
-  { id: "eu-ai-act-annex1", name: "EU AI Act — Annex I high-risk", daysRemaining: 870, impact: "MEDIUM" as const }
+  {
+    id: "eu-ai-act-high-risk",
+    name: "EU AI Act — High-risk requirements",
+    daysRemaining: 140,
+    impact: "HIGH" as const
+  },
+  {
+    id: "sr11-7",
+    name: "SR 11-7 — Model risk guidance",
+    daysRemaining: 180,
+    impact: "HIGH" as const
+  },
+  {
+    id: "eu-ai-act-annex1",
+    name: "EU AI Act — Annex I high-risk",
+    daysRemaining: 870,
+    impact: "MEDIUM" as const
+  }
 ];
 
 export function RegulationFeedClient({ items }: Props) {
   return (
     <div className="space-y-8">
       {/* Your deadlines */}
-      <div className="rounded-lg border border-navy-200 bg-navy-50 p-4">
+      <div className="border-navy-200 bg-navy-50 rounded-lg border p-4">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-900">
-          <Calendar className="h-4 w-4 text-navy-600" />
+          <Calendar className="text-navy-600 h-4 w-4" />
           Your deadlines
         </h2>
         <p className="mb-3 text-xs text-slate-600">
@@ -55,15 +70,15 @@ export function RegulationFeedClient({ items }: Props) {
             >
               <span className="text-sm font-medium text-slate-900">{d.name}</span>
               <div className="flex items-center gap-2">
-                <span className={`rounded px-2 py-0.5 text-xs font-medium ${IMPACT_COLORS[d.impact]}`}>
+                <span
+                  className={`rounded px-2 py-0.5 text-xs font-medium ${IMPACT_COLORS[d.impact]}`}
+                >
                   {d.impact}
                 </span>
-                <span className="text-sm text-slate-600">
-                  {d.daysRemaining} days remaining
-                </span>
+                <span className="text-sm text-slate-600">{d.daysRemaining} days remaining</span>
                 <Link
                   href="/layer3-application/assets"
-                  className="text-xs text-navy-600 hover:underline"
+                  className="text-navy-600 text-xs hover:underline"
                 >
                   View affected assets →
                 </Link>
@@ -79,7 +94,9 @@ export function RegulationFeedClient({ items }: Props) {
           <Bell className="h-5 w-5 text-slate-500" />
           <div>
             <p className="text-sm font-medium text-slate-900">Get notified of regulatory changes</p>
-            <p className="text-xs text-slate-600">Email alerts for deadlines and updates (coming soon)</p>
+            <p className="text-xs text-slate-600">
+              Email alerts for deadlines and updates (coming soon)
+            </p>
           </div>
         </div>
         <button
@@ -107,10 +124,14 @@ export function RegulationFeedClient({ items }: Props) {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-slate-900">{r.name}</span>
-                  <span className={`rounded px-2 py-0.5 text-xs font-medium ${JURISDICTION_COLORS[r.jurisdiction] ?? "bg-slate-100 text-slate-700"}`}>
+                  <span
+                    className={`rounded px-2 py-0.5 text-xs font-medium ${JURISDICTION_COLORS[r.jurisdiction] ?? "bg-slate-100 text-slate-700"}`}
+                  >
                     {r.jurisdiction}
                   </span>
-                  <span className={`rounded px-2 py-0.5 text-xs font-medium ${IMPACT_COLORS[r.impact]}`}>
+                  <span
+                    className={`rounded px-2 py-0.5 text-xs font-medium ${IMPACT_COLORS[r.impact]}`}
+                  >
                     {r.impact}
                   </span>
                 </div>
@@ -119,13 +140,11 @@ export function RegulationFeedClient({ items }: Props) {
               </div>
               <div className="flex items-center gap-2">
                 {r.affectedCount != null && (
-                  <span className="text-sm text-slate-600">
-                    {r.affectedCount} assets in scope
-                  </span>
+                  <span className="text-sm text-slate-600">{r.affectedCount} assets in scope</span>
                 )}
                 <Link
                   href="/layer3-application/assets"
-                  className="flex items-center gap-1 text-sm text-navy-600 hover:underline"
+                  className="text-navy-600 flex items-center gap-1 text-sm hover:underline"
                 >
                   View affected assets
                   <ExternalLink className="h-3 w-3" />

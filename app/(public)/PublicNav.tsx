@@ -7,16 +7,10 @@ export function PublicNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   if (isLoggedIn) {
     return (
       <nav className="flex items-center gap-4">
-        <Link
-          href="/dashboard"
-          className="text-sm font-medium text-slate-600 hover:text-slate-900"
-        >
+        <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">
           Dashboard
         </Link>
-        <Link
-          href="/discover"
-          className="text-sm font-medium text-slate-600 hover:text-slate-900"
-        >
+        <Link href="/discover" className="text-sm font-medium text-slate-600 hover:text-slate-900">
           Discovery
         </Link>
         <button
@@ -32,15 +26,12 @@ export function PublicNav({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   return (
     <nav className="flex items-center gap-4">
-      <Link
-        href="/login"
-        className="text-sm font-medium text-slate-600 hover:text-slate-900"
-      >
+      <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900">
         Sign in
       </Link>
       <Link
         href="/register"
-        className="rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2 text-sm font-medium text-white"
       >
         Start free
       </Link>

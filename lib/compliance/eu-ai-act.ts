@@ -108,7 +108,9 @@ export function checkProhibitedPractices(asset: AssetInput): ProhibitedResult {
     reasons.push("Social scoring (Art. 5(1)(c)).");
   }
   if (desc.includes("real-time") && desc.includes("biometric") && desc.includes("public")) {
-    reasons.push("Real-time remote biometric identification in publicly accessible spaces (Art. 5(1)(d)).");
+    reasons.push(
+      "Real-time remote biometric identification in publicly accessible spaces (Art. 5(1)(d))."
+    );
   }
 
   return { prohibited: reasons.length > 0, reasons };

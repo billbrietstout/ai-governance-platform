@@ -20,12 +20,7 @@ import {
   Zap
 } from "lucide-react";
 
-const TRUST_BADGES = [
-  "CoSAI Framework",
-  "EU AI Act Ready",
-  "ISO 42001 Aligned",
-  "NIST AI RMF"
-];
+const TRUST_BADGES = ["CoSAI Framework", "EU AI Act Ready", "ISO 42001 Aligned", "NIST AI RMF"];
 
 const FREE_FEATURES = [
   { label: "AI Readiness Assessment (M1-M2)", icon: BarChart3 },
@@ -68,14 +63,14 @@ export default async function PublicLandingPage() {
             Is your company prepared to deploy AI?
           </h1>
           <p className="mt-6 text-xl text-slate-600">
-            The only platform built on the CoSAI Shared Responsibility Framework — assess
-            readiness, discover regulations, and build governance that satisfies auditors
+            The only platform built on the CoSAI Shared Responsibility Framework — assess readiness,
+            discover regulations, and build governance that satisfies auditors
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4">
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/discover/wizard"
-                className="rounded-lg bg-navy-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-navy-500"
+                className="bg-navy-600 hover:bg-navy-500 rounded-lg px-6 py-3 text-base font-medium text-white shadow-sm"
               >
                 Assess my AI readiness →
               </Link>
@@ -88,7 +83,7 @@ export default async function PublicLandingPage() {
             </div>
             <p className="text-sm text-slate-500">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-navy-600 hover:underline">
+              <Link href="/login" className="text-navy-600 font-medium hover:underline">
                 Sign in
               </Link>
             </p>
@@ -115,49 +110,46 @@ export default async function PublicLandingPage() {
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             <Link
               href="/discover/wizard"
-              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy-300 hover:shadow-md"
+              className="group hover:border-navy-300 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
             >
-              <Search className="h-10 w-10 text-navy-600" />
-              <h3 className="mt-4 font-semibold text-slate-900">
-                I&apos;m evaluating AI adoption
-              </h3>
+              <Search className="text-navy-600 h-10 w-10" />
+              <h3 className="mt-4 font-semibold text-slate-900">I&apos;m evaluating AI adoption</h3>
               <p className="mt-2 text-sm text-slate-600">
                 Start the regulation discovery wizard — no login required for the first 3 steps.
                 Identify which regulations apply to your planned AI system.
               </p>
-              <span className="mt-4 inline-block text-sm font-medium text-navy-600 group-hover:underline">
+              <span className="text-navy-600 mt-4 inline-block text-sm font-medium group-hover:underline">
                 Start free →
               </span>
             </Link>
             <Link
               href="/login?callbackUrl=/onboarding&consultant=1"
-              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy-300 hover:shadow-md"
+              className="group hover:border-navy-300 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
             >
-              <Briefcase className="h-10 w-10 text-navy-600" />
+              <Briefcase className="text-navy-600 h-10 w-10" />
               <h3 className="mt-4 font-semibold text-slate-900">
                 I&apos;m a consultant or advisor
               </h3>
               <p className="mt-2 text-sm text-slate-600">
-                Access the consultant workspace with multiple client workspaces and
-                white-label branding.
+                Access the consultant workspace with multiple client workspaces and white-label
+                branding.
               </p>
-              <span className="mt-4 inline-block text-sm font-medium text-navy-600 group-hover:underline">
+              <span className="text-navy-600 mt-4 inline-block text-sm font-medium group-hover:underline">
                 Consultant signup →
               </span>
             </Link>
             <Link
               href="/login?callbackUrl=/onboarding&vendor=1"
-              className="group rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy-300 hover:shadow-md"
+              className="group hover:border-navy-300 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
             >
-              <Building2 className="h-10 w-10 text-navy-600" />
+              <Building2 className="text-navy-600 h-10 w-10" />
               <h3 className="mt-4 font-semibold text-slate-900">
                 I&apos;m a vendor or platform provider
               </h3>
               <p className="mt-2 text-sm text-slate-600">
-                Partner inquiry — manage your AI assurance posture and compliance
-                documentation.
+                Partner inquiry — manage your AI assurance posture and compliance documentation.
               </p>
-              <span className="mt-4 inline-block text-sm font-medium text-navy-600 group-hover:underline">
+              <span className="text-navy-600 mt-4 inline-block text-sm font-medium group-hover:underline">
                 Partner inquiry →
               </span>
             </Link>
@@ -168,9 +160,7 @@ export default async function PublicLandingPage() {
       {/* What you get free */}
       <section className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-center text-2xl font-semibold text-slate-900">
-            What you get free
-          </h2>
+          <h2 className="text-center text-2xl font-semibold text-slate-900">What you get free</h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FREE_FEATURES.map(({ label, icon: Icon }) => (
               <div
@@ -188,16 +178,14 @@ export default async function PublicLandingPage() {
       {/* What's in Pro */}
       <section className="border-t border-slate-200 bg-white px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-center text-2xl font-semibold text-slate-900">
-            What&apos;s in Pro
-          </h2>
+          <h2 className="text-center text-2xl font-semibold text-slate-900">What&apos;s in Pro</h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {PRO_FEATURES.map(({ label, icon: Icon }) => (
               <div
                 key={label}
-                className="flex items-start gap-3 rounded-lg border border-navy-200 bg-navy-50/30 p-4"
+                className="border-navy-200 bg-navy-50/30 flex items-start gap-3 rounded-lg border p-4"
               >
-                <Icon className="h-5 w-5 shrink-0 text-navy-600" />
+                <Icon className="text-navy-600 h-5 w-5 shrink-0" />
                 <span className="text-sm font-medium text-slate-900">{label}</span>
               </div>
             ))}
@@ -232,7 +220,7 @@ export default async function PublicLandingPage() {
               href="https://coalitionforsecureai.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-medium text-navy-600 hover:underline"
+              className="text-navy-600 inline-flex items-center gap-2 text-sm font-medium hover:underline"
             >
               <Shield className="h-4 w-4" />
               Learn more about CoSAI

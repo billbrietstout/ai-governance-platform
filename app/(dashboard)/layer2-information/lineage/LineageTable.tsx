@@ -41,14 +41,17 @@ export function LineageTable({ records, classificationColors }: Props) {
             <tr key={r.id} className="border-b border-slate-100">
               <td className="px-4 py-2 font-medium text-slate-900">{r.name}</td>
               <td className="px-4 py-2">
-                <span className="rounded bg-navy-100 px-2 py-0.5 text-xs font-medium text-navy-700">
+                <span className="bg-navy-100 text-navy-700 rounded px-2 py-0.5 text-xs font-medium">
                   {r.pipelineType}
                 </span>
               </td>
               <td className="px-4 py-2">
                 <span className="text-slate-600">
                   {r.sourceEntity ? (
-                    <Link href={`/layer2-information/master-data?highlight=${r.sourceEntity.id}`} className="hover:underline">
+                    <Link
+                      href={`/layer2-information/master-data?highlight=${r.sourceEntity.id}`}
+                      className="hover:underline"
+                    >
                       {r.sourceEntity.name}
                     </Link>
                   ) : (
@@ -56,7 +59,10 @@ export function LineageTable({ records, classificationColors }: Props) {
                   )}{" "}
                   →{" "}
                   {r.targetAsset ? (
-                    <Link href={`/layer3-application/assets/${r.targetAsset.id}`} className="hover:underline">
+                    <Link
+                      href={`/layer3-application/assets/${r.targetAsset.id}`}
+                      className="hover:underline"
+                    >
                       {r.targetAsset.name}
                     </Link>
                   ) : (
@@ -78,7 +84,9 @@ export function LineageTable({ records, classificationColors }: Props) {
               <td className="px-4 py-2">
                 <span
                   className={`rounded px-2 py-0.5 text-xs font-medium ${
-                    r.status === "ACTIVE" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                    r.status === "ACTIVE"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-amber-100 text-amber-700"
                   }`}
                 >
                   {r.status}

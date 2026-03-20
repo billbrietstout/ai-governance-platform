@@ -51,11 +51,7 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   },
   LEGAL: {
     mode: "focused",
-    allowedSections: [
-      "GOVERNANCE OVERVIEW",
-      "COMPLIANCE",
-      "PLANNING TOOLS"
-    ]
+    allowedSections: ["GOVERNANCE OVERVIEW", "COMPLIANCE", "PLANNING TOOLS"]
   },
   DATA_OWNER: {
     mode: "focused",
@@ -63,19 +59,11 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   },
   DEV_LEAD: {
     mode: "focused",
-    allowedSections: [
-      "GOVERNANCE OVERVIEW",
-      "LAYER 3: APPLICATION",
-      "LAYER 2: INFORMATION"
-    ]
+    allowedSections: ["GOVERNANCE OVERVIEW", "LAYER 3: APPLICATION", "LAYER 2: INFORMATION"]
   },
   PLATFORM_ENG: {
     mode: "focused",
-    allowedSections: [
-      "GOVERNANCE OVERVIEW",
-      "LAYER 4: PLATFORM",
-      "LAYER 5: SUPPLY CHAIN"
-    ]
+    allowedSections: ["GOVERNANCE OVERVIEW", "LAYER 4: PLATFORM", "LAYER 5: SUPPLY CHAIN"]
   },
   VENDOR_MGR: {
     mode: "focused",

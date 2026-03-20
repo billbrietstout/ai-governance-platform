@@ -49,20 +49,27 @@ export function AddEntityForm({ users }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+    >
       <div>
         <label className="block text-sm font-medium text-slate-700">Entity Type *</label>
         <select
           value={form.entityType}
-          onChange={(e) => setForm((f) => ({ ...f, entityType: e.target.value as typeof form.entityType }))}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, entityType: e.target.value as typeof form.entityType }))
+          }
           className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
           required
         >
-          {["CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"].map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
+          {["CUSTOMER", "PRODUCT", "VENDOR", "EMPLOYEE", "FINANCE", "LOCATION", "OTHER"].map(
+            (t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            )
+          )}
         </select>
       </div>
       <div>
@@ -103,7 +110,9 @@ export function AddEntityForm({ users }: Props) {
         <label className="block text-sm font-medium text-slate-700">Classification</label>
         <select
           value={form.classification}
-          onChange={(e) => setForm((f) => ({ ...f, classification: e.target.value as typeof form.classification }))}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, classification: e.target.value as typeof form.classification }))
+          }
           className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
         >
           {["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"].map((c) => (
@@ -117,7 +126,9 @@ export function AddEntityForm({ users }: Props) {
         <label className="block text-sm font-medium text-slate-700">AI Access Policy</label>
         <select
           value={form.aiAccessPolicy}
-          onChange={(e) => setForm((f) => ({ ...f, aiAccessPolicy: e.target.value as typeof form.aiAccessPolicy }))}
+          onChange={(e) =>
+            setForm((f) => ({ ...f, aiAccessPolicy: e.target.value as typeof form.aiAccessPolicy }))
+          }
           className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
         >
           {["OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"].map((a) => (
@@ -163,7 +174,7 @@ export function AddEntityForm({ users }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {saving ? "Saving..." : "Add Entity"}
         </button>

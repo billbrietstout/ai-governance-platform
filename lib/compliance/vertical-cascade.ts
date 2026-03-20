@@ -44,7 +44,16 @@ export async function getVerticalControls(
   const controls = await prisma.control.findMany({
     where: {
       framework: { orgId, isActive: true },
-      ...(cosaiLayer ? { cosaiLayer: cosaiLayer as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" } : {})
+      ...(cosaiLayer
+        ? {
+            cosaiLayer: cosaiLayer as
+              | "LAYER_1_BUSINESS"
+              | "LAYER_2_INFORMATION"
+              | "LAYER_3_APPLICATION"
+              | "LAYER_4_PLATFORM"
+              | "LAYER_5_SUPPLY_CHAIN"
+          }
+        : {})
     },
     include: { framework: { select: { code: true } } }
   });
@@ -74,12 +83,22 @@ export async function getCascadeChain(
 ): Promise<CascadeChain> {
   const fromIdx = COSAI_LAYER_ORDER.indexOf(fromLayer as (typeof COSAI_LAYER_ORDER)[number]);
   const toIdx = COSAI_LAYER_ORDER.indexOf(toLayer as (typeof COSAI_LAYER_ORDER)[number]);
-  const start = Math.min(fromIdx >= 0 ? fromIdx : 0, toIdx >= 0 ? toIdx : COSAI_LAYER_ORDER.length - 1);
-  const end = Math.max(fromIdx >= 0 ? fromIdx : 0, toIdx >= 0 ? toIdx : COSAI_LAYER_ORDER.length - 1);
+  const start = Math.min(
+    fromIdx >= 0 ? fromIdx : 0,
+    toIdx >= 0 ? toIdx : COSAI_LAYER_ORDER.length - 1
+  );
+  const end = Math.max(
+    fromIdx >= 0 ? fromIdx : 0,
+    toIdx >= 0 ? toIdx : COSAI_LAYER_ORDER.length - 1
+  );
   const layersInRange = COSAI_LAYER_ORDER.slice(Math.min(start, end), Math.max(start, end) + 1);
 
   const frameworks = await prisma.complianceFramework.findMany({
-    where: { orgId, isActive: true, code: regulation as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF" },
+    where: {
+      orgId,
+      isActive: true,
+      code: regulation as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF"
+    },
     select: { id: true }
   });
   if (frameworks.length === 0) {
@@ -108,7 +127,10 @@ export async function getCascadeChain(
   return { regulation, fromLayer, toLayer, steps };
 }
 
-export async function getRegulationMap(prisma: PrismaClient, orgId: string): Promise<RegulationMap> {
+export async function getRegulationMap(
+  prisma: PrismaClient,
+  orgId: string
+): Promise<RegulationMap> {
   const frameworks = await prisma.complianceFramework.findMany({
     where: { orgId, isActive: true },
     select: { id: true, code: true, name: true },

@@ -13,7 +13,7 @@ type Props = {
 
 export function EmptyState({ title, description, ctaLabel, ctaHref, icon }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white py-16 px-6 shadow-sm">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white px-6 py-16 shadow-sm">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 text-gray-400">
         {icon ?? <Bot className="h-8 w-8" />}
       </div>
@@ -21,7 +21,7 @@ export function EmptyState({ title, description, ctaLabel, ctaHref, icon }: Prop
       <p className="mt-2 max-w-sm text-center text-sm text-gray-600">{description}</p>
       <Link
         href={ctaHref}
-        className="mt-6 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 mt-6 rounded px-4 py-2 text-sm font-medium text-white"
       >
         {ctaLabel}
       </Link>

@@ -34,11 +34,7 @@ const STEP_LABELS: Record<string, string> = {
   DEPLOYMENT: "Deployed version"
 };
 
-export function ProvenanceClient({
-  initialRecords,
-  vendors,
-  highRiskAssetCount
-}: Props) {
+export function ProvenanceClient({ initialRecords, vendors, highRiskAssetCount }: Props) {
   const [records, setRecords] = useState(initialRecords);
   const [showForm, setShowForm] = useState(false);
   const [vendorFilter, setVendorFilter] = useState("");
@@ -62,12 +58,15 @@ export function ProvenanceClient({
   const [saving, setSaving] = useState(false);
 
   const DELIM = "\x00";
-  const byVendorModel = records.reduce((acc, r) => {
-    const key = `${r.vendorId}${DELIM}${r.modelName}`;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(r);
-    return acc;
-  }, {} as Record<string, ProvenanceRecord[]>);
+  const byVendorModel = records.reduce(
+    (acc, r) => {
+      const key = `${r.vendorId}${DELIM}${r.modelName}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(r);
+      return acc;
+    },
+    {} as Record<string, ProvenanceRecord[]>
+  );
 
   const completeness = (vendorId: string, modelName: string) => {
     const steps = (byVendorModel[`${vendorId}${DELIM}${modelName}`] ?? []).map((r) => r.stepType);
@@ -122,7 +121,10 @@ export function ProvenanceClient({
             <p className="text-sm text-amber-700">
               {highRiskAssetCount} HIGH risk asset(s) may require provenance documentation.
             </p>
-            <Link href="/layer3-application/assets" className="mt-1 text-sm text-amber-800 hover:underline">
+            <Link
+              href="/layer3-application/assets"
+              className="mt-1 text-sm text-amber-800 hover:underline"
+            >
               View HIGH risk assets →
             </Link>
           </div>
@@ -145,7 +147,7 @@ export function ProvenanceClient({
         <button
           type="button"
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm text-white"
         >
           <Plus className="h-4 w-4" />
           Add provenance record
@@ -169,7 +171,11 @@ export function ProvenanceClient({
                 </h3>
                 <span
                   className={`rounded px-2 py-0.5 text-sm font-medium ${
-                    score >= 80 ? "bg-emerald-100 text-emerald-700" : score >= 50 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700"
+                    score >= 80
+                      ? "bg-emerald-100 text-emerald-700"
+                      : score >= 50
+                        ? "bg-amber-100 text-amber-700"
+                        : "bg-red-100 text-red-700"
                   }`}
                 >
                   {score}% complete
@@ -252,7 +258,11 @@ export function ProvenanceClient({
                   onChange={(e) =>
                     setForm((f) => ({
                       ...f,
-                      stepType: e.target.value as "TRAINING_DATA" | "BASE_MODEL" | "FINE_TUNING" | "DEPLOYMENT"
+                      stepType: e.target.value as
+                        | "TRAINING_DATA"
+                        | "BASE_MODEL"
+                        | "FINE_TUNING"
+                        | "DEPLOYMENT"
                     }))
                   }
                   className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
@@ -274,7 +284,9 @@ export function ProvenanceClient({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700">Responsible party</label>
+                <label className="block text-sm font-medium text-slate-700">
+                  Responsible party
+                </label>
                 <input
                   value={form.responsibleParty}
                   onChange={(e) => setForm((f) => ({ ...f, responsibleParty: e.target.value }))}
@@ -314,7 +326,7 @@ export function ProvenanceClient({
                 type="button"
                 onClick={handleSubmit}
                 disabled={saving || !form.vendorId || !form.modelName}
-                className="rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm text-white disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Add"}
               </button>

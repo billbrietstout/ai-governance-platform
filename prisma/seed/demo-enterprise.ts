@@ -49,7 +49,12 @@ type AssetInput = {
   description: string;
   assetType: "MODEL" | "AGENT" | "APPLICATION";
   euRiskLevel: "MINIMAL" | "LIMITED" | "HIGH";
-  cosaiLayer: "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN";
+  cosaiLayer:
+    | "LAYER_1_BUSINESS"
+    | "LAYER_2_INFORMATION"
+    | "LAYER_3_APPLICATION"
+    | "LAYER_4_PLATFORM"
+    | "LAYER_5_SUPPLY_CHAIN";
   autonomyLevel: "ASSISTED" | "SEMI_AUTONOMOUS" | "AUTONOMOUS";
   ownerEmail: string;
   overrideTier?: "T1" | "T2" | "T3" | "T4" | "T5";
@@ -387,23 +392,118 @@ const RISKS: Array<{
   description?: string;
   likelihood: number;
   impact: number;
-  cosaiLayer: "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN";
+  cosaiLayer:
+    | "LAYER_1_BUSINESS"
+    | "LAYER_2_INFORMATION"
+    | "LAYER_3_APPLICATION"
+    | "LAYER_4_PLATFORM"
+    | "LAYER_5_SUPPLY_CHAIN";
 }> = [
-  { assetName: "CV Screening Assistant", title: "CV screening model exhibits demographic bias in filtering", likelihood: 5, impact: 5, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Dynamic Pricing Model", title: "Dynamic pricing model lacks explainability documentation", likelihood: 4, impact: 4, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Fraud Detection System", title: "Fraud detection system has no documented appeal process", likelihood: 4, impact: 5, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Quality Inspection Vision System", title: "Vision system may misclassify defects under low-light conditions", likelihood: 4, impact: 4, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Employee Sentiment Monitor", title: "Employee sentiment monitor collects data without explicit consent", likelihood: 5, impact: 4, cosaiLayer: "LAYER_2_INFORMATION" },
-  { assetName: "Inventory Reorder Agent", title: "Inventory agent may execute purchases without human review", likelihood: 3, impact: 4, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Production Schedule Optimizer", title: "Schedule optimizer may prioritize cost over safety constraints", likelihood: 2, impact: 4, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Supply Chain Demand Forecaster", title: "Demand forecaster lacks validation for new product launches", likelihood: 3, impact: 3, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Accounts Payable Automation", title: "AP agent may approve invoices from unverified vendors", likelihood: 2, impact: 4, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Log Analysis Agent", title: "Log agent may miss critical security events in high-volume environments", likelihood: 3, impact: 3, cosaiLayer: "LAYER_4_PLATFORM" },
-  { assetName: "Supplier Risk Scorer", title: "Supplier scorer relies on incomplete third-party data", likelihood: 3, impact: 3, cosaiLayer: "LAYER_5_SUPPLY_CHAIN" },
-  { assetName: "Product Recommendation Engine", title: "Recommendation engine may create filter bubbles", likelihood: 2, impact: 2, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "IT Helpdesk Chatbot", title: "Chatbot may provide incorrect troubleshooting steps", likelihood: 2, impact: 1, cosaiLayer: "LAYER_3_APPLICATION" },
-  { assetName: "Energy Consumption Optimizer", title: "Optimizer may conflict with production priorities", likelihood: 1, impact: 2, cosaiLayer: "LAYER_4_PLATFORM" },
-  { assetName: "Store Layout Optimizer", title: "Layout recommendations may not account for accessibility", likelihood: 1, impact: 1, cosaiLayer: "LAYER_1_BUSINESS" }
+  {
+    assetName: "CV Screening Assistant",
+    title: "CV screening model exhibits demographic bias in filtering",
+    likelihood: 5,
+    impact: 5,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Dynamic Pricing Model",
+    title: "Dynamic pricing model lacks explainability documentation",
+    likelihood: 4,
+    impact: 4,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Fraud Detection System",
+    title: "Fraud detection system has no documented appeal process",
+    likelihood: 4,
+    impact: 5,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Quality Inspection Vision System",
+    title: "Vision system may misclassify defects under low-light conditions",
+    likelihood: 4,
+    impact: 4,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Employee Sentiment Monitor",
+    title: "Employee sentiment monitor collects data without explicit consent",
+    likelihood: 5,
+    impact: 4,
+    cosaiLayer: "LAYER_2_INFORMATION"
+  },
+  {
+    assetName: "Inventory Reorder Agent",
+    title: "Inventory agent may execute purchases without human review",
+    likelihood: 3,
+    impact: 4,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Production Schedule Optimizer",
+    title: "Schedule optimizer may prioritize cost over safety constraints",
+    likelihood: 2,
+    impact: 4,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Supply Chain Demand Forecaster",
+    title: "Demand forecaster lacks validation for new product launches",
+    likelihood: 3,
+    impact: 3,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Accounts Payable Automation",
+    title: "AP agent may approve invoices from unverified vendors",
+    likelihood: 2,
+    impact: 4,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Log Analysis Agent",
+    title: "Log agent may miss critical security events in high-volume environments",
+    likelihood: 3,
+    impact: 3,
+    cosaiLayer: "LAYER_4_PLATFORM"
+  },
+  {
+    assetName: "Supplier Risk Scorer",
+    title: "Supplier scorer relies on incomplete third-party data",
+    likelihood: 3,
+    impact: 3,
+    cosaiLayer: "LAYER_5_SUPPLY_CHAIN"
+  },
+  {
+    assetName: "Product Recommendation Engine",
+    title: "Recommendation engine may create filter bubbles",
+    likelihood: 2,
+    impact: 2,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "IT Helpdesk Chatbot",
+    title: "Chatbot may provide incorrect troubleshooting steps",
+    likelihood: 2,
+    impact: 1,
+    cosaiLayer: "LAYER_3_APPLICATION"
+  },
+  {
+    assetName: "Energy Consumption Optimizer",
+    title: "Optimizer may conflict with production priorities",
+    likelihood: 1,
+    impact: 2,
+    cosaiLayer: "LAYER_4_PLATFORM"
+  },
+  {
+    assetName: "Store Layout Optimizer",
+    title: "Layout recommendations may not account for accessibility",
+    likelihood: 1,
+    impact: 1,
+    cosaiLayer: "LAYER_1_BUSINESS"
+  }
 ];
 
 export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
@@ -422,7 +522,13 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
           assetLimit: 500,
           usersLimit: 25,
           claimedDomain: ORG.claimedDomain,
-          clientVerticals: ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR"] as object
+          clientVerticals: [
+            "GENERAL",
+            "FINANCIAL_SERVICES",
+            "HEALTHCARE",
+            "INSURANCE",
+            "PUBLIC_SECTOR"
+          ] as object
         }
       })
     : await prisma.organization.create({
@@ -435,7 +541,13 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
           assetLimit: 500,
           usersLimit: 25,
           claimedDomain: ORG.claimedDomain,
-          clientVerticals: ["GENERAL", "FINANCIAL_SERVICES", "HEALTHCARE", "INSURANCE", "PUBLIC_SECTOR"] as object
+          clientVerticals: [
+            "GENERAL",
+            "FINANCIAL_SERVICES",
+            "HEALTHCARE",
+            "INSURANCE",
+            "PUBLIC_SECTOR"
+          ] as object
         }
       });
 
@@ -477,7 +589,9 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
       ...(a.overrideTier && { overrideTier: a.overrideTier }),
       ...(a.toolAuthorizations && { toolAuthorizations: a.toolAuthorizations }),
       ...(a.lifecycleStage && { lifecycleStage: a.lifecycleStage }),
-      ...(a.humanOversightRequired !== undefined && { humanOversightRequired: a.humanOversightRequired })
+      ...(a.humanOversightRequired !== undefined && {
+        humanOversightRequired: a.humanOversightRequired
+      })
     };
     const asset = existing
       ? await prisma.aIAsset.update({
@@ -529,7 +643,7 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
     if (!assetId) continue;
 
     const asset = ASSETS.find((a) => a.name === assetName);
-    const ownerName = asset ? ownerNames[asset.ownerEmail] ?? "Asset Owner" : "Asset Owner";
+    const ownerName = asset ? (ownerNames[asset.ownerEmail] ?? "Asset Owner") : "Asset Owner";
 
     const assignments = [
       {
@@ -601,5 +715,7 @@ export async function seedDemoEnterprise(prisma: PrismaClient): Promise<void> {
   }
 
   // eslint-disable-next-line no-console
-  console.log(`Meridian Industrial Group seeded: ${USERS.length} users, ${ASSETS.length} assets, ${HIGH_RISK_ASSET_NAMES.length} accountability sets, ${RISKS.length} risks.`);
+  console.log(
+    `Meridian Industrial Group seeded: ${USERS.length} users, ${ASSETS.length} assets, ${HIGH_RISK_ASSET_NAMES.length} accountability sets, ${RISKS.length} risks.`
+  );
 }

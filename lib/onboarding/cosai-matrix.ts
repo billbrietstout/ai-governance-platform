@@ -12,10 +12,7 @@ export const COSAI_LAYERS = [
 
 export type Responsibility = "Customer" | "Provider" | "Shared";
 
-export const COSAI_RESPONSIBILITY_MATRIX: Record<
-  string,
-  Record<string, Responsibility>
-> = {
+export const COSAI_RESPONSIBILITY_MATRIX: Record<string, Record<string, Responsibility>> = {
   IAAS: {
     L1: "Customer",
     L2: "Customer",

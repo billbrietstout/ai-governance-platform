@@ -20,9 +20,6 @@ export async function POST() {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  await sendWeeklyDigestToUser(
-    { id: user.id, email: dbUser.email },
-    user.orgId
-  );
+  await sendWeeklyDigestToUser({ id: user.id, email: dbUser.email }, user.orgId);
   return NextResponse.json({ sent: true });
 }

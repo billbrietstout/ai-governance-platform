@@ -247,9 +247,7 @@ export const VERTICAL_REGULATIONS: Record<VerticalKey, VerticalProfile> = {
 };
 
 /** Map Prisma VerticalMarket to our VerticalKey */
-export function orgVerticalToKey(
-  vertical: string | null
-): VerticalKey {
+export function orgVerticalToKey(vertical: string | null): VerticalKey {
   switch (vertical) {
     case "FINANCIAL":
       return "FINANCIAL_SERVICES";
@@ -293,7 +291,11 @@ export function assetAppliesToRegulation(
   const desc = (asset.description ?? "").toLowerCase();
   const combined = `${name} ${desc}`;
 
-  if (reg.condition.includes("recruit") || reg.condition.includes("screening") || reg.condition.includes("hiring")) {
+  if (
+    reg.condition.includes("recruit") ||
+    reg.condition.includes("screening") ||
+    reg.condition.includes("hiring")
+  ) {
     return (
       combined.includes("recruit") ||
       combined.includes("screening") ||

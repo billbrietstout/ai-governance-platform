@@ -25,7 +25,9 @@ export default async function DiscoverPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-8 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Regulation Discovery</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          Regulation Discovery
+        </h1>
         <p className="mt-1 text-slate-600">
           Find out which regulations apply to your planned AI system before you build it.
         </p>
@@ -35,17 +37,19 @@ export default async function DiscoverPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
           href="/discover/wizard"
-          className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow"
         >
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-navy-100">
-            <PlusCircle className="h-7 w-7 text-navy-600" />
+          <div className="bg-navy-100 flex h-14 w-14 shrink-0 items-center justify-center rounded-lg">
+            <PlusCircle className="text-navy-600 h-7 w-7" />
           </div>
           <div>
             <h2 className="font-semibold text-slate-900">Discover for a new system</h2>
             <p className="mt-1 text-sm text-slate-600">
               Run the 4-step wizard to identify applicable regulations for a planned AI system.
             </p>
-            <span className="mt-2 inline-block text-sm font-medium text-navy-600">Start wizard →</span>
+            <span className="text-navy-600 mt-2 inline-block text-sm font-medium">
+              Start wizard →
+            </span>
           </div>
         </Link>
 
@@ -69,7 +73,7 @@ export default async function DiscoverPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
           href="/discover/operating-model"
-          className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100">
             <Layers className="h-6 w-6 text-slate-600" />
@@ -79,12 +83,12 @@ export default async function DiscoverPage() {
             <p className="text-sm text-slate-600">
               Understand shared responsibility boundaries (IaaS, AI-PaaS, Agent-PaaS, AI-SaaS).
             </p>
-            <span className="mt-1 inline-block text-sm font-medium text-navy-600">View →</span>
+            <span className="text-navy-600 mt-1 inline-block text-sm font-medium">View →</span>
           </div>
         </Link>
         <Link
           href="/discover/use-cases"
-          className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300 hover:shadow"
+          className="hover:border-navy-300 flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-100">
             <BookOpen className="h-6 w-6 text-slate-600" />
@@ -94,7 +98,7 @@ export default async function DiscoverPage() {
             <p className="text-sm text-slate-600">
               Common use cases with pre-built governance templates.
             </p>
-            <span className="mt-1 inline-block text-sm font-medium text-navy-600">Browse →</span>
+            <span className="text-navy-600 mt-1 inline-block text-sm font-medium">Browse →</span>
           </div>
         </Link>
       </div>
@@ -102,11 +106,13 @@ export default async function DiscoverPage() {
       {/* Recent discoveries */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
-          <Sparkles className="h-4 w-4 text-navy-600" />
+          <Sparkles className="text-navy-600 h-4 w-4" />
           Recent discoveries
         </h3>
         {discoveries.length === 0 ? (
-          <p className="text-sm text-slate-500">No discoveries yet. Run the wizard or review an asset to get started.</p>
+          <p className="text-sm text-slate-500">
+            No discoveries yet. Run the wizard or review an asset to get started.
+          </p>
         ) : (
           <ul className="space-y-2">
             {discoveries.map((d) => {

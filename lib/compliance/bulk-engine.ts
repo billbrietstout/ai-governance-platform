@@ -23,7 +23,7 @@ const COSAI_LAYERS = [
   "LAYER_2_INFORMATION",
   "LAYER_3_APPLICATION",
   "LAYER_4_PLATFORM",
-  "LAYER_5_SUPPLY_CHAIN",
+  "LAYER_5_SUPPLY_CHAIN"
 ] as const;
 
 /**
@@ -38,22 +38,22 @@ export async function getBulkLayerPosture(
   const [assets, frameworks, assignments, risks] = await Promise.all([
     prisma.aIAsset.findMany({
       where: { orgId, deletedAt: null },
-      select: { id: true, cosaiLayer: true },
+      select: { id: true, cosaiLayer: true }
     }),
     prisma.complianceFramework.findMany({
       where: { orgId, isActive: true },
-      select: { id: true },
+      select: { id: true }
     }),
     prisma.accountabilityAssignment.findMany({
       where: { asset: { orgId, deletedAt: null } },
       select: { cosaiLayer: true, accountableParty: true, updatedAt: true },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { updatedAt: "desc" }
     }),
     prisma.riskRegister.groupBy({
       by: ["cosaiLayer"],
       where: { orgId, deletedAt: null, cosaiLayer: { not: null } },
-      _count: { id: true },
-    }),
+      _count: { id: true }
+    })
   ]);
 
   if (assets.length === 0 || frameworks.length === 0) {
@@ -62,14 +62,17 @@ export async function getBulkLayerPosture(
       compliancePct: 0,
       riskCount: 0,
       accountableOwner: null,
-      lastReviewed: null,
+      lastReviewed: null
     }));
   }
 
   const assetIds = assets.map((a) => a.id);
   const frameworkIds = frameworks.map((f) => f.id);
 
-  const controls = await prisma.control.findMany({ where: { frameworkId: { in: frameworkIds } }, select: { id: true, cosaiLayer: true, frameworkId: true } });
+  const controls = await prisma.control.findMany({
+    where: { frameworkId: { in: frameworkIds } },
+    select: { id: true, cosaiLayer: true, frameworkId: true }
+  });
 
   // Fetch attestations with correct control IDs
   const controlIds = controls.map((c) => c.id);
@@ -77,18 +80,16 @@ export async function getBulkLayerPosture(
     where: {
       assetId: { in: assetIds },
       controlId: { in: controlIds },
-      status: { in: ["COMPLIANT", "NOT_APPLICABLE"] },
+      status: { in: ["COMPLIANT", "NOT_APPLICABLE"] }
     },
-    select: { assetId: true, controlId: true },
+    select: { assetId: true, controlId: true }
   });
 
   // Build lookup: assetId+controlId → attested
   const attestedSet = new Set(bulkAttestations.map((a) => `${a.assetId}:${a.controlId}`));
 
   // Build risk count lookup
-  const riskCountByLayer = new Map(
-    risks.map((r) => [r.cosaiLayer!, r._count.id])
-  );
+  const riskCountByLayer = new Map(risks.map((r) => [r.cosaiLayer!, r._count.id]));
 
   // Build accountability lookup (first assignment per layer)
   const assignmentByLayer = new Map<string, { accountableParty: string | null; updatedAt: Date }>();
@@ -96,7 +97,7 @@ export async function getBulkLayerPosture(
     if (a.cosaiLayer && !assignmentByLayer.has(a.cosaiLayer)) {
       assignmentByLayer.set(a.cosaiLayer, {
         accountableParty: a.accountableParty,
-        updatedAt: a.updatedAt,
+        updatedAt: a.updatedAt
       });
     }
   }
@@ -114,7 +115,7 @@ export async function getBulkLayerPosture(
         compliancePct: 0,
         riskCount: riskCountByLayer.get(layer) ?? 0,
         accountableOwner: assignment?.accountableParty ?? null,
-        lastReviewed: assignment?.updatedAt ?? null,
+        lastReviewed: assignment?.updatedAt ?? null
       };
     }
 
@@ -137,7 +138,7 @@ export async function getBulkLayerPosture(
       compliancePct: totalControls > 0 ? Math.round((attestedControls / totalControls) * 100) : 0,
       riskCount: riskCountByLayer.get(layer) ?? 0,
       accountableOwner: assignment?.accountableParty ?? null,
-      lastReviewed: assignment?.updatedAt ?? null,
+      lastReviewed: assignment?.updatedAt ?? null
     };
   });
 }
@@ -153,12 +154,12 @@ export async function getBulkComplianceHeatmap(
   const [frameworks, assets] = await Promise.all([
     prisma.complianceFramework.findMany({
       where: { orgId, isActive: true },
-      select: { id: true, code: true },
+      select: { id: true, code: true }
     }),
     prisma.aIAsset.findMany({
       where: { orgId, deletedAt: null },
-      select: { id: true, assetType: true },
-    }),
+      select: { id: true, assetType: true }
+    })
   ]);
 
   if (frameworks.length === 0 || assets.length === 0) return [];
@@ -169,15 +170,15 @@ export async function getBulkComplianceHeatmap(
   const [controls, attestations] = await Promise.all([
     prisma.control.findMany({
       where: { frameworkId: { in: frameworkIds } },
-      select: { id: true, frameworkId: true },
+      select: { id: true, frameworkId: true }
     }),
     prisma.controlAttestation.findMany({
       where: {
         assetId: { in: assetIds },
-        status: { in: ["COMPLIANT", "NOT_APPLICABLE"] },
+        status: { in: ["COMPLIANT", "NOT_APPLICABLE"] }
       },
-      select: { assetId: true, controlId: true },
-    }),
+      select: { assetId: true, controlId: true }
+    })
   ]);
 
   // Build lookups

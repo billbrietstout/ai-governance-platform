@@ -62,7 +62,7 @@ export default async function VerticalDetailPage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer1-business" className="text-sm text-navy-600 hover:underline">
+        <Link href="/layer1-business" className="text-navy-600 text-sm hover:underline">
           ← Layer 1: Business
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
@@ -129,9 +129,7 @@ export default async function VerticalDetailPage({
                       </Link>
                       <span
                         className={
-                          assetHasCompliant.get(a.id)
-                            ? "text-emerald-600"
-                            : "text-amber-600"
+                          assetHasCompliant.get(a.id) ? "text-emerald-600" : "text-amber-600"
                         }
                       >
                         {assetHasCompliant.get(a.id) ? "Compliant" : "Gap"}
@@ -139,14 +137,12 @@ export default async function VerticalDetailPage({
                     </li>
                   ))}
                   {inScopeAssets.length > 5 && (
-                    <li className="text-xs text-slate-500">
-                      +{inScopeAssets.length - 5} more
-                    </li>
+                    <li className="text-xs text-slate-500">+{inScopeAssets.length - 5} more</li>
                   )}
                 </ul>
                 <Link
                   href="/layer1-business/regulatory-cascade"
-                  className="mt-2 block text-xs text-navy-600 hover:underline"
+                  className="text-navy-600 mt-2 block text-xs hover:underline"
                 >
                   View controls →
                 </Link>

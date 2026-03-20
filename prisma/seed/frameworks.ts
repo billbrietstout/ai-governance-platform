@@ -93,7 +93,13 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           title: c.title,
           description: c.description ?? null,
           category: c.category ?? null,
-          cosaiLayer: mapCosaiLayer(c.cosaiLayer) as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" | null,
+          cosaiLayer: mapCosaiLayer(c.cosaiLayer) as
+            | "LAYER_1_BUSINESS"
+            | "LAYER_2_INFORMATION"
+            | "LAYER_3_APPLICATION"
+            | "LAYER_4_PLATFORM"
+            | "LAYER_5_SUPPLY_CHAIN"
+            | null,
           personaAccountable: c.personaAccountable ?? null,
           operatingModelApplicability: c.operatingModelApplicability ?? undefined,
           verticalApplicability: c.verticalApplicability ?? undefined,
@@ -105,7 +111,13 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           title: c.title,
           description: c.description ?? null,
           category: c.category ?? null,
-          cosaiLayer: mapCosaiLayer(c.cosaiLayer) as "LAYER_1_BUSINESS" | "LAYER_2_INFORMATION" | "LAYER_3_APPLICATION" | "LAYER_4_PLATFORM" | "LAYER_5_SUPPLY_CHAIN" | null,
+          cosaiLayer: mapCosaiLayer(c.cosaiLayer) as
+            | "LAYER_1_BUSINESS"
+            | "LAYER_2_INFORMATION"
+            | "LAYER_3_APPLICATION"
+            | "LAYER_4_PLATFORM"
+            | "LAYER_5_SUPPLY_CHAIN"
+            | null,
           personaAccountable: c.personaAccountable ?? null,
           operatingModelApplicability: c.operatingModelApplicability ?? undefined,
           verticalApplicability: c.verticalApplicability ?? undefined,

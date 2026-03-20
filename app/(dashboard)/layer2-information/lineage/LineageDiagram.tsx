@@ -45,7 +45,10 @@ export function LineageDiagram({ data }: Props) {
   const svgWidth = NODE_WIDTH * 2 + 120;
 
   const getLeftPos = (i: number) => ({ x: 20, y: GAP + i * (NODE_HEIGHT + GAP) });
-  const getRightPos = (i: number) => ({ x: svgWidth - NODE_WIDTH - 20, y: GAP + i * (NODE_HEIGHT + GAP) });
+  const getRightPos = (i: number) => ({
+    x: svgWidth - NODE_WIDTH - 20,
+    y: GAP + i * (NODE_HEIGHT + GAP)
+  });
 
   const entityIndex = new Map(leftNodes.map((e, i) => [e.id, i]));
   const assetIndex = new Map(rightNodes.map((a, i) => [a.id, i]));
@@ -146,13 +149,13 @@ export function LineageDiagram({ data }: Props) {
       </div>
 
       {selectedLineage && (
-        <div className="rounded-lg border border-navy-200 bg-navy-50 p-4">
-          <h3 className="font-medium text-navy-900">Pipeline: {selectedLineage.name}</h3>
-          <p className="mt-1 text-sm text-navy-700">Type: {selectedLineage.pipelineType}</p>
+        <div className="border-navy-200 bg-navy-50 rounded-lg border p-4">
+          <h3 className="text-navy-900 font-medium">Pipeline: {selectedLineage.name}</h3>
+          <p className="text-navy-700 mt-1 text-sm">Type: {selectedLineage.pipelineType}</p>
           <button
             type="button"
             onClick={() => setSelectedLineage(null)}
-            className="mt-2 text-sm text-navy-600 hover:underline"
+            className="text-navy-600 mt-2 text-sm hover:underline"
           >
             Close
           </button>

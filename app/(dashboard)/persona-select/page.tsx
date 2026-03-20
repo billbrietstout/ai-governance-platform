@@ -9,7 +9,7 @@ export default function PersonaSelectPage() {
           Select a view tailored to your role. You&apos;ll see a focused dashboard with just what
           matters for your role.
         </p>
-        <p className="mt-2 rounded-lg border border-navy-200 bg-navy-50 p-3 text-sm text-navy-800">
+        <p className="border-navy-200 bg-navy-50 text-navy-800 mt-2 rounded-lg border p-3 text-sm">
           You can always access the full platform from any page via &quot;Switch to full platform
           →&quot; in the top right.
         </p>

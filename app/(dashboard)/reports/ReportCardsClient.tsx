@@ -56,7 +56,7 @@ function ReportExportButton({
       type="button"
       onClick={handleExport}
       disabled={loading || disabled}
-      className="flex items-center gap-1 rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+      className="bg-navy-600 hover:bg-navy-500 flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
     >
       <Download className="h-3.5 w-3.5" />
       {loading ? "Generating…" : label}
@@ -64,12 +64,7 @@ function ReportExportButton({
   );
 }
 
-export function ReportCardsClient({
-  maturityLevel,
-  scores,
-  snapshots,
-  gaps
-}: Props) {
+export function ReportCardsClient({ maturityLevel, scores, snapshots, gaps }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const date = new Date().toISOString().slice(0, 10);
 
@@ -130,8 +125,8 @@ export function ReportCardsClient({
               className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
             >
               <div className="flex items-start gap-3">
-                <div className="rounded-lg bg-navy-100 p-2">
-                  <Icon className="h-5 w-5 text-navy-600" />
+                <div className="bg-navy-100 rounded-lg p-2">
+                  <Icon className="text-navy-600 h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="font-medium text-slate-900">{r.name}</h3>
@@ -163,13 +158,13 @@ export function ReportCardsClient({
       {preview && (
         <div className="rounded-lg border border-slate-200 bg-white p-6">
           <h3 className="font-medium text-slate-900">Report preview</h3>
-          <pre className="mt-3 whitespace-pre-wrap rounded bg-slate-50 p-4 text-sm text-slate-700">
+          <pre className="mt-3 rounded bg-slate-50 p-4 text-sm whitespace-pre-wrap text-slate-700">
             {preview}
           </pre>
           <button
             type="button"
             onClick={() => setPreview(null)}
-            className="mt-3 text-sm text-navy-600 hover:underline"
+            className="text-navy-600 mt-3 text-sm hover:underline"
           >
             Close preview
           </button>

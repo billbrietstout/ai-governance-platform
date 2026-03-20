@@ -19,18 +19,19 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
   const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
   const personaDashboardPath = getPersonaDashboardPath(persona ?? null);
 
-  const initials = userEmail
-    ? userEmail.split("@")[0].slice(0, 2).toUpperCase()
-    : "?";
+  const initials = userEmail ? userEmail.split("@")[0].slice(0, 2).toUpperCase() : "?";
   const displayName = userEmail
-    ? userEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    ? userEmail
+        .split("@")[0]
+        .replace(/[._]/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase())
     : "User";
   const personaConfig = persona ? getPersonaConfig(persona) : null;
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 shadow-sm">
       <Link href={personaDashboardPath ?? "/dashboard"} className="flex items-center gap-2">
-        <ShieldLogo className="h-8 w-8 shrink-0 text-navy-500" />
+        <ShieldLogo className="text-navy-500 h-8 w-8 shrink-0" />
         <span className="text-lg font-semibold text-slate-900">AI Readiness</span>
       </Link>
 
@@ -40,7 +41,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
             <button
               type="button"
               onClick={() => setViewDropdownOpen((o) => !o)}
-              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-navy-600"
+              className="hover:text-navy-600 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
             >
               Viewing as: {personaConfig?.label ?? persona} <ChevronDown className="h-4 w-4" />
             </button>
@@ -51,7 +52,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
                   onClick={() => setViewDropdownOpen(false)}
                   aria-hidden
                 />
-                <div className="absolute right-0 top-full z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-xl">
+                <div className="absolute top-full right-0 z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-xl">
                   <Link
                     href="/persona-select"
                     className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
@@ -66,7 +67,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
         ) : (
           <Link
             href="/persona-select"
-            className="text-sm font-medium text-slate-600 hover:text-navy-600 hover:underline"
+            className="hover:text-navy-600 text-sm font-medium text-slate-600 hover:underline"
           >
             Choose view →
           </Link>
@@ -78,7 +79,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
             onClick={() => setUserMenuOpen((o) => !o)}
             className="flex items-center gap-2 rounded-lg p-1.5 hover:bg-slate-100"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-navy-100 text-sm font-medium text-navy-600">
+            <div className="bg-navy-100 text-navy-600 flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium">
               {initials}
             </div>
             <div className="hidden text-left sm:block">
@@ -93,12 +94,12 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
                 onClick={() => setUserMenuOpen(false)}
                 aria-hidden
               />
-              <div className="absolute right-0 top-full z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-xl">
+              <div className="absolute top-full right-0 z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-xl">
                 <div className="border-b border-slate-100 px-3 py-2">
                   <p className="text-sm font-medium text-slate-900">{displayName}</p>
                   <p className="text-xs text-slate-500">{orgName ?? "Organization"}</p>
                   {personaConfig && (
-                    <span className="mt-1 inline-block rounded bg-navy-100 px-2 py-0.5 text-xs font-medium text-navy-700">
+                    <span className="bg-navy-100 text-navy-700 mt-1 inline-block rounded px-2 py-0.5 text-xs font-medium">
                       {personaConfig.label}
                     </span>
                   )}

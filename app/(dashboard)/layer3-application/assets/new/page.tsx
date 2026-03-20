@@ -36,14 +36,28 @@ function mapDiscoveryToAssetDefaults(inputs: Record<string, unknown>) {
   return {
     name: "",
     description: (inputs.description as string) ?? "",
-    assetType: ["MODEL", "AGENT", "APPLICATION", "PIPELINE"].includes(assetType) ? assetType : "APPLICATION",
+    assetType: ["MODEL", "AGENT", "APPLICATION", "PIPELINE"].includes(assetType)
+      ? assetType
+      : "APPLICATION",
     verticalMarket,
     autonomyLevel,
-    euRiskLevel: (inputs.expectedRiskLevel as string) === "High" ? "HIGH" : (inputs.expectedRiskLevel as string) === "Critical" ? "HIGH" : undefined
+    euRiskLevel:
+      (inputs.expectedRiskLevel as string) === "High"
+        ? "HIGH"
+        : (inputs.expectedRiskLevel as string) === "Critical"
+          ? "HIGH"
+          : undefined
   };
 }
 
-function mapUseCaseToAssetDefaults(uc: { name: string; description: string; assetType: string; vertical: string; autonomyLevel: string; euRiskLevel: string }) {
+function mapUseCaseToAssetDefaults(uc: {
+  name: string;
+  description: string;
+  assetType: string;
+  vertical: string;
+  autonomyLevel: string;
+  euRiskLevel: string;
+}) {
   const verticalMap: Record<string, string> = {
     MANUFACTURING: "GENERAL",
     FINANCIAL: "FINANCIAL",
@@ -60,7 +74,9 @@ function mapUseCaseToAssetDefaults(uc: { name: string; description: string; asse
     L4: "AUTONOMOUS",
     L5: "AUTONOMOUS"
   };
-  const assetType = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"].includes(uc.assetType) ? uc.assetType : "APPLICATION";
+  const assetType = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"].includes(uc.assetType)
+    ? uc.assetType
+    : "APPLICATION";
   return {
     name: uc.name,
     description: uc.description,
@@ -96,16 +112,17 @@ export default async function NewAssetPage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer3-application/assets" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer3-application/assets" className="text-navy-400 text-sm hover:underline">
           ← Asset Inventory
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">New Asset</h1>
-        <p className="mt-1 text-slatePro-300">
+        <p className="text-slatePro-300 mt-1">
           Create an AI asset with EU risk classification and accountability.
         </p>
         {defaults && (
-          <p className="mt-2 rounded border border-navy-500/30 bg-navy-500/10 px-3 py-2 text-sm text-navy-300">
-            Pre-filled from {useCase ? "Use Case Library" : "Regulation Discovery"}. Review and adjust as needed.
+          <p className="border-navy-500/30 bg-navy-500/10 text-navy-300 mt-2 rounded border px-3 py-2 text-sm">
+            Pre-filled from {useCase ? "Use Case Library" : "Regulation Discovery"}. Review and
+            adjust as needed.
           </p>
         )}
       </div>

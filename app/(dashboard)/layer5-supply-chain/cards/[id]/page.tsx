@@ -26,12 +26,12 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer5-supply-chain/cards" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer5-supply-chain/cards" className="text-navy-400 text-sm hover:underline">
           ← Card Library
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">{card.asset.name}</h1>
         <div className="mt-1 flex items-center gap-2">
-          <span className="text-sm text-slatePro-400">{card.cardType}</span>
+          <span className="text-slatePro-400 text-sm">{card.cardType}</span>
           <CardSyncStatus status={card.syncStatus} lastSyncedAt={card.lastSyncedAt} />
           <EUCoverageBadge coverage={coverage} />
         </div>
@@ -39,15 +39,21 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
 
       <section>
         <h2 className="mb-2 text-lg font-medium">EU AI Act Coverage</h2>
-        <div className="space-y-1 rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-3">
+        <div className="border-slatePro-700 bg-slatePro-900/30 space-y-1 rounded-lg border p-3">
           {coverage.map((r) => (
             <div
               key={`${r.article}-${r.field}`}
               className={`flex items-center justify-between rounded px-2 py-1 ${
-                r.covered ? "bg-emerald-500/10 text-emerald-300" : r.required ? "bg-red-500/10 text-red-300" : "bg-slatePro-800/50 text-slatePro-400"
+                r.covered
+                  ? "bg-emerald-500/10 text-emerald-300"
+                  : r.required
+                    ? "bg-red-500/10 text-red-300"
+                    : "bg-slatePro-800/50 text-slatePro-400"
               }`}
             >
-              <span>{r.article} – {r.title}</span>
+              <span>
+                {r.article} – {r.title}
+              </span>
               <span>{r.covered ? "✓" : r.required ? "✗" : "—"}</span>
             </div>
           ))}
@@ -57,7 +63,7 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
       {normalized && (
         <section>
           <h2 className="mb-2 text-lg font-medium">Normalized Card</h2>
-          <div className="space-y-3 rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
+          <div className="border-slatePro-700 bg-slatePro-900/30 space-y-3 rounded-lg border p-4">
             <Field label="Model" value={normalized.modelName ?? ""} />
             <Field label="Version" value={normalized.version ?? ""} />
             <Field label="Organization" value={normalized.organization ?? ""} />
@@ -71,7 +77,10 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
               <Field label="Limitations" value={(normalized.limitations ?? []).join(", ")} />
             )}
             {(normalized.knownVulnerabilities?.length ?? 0) > 0 && (
-              <Field label="Known Vulnerabilities" value={(normalized.knownVulnerabilities ?? []).join(", ")} />
+              <Field
+                label="Known Vulnerabilities"
+                value={(normalized.knownVulnerabilities ?? []).join(", ")}
+              />
             )}
             <Field label="Contact" value={normalized.contactInfo ?? ""} />
             <Field label="Last Updated" value={normalized.lastUpdated ?? ""} />
@@ -81,7 +90,7 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
 
       <section>
         <h2 className="mb-2 text-lg font-medium">Version History</h2>
-        <p className="rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4 text-sm text-slatePro-400">
+        <p className="border-slatePro-700 bg-slatePro-900/30 text-slatePro-400 rounded-lg border p-4 text-sm">
           Version history and diff view coming soon.
         </p>
       </section>
@@ -93,8 +102,8 @@ function Field({ label, value }: { label: string; value: string }) {
   if (!value?.trim()) return null;
   return (
     <div>
-      <div className="text-xs font-medium text-slatePro-500">{label}</div>
-      <div className="text-sm text-slatePro-200">{value}</div>
+      <div className="text-slatePro-500 text-xs font-medium">{label}</div>
+      <div className="text-slatePro-200 text-sm">{value}</div>
     </div>
   );
 }

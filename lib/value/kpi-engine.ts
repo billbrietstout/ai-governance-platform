@@ -45,10 +45,7 @@ export type PenaltyExposure = {
   highRiskAssetCount: number;
 };
 
-export async function calculateKPI(
-  kpi: KpiName,
-  context: KpiContext
-): Promise<number> {
+export async function calculateKPI(kpi: KpiName, context: KpiContext): Promise<number> {
   const { orgId, prisma } = context;
 
   switch (kpi) {
@@ -75,10 +72,7 @@ export async function calculateKPI(
         where: {
           orgId,
           deletedAt: null,
-          OR: [
-            { riskScore: { gte: 15 } },
-            { residualScore: { gte: 15 } }
-          ]
+          OR: [{ riskScore: { gte: 15 } }, { residualScore: { gte: 15 } }]
         }
       });
 
@@ -106,10 +100,7 @@ export async function calculateKPI(
       return prisma.artifactCard.count({
         where: {
           orgId,
-          OR: [
-            { lastSyncedAt: null },
-            { lastSyncedAt: { lt: thirtyDaysAgo } }
-          ]
+          OR: [{ lastSyncedAt: null }, { lastSyncedAt: { lt: thirtyDaysAgo } }]
         }
       });
     }
@@ -207,7 +198,8 @@ export async function calculateEUPenaltyExposure(
   ];
 
   for (const art of articles) {
-    const range = EU_PENALTY_RANGES[art.key as keyof typeof EU_PENALTY_RANGES] ?? EU_PENALTY_RANGES.DEFAULT;
+    const range =
+      EU_PENALTY_RANGES[art.key as keyof typeof EU_PENALTY_RANGES] ?? EU_PENALTY_RANGES.DEFAULT;
     const gapCount = highRiskAssets.length;
     const min = gapCount > 0 ? range.min : 0;
     const max = gapCount > 0 ? range.max : 0;

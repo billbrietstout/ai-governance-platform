@@ -7,7 +7,9 @@ export default function Layer3ApplicationPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Layer 3: Application</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+          Layer 3: Application
+        </h1>
         <p className="mt-1 text-gray-600">
           AI asset inventory, accountability matrix, and compliance assessments.
         </p>

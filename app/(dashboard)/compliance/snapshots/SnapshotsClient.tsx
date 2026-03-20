@@ -63,8 +63,20 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
   const tableRowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
   const [compareIds, setCompareIds] = useState<[string | null, string | null]>([null, null]);
   const [compareResult, setCompareResult] = useState<{
-    snapshot1: { id: string; createdAt: Date; overallScore: number; gapCount: number; assetCount: number };
-    snapshot2: { id: string; createdAt: Date; overallScore: number; gapCount: number; assetCount: number };
+    snapshot1: {
+      id: string;
+      createdAt: Date;
+      overallScore: number;
+      gapCount: number;
+      assetCount: number;
+    };
+    snapshot2: {
+      id: string;
+      createdAt: Date;
+      overallScore: number;
+      gapCount: number;
+      assetCount: number;
+    };
     overallDelta: number;
     gapCountDelta: number;
     assetCountDelta: number;
@@ -114,7 +126,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
           type="button"
           onClick={handleTakeSnapshot}
           disabled={taking}
-          className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           <Camera className="h-4 w-4" />
           {taking ? "Capturing…" : "Take Snapshot"}
@@ -132,7 +144,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
               type="button"
               onClick={handleTakeSnapshot}
               disabled={taking}
-              className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+              className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               <Camera className="h-4 w-4" />
               {taking ? "Capturing…" : "Take Snapshot"}
@@ -212,14 +224,26 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
           <div className="mt-4 rounded border border-slate-200 bg-slate-50 p-3">
             <div className="text-xs font-medium text-slate-500">Delta</div>
             <div className="mt-2 flex flex-wrap gap-4 text-sm">
-              <span className={compareResult.overallDelta >= 0 ? "text-emerald-600" : "text-red-600"}>
-                Score: {compareResult.overallDelta >= 0 ? "+" : ""}{compareResult.overallDelta}%
+              <span
+                className={compareResult.overallDelta >= 0 ? "text-emerald-600" : "text-red-600"}
+              >
+                Score: {compareResult.overallDelta >= 0 ? "+" : ""}
+                {compareResult.overallDelta}%
               </span>
-              <span className={compareResult.gapCountDelta <= 0 ? "text-emerald-600" : "text-red-600"}>
-                Gaps: {compareResult.gapCountDelta >= 0 ? "+" : ""}{compareResult.gapCountDelta}
+              <span
+                className={compareResult.gapCountDelta <= 0 ? "text-emerald-600" : "text-red-600"}
+              >
+                Gaps: {compareResult.gapCountDelta >= 0 ? "+" : ""}
+                {compareResult.gapCountDelta}
               </span>
-              <span>Assets: {compareResult.assetCountDelta >= 0 ? "+" : ""}{compareResult.assetCountDelta}</span>
-              <span>Evidence: {compareResult.evidenceCompletenessDelta >= 0 ? "+" : ""}{compareResult.evidenceCompletenessDelta.toFixed(1)}%</span>
+              <span>
+                Assets: {compareResult.assetCountDelta >= 0 ? "+" : ""}
+                {compareResult.assetCountDelta}
+              </span>
+              <span>
+                Evidence: {compareResult.evidenceCompletenessDelta >= 0 ? "+" : ""}
+                {compareResult.evidenceCompletenessDelta.toFixed(1)}%
+              </span>
             </div>
             <div className="mt-3 grid grid-cols-5 gap-2 text-xs">
               {compareResult.layerDiff.map((d) => (
@@ -228,7 +252,9 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
                   <div className="text-slate-600">
                     {d.score1} → {d.score2}
                     <span className={d.delta >= 0 ? "text-emerald-600" : "text-red-600"}>
-                      {" "}({d.delta >= 0 ? "+" : ""}{d.delta})
+                      {" "}
+                      ({d.delta >= 0 ? "+" : ""}
+                      {d.delta})
                     </span>
                   </div>
                 </div>
@@ -243,15 +269,33 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
         <table className="min-w-full divide-y divide-slate-200">
           <thead>
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Date</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Type</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Framework</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Score</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Layer scores</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Gaps</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Evidence %</th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase text-slate-500">Created by</th>
-              <th className="px-4 py-3 text-right text-xs font-medium uppercase text-slate-500">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Date
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Type
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Framework
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Score
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Layer scores
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Gaps
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Evidence %
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">
+                Created by
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
@@ -267,7 +311,9 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
                   {new Date(s.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`rounded px-2 py-0.5 text-xs font-medium ${TYPE_BADGES[s.snapshotType] ?? "bg-gray-100 text-gray-700"}`}>
+                  <span
+                    className={`rounded px-2 py-0.5 text-xs font-medium ${TYPE_BADGES[s.snapshotType] ?? "bg-gray-100 text-gray-700"}`}
+                  >
                     {s.snapshotType}
                   </span>
                 </td>
@@ -282,7 +328,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
                 <td className="px-4 py-3 text-right">
                   <Link
                     href={`/compliance/snapshots/${s.id}`}
-                    className="flex items-center gap-1 text-sm text-navy-600 hover:underline"
+                    className="text-navy-600 flex items-center gap-1 text-sm hover:underline"
                   >
                     <Eye className="h-4 w-4" />
                     View details

@@ -92,15 +92,13 @@ export default async function RegulationFeedPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-8 px-6 py-10">
       <div>
-        <Link href="/dashboard" className="text-sm text-navy-600 hover:underline">
+        <Link href="/dashboard" className="text-navy-600 text-sm hover:underline">
           ← Posture Overview
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           Regulation Watch
         </h1>
-        <p className="mt-1 text-slate-600">
-          Track regulatory changes that affect your AI systems.
-        </p>
+        <p className="mt-1 text-slate-600">Track regulatory changes that affect your AI systems.</p>
       </div>
 
       <RegulationFeedClient items={REGULATION_ITEMS} />

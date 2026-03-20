@@ -73,11 +73,41 @@ export function getNextSteps(layerScores: LayerScores, _vertical?: string): Next
   const steps: NextStep[] = [];
   const layers: MaturityLayer[] = ["L1", "L2", "L3", "L4", "L5"];
   const suggestions: Record<MaturityLayer, string[]> = {
-    L1: ["Document an AI governance policy", "Map regulations to your AI systems", "Assign executive ownership (CAIO)", "Create an AI incident response plan", "Define AI value and ROI KPIs"],
-    L2: ["Classify AI datasets", "Establish data lineage", "Implement MDM for AI data", "Deploy shadow AI discovery", "Assign data stewards"],
-    L3: ["Build an AI asset inventory", "Document accountability assignments", "Run compliance gap analysis", "Define AI asset lifecycle", "Add agentic AI controls"],
-    L4: ["Enable scan coverage for AI assets", "Implement drift detection", "Configure anomaly alerts", "Integrate MLOps with governance", "Enforce guardrails"],
-    L5: ["Assess vendor assurance", "Maintain model cards", "Track provenance", "Apply vulnerability management", "Assess supply chain risk"]
+    L1: [
+      "Document an AI governance policy",
+      "Map regulations to your AI systems",
+      "Assign executive ownership (CAIO)",
+      "Create an AI incident response plan",
+      "Define AI value and ROI KPIs"
+    ],
+    L2: [
+      "Classify AI datasets",
+      "Establish data lineage",
+      "Implement MDM for AI data",
+      "Deploy shadow AI discovery",
+      "Assign data stewards"
+    ],
+    L3: [
+      "Build an AI asset inventory",
+      "Document accountability assignments",
+      "Run compliance gap analysis",
+      "Define AI asset lifecycle",
+      "Add agentic AI controls"
+    ],
+    L4: [
+      "Enable scan coverage for AI assets",
+      "Implement drift detection",
+      "Configure anomaly alerts",
+      "Integrate MLOps with governance",
+      "Enforce guardrails"
+    ],
+    L5: [
+      "Assess vendor assurance",
+      "Maintain model cards",
+      "Track provenance",
+      "Apply vulnerability management",
+      "Assess supply chain risk"
+    ]
   };
 
   for (const layer of layers) {

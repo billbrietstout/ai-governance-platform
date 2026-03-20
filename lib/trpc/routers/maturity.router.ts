@@ -130,8 +130,13 @@ export const maturityRouter = createTRPCRouter({
     const nextLevel = Math.min(maturityLevel + 1, 5);
     const progressToNext =
       scores?.overall != null && nextLevel > maturityLevel
-        ? Math.min(100, Math.max(0, ((scores.overall - maturityLevel) / (nextLevel - maturityLevel)) * 100))
-        : maturityLevel >= 5 ? 100 : 0;
+        ? Math.min(
+            100,
+            Math.max(0, ((scores.overall - maturityLevel) / (nextLevel - maturityLevel)) * 100)
+          )
+        : maturityLevel >= 5
+          ? 100
+          : 0;
 
     const nextSteps = scores
       ? getNextSteps(

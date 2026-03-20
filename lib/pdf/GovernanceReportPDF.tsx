@@ -231,16 +231,12 @@ export function GovernanceReportPDF({
             );
           })}
         </View>
-        <Text style={{ marginTop: 16, fontWeight: "bold" }}>
-          What {nextLevelLabel} requires
-        </Text>
+        <Text style={{ marginTop: 16, fontWeight: "bold" }}>What {nextLevelLabel} requires</Text>
         <Text style={{ marginTop: 4, fontSize: 9, color: "#64748b" }}>
           {nextLevel === 2 &&
             "Documented policies, data inventory, and accountability assignments."}
-          {nextLevel === 3 &&
-            "Implemented controls, model cards, and evidence collection."}
-          {nextLevel === 4 &&
-            "Measured metrics, drift detection, and continuous monitoring."}
+          {nextLevel === 3 && "Implemented controls, model cards, and evidence collection."}
+          {nextLevel === 4 && "Measured metrics, drift detection, and continuous monitoring."}
           {nextLevel === 5 &&
             "Optimised processes, automated compliance, and continuous improvement."}
         </Text>
@@ -306,13 +302,32 @@ export function GovernanceReportPDF({
       <Page size="A4" style={styles.page}>
         <Text style={styles.sectionTitle}>Recommended Next Steps</Text>
         <Text style={{ marginBottom: 12 }}>Top 5 priority actions (effort / impact)</Text>
-        {(nextSteps.length > 0 ? nextSteps.slice(0, 5) : [
-          { action: "Complete data classification for AI assets", effort: "Medium", impact: "High" },
-          { action: "Document accountability matrix for high-risk systems", effort: "Low", impact: "High" },
-          { action: "Implement drift detection for production models", effort: "High", impact: "Medium" },
-          { action: "Collect vendor assurance documentation", effort: "Medium", impact: "Medium" },
-          { action: "Schedule recurring compliance snapshots", effort: "Low", impact: "Medium" }
-        ]).map((s, i) => (
+        {(nextSteps.length > 0
+          ? nextSteps.slice(0, 5)
+          : [
+              {
+                action: "Complete data classification for AI assets",
+                effort: "Medium",
+                impact: "High"
+              },
+              {
+                action: "Document accountability matrix for high-risk systems",
+                effort: "Low",
+                impact: "High"
+              },
+              {
+                action: "Implement drift detection for production models",
+                effort: "High",
+                impact: "Medium"
+              },
+              {
+                action: "Collect vendor assurance documentation",
+                effort: "Medium",
+                impact: "Medium"
+              },
+              { action: "Schedule recurring compliance snapshots", effort: "Low", impact: "Medium" }
+            ]
+        ).map((s, i) => (
           <View key={i} style={styles.listItem}>
             <Text>
               {s.action} — {s.effort} effort / {s.impact} impact

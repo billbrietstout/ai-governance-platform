@@ -22,15 +22,17 @@ export function AccountabilityFilters() {
   }
 
   return (
-    <div className="flex gap-4 rounded-lg border border-slatePro-700 bg-slatePro-900/30 p-4">
+    <div className="border-slatePro-700 bg-slatePro-900/30 flex gap-4 rounded-lg border p-4">
       <select
         value={params.get("layer") ?? ""}
         onChange={(e) => setLayer(e.target.value)}
-        className="rounded border border-slatePro-600 bg-slatePro-900 px-2 py-1 text-sm text-slatePro-200"
+        className="border-slatePro-600 bg-slatePro-900 text-slatePro-200 rounded border px-2 py-1 text-sm"
       >
         <option value="">All layers</option>
         {LAYERS.map((l) => (
-          <option key={l} value={l}>{l.replace("LAYER_", "L")}</option>
+          <option key={l} value={l}>
+            {l.replace("LAYER_", "L")}
+          </option>
         ))}
       </select>
     </div>

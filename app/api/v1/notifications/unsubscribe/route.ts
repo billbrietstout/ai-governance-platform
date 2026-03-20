@@ -10,25 +10,23 @@ export async function GET(req: NextRequest) {
   if (token) {
     const user = await prisma.user.findUnique({
       where: { unsubscribeToken: token },
-      select: { id: true, email: true, unsubscribedAt: true },
+      select: { id: true, email: true, unsubscribedAt: true }
     });
 
     if (!user) {
-      return NextResponse.redirect(
-        new URL("/unsubscribe?error=invalid_token", req.nextUrl.origin)
-      );
+      return NextResponse.redirect(new URL("/unsubscribe?error=invalid_token", req.nextUrl.origin));
     }
 
     if (!user.unsubscribedAt) {
       await prisma.$transaction([
         prisma.notificationPreference.updateMany({
           where: { userId: user.id },
-          data: { emailEnabled: false },
+          data: { emailEnabled: false }
         }),
         prisma.user.update({
           where: { id: user.id },
-          data: { unsubscribedAt: new Date() },
-        }),
+          data: { unsubscribedAt: new Date() }
+        })
       ]);
     }
 
@@ -44,7 +42,7 @@ export async function GET(req: NextRequest) {
   if (email) {
     const user = await prisma.user.findFirst({
       where: { email },
-      select: { id: true, unsubscribeToken: true },
+      select: { id: true, unsubscribeToken: true }
     });
 
     if (user) {
@@ -54,15 +52,12 @@ export async function GET(req: NextRequest) {
         token = crypto.randomBytes(32).toString("hex");
         await prisma.user.update({
           where: { id: user.id },
-          data: { unsubscribeToken: token },
+          data: { unsubscribeToken: token }
         });
       }
       // Redirect to token-based flow
       return NextResponse.redirect(
-        new URL(
-          `/api/v1/notifications/unsubscribe?token=${token}`,
-          req.nextUrl.origin
-        )
+        new URL(`/api/v1/notifications/unsubscribe?token=${token}`, req.nextUrl.origin)
       );
     }
   }
@@ -80,7 +75,7 @@ export async function POST(req: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { unsubscribeToken: token },
-    select: { id: true, email: true },
+    select: { id: true, email: true }
   });
 
   if (!user) {
@@ -90,12 +85,12 @@ export async function POST(req: NextRequest) {
   await prisma.$transaction([
     prisma.notificationPreference.updateMany({
       where: { userId: user.id },
-      data: { emailEnabled: true },
+      data: { emailEnabled: true }
     }),
     prisma.user.update({
       where: { id: user.id },
-      data: { unsubscribedAt: null },
-    }),
+      data: { unsubscribedAt: null }
+    })
   ]);
 
   return NextResponse.json({ success: true, email: user.email });

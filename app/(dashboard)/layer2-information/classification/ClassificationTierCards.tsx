@@ -31,10 +31,7 @@ export function ClassificationTierCards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {TIERS.map((t) => (
-        <div
-          key={t.level}
-          className={`rounded-lg border-l-4 p-4 ${t.color}`}
-        >
+        <div key={t.level} className={`rounded-lg border-l-4 p-4 ${t.color}`}>
           <div className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-slate-600" />
             <h3 className="font-semibold text-slate-900">{t.title}</h3>

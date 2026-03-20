@@ -22,7 +22,7 @@ export function getCachedKPIs(orgId: string) {
         withoutAccountability,
         staleCards,
         failedScans,
-        vendorsExpiring,
+        vendorsExpiring
       ] = await Promise.all([
         calculateKPI("TOTAL_AI_ASSETS", context),
         calculateKPI("COMPLIANCE_SCORE", context),
@@ -31,7 +31,7 @@ export function getCachedKPIs(orgId: string) {
         calculateKPI("ASSETS_WITHOUT_ACCOUNTABILITY", context),
         calculateKPI("STALE_CARDS", context),
         calculateKPI("FAILED_SCAN_POLICIES", context),
-        calculateKPI("VENDORS_EXPIRING", context),
+        calculateKPI("VENDORS_EXPIRING", context)
       ]);
       return {
         data: {
@@ -42,7 +42,7 @@ export function getCachedKPIs(orgId: string) {
           withoutAccountability,
           staleCards,
           failedScans,
-          vendorsExpiring,
+          vendorsExpiring
         }
       };
     },
@@ -58,7 +58,7 @@ const COSAI_LAYERS = [
   "LAYER_2_INFORMATION",
   "LAYER_3_APPLICATION",
   "LAYER_4_PLATFORM",
-  "LAYER_5_SUPPLY_CHAIN",
+  "LAYER_5_SUPPLY_CHAIN"
 ] as const;
 
 export function getCachedLayerPosture(orgId: string) {
@@ -92,14 +92,17 @@ export function getCachedRiskMatrix(orgId: string) {
     async () => {
       const risks = await prisma.riskRegister.findMany({
         where: { orgId, deletedAt: null },
-        select: { likelihood: true, impact: true, riskScore: true, id: true, title: true },
+        select: { likelihood: true, impact: true, riskScore: true, id: true, title: true }
       });
       const matrix: Record<string, { count: number; risks: { id: string; title: string }[] }> = {};
       for (let l = 1; l <= 5; l++) {
         for (let i = 1; i <= 5; i++) {
           const key = `${l}-${i}`;
           const cell = risks.filter((r) => (r.likelihood ?? 0) === l && (r.impact ?? 0) === i);
-          matrix[key] = { count: cell.length, risks: cell.map((r) => ({ id: r.id, title: r.title })) };
+          matrix[key] = {
+            count: cell.length,
+            risks: cell.map((r) => ({ id: r.id, title: r.title }))
+          };
         }
       }
       return { data: matrix, meta: {} };
@@ -120,22 +123,25 @@ export function getCachedMaturity(orgId: string) {
         select: {
           maturityLevel: true,
           scores: true,
-          createdAt: true,
-        },
+          createdAt: true
+        }
       });
 
       // Derive next steps from scores — mirrors tRPC router logic
       const scores = (latest?.scores ?? {}) as Record<string, number>;
       const LAYER_NAMES: Record<string, string> = {
-        L1: "LAYER_1_BUSINESS", L2: "LAYER_2_INFORMATION",
-        L3: "LAYER_3_APPLICATION", L4: "LAYER_4_PLATFORM", L5: "LAYER_5_SUPPLY_CHAIN",
+        L1: "LAYER_1_BUSINESS",
+        L2: "LAYER_2_INFORMATION",
+        L3: "LAYER_3_APPLICATION",
+        L4: "LAYER_4_PLATFORM",
+        L5: "LAYER_5_SUPPLY_CHAIN"
       };
       const LAYER_ACTIONS: Record<string, string> = {
         L1: "Define AI governance policies and accountability owners",
         L2: "Classify data assets and implement privacy controls",
         L3: "Implement application-level guardrails and safety controls",
         L4: "Secure platform infrastructure and API gateways",
-        L5: "Validate model supply chain and vendor evidence",
+        L5: "Validate model supply chain and vendor evidence"
       };
       const nextSteps = Object.entries(scores)
         .filter(([key]) => key !== "overall")
@@ -144,7 +150,7 @@ export function getCachedMaturity(orgId: string) {
         .map(([key, score]) => ({
           layer: LAYER_NAMES[key] ?? key,
           action: LAYER_ACTIONS[key] ?? `Improve ${key} maturity`,
-          priority: (score as number) <= 2 ? "HIGH" : "MEDIUM",
+          priority: (score as number) <= 2 ? "HIGH" : "MEDIUM"
         }));
 
       return {
@@ -152,7 +158,7 @@ export function getCachedMaturity(orgId: string) {
           maturityLevel: latest?.maturityLevel ?? 1,
           scores: latest?.scores ?? {},
           nextSteps,
-          lastAssessedAt: latest?.createdAt ?? null,
+          lastAssessedAt: latest?.createdAt ?? null
         }
       };
     },
@@ -174,16 +180,39 @@ export function getCachedSankey(orgId: string) {
         assetsWithScans,
         l4VendorCount,
         l5VendorCount,
-        risksByLayer,
+        risksByLayer
       ] = await Promise.all([
         prisma.dataGovernancePolicy.count({ where: { orgId } }),
-        prisma.dataLineageRecord.count({ where: { orgId, sourceEntityId: { not: null }, targetAssetId: { not: null } } }),
+        prisma.dataLineageRecord.count({
+          where: { orgId, sourceEntityId: { not: null }, targetAssetId: { not: null } }
+        }),
         prisma.masterDataEntity.count({ where: { orgId } }),
         prisma.aIAsset.count({ where: { orgId, deletedAt: null } }),
         prisma.scanRecord.groupBy({ by: ["assetId"], where: { orgId } }),
-        prisma.vendorAssurance.count({ where: { orgId, OR: [{ vendorType: "INFRASTRUCTURE" }, { vendorType: "TOOLING" }, { cosaiLayer: "LAYER_4_PLATFORM" }] } }),
-        prisma.vendorAssurance.count({ where: { orgId, OR: [{ vendorType: "MODEL_PROVIDER" }, { vendorType: "DATA_PROVIDER" }, { cosaiLayer: "LAYER_5_SUPPLY_CHAIN" }] } }),
-        prisma.riskRegister.findMany({ where: { orgId, deletedAt: null, cosaiLayer: { not: null } }, select: { cosaiLayer: true } }),
+        prisma.vendorAssurance.count({
+          where: {
+            orgId,
+            OR: [
+              { vendorType: "INFRASTRUCTURE" },
+              { vendorType: "TOOLING" },
+              { cosaiLayer: "LAYER_4_PLATFORM" }
+            ]
+          }
+        }),
+        prisma.vendorAssurance.count({
+          where: {
+            orgId,
+            OR: [
+              { vendorType: "MODEL_PROVIDER" },
+              { vendorType: "DATA_PROVIDER" },
+              { cosaiLayer: "LAYER_5_SUPPLY_CHAIN" }
+            ]
+          }
+        }),
+        prisma.riskRegister.findMany({
+          where: { orgId, deletedAt: null, cosaiLayer: { not: null } },
+          select: { cosaiLayer: true }
+        })
       ]);
 
       const assetsWithPlatformDeps = assetsWithScans.length;
@@ -194,28 +223,47 @@ export function getCachedSankey(orgId: string) {
       }
 
       const LAYER_COLORS: Record<string, string> = {
-        LAYER_1_BUSINESS: "#1D9E75", LAYER_2_INFORMATION: "#534AB7",
-        LAYER_3_APPLICATION: "#D85A30", LAYER_4_PLATFORM: "#185FA5", LAYER_5_SUPPLY_CHAIN: "#5F5E5A",
+        LAYER_1_BUSINESS: "#1D9E75",
+        LAYER_2_INFORMATION: "#534AB7",
+        LAYER_3_APPLICATION: "#D85A30",
+        LAYER_4_PLATFORM: "#185FA5",
+        LAYER_5_SUPPLY_CHAIN: "#5F5E5A"
       };
       const LAYER_LABELS: Record<string, string> = {
-        LAYER_1_BUSINESS: "Business", LAYER_2_INFORMATION: "Information",
-        LAYER_3_APPLICATION: "Application", LAYER_4_PLATFORM: "Platform", LAYER_5_SUPPLY_CHAIN: "Supply Chain",
+        LAYER_1_BUSINESS: "Business",
+        LAYER_2_INFORMATION: "Information",
+        LAYER_3_APPLICATION: "Application",
+        LAYER_4_PLATFORM: "Platform",
+        LAYER_5_SUPPLY_CHAIN: "Supply Chain"
       };
-      const layerOrder = ["LAYER_1_BUSINESS","LAYER_2_INFORMATION","LAYER_3_APPLICATION","LAYER_4_PLATFORM","LAYER_5_SUPPLY_CHAIN"];
+      const layerOrder = [
+        "LAYER_1_BUSINESS",
+        "LAYER_2_INFORMATION",
+        "LAYER_3_APPLICATION",
+        "LAYER_4_PLATFORM",
+        "LAYER_5_SUPPLY_CHAIN"
+      ];
       const assetCounts = [
-        Math.max(1, governancePolicyCount), Math.max(1, masterDataCount),
-        Math.max(1, assetCount), Math.max(1, l4VendorCount), Math.max(1, l5VendorCount),
+        Math.max(1, governancePolicyCount),
+        Math.max(1, masterDataCount),
+        Math.max(1, assetCount),
+        Math.max(1, l4VendorCount),
+        Math.max(1, l5VendorCount)
       ];
 
       const nodes = layerOrder.map((layer, i) => ({
-        id: `L${i + 1}`, label: LAYER_LABELS[layer], assetCount: assetCounts[i],
-        complianceScore: 75, riskCount: riskCountByLayer[layer] ?? 0, color: LAYER_COLORS[layer],
+        id: `L${i + 1}`,
+        label: LAYER_LABELS[layer],
+        assetCount: assetCounts[i],
+        complianceScore: 75,
+        riskCount: riskCountByLayer[layer] ?? 0,
+        color: LAYER_COLORS[layer]
       }));
       const links = [
         { source: "L1", target: "L2", value: Math.max(5, governancePolicyCount) },
         { source: "L2", target: "L3", value: Math.max(5, lineageCount) },
         { source: "L3", target: "L4", value: Math.max(5, assetsWithPlatformDeps) },
-        { source: "L4", target: "L5", value: Math.max(5, l5VendorCount) },
+        { source: "L4", target: "L5", value: Math.max(5, l5VendorCount) }
       ];
 
       return { data: { nodes, links }, meta: {} };

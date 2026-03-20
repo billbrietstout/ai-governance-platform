@@ -29,11 +29,11 @@ export default async function NewAssessmentPage({
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/assessments" className="text-sm text-navy-400 hover:underline">
+        <Link href="/assessments" className="text-navy-400 text-sm hover:underline">
           ← Assessments
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">New Assessment</h1>
-        <p className="mt-1 text-slatePro-300">Create a compliance assessment for an asset.</p>
+        <p className="text-slatePro-300 mt-1">Create a compliance assessment for an asset.</p>
       </div>
 
       <AssessmentWizard

@@ -17,9 +17,25 @@ export default async function MasterDataPage({
   const caller = await createServerCaller();
   const [{ data }, { data: users }] = await Promise.all([
     caller.layer2.getMasterDataEntities({
-      entityType: params.type && params.type !== "ALL" ? (params.type as "CUSTOMER" | "PRODUCT" | "VENDOR" | "EMPLOYEE" | "FINANCE" | "LOCATION" | "OTHER") : undefined,
-      classification: params.classification && params.classification !== "ALL" ? (params.classification as "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED") : undefined,
-      aiAccessPolicy: params.aiAccess && params.aiAccess !== "ALL" ? (params.aiAccess as "OPEN" | "GOVERNED" | "RESTRICTED" | "PROHIBITED") : undefined
+      entityType:
+        params.type && params.type !== "ALL"
+          ? (params.type as
+              | "CUSTOMER"
+              | "PRODUCT"
+              | "VENDOR"
+              | "EMPLOYEE"
+              | "FINANCE"
+              | "LOCATION"
+              | "OTHER")
+          : undefined,
+      classification:
+        params.classification && params.classification !== "ALL"
+          ? (params.classification as "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED")
+          : undefined,
+      aiAccessPolicy:
+        params.aiAccess && params.aiAccess !== "ALL"
+          ? (params.aiAccess as "OPEN" | "GOVERNED" | "RESTRICTED" | "PROHIBITED")
+          : undefined
     }),
     caller.assets.getOrgUsers()
   ]);
@@ -28,14 +44,16 @@ export default async function MasterDataPage({
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Master Data Registry</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Master Data Registry
+          </h1>
           <p className="mt-1 text-slate-600">
             Master data entities with classification, stewardship, and AI access policies.
           </p>
         </div>
         <Link
           href="/layer2-information/master-data/new"
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
         >
           Add Entity
         </Link>

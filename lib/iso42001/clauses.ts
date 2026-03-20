@@ -19,9 +19,17 @@ export const ISO_42001_CLAUSES: ClauseGroup[] = [
   {
     title: "Clause 5: Leadership",
     clauses: [
-      { id: "5.1", label: "Leadership and commitment", evidenceLink: "/layer3-application/accountability" },
+      {
+        id: "5.1",
+        label: "Leadership and commitment",
+        evidenceLink: "/layer3-application/accountability"
+      },
       { id: "5.2", label: "AI policy", evidenceLink: "/compliance/snapshots" },
-      { id: "5.3", label: "Roles and responsibilities", evidenceLink: "/layer3-application/accountability" }
+      {
+        id: "5.3",
+        label: "Roles and responsibilities",
+        evidenceLink: "/layer3-application/accountability"
+      }
     ]
   },
   {
@@ -53,7 +61,11 @@ export const ISO_42001_CLAUSES: ClauseGroup[] = [
   {
     title: "Clause 9: Performance evaluation",
     clauses: [
-      { id: "9.1", label: "Monitoring and measurement", evidenceLink: "/layer4-platform/telemetry" },
+      {
+        id: "9.1",
+        label: "Monitoring and measurement",
+        evidenceLink: "/layer4-platform/telemetry"
+      },
       { id: "9.2", label: "Internal audit", evidenceLink: "/audit" },
       { id: "9.3", label: "Management review", evidenceLink: "/reports/executive-summary" }
     ]
@@ -61,7 +73,11 @@ export const ISO_42001_CLAUSES: ClauseGroup[] = [
   {
     title: "Clause 10: Improvement",
     clauses: [
-      { id: "10.1", label: "Nonconformity and corrective action", evidenceLink: "/layer3-application/gaps" },
+      {
+        id: "10.1",
+        label: "Nonconformity and corrective action",
+        evidenceLink: "/layer3-application/gaps"
+      },
       { id: "10.2", label: "Continual improvement", evidenceLink: "/maturity" }
     ]
   },

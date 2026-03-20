@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  MATURITY_QUESTIONS,
-  LAYER_LABELS,
-  MATURITY_LEVEL_LABELS
-} from "@/lib/maturity/questions";
+import { MATURITY_QUESTIONS, LAYER_LABELS, MATURITY_LEVEL_LABELS } from "@/lib/maturity/questions";
 import { QUICK_MATURITY_QUESTION_IDS } from "@/lib/onboarding/steps";
 import { scoreAssessment, getMaturityLevel } from "@/lib/maturity/scoring";
 import { saveStep5 } from "./actions";
@@ -64,18 +60,15 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
   if (submitted && resultLevel !== null) {
     return (
       <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-6 text-center">
-        <h3 className="text-lg font-semibold text-emerald-800">
-          You&apos;re ready to start
-        </h3>
+        <h3 className="text-lg font-semibold text-emerald-800">You&apos;re ready to start</h3>
         <p className="mt-2 text-emerald-700">
           Your baseline readiness score is{" "}
-          <span className="font-bold">{MATURITY_LEVEL_LABELS[resultLevel]}</span>
-          .
+          <span className="font-bold">{MATURITY_LEVEL_LABELS[resultLevel]}</span>.
         </p>
         <button
           type="button"
           onClick={() => onComplete()}
-          className="mt-4 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 mt-4 rounded px-4 py-2 text-sm font-medium text-white"
         >
           Go to Posture Overview
         </button>
@@ -91,12 +84,9 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
 
       <div className="space-y-6">
         {QUESTIONS.map((q) => (
-          <div
-            key={q.id}
-            className="rounded-lg border border-slate-200 bg-slate-50 p-4"
-          >
+          <div key={q.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
             <div className="mb-2 flex items-center gap-2">
-              <span className="rounded bg-navy-100 px-2 py-0.5 text-xs font-medium text-navy-700">
+              <span className="bg-navy-100 text-navy-700 rounded px-2 py-0.5 text-xs font-medium">
                 {LAYER_LABELS[q.layer]}
               </span>
             </div>
@@ -111,7 +101,7 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
                     key={index}
                     className={`flex cursor-pointer items-start gap-3 rounded border px-3 py-2.5 transition ${
                       isSelected
-                        ? "border-navy-500 bg-navy-50 ring-1 ring-navy-500"
+                        ? "border-navy-500 bg-navy-50 ring-navy-500 ring-1"
                         : "border-slate-200 bg-white hover:border-slate-300"
                     }`}
                   >
@@ -121,7 +111,7 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
                       value={score}
                       checked={isSelected}
                       onChange={() => setAnswer(q.id, score)}
-                      className="mt-1 h-4 w-4 shrink-0 border-slate-300 text-navy-600 focus:ring-navy-500"
+                      className="text-navy-600 focus:ring-navy-500 mt-1 h-4 w-4 shrink-0 border-slate-300"
                     />
                     <span className="text-sm text-slate-800">{optionText}</span>
                   </label>
@@ -138,7 +128,7 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
         <button
           type="submit"
           disabled={!allAnswered || isPending}
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {isPending ? "Saving…" : "Complete & go to Posture Overview"}
         </button>

@@ -16,7 +16,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   "shadow-ai": "Shadow AI Detection",
   "layer3-application": "Layer 3: Application",
   assets: "Assets",
-  "new": "New Asset",
+  new: "New Asset",
   gaps: "Gaps",
   accountability: "Accountability",
   "layer4-platform": "Layer 4: Platform",
@@ -73,7 +73,7 @@ export function Breadcrumbs() {
   if (segments.length === 0 || (segments.length === 1 && segments[0] === "dashboard")) {
     return (
       <nav aria-label="Breadcrumb" className="text-sm text-gray-500">
-        <span className="text-gray-900 font-medium">Posture Overview</span>
+        <span className="font-medium text-gray-900">Posture Overview</span>
       </nav>
     );
   }
@@ -100,9 +100,11 @@ export function Breadcrumbs() {
         </li>
         {crumbs.map((crumb, i) => (
           <li key={crumb.href} className="flex items-center gap-1">
-            <span aria-hidden className="text-gray-400">/</span>
+            <span aria-hidden className="text-gray-400">
+              /
+            </span>
             {i === crumbs.length - 1 ? (
-              <span className="text-gray-900 font-medium">{crumb.label}</span>
+              <span className="font-medium text-gray-900">{crumb.label}</span>
             ) : (
               <Link href={crumb.href} className="text-navy-600 hover:text-navy-700 hover:underline">
                 {crumb.label}

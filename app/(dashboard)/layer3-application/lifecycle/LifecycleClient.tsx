@@ -5,7 +5,14 @@ import Link from "next/link";
 import { ArrowUp, ArrowDown, AlertTriangle, ChevronRight, History } from "lucide-react";
 import { promoteLifecycleStage, demoteLifecycleStage } from "./actions";
 
-const STAGES = ["DEVELOPMENT", "TESTING", "STAGING", "PRODUCTION", "DEPRECATED", "RETIRED"] as const;
+const STAGES = [
+  "DEVELOPMENT",
+  "TESTING",
+  "STAGING",
+  "PRODUCTION",
+  "DEPRECATED",
+  "RETIRED"
+] as const;
 
 const STAGE_COLORS: Record<string, string> = {
   DEVELOPMENT: "border-slate-200 bg-slate-50",
@@ -31,7 +38,13 @@ type Asset = {
   lifecycleStage: string;
   lifecycleUpdatedAt: Date | null;
   owner: { id: string; email: string } | null;
-  lifecycleTransitions: { fromStage: string; toStage: string; direction: string; createdAt: Date; notes: string | null }[];
+  lifecycleTransitions: {
+    fromStage: string;
+    toStage: string;
+    direction: string;
+    createdAt: Date;
+    notes: string | null;
+  }[];
 };
 
 type Board = {
@@ -50,8 +63,12 @@ function daysInStage(updatedAt: Date | null, stage: string): number {
 export function LifecycleClient({ board }: Props) {
   const [promoting, setPromoting] = useState<string | null>(null);
   const [demoting, setDemoting] = useState<string | null>(null);
-  const [confirmPromote, setConfirmPromote] = useState<{ asset: Asset; nextStage: string } | null>(null);
-  const [confirmDemote, setConfirmDemote] = useState<{ asset: Asset; prevStage: string } | null>(null);
+  const [confirmPromote, setConfirmPromote] = useState<{ asset: Asset; nextStage: string } | null>(
+    null
+  );
+  const [confirmDemote, setConfirmDemote] = useState<{ asset: Asset; prevStage: string } | null>(
+    null
+  );
   const [notes, setNotes] = useState("");
   const [historyAsset, setHistoryAsset] = useState<Asset | null>(null);
 
@@ -179,7 +196,9 @@ export function LifecycleClient({ board }: Props) {
                     <div className="mt-1 flex flex-wrap gap-1">
                       <span className="text-xs text-slate-500">{a.assetType}</span>
                       {a.euRiskLevel && (
-                        <span className={`rounded px-1.5 py-0.5 text-xs ${RISK_COLORS[a.euRiskLevel] ?? ""}`}>
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-xs ${RISK_COLORS[a.euRiskLevel] ?? ""}`}
+                        >
                           {a.euRiskLevel}
                         </span>
                       )}
@@ -193,7 +212,7 @@ export function LifecycleClient({ board }: Props) {
                           type="button"
                           onClick={() => setConfirmPromote({ asset: a, nextStage })}
                           disabled={!!promoting}
-                          className="flex items-center gap-0.5 rounded bg-navy-600 px-2 py-1 text-xs text-white hover:bg-navy-500 disabled:opacity-50"
+                          className="bg-navy-600 hover:bg-navy-500 flex items-center gap-0.5 rounded px-2 py-1 text-xs text-white disabled:opacity-50"
                         >
                           <ArrowUp className="h-3 w-3" />
                           Promote
@@ -236,17 +255,18 @@ export function LifecycleClient({ board }: Props) {
               {confirmPromote.asset.name} will move from {confirmPromote.asset.lifecycleStage} to{" "}
               {confirmPromote.nextStage}.
             </p>
-            {confirmPromote.asset.euRiskLevel === "HIGH" && confirmPromote.nextStage === "PRODUCTION" && (
-              <div className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-sm">
-                <p className="font-medium text-amber-800">HIGH risk checklist (required):</p>
-                <ul className="mt-1 list-inside list-disc text-amber-700">
-                  <li>Control attestation exists</li>
-                  <li>Accountability assigned</li>
-                  <li>Bias assessment completed (if applicable)</li>
-                  <li>Human oversight configured (if L3+ autonomy)</li>
-                </ul>
-              </div>
-            )}
+            {confirmPromote.asset.euRiskLevel === "HIGH" &&
+              confirmPromote.nextStage === "PRODUCTION" && (
+                <div className="mt-3 rounded border border-amber-200 bg-amber-50 p-3 text-sm">
+                  <p className="font-medium text-amber-800">HIGH risk checklist (required):</p>
+                  <ul className="mt-1 list-inside list-disc text-amber-700">
+                    <li>Control attestation exists</li>
+                    <li>Accountability assigned</li>
+                    <li>Bias assessment completed (if applicable)</li>
+                    <li>Human oversight configured (if L3+ autonomy)</li>
+                  </ul>
+                </div>
+              )}
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -257,7 +277,10 @@ export function LifecycleClient({ board }: Props) {
             <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
-                onClick={() => { setConfirmPromote(null); setNotes(""); }}
+                onClick={() => {
+                  setConfirmPromote(null);
+                  setNotes("");
+                }}
                 className="rounded border px-4 py-2 text-sm"
               >
                 Cancel
@@ -266,7 +289,7 @@ export function LifecycleClient({ board }: Props) {
                 type="button"
                 onClick={handlePromote}
                 disabled={promoting === confirmPromote.asset.id}
-                className="rounded bg-navy-600 px-4 py-2 text-sm text-white hover:bg-navy-500 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm text-white disabled:opacity-50"
               >
                 {promoting === confirmPromote.asset.id ? "Promoting…" : "Promote"}
               </button>
@@ -294,7 +317,10 @@ export function LifecycleClient({ board }: Props) {
             <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
-                onClick={() => { setConfirmDemote(null); setNotes(""); }}
+                onClick={() => {
+                  setConfirmDemote(null);
+                  setNotes("");
+                }}
                 className="rounded border px-4 py-2 text-sm"
               >
                 Cancel
@@ -317,8 +343,14 @@ export function LifecycleClient({ board }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="font-medium text-slate-900">Stage transitions — {historyAsset.name}</h3>
-              <button type="button" onClick={() => setHistoryAsset(null)} className="text-slate-500 hover:text-slate-700">
+              <h3 className="font-medium text-slate-900">
+                Stage transitions — {historyAsset.name}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setHistoryAsset(null)}
+                className="text-slate-500 hover:text-slate-700"
+              >
                 ×
               </button>
             </div>
@@ -326,7 +358,9 @@ export function LifecycleClient({ board }: Props) {
               {historyAsset.lifecycleTransitions.map((t, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm">
                   <ChevronRight className="h-4 w-4 text-slate-400" />
-                  <span className={t.direction === "PROMOTE" ? "text-emerald-600" : "text-amber-600"}>
+                  <span
+                    className={t.direction === "PROMOTE" ? "text-emerald-600" : "text-amber-600"}
+                  >
                     {t.direction}
                   </span>
                   <span>

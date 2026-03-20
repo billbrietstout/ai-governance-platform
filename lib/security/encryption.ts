@@ -24,10 +24,7 @@ export function encryptField(value: string, secret: string): string {
   const key = getKey(secret, salt);
   const cipher = createCipheriv(ALGORITHM, key, iv, { authTagLength: TAG_LENGTH });
 
-  const encrypted = Buffer.concat([
-    cipher.update(value, "utf8"),
-    cipher.final()
-  ]);
+  const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
 
   return Buffer.concat([salt, iv, tag, encrypted]).toString("base64");

@@ -96,11 +96,11 @@ export function PersonaSelectGrid() {
               className={`flex flex-col gap-3 rounded-lg border p-4 text-left shadow-sm transition ${
                 isDisabled
                   ? "pointer-events-none cursor-not-allowed opacity-50"
-                    : state === "loading"
-                    ? "border-2 border-blue-500 bg-blue-50/30 animate-pulse shadow-md"
+                  : state === "loading"
+                    ? "animate-pulse border-2 border-blue-500 bg-blue-50/30 shadow-md"
                     : state === "saved"
                       ? "border-2 border-emerald-500 bg-emerald-50/30 shadow-md"
-                      : "border-slate-200 bg-white hover:border-navy-300 hover:shadow-md"
+                      : "hover:border-navy-300 border-slate-200 bg-white hover:shadow-md"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export function PersonaSelectGrid() {
                   ) : state === "saved" ? (
                     <Check className="h-5 w-5 text-emerald-600" />
                   ) : (
-                    <Icon className="h-5 w-5 text-navy-600" />
+                    <Icon className="text-navy-600 h-5 w-5" />
                   )}
                 </div>
                 <div>
@@ -126,8 +126,12 @@ export function PersonaSelectGrid() {
                   <p className="text-sm text-slate-500">{config.description}</p>
                 </div>
               </div>
-              <span className="text-sm font-medium text-navy-600">
-                {state === "loading" ? "Saving..." : state === "saved" ? "Saved ✓" : "Select view →"}
+              <span className="text-navy-600 text-sm font-medium">
+                {state === "loading"
+                  ? "Saving..."
+                  : state === "saved"
+                    ? "Saved ✓"
+                    : "Select view →"}
               </span>
             </button>
           );
@@ -141,7 +145,7 @@ export function PersonaSelectGrid() {
           onClick={() => handleSelect(null)}
           className={`flex w-full items-center gap-3 rounded-lg p-3 text-left transition ${
             pending === "all-layers"
-              ? `border-2 border-blue-500 bg-blue-50/30 ${saved ? "" : "cursor-wait animate-pulse"}`
+              ? `border-2 border-blue-500 bg-blue-50/30 ${saved ? "" : "animate-pulse cursor-wait"}`
               : isBusy
                 ? "pointer-events-none cursor-not-allowed opacity-50"
                 : "hover:opacity-90"
@@ -168,12 +172,8 @@ export function PersonaSelectGrid() {
               Full access across all CoSAI layers (CAIO / admin default)
             </p>
           </div>
-          <span className="text-sm font-medium text-navy-600">
-            {pending === "all-layers"
-              ? saved
-                ? "Saved ✓"
-                : "Saving..."
-              : "Select →"}
+          <span className="text-navy-600 text-sm font-medium">
+            {pending === "all-layers" ? (saved ? "Saved ✓" : "Saving...") : "Select →"}
           </span>
         </button>
       </div>

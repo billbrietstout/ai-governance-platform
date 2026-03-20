@@ -12,45 +12,62 @@ export default async function VendorAssuranceReportPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/reports" className="text-sm text-navy-400 hover:underline">
+          <Link href="/reports" className="text-navy-400 text-sm hover:underline">
             ← Reports
           </Link>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight">Vendor Assurance Report</h1>
         </div>
         <div className="flex gap-2">
-          <button className="rounded border border-slatePro-600 px-3 py-1 text-sm text-slatePro-300">Export PDF</button>
-          <button className="rounded border border-slatePro-600 px-3 py-1 text-sm text-slatePro-300">Export CSV</button>
+          <button className="border-slatePro-600 text-slatePro-300 rounded border px-3 py-1 text-sm">
+            Export PDF
+          </button>
+          <button className="border-slatePro-600 text-slatePro-300 rounded border px-3 py-1 text-sm">
+            Export CSV
+          </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slatePro-700">
+      <div className="border-slatePro-700 overflow-x-auto rounded-lg border">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-slatePro-700 bg-slatePro-900/50">
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Vendor</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Score</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Expired Evidence</th>
-              <th className="px-4 py-2 text-left font-medium text-slatePro-300">Next Review</th>
+            <tr className="border-slatePro-700 bg-slatePro-900/50 border-b">
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Vendor</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Score</th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">
+                Expired Evidence
+              </th>
+              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Next Review</th>
             </tr>
           </thead>
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-slatePro-500">
+                <td colSpan={4} className="text-slatePro-500 px-4 py-8 text-center">
                   No vendors
                 </td>
               </tr>
             ) : (
               data.map((v) => (
-                <tr key={v.id} className="border-b border-slatePro-800">
+                <tr key={v.id} className="border-slatePro-800 border-b">
                   <td className="px-4 py-2">
-                    <Link href={`/layer5-supply-chain/vendors/${v.id}`} className="text-navy-400 hover:underline">
+                    <Link
+                      href={`/layer5-supply-chain/vendors/${v.id}`}
+                      className="text-navy-400 hover:underline"
+                    >
                       {v.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-2 text-slatePro-200">{Math.round(v.score * 100)}%</td>
-                  <td className="px-4 py-2">{v.expiredCount > 0 ? <span className="text-amber-400">{v.expiredCount}</span> : "—"}</td>
-                  <td className="px-4 py-2 text-slatePro-400">{v.nextReviewAt?.toLocaleDateString() ?? "—"}</td>
+                  <td className="text-slatePro-200 px-4 py-2">{Math.round(v.score * 100)}%</td>
+                  <td className="px-4 py-2">
+                    {v.expiredCount > 0 ? (
+                      <span className="text-amber-400">{v.expiredCount}</span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="text-slatePro-400 px-4 py-2">
+                    {v.nextReviewAt?.toLocaleDateString() ?? "—"}
+                  </td>
                 </tr>
               ))
             )}

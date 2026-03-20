@@ -26,7 +26,11 @@ export const searchRouter = createTRPCRouter({
     .input(z.object({ query: z.string().min(1).max(100) }))
     .query(async ({ ctx, input }) => {
       const q = input.query.toLowerCase().trim();
-      if (!q) return { data: { assets: [], vendors: [], regulations: [], useCases: [], pages: [] }, meta: {} };
+      if (!q)
+        return {
+          data: { assets: [], vendors: [], regulations: [], useCases: [], pages: [] },
+          meta: {}
+        };
 
       const [assets, vendors] = await Promise.all([
         prisma.aIAsset.findMany({
@@ -45,11 +49,26 @@ export const searchRouter = createTRPCRouter({
 
       return {
         data: {
-          assets: assets.map((a) => ({ id: a.id, label: a.name, href: `/layer3-application/assets/${a.id}`, category: "assets" as const })),
-          vendors: vendors.map((v) => ({ id: v.id, label: v.vendorName, href: `/layer5-supply-chain/vendors/${v.id}`, category: "vendors" as const })),
+          assets: assets.map((a) => ({
+            id: a.id,
+            label: a.name,
+            href: `/layer3-application/assets/${a.id}`,
+            category: "assets" as const
+          })),
+          vendors: vendors.map((v) => ({
+            id: v.id,
+            label: v.vendorName,
+            href: `/layer5-supply-chain/vendors/${v.id}`,
+            category: "vendors" as const
+          })),
           regulations: [] as { id: string; label: string; href: string; category: "regulations" }[],
           useCases: [] as { id: string; label: string; href: string; category: "useCases" }[],
-          pages: pages.map((p) => ({ id: p.href, label: p.label, href: p.href, category: "pages" as const }))
+          pages: pages.map((p) => ({
+            id: p.href,
+            label: p.label,
+            href: p.href,
+            category: "pages" as const
+          }))
         },
         meta: {}
       };

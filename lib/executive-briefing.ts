@@ -70,9 +70,7 @@ export async function getExecutiveBriefingData(
         total += controls.length * Math.max(1, assets.length);
         for (const a of assets) {
           const r = await engine.calculateComplianceScore(prisma, a.id);
-          met += Math.round(
-            ((controls.length * (r.byLayer[layer]?.percentage ?? 0)) / 100)
-          );
+          met += Math.round((controls.length * (r.byLayer[layer]?.percentage ?? 0)) / 100);
         }
       }
       return { pct: total > 0 ? Math.round((met / total) * 100) : 100 };
@@ -118,9 +116,7 @@ export async function getExecutiveBriefingData(
 
   const totalAssets = kpis.totalAssets;
   const missingControlsPct =
-    totalAssets > 0 && gaps.length > 0
-      ? Math.round((gaps.length / (totalAssets * 5)) * 100)
-      : 0;
+    totalAssets > 0 && gaps.length > 0 ? Math.round((gaps.length / (totalAssets * 5)) * 100) : 0;
   const byRisk: Record<string, number> = {};
   for (const g of assetsByRisk) {
     byRisk[g.euRiskLevel ?? "UNKNOWN"] = g._count;

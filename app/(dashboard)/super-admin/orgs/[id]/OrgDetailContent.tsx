@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { updateOrgAction, softDeleteUserAction, softDeleteOrgAction, toggleUserMfaAction } from "../../actions";
+import {
+  updateOrgAction,
+  softDeleteUserAction,
+  softDeleteOrgAction,
+  toggleUserMfaAction
+} from "../../actions";
 
 const TIERS = ["FREE", "PRO", "CONSULTANT", "ENTERPRISE"] as const;
 
@@ -37,13 +42,7 @@ type UserRow = {
   createdAt: Date;
 };
 
-export function OrgDetailContent({
-  org,
-  users: initialUsers
-}: {
-  org: OrgData;
-  users: UserRow[];
-}) {
+export function OrgDetailContent({ org, users: initialUsers }: { org: OrgData; users: UserRow[] }) {
   const router = useRouter();
   const [name, setName] = useState(org.name);
   const [tier, setTier] = useState(org.tier);
@@ -141,16 +140,13 @@ export function OrgDetailContent({
       <div>
         <Link
           href="/super-admin"
-          className="text-sm text-navy-600 hover:text-navy-500 hover:underline"
+          className="text-navy-600 hover:text-navy-500 text-sm hover:underline"
         >
           &larr; Back to all organizations
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
-          {org.name}
-        </h1>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">{org.name}</h1>
         <p className="mt-1 text-sm text-slate-500">
-          {org.slug} &middot; Created{" "}
-          {new Date(org.createdAt).toLocaleDateString()}
+          {org.slug} &middot; Created {new Date(org.createdAt).toLocaleDateString()}
         </p>
       </div>
 
@@ -159,64 +155,55 @@ export function OrgDetailContent({
         <div className="rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-sm font-medium text-red-800">This organization has been deleted</p>
           <p className="mt-1 text-xs text-red-700">
-            Deleted on {new Date(org.deletedAt!).toLocaleDateString()}. All users have been deactivated.
+            Deleted on {new Date(org.deletedAt!).toLocaleDateString()}. All users have been
+            deactivated.
           </p>
         </div>
       )}
 
       {/* Edit Org Properties */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-medium text-slate-900">
-          Organization Properties
-        </h2>
+        <h2 className="text-lg font-medium text-slate-900">Organization Properties</h2>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Name
-            </label>
+            <label className="block text-sm font-medium text-slate-700">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isDeleted}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 disabled:opacity-50"
+              className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:ring-1 focus:outline-none disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Asset Limit
-            </label>
+            <label className="block text-sm font-medium text-slate-700">Asset Limit</label>
             <input
               type="number"
               min={0}
               value={assetLimit}
               onChange={(e) => setAssetLimit(parseInt(e.target.value) || 0)}
               disabled={isDeleted}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 disabled:opacity-50"
+              className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:ring-1 focus:outline-none disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700">
-              Users Limit
-            </label>
+            <label className="block text-sm font-medium text-slate-700">Users Limit</label>
             <input
               type="number"
               min={0}
               value={usersLimit}
               onChange={(e) => setUsersLimit(parseInt(e.target.value) || 0)}
               disabled={isDeleted}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500 disabled:opacity-50"
+              className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:ring-1 focus:outline-none disabled:opacity-50"
             />
           </div>
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-slate-700">
-            Tier
-          </label>
+          <label className="block text-sm font-medium text-slate-700">Tier</label>
           <div className="mt-2 flex flex-wrap gap-4">
             {TIERS.map((t) => (
               <label key={t} className="flex cursor-pointer items-center gap-2">
@@ -227,7 +214,7 @@ export function OrgDetailContent({
                   checked={tier === t}
                   onChange={() => setTier(t)}
                   disabled={isDeleted}
-                  className="h-4 w-4 text-navy-600 focus:ring-navy-500"
+                  className="text-navy-600 focus:ring-navy-500 h-4 w-4"
                 />
                 <span className="text-sm text-slate-700">{t}</span>
               </label>
@@ -238,9 +225,7 @@ export function OrgDetailContent({
         {message && (
           <div
             className={`mt-4 rounded-lg p-3 text-sm ${
-              message.type === "success"
-                ? "bg-green-50 text-green-800"
-                : "bg-red-50 text-red-800"
+              message.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
             }`}
           >
             {message.text}
@@ -251,7 +236,7 @@ export function OrgDetailContent({
           type="button"
           onClick={handleSave}
           disabled={pending || isDeleted}
-          className="mt-4 rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 mt-4 rounded-lg px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {pending ? "Saving..." : "Save Changes"}
         </button>
@@ -263,15 +248,11 @@ export function OrgDetailContent({
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-sm text-slate-600">AI Assets</p>
-            <p className="text-xl font-semibold text-slate-900">
-              {org._count.aiAssets}
-            </p>
+            <p className="text-xl font-semibold text-slate-900">{org._count.aiAssets}</p>
           </div>
           <div>
             <p className="text-sm text-slate-600">Risk Registers</p>
-            <p className="text-xl font-semibold text-slate-900">
-              {org._count.riskRegisters}
-            </p>
+            <p className="text-xl font-semibold text-slate-900">{org._count.riskRegisters}</p>
           </div>
           <div>
             <p className="text-sm text-slate-600">Compliance Frameworks</p>
@@ -281,23 +262,17 @@ export function OrgDetailContent({
           </div>
           <div>
             <p className="text-sm text-slate-600">Audit Log Entries</p>
-            <p className="text-xl font-semibold text-slate-900">
-              {org._count.auditLogs}
-            </p>
+            <p className="text-xl font-semibold text-slate-900">{org._count.auditLogs}</p>
           </div>
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-sm text-slate-600">Vertical</p>
-            <p className="text-sm font-medium text-slate-900">
-              {org.verticalMarket}
-            </p>
+            <p className="text-sm font-medium text-slate-900">{org.verticalMarket}</p>
           </div>
           <div>
             <p className="text-sm text-slate-600">Data Residency</p>
-            <p className="text-sm font-medium text-slate-900">
-              {org.dataResidency ?? "Not set"}
-            </p>
+            <p className="text-sm font-medium text-slate-900">{org.dataResidency ?? "Not set"}</p>
           </div>
           <div>
             <p className="text-sm text-slate-600">Onboarding</p>
@@ -317,33 +292,31 @@ export function OrgDetailContent({
       {/* Users Table */}
       <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 px-6 py-4">
-          <h2 className="text-lg font-medium text-slate-900">
-            Users ({users.length})
-          </h2>
+          <h2 className="text-lg font-medium text-slate-900">Users ({users.length})</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                   Email
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                   Persona
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                   MFA
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                   Super Admin
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-slate-500 uppercase">
                   Created
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-slate-500">
+                <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-slate-500 uppercase">
                   Actions
                 </th>
               </tr>
@@ -351,16 +324,12 @@ export function OrgDetailContent({
             <tbody className="divide-y divide-slate-200">
               {users.map((u) => (
                 <tr key={u.id} className="hover:bg-slate-50">
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-900">
-                    {u.email}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-700">
-                    {u.role}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-500">
+                  <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-900">{u.email}</td>
+                  <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-700">{u.role}</td>
+                  <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-500">
                     {u.persona ?? "—"}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm">
+                  <td className="px-4 py-3 text-sm whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => handleToggleMfa(u)}
@@ -371,14 +340,10 @@ export function OrgDetailContent({
                           : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                       } disabled:opacity-50`}
                     >
-                      {togglingMfa === u.id
-                        ? "..."
-                        : u.mfaEnabled
-                          ? "Enabled"
-                          : "Off"}
+                      {togglingMfa === u.id ? "..." : u.mfaEnabled ? "Enabled" : "Off"}
                     </button>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm">
+                  <td className="px-4 py-3 text-sm whitespace-nowrap">
                     {u.isSuperAdmin ? (
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
                         Yes
@@ -387,10 +352,10 @@ export function OrgDetailContent({
                       <span className="text-slate-400">No</span>
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-sm text-slate-500">
+                  <td className="px-4 py-3 text-sm whitespace-nowrap text-slate-500">
                     {new Date(u.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-right text-sm">
+                  <td className="px-4 py-3 text-right text-sm whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => setConfirmDeleteUser(u)}
@@ -437,8 +402,8 @@ export function OrgDetailContent({
           <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl">
             <h3 className="font-medium text-slate-900">Delete user?</h3>
             <p className="mt-2 text-sm text-slate-600">
-              <span className="font-medium">{confirmDeleteUser.email}</span> will lose
-              access to the platform. This can be reversed by restoring the user in the database.
+              <span className="font-medium">{confirmDeleteUser.email}</span> will lose access to the
+              platform. This can be reversed by restoring the user in the database.
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button
@@ -468,9 +433,9 @@ export function OrgDetailContent({
           <div className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-xl">
             <h3 className="font-medium text-slate-900">Delete organization?</h3>
             <p className="mt-2 text-sm text-slate-600">
-              <span className="font-medium">{org.name}</span> and all{" "}
-              {users.length} user{users.length !== 1 ? "s" : ""} will be deactivated.
-              The data will be preserved but inaccessible.
+              <span className="font-medium">{org.name}</span> and all {users.length} user
+              {users.length !== 1 ? "s" : ""} will be deactivated. The data will be preserved but
+              inaccessible.
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button

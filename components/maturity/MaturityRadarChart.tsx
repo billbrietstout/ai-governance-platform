@@ -56,7 +56,14 @@ export function MaturityRadarChart({
   interactive = true
 }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; layer: string; score: number; level: string; gap: number } | null>(null);
+  const [tooltip, setTooltip] = useState<{
+    x: number;
+    y: number;
+    layer: string;
+    score: number;
+    level: string;
+    gap: number;
+  } | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -190,12 +197,18 @@ export function MaturityRadarChart({
     // Axis labels — positioned beyond vertices, always horizontal
     const getLabelPos = (p: { x: number; y: number }, i: number) => {
       switch (i) {
-        case 0: return { x: cx, y: p.y - 20, anchor: "middle" as const }; // Business: top center
-        case 1: return { x: p.x + 36, y: p.y - 8, anchor: "start" as const }; // Information: upper right
-        case 2: return { x: p.x + 36, y: p.y + 8, anchor: "start" as const }; // Application: lower right
-        case 3: return { x: p.x - 36, y: p.y + 8, anchor: "end" as const }; // Platform: lower left
-        case 4: return { x: p.x - 36, y: p.y - 8, anchor: "end" as const }; // Supply Chain: upper left
-        default: return { x: p.x, y: p.y, anchor: "middle" as const };
+        case 0:
+          return { x: cx, y: p.y - 20, anchor: "middle" as const }; // Business: top center
+        case 1:
+          return { x: p.x + 36, y: p.y - 8, anchor: "start" as const }; // Information: upper right
+        case 2:
+          return { x: p.x + 36, y: p.y + 8, anchor: "start" as const }; // Application: lower right
+        case 3:
+          return { x: p.x - 36, y: p.y + 8, anchor: "end" as const }; // Platform: lower left
+        case 4:
+          return { x: p.x - 36, y: p.y - 8, anchor: "end" as const }; // Supply Chain: upper left
+        default:
+          return { x: p.x, y: p.y, anchor: "middle" as const };
       }
     };
     LAYER_KEYS.forEach((k, i) => {
@@ -247,7 +260,13 @@ export function MaturityRadarChart({
           .on("mousemove", function (event) {
             const rect = containerRef.current?.getBoundingClientRect();
             setTooltip((t) =>
-              t ? { ...t, x: rect ? event.clientX - rect.left : event.offsetX, y: rect ? event.clientY - rect.top : event.offsetY } : null
+              t
+                ? {
+                    ...t,
+                    x: rect ? event.clientX - rect.left : event.offsetX,
+                    y: rect ? event.clientY - rect.top : event.offsetY
+                  }
+                : null
             );
           })
           .on("mouseleave", function () {

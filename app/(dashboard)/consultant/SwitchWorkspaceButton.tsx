@@ -25,7 +25,7 @@ export function SwitchWorkspaceButton({
     <button
       type="button"
       onClick={handleClick}
-      className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-navy-600 hover:text-navy-700"
+      className="text-navy-600 hover:text-navy-700 mt-4 inline-flex items-center gap-1 text-sm font-medium"
     >
       {children}
     </button>

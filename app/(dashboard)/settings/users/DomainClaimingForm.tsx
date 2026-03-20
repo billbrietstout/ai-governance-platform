@@ -14,7 +14,8 @@ async function saveDomain(
 ): Promise<{ error?: string; success?: boolean }> {
   const claimedDomainRaw = formData.get("claimedDomain");
   const claimedDomain =
-    claimedDomainRaw === null || (typeof claimedDomainRaw === "string" && claimedDomainRaw.trim() === "")
+    claimedDomainRaw === null ||
+    (typeof claimedDomainRaw === "string" && claimedDomainRaw.trim() === "")
       ? null
       : (claimedDomainRaw as string).trim();
   const autoJoinRole = formData.get("autoJoinRole") as string;
@@ -24,7 +25,8 @@ async function saveDomain(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       claimedDomain,
-      autoJoinRole: autoJoinRole === "VIEWER" || autoJoinRole === "ANALYST" ? autoJoinRole : "VIEWER"
+      autoJoinRole:
+        autoJoinRole === "VIEWER" || autoJoinRole === "ANALYST" ? autoJoinRole : "VIEWER"
     })
   });
   const data = (await res.json()) as { error?: string };
@@ -66,7 +68,7 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
           type="text"
           placeholder="example.com"
           defaultValue={claimedDomain ?? ""}
-          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-1 focus:outline-none"
         />
         <p className="mt-1 text-xs text-gray-500">Letters, dots, hyphens only. No @ symbol.</p>
       </div>
@@ -79,7 +81,7 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
           id="domain-autoJoinRole"
           name="autoJoinRole"
           defaultValue={autoJoinRole}
-          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-1 focus:outline-none"
         >
           <option value="VIEWER">VIEWER</option>
           <option value="ANALYST">ANALYST</option>
@@ -92,7 +94,7 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
 
       <button
         type="submit"
-        className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
       >
         Save
       </button>

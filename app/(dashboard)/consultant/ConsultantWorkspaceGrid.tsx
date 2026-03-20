@@ -20,10 +20,12 @@ export function ConsultantWorkspaceGrid({ workspaces }: { workspaces: Workspace[
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-16 text-center">
         <p className="text-slate-600">No client workspaces yet.</p>
-        <p className="mt-1 text-sm text-slate-500">Create your first client assessment to get started.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          Create your first client assessment to get started.
+        </p>
         <Link
           href="/consultant/new"
-          className="mt-6 inline-flex items-center rounded-lg bg-navy-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-navy-500"
+          className="bg-navy-600 hover:bg-navy-500 mt-6 inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-white"
         >
           New client workspace
         </Link>
@@ -83,11 +85,15 @@ export function ConsultantWorkspaceGrid({ workspaces }: { workspaces: Workspace[
                   style={{ width: `${Math.min(100, w.complianceScore)}%` }}
                 />
               </div>
-              <span className="text-xs text-slate-500">{Math.round(w.complianceScore)}% compliance</span>
+              <span className="text-xs text-slate-500">
+                {Math.round(w.complianceScore)}% compliance
+              </span>
             </div>
           )}
           <p className="mt-2 text-xs text-slate-500">{w.assetCount} AI systems</p>
-          <p className="text-xs text-slate-500">{formatDaysAgo(w.lastSnapshot ?? w.clientOrg.updatedAt)}</p>
+          <p className="text-xs text-slate-500">
+            {formatDaysAgo(w.lastSnapshot ?? w.clientOrg.updatedAt)}
+          </p>
           <div className="mt-4 flex gap-2">
             <SwitchWorkspaceButton clientOrgId={w.clientOrgId} clientName={w.clientName}>
               Open workspace →

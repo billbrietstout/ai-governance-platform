@@ -25,14 +25,15 @@ const COSAI_LAYERS = [
 export default async function AssetDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const caller = await createServerCaller();
-  const [assetRes, complianceRes, accountabilityRes, riskRes, cardsRes, scanRes] = await Promise.all([
-    caller.assets.get({ id }),
-    caller.compliance.getComplianceScore({ assetId: id }),
-    caller.accountability.getAccountabilityMatrix({ assetId: id }),
-    caller.risk.getRiskRegister({ assetId: id }),
-    caller.supplyChain.getCards({ assetId: id }),
-    caller.supplyChain.getScanCompliance({ assetId: id })
-  ]);
+  const [assetRes, complianceRes, accountabilityRes, riskRes, cardsRes, scanRes] =
+    await Promise.all([
+      caller.assets.get({ id }),
+      caller.compliance.getComplianceScore({ assetId: id }),
+      caller.accountability.getAccountabilityMatrix({ assetId: id }),
+      caller.risk.getRiskRegister({ assetId: id }),
+      caller.supplyChain.getCards({ assetId: id }),
+      caller.supplyChain.getScanCompliance({ assetId: id })
+    ]);
 
   if (!assetRes.data) notFound();
   const asset = assetRes.data;
@@ -55,7 +56,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ id
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/layer3-application/assets" className="text-sm text-navy-400 hover:underline">
+        <Link href="/layer3-application/assets" className="text-navy-400 text-sm hover:underline">
           ← Asset Inventory
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">{asset.name}</h1>
@@ -63,7 +64,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ id
           <EURiskBadge level={asset.euRiskLevel} />
           <AutonomyBadge level={asset.autonomyLevel} />
           <OperatingModelBadge model={asset.operatingModel} />
-          <span className="text-sm text-slatePro-400">{asset.status}</span>
+          <span className="text-slatePro-400 text-sm">{asset.status}</span>
           <ComplianceRing percentage={complianceRes.data.percentage} size={36} />
         </div>
       </div>
@@ -74,7 +75,9 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ id
         accountability={{
           assignments: accountabilityRes.data.assignments.map((a) => ({
             ...a,
-            supportingParties: Array.isArray(a.supportingParties) ? a.supportingParties as string[] : undefined
+            supportingParties: Array.isArray(a.supportingParties)
+              ? (a.supportingParties as string[])
+              : undefined
           }))
         }}
         risks={riskRes.data}

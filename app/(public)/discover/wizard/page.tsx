@@ -49,16 +49,31 @@ export default async function DiscoveryWizardPage() {
                 return runDiscovery({
                   assetType: inputs.assetType as "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE",
                   description: inputs.description,
-                  businessFunction: inputs.businessFunction as "HR" | "Finance" | "Operations" | "Customer Service" | "Healthcare" | "Legal" | "Other",
+                  businessFunction: inputs.businessFunction as
+                    | "HR"
+                    | "Finance"
+                    | "Operations"
+                    | "Customer Service"
+                    | "Healthcare"
+                    | "Legal"
+                    | "Other",
                   decisionsAffectingPeople: inputs.decisionsAffectingPeople,
                   interactsWithEndUsers: inputs.interactsWithEndUsers,
-                  deployment: inputs.deployment as "EU_market" | "US_only" | "Global" | "Internal_only",
+                  deployment: inputs.deployment as
+                    | "EU_market"
+                    | "US_only"
+                    | "Global"
+                    | "Internal_only",
                   verticals: inputs.verticals,
                   operatingModel: inputs.operatingModel,
                   autonomyLevel: inputs.autonomyLevel as "L0" | "L1" | "L2" | "L3" | "L4" | "L5",
                   dataTypes: inputs.dataTypes,
                   euResidentsData: inputs.euResidentsData as "Yes" | "No" | "Unknown",
-                  expectedRiskLevel: inputs.expectedRiskLevel as "Low" | "Medium" | "High" | "Critical",
+                  expectedRiskLevel: inputs.expectedRiskLevel as
+                    | "Low"
+                    | "Medium"
+                    | "High"
+                    | "Critical",
                   vulnerablePopulations: inputs.vulnerablePopulations
                 });
               }

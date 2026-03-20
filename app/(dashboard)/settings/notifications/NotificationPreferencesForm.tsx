@@ -40,7 +40,7 @@ const DAYS = [
   { value: "TUESDAY", label: "Tuesday" },
   { value: "WEDNESDAY", label: "Wednesday" },
   { value: "THURSDAY", label: "Thursday" },
-  { value: "FRIDAY", label: "Friday" },
+  { value: "FRIDAY", label: "Friday" }
 ];
 
 const TIMES = [
@@ -48,7 +48,7 @@ const TIMES = [
   { value: "07:00", label: "7:00 AM" },
   { value: "08:00", label: "8:00 AM" },
   { value: "09:00", label: "9:00 AM" },
-  { value: "10:00", label: "10:00 AM" },
+  { value: "10:00", label: "10:00 AM" }
 ];
 
 const DEFAULT_PREFS: NotificationPreference = {
@@ -68,13 +68,13 @@ const DEFAULT_PREFS: NotificationPreference = {
   newUnownedHighRisk: true,
   failedScanAlert: false,
   emailEnabled: true,
-  slackWebhookUrl: null,
+  slackWebhookUrl: null
 };
 
 export function NotificationPreferencesForm({
   initialPrefs,
   userEmail,
-  isAdmin = false,
+  isAdmin = false
 }: NotificationPreferencesFormProps) {
   const searchParams = useSearchParams();
   const [prefs, setPrefs] = useState<NotificationPreference>(initialPrefs ?? DEFAULT_PREFS);
@@ -87,7 +87,9 @@ export function NotificationPreferencesForm({
   // Slack-specific state
   const [slackWebhookInput, setSlackWebhookInput] = useState("");
   const [slackEnabled, setSlackEnabled] = useState(prefs.org?.slackEnabled ?? false);
-  const [slackTestStatus, setSlackTestStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [slackTestStatus, setSlackTestStatus] = useState<"idle" | "sending" | "success" | "error">(
+    "idle"
+  );
   const [slackSaved, setSlackSaved] = useState(false);
 
   // Org kill switch state
@@ -113,7 +115,7 @@ export function NotificationPreferencesForm({
       const res = await fetch("/api/v1/notifications/preferences", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(prefs),
+        body: JSON.stringify(prefs)
       });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
@@ -149,7 +151,7 @@ export function NotificationPreferencesForm({
       await fetch("/api/v1/notifications/preferences", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orgNotificationsEnabled: enabled }),
+        body: JSON.stringify({ orgNotificationsEnabled: enabled })
       });
     } catch {
       setOrgNotificationsEnabled(!enabled); // revert on error
@@ -164,8 +166,8 @@ export function NotificationPreferencesForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orgSlackWebhookUrl: slackWebhookInput,
-          slackEnabled,
-        }),
+          slackEnabled
+        })
       });
       setSlackSaved(true);
       setTimeout(() => setSlackSaved(false), 3000);
@@ -184,8 +186,8 @@ export function NotificationPreferencesForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           testSlack: true,
-          orgSlackWebhookUrl: slackWebhookInput || undefined,
-        }),
+          orgSlackWebhookUrl: slackWebhookInput || undefined
+        })
       });
       const data = (await res.json()) as { success?: boolean };
       setSlackTestStatus(data.success ? "success" : "error");
@@ -216,7 +218,7 @@ export function NotificationPreferencesForm({
       const res = await fetch("/api/v1/notifications/preferences", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailEnabled: enabled }),
+        body: JSON.stringify({ emailEnabled: enabled })
       });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
@@ -285,8 +287,8 @@ export function NotificationPreferencesForm({
               {orgKilled
                 ? "All email notifications are disabled at the organization level."
                 : emailEnabled
-                ? `You are receiving email notifications at ${userEmail ?? "your email"}`
-                : "All email notifications are disabled. You will not receive any emails from AI Readiness Platform."}
+                  ? `You are receiving email notifications at ${userEmail ?? "your email"}`
+                  : "All email notifications are disabled. You will not receive any emails from AI Readiness Platform."}
             </p>
           </div>
           <Toggle
@@ -304,7 +306,9 @@ export function NotificationPreferencesForm({
       </div>
 
       {/* Email delivery */}
-      <section className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm ${!emailEnabled || orgKilled ? disabledOpacity : ""}`}>
+      <section
+        className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm ${!emailEnabled || orgKilled ? disabledOpacity : ""}`}
+      >
         <h2 className="text-lg font-medium text-gray-900">Email delivery</h2>
         <div className="mt-4 space-y-4">
           <div>
@@ -320,10 +324,12 @@ export function NotificationPreferencesForm({
                 id="digest-day"
                 value={prefs.weeklyDigestDay}
                 onChange={(e) => set("weeklyDigestDay", e.target.value)}
-                className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+                className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-1 focus:outline-none"
               >
                 {DAYS.map((d) => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
+                  <option key={d.value} value={d.value}>
+                    {d.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -335,10 +341,12 @@ export function NotificationPreferencesForm({
                 id="digest-time"
                 value={prefs.weeklyDigestTime}
                 onChange={(e) => set("weeklyDigestTime", e.target.value)}
-                className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+                className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-1 focus:outline-none"
               >
                 {TIMES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -355,21 +363,29 @@ export function NotificationPreferencesForm({
       </section>
 
       {/* Alert types */}
-      <section className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm ${!emailEnabled || orgKilled ? disabledOpacity : ""}`}>
+      <section
+        className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm ${!emailEnabled || orgKilled ? disabledOpacity : ""}`}
+      >
         <h2 className="text-lg font-medium text-gray-900">Alert types</h2>
 
         <div className="mt-4">
           <h3 className="text-sm font-medium text-gray-600">Compliance alerts</h3>
           <div className="mt-2 space-y-2">
             {[
-              { key: "complianceDropAlert" as const, label: `Compliance score drops by ${prefs.complianceDropThreshold}+ points` },
+              {
+                key: "complianceDropAlert" as const,
+                label: `Compliance score drops by ${prefs.complianceDropThreshold}+ points`
+              },
               { key: "newCriticalRiskAlert" as const, label: "New critical risk identified" },
-              { key: "newUnownedHighRisk" as const, label: "New unowned high-risk AI system" },
+              { key: "newUnownedHighRisk" as const, label: "New unowned high-risk AI system" }
             ].map(({ key, label }) => (
               <label key={key} className="flex items-center gap-2">
-                <input type="checkbox" checked={prefs[key] as boolean}
+                <input
+                  type="checkbox"
+                  checked={prefs[key] as boolean}
                   onChange={(e) => toggle(key, e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-navy-600 focus:ring-navy-500" />
+                  className="text-navy-600 focus:ring-navy-500 h-4 w-4 rounded border-gray-300"
+                />
                 <span className="text-sm text-gray-700">{label}</span>
               </label>
             ))}
@@ -382,12 +398,15 @@ export function NotificationPreferencesForm({
             {[
               { key: "regulatoryDeadline90" as const, label: "90 days before deadline" },
               { key: "regulatoryDeadline30" as const, label: "30 days before deadline" },
-              { key: "regulatoryDeadline7" as const, label: "7 days before deadline" },
+              { key: "regulatoryDeadline7" as const, label: "7 days before deadline" }
             ].map(({ key, label }) => (
               <label key={key} className="flex items-center gap-2">
-                <input type="checkbox" checked={prefs[key] as boolean}
+                <input
+                  type="checkbox"
+                  checked={prefs[key] as boolean}
                   onChange={(e) => toggle(key, e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-navy-600 focus:ring-navy-500" />
+                  className="text-navy-600 focus:ring-navy-500 h-4 w-4 rounded border-gray-300"
+                />
                 <span className="text-sm text-gray-700">{label}</span>
               </label>
             ))}
@@ -398,14 +417,20 @@ export function NotificationPreferencesForm({
           <h3 className="text-sm font-medium text-gray-600">Operational alerts</h3>
           <div className="mt-2 space-y-2">
             {[
-              { key: "vendorEvidenceExpiry" as const, label: `Vendor evidence expiring (${prefs.evidenceExpiryDays} days)` },
+              {
+                key: "vendorEvidenceExpiry" as const,
+                label: `Vendor evidence expiring (${prefs.evidenceExpiryDays} days)`
+              },
               { key: "shadowAiDetected" as const, label: "Shadow AI usage detected" },
-              { key: "failedScanAlert" as const, label: "Failed security scan" },
+              { key: "failedScanAlert" as const, label: "Failed security scan" }
             ].map(({ key, label }) => (
               <label key={key} className="flex items-center gap-2">
-                <input type="checkbox" checked={prefs[key] as boolean}
+                <input
+                  type="checkbox"
+                  checked={prefs[key] as boolean}
                   onChange={(e) => toggle(key, e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-navy-600 focus:ring-navy-500" />
+                  className="text-navy-600 focus:ring-navy-500 h-4 w-4 rounded border-gray-300"
+                />
                 <span className="text-sm text-gray-700">{label}</span>
               </label>
             ))}
@@ -416,7 +441,7 @@ export function NotificationPreferencesForm({
       {/* Slack integration — admin only */}
       {isAdmin && (
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="mb-4 flex items-start justify-between gap-4">
             <div>
               <h2 className="text-lg font-medium text-gray-900">Slack integration</h2>
               <p className="mt-1 text-sm text-gray-500">
@@ -430,7 +455,7 @@ export function NotificationPreferencesForm({
                 fetch("/api/v1/notifications/preferences", {
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ slackEnabled: v }),
+                  body: JSON.stringify({ slackEnabled: v })
                 });
               }}
               size="large"
@@ -449,7 +474,7 @@ export function NotificationPreferencesForm({
                 value={slackWebhookInput}
                 onChange={(e) => setSlackWebhookInput(e.target.value.trim())}
                 placeholder="https://hooks.slack.com/services/..."
-                className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+                className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-1 focus:outline-none"
               />
               <p className="mt-1 text-xs text-gray-500">
                 {prefs.org?.slackConfigured
@@ -470,13 +495,19 @@ export function NotificationPreferencesForm({
               <button
                 type="button"
                 onClick={handleTestSlack}
-                disabled={(!slackWebhookInput && !prefs.org?.slackConfigured) || slackTestStatus === "sending"}
+                disabled={
+                  (!slackWebhookInput && !prefs.org?.slackConfigured) ||
+                  slackTestStatus === "sending"
+                }
                 className="flex-1 rounded bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
               >
-                {slackTestStatus === "sending" ? "Sending…"
-                  : slackTestStatus === "success" ? "✓ Sent!"
-                  : slackTestStatus === "error" ? "✗ Failed"
-                  : "Send test message"}
+                {slackTestStatus === "sending"
+                  ? "Sending…"
+                  : slackTestStatus === "success"
+                    ? "✓ Sent!"
+                    : slackTestStatus === "error"
+                      ? "✗ Failed"
+                      : "Send test message"}
               </button>
             </div>
 
@@ -484,7 +515,9 @@ export function NotificationPreferencesForm({
               <p className="text-xs text-green-600">Test message sent. Check your Slack channel.</p>
             )}
             {slackTestStatus === "error" && (
-              <p className="text-xs text-red-600">Failed to send. Check the webhook URL and try again.</p>
+              <p className="text-xs text-red-600">
+                Failed to send. Check the webhook URL and try again.
+              </p>
             )}
           </div>
         </section>
@@ -513,7 +546,7 @@ export function NotificationPreferencesForm({
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+          className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {saving ? "Saving…" : saved ? "Saved!" : "Save"}
         </button>

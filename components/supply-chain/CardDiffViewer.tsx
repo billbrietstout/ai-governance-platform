@@ -18,14 +18,14 @@ export function CardDiffViewer({ prev, next }: Props) {
   }
 
   if (changes.length === 0) {
-    return <p className="text-sm text-slatePro-400">No changes detected.</p>;
+    return <p className="text-slatePro-400 text-sm">No changes detected.</p>;
   }
 
   return (
     <div className="space-y-2 text-sm">
       {changes.map(({ key, prev: p, next: n }) => (
-        <div key={key} className="rounded border border-slatePro-700 bg-slatePro-900/30 p-2">
-          <div className="font-medium text-slatePro-300">{key}</div>
+        <div key={key} className="border-slatePro-700 bg-slatePro-900/30 rounded border p-2">
+          <div className="text-slatePro-300 font-medium">{key}</div>
           <div className="mt-1 grid grid-cols-2 gap-2">
             <div className="rounded bg-red-500/10 p-1.5 text-red-300 line-through">
               {typeof p === "object" ? JSON.stringify(p) : String(p ?? "")}

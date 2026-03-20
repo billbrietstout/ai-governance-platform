@@ -43,7 +43,7 @@ export function OperatingModelClient({ currentModel }: Props) {
             onClick={() => setSelected(m.key as OperatingModelKey)}
             className={`rounded-lg border p-5 text-left shadow-sm transition ${
               selected === m.key
-                ? "border-navy-500 bg-navy-50 ring-2 ring-navy-500"
+                ? "border-navy-500 bg-navy-50 ring-navy-500 ring-2"
                 : "border-slate-200 bg-white hover:border-slate-300 hover:shadow"
             }`}
           >
@@ -86,7 +86,11 @@ export function OperatingModelClient({ currentModel }: Props) {
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-600">Layer</th>
                 {OPERATING_MODELS.map((m) => (
-                  <th key={m.key} colSpan={3} className="px-4 py-3 text-center text-xs font-medium text-slate-600">
+                  <th
+                    key={m.key}
+                    colSpan={3}
+                    className="px-4 py-3 text-center text-xs font-medium text-slate-600"
+                  >
                     {m.name}
                   </th>
                 ))}
@@ -95,9 +99,15 @@ export function OperatingModelClient({ currentModel }: Props) {
                 <th className="px-4 py-2 text-left text-xs text-slate-500" />
                 {OPERATING_MODELS.map((m) => (
                   <React.Fragment key={m.key}>
-                    <th className="px-2 py-2 text-center text-[10px] font-medium text-blue-600">Customer</th>
-                    <th className="px-2 py-2 text-center text-[10px] font-medium text-amber-600">Shared</th>
-                    <th className="px-2 py-2 text-center text-[10px] font-medium text-slate-500">Provider</th>
+                    <th className="px-2 py-2 text-center text-[10px] font-medium text-blue-600">
+                      Customer
+                    </th>
+                    <th className="px-2 py-2 text-center text-[10px] font-medium text-amber-600">
+                      Shared
+                    </th>
+                    <th className="px-2 py-2 text-center text-[10px] font-medium text-slate-500">
+                      Provider
+                    </th>
                   </React.Fragment>
                 ))}
               </tr>
@@ -115,21 +125,30 @@ export function OperatingModelClient({ currentModel }: Props) {
                       <React.Fragment key={m.key}>
                         <td className="px-2 py-2 text-center">
                           {row.customer ? (
-                            <span className="inline-block h-4 w-4 rounded bg-blue-200" title="Customer" />
+                            <span
+                              className="inline-block h-4 w-4 rounded bg-blue-200"
+                              title="Customer"
+                            />
                           ) : (
                             <span className="inline-block h-4 w-4 rounded bg-slate-100" />
                           )}
                         </td>
                         <td className="px-2 py-2 text-center">
                           {row.shared ? (
-                            <span className="inline-block h-4 w-4 rounded bg-amber-200" title="Shared" />
+                            <span
+                              className="inline-block h-4 w-4 rounded bg-amber-200"
+                              title="Shared"
+                            />
                           ) : (
                             <span className="inline-block h-4 w-4 rounded bg-slate-100" />
                           )}
                         </td>
                         <td className="px-2 py-2 text-center">
                           {row.provider ? (
-                            <span className="inline-block h-4 w-4 rounded bg-slate-300" title="Provider" />
+                            <span
+                              className="inline-block h-4 w-4 rounded bg-slate-300"
+                              title="Provider"
+                            />
                           ) : (
                             <span className="inline-block h-4 w-4 rounded bg-slate-100" />
                           )}
@@ -146,17 +165,25 @@ export function OperatingModelClient({ currentModel }: Props) {
         model && (
           <>
             {/* Single model matrix */}
-            <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
+            <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
               <h3 className="border-b border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
                 CoSAI 5-Layer Responsibility Matrix — {model.name}
               </h3>
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50">
-                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-600">Layer</th>
-                    <th className="px-4 py-2 text-center text-xs font-medium text-blue-600">Customer</th>
-                    <th className="px-4 py-2 text-center text-xs font-medium text-amber-600">Shared</th>
-                    <th className="px-4 py-2 text-center text-xs font-medium text-slate-600">Provider</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-slate-600">
+                      Layer
+                    </th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-blue-600">
+                      Customer
+                    </th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-amber-600">
+                      Shared
+                    </th>
+                    <th className="px-4 py-2 text-center text-xs font-medium text-slate-600">
+                      Provider
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,7 +229,7 @@ export function OperatingModelClient({ currentModel }: Props) {
               <ul className="space-y-2">
                 {model.customerResponsibilities.map((r, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-navy-500" />
+                    <span className="bg-navy-500 mt-1 h-1.5 w-1.5 shrink-0 rounded-full" />
                     {r}
                   </li>
                 ))}
@@ -215,13 +242,14 @@ export function OperatingModelClient({ currentModel }: Props) {
                 type="button"
                 onClick={handleSetModel}
                 disabled={saving || selected === currentModel}
-                className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
               >
                 {saving ? "Saving…" : saved ? "Saved" : "Set as my operating model"}
               </button>
               {currentModel && (
                 <span className="text-sm text-slate-500">
-                  Current: {OPERATING_MODELS.find((m) => m.key === currentModel)?.name ?? currentModel}
+                  Current:{" "}
+                  {OPERATING_MODELS.find((m) => m.key === currentModel)?.name ?? currentModel}
                 </span>
               )}
             </div>

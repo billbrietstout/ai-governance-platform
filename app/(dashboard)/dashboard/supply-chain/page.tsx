@@ -26,13 +26,13 @@ export default async function SupplyChainDashboardPage() {
       <div className="flex flex-col gap-6">
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <Building className="h-5 w-5 text-navy-600" />
+            <Building className="text-navy-600 h-5 w-5" />
             <p className="mt-2 text-2xl font-bold text-slate-900">{vendors.length}</p>
             <p className="text-xs text-slate-500">Total vendors</p>
           </div>
           <Link
             href="/layer5-supply-chain/vendors"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
             <Shield className="h-5 w-5 text-amber-600" />
             <p className="mt-2 text-2xl font-bold text-slate-900">{expiredCount}</p>
@@ -40,12 +40,10 @@ export default async function SupplyChainDashboardPage() {
           </Link>
           <Link
             href="/layer5-supply-chain/cards"
-            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-300"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
-            <Package className="h-5 w-5 text-navy-600" />
-            <p className="mt-2 text-2xl font-bold text-slate-900">
-              {kpis.staleCards ?? 0}
-            </p>
+            <Package className="text-navy-600 h-5 w-5" />
+            <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.staleCards ?? 0}</p>
             <p className="text-xs text-slate-500">Stale cards (&gt;30d)</p>
           </Link>
         </div>
@@ -62,17 +60,12 @@ export default async function SupplyChainDashboardPage() {
                 >
                   <Link
                     href={`/layer5-supply-chain/vendors/${v.id}`}
-                    className="font-medium text-navy-600 hover:underline"
+                    className="text-navy-600 font-medium hover:underline"
                   >
                     {v.name}
                   </Link>
-                  <span
-                    className={
-                      v.expiredCount > 0 ? "text-amber-600" : "text-emerald-600"
-                    }
-                  >
-                    {Math.round((v.score ?? 0) * 100)}%
-                    {v.expiredCount > 0 && " ⚠"}
+                  <span className={v.expiredCount > 0 ? "text-amber-600" : "text-emerald-600"}>
+                    {Math.round((v.score ?? 0) * 100)}%{v.expiredCount > 0 && " ⚠"}
                   </span>
                 </li>
               ))}
@@ -80,7 +73,7 @@ export default async function SupplyChainDashboardPage() {
           )}
           <Link
             href="/layer5-supply-chain/vendors"
-            className="mt-4 inline-block text-sm font-medium text-navy-600 hover:underline"
+            className="text-navy-600 mt-4 inline-block text-sm font-medium hover:underline"
           >
             View all vendors →
           </Link>

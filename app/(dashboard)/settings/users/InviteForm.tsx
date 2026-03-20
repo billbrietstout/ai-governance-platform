@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 
 const ROLES = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"] as const;
 
-async function createInvite(_prev: { error?: string; success?: boolean } | undefined, formData: FormData) {
+async function createInvite(
+  _prev: { error?: string; success?: boolean } | undefined,
+  formData: FormData
+) {
   const email = formData.get("email") as string;
   const role = formData.get("role") as string;
   if (!email?.trim()) return { error: "Email is required" };
@@ -26,7 +29,10 @@ async function createInvite(_prev: { error?: string; success?: boolean } | undef
 
 export function InviteForm() {
   const router = useRouter();
-  const [state, formAction] = useActionState(createInvite, {} as { error?: string; success?: boolean });
+  const [state, formAction] = useActionState(
+    createInvite,
+    {} as { error?: string; success?: boolean }
+  );
 
   useEffect(() => {
     if (state?.success) router.refresh();
@@ -44,7 +50,7 @@ export function InviteForm() {
           type="email"
           required
           placeholder="colleague@example.com"
-          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 placeholder-gray-500 focus:ring-1 focus:outline-none"
         />
       </div>
       <div>
@@ -54,7 +60,7 @@ export function InviteForm() {
         <select
           id="invite-role"
           name="role"
-          className="mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-navy-500 focus:outline-none focus:ring-1 focus:ring-navy-500"
+          className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-1 focus:outline-none"
         >
           {ROLES.map((r) => (
             <option key={r} value={r}>
@@ -63,15 +69,13 @@ export function InviteForm() {
           ))}
         </select>
       </div>
-      {state?.error && (
-        <p className="text-sm text-red-600">{state.error}</p>
-      )}
+      {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
       {state?.success && (
         <p className="text-sm text-emerald-600">Invite sent. Expires in 7 days.</p>
       )}
       <button
         type="submit"
-        className="rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+        className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
       >
         Send invite
       </button>

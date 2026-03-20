@@ -28,15 +28,11 @@ export default async function ProfileSettingsPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
       <div>
-        <Link href="/settings" className="text-sm text-navy-600 hover:underline">
+        <Link href="/settings" className="text-navy-600 text-sm hover:underline">
           ← Settings
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
-          Profile
-        </h1>
-        <p className="mt-1 text-gray-600">
-          Your account and communication preferences.
-        </p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Profile</h1>
+        <p className="mt-1 text-gray-600">Your account and communication preferences.</p>
       </div>
 
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -48,10 +44,7 @@ export default async function ProfileSettingsPage() {
         </div>
       </section>
 
-      <ProfileCommunicationPrefs
-        emailEnabled={pref.emailEnabled}
-        userEmail={user.email ?? null}
-      />
+      <ProfileCommunicationPrefs emailEnabled={pref.emailEnabled} userEmail={user.email ?? null} />
     </main>
   );
 }

@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { GitBranch, Users, Package, Building2, DollarSign, MapPin, MoreHorizontal } from "lucide-react";
+import {
+  GitBranch,
+  Users,
+  Package,
+  Building2,
+  DollarSign,
+  MapPin,
+  MoreHorizontal
+} from "lucide-react";
 import { MasterDataEntityActions } from "./MasterDataEntityActions";
 
 const ENTITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -30,8 +38,7 @@ const AI_ACCESS_COLORS: Record<string, string> = {
 
 function QualityCircle({ score }: { score: number | null | undefined }) {
   if (score == null) return <span className="text-xs text-slate-500">—</span>;
-  const color =
-    score > 80 ? "text-emerald-500" : score >= 60 ? "text-amber-500" : "text-red-500";
+  const color = score > 80 ? "text-emerald-500" : score >= 60 ? "text-amber-500" : "text-red-500";
   return (
     <div className="flex items-center gap-1">
       <div
@@ -69,8 +76,8 @@ export function MasterDataEntityCard({ entity, users = [] }: { entity: Entity; u
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:shadow">
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-navy-100">
-            <Icon className="h-5 w-5 text-navy-600" />
+          <div className="bg-navy-100 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+            <Icon className="text-navy-600 h-5 w-5" />
           </div>
           <div>
             <h3 className="font-medium text-slate-900">{entity.name}</h3>
@@ -106,7 +113,7 @@ export function MasterDataEntityCard({ entity, users = [] }: { entity: Entity; u
 
       <Link
         href={`/layer2-information/lineage?source=${entity.id}`}
-        className="mt-3 flex items-center gap-1 text-sm text-navy-600 hover:underline"
+        className="text-navy-600 mt-3 flex items-center gap-1 text-sm hover:underline"
       >
         <GitBranch className="h-4 w-4" />
         View Lineage

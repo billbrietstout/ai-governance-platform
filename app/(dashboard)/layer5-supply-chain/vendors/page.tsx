@@ -18,7 +18,9 @@ function Soc2Badge({ status, expiresAt }: { status: string | null; expiresAt: Da
   const expired = expiresAt && expiresAt < new Date();
   if (status === "CERTIFIED")
     return (
-      <span className={`rounded px-2 py-0.5 text-xs font-medium ${expired ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}>
+      <span
+        className={`rounded px-2 py-0.5 text-xs font-medium ${expired ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700"}`}
+      >
         {expired ? "EXPIRED" : "CERTIFIED"}
       </span>
     );
@@ -82,7 +84,7 @@ export default async function VendorsPage() {
                 className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-navy-100 text-lg font-semibold text-navy-700">
+                  <div className="bg-navy-100 text-navy-700 flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-semibold">
                     {initial}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -115,14 +117,18 @@ export default async function VendorsPage() {
                     {v.contractAligned ? "Contract aligned" : "Contract gap"}
                   </span>
                   {daysToExpiry !== null && (
-                    <span className={`text-xs ${expiryWarning ? "text-amber-600" : "text-gray-500"}`}>
+                    <span
+                      className={`text-xs ${expiryWarning ? "text-amber-600" : "text-gray-500"}`}
+                    >
                       {daysToExpiry > 0 ? `${daysToExpiry}d to expiry` : "Expired"}
                     </span>
                   )}
                 </div>
 
                 {v.expiredEvidence.length > 0 && (
-                  <p className="mt-2 text-xs text-amber-600">{v.expiredEvidence.length} expired evidence</p>
+                  <p className="mt-2 text-xs text-amber-600">
+                    {v.expiredEvidence.length} expired evidence
+                  </p>
                 )}
 
                 <div className="mt-3 flex items-center justify-between">
@@ -146,7 +152,13 @@ export default async function VendorsPage() {
                         stroke="currentColor"
                         strokeWidth="3"
                         strokeDasharray={`${(scorePct / 100) * 88} 88`}
-                        className={scorePct >= 70 ? "text-emerald-500" : scorePct >= 40 ? "text-amber-500" : "text-red-500"}
+                        className={
+                          scorePct >= 70
+                            ? "text-emerald-500"
+                            : scorePct >= 40
+                              ? "text-amber-500"
+                              : "text-red-500"
+                        }
                       />
                     </svg>
                     <span className="absolute inset-0 flex items-center justify-center text-[10px] font-medium text-gray-900">

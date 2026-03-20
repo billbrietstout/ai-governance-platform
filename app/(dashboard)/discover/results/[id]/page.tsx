@@ -22,7 +22,11 @@ const LAYER_LABELS: Record<string, string> = {
   LAYER_5_SUPPLY_CHAIN: "Layer 5: Supply Chain"
 };
 
-export default async function DiscoveryResultsPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DiscoveryResultsPage({
+  params
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const caller = await createServerCaller();
   let discovery;
@@ -34,10 +38,39 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
   }
 
   const results = discovery.results as {
-    mandatory?: { code: string; name: string; jurisdiction: string; applicability: string; keyRequirements: string; deadline?: string; implementationEffort: string }[];
-    likelyApplicable?: { code: string; name: string; jurisdiction: string; applicability: string; keyRequirements: string; deadline?: string; implementationEffort: string }[];
-    recommended?: { code: string; name: string; jurisdiction: string; applicability: string; keyRequirements: string; deadline?: string; implementationEffort: string }[];
-    requiredControls?: { controlId: string; title: string; cosaiLayer: string; complianceStatus?: string }[];
+    mandatory?: {
+      code: string;
+      name: string;
+      jurisdiction: string;
+      applicability: string;
+      keyRequirements: string;
+      deadline?: string;
+      implementationEffort: string;
+    }[];
+    likelyApplicable?: {
+      code: string;
+      name: string;
+      jurisdiction: string;
+      applicability: string;
+      keyRequirements: string;
+      deadline?: string;
+      implementationEffort: string;
+    }[];
+    recommended?: {
+      code: string;
+      name: string;
+      jurisdiction: string;
+      applicability: string;
+      keyRequirements: string;
+      deadline?: string;
+      implementationEffort: string;
+    }[];
+    requiredControls?: {
+      controlId: string;
+      title: string;
+      cosaiLayer: string;
+      complianceStatus?: string;
+    }[];
     estimatedMaturityRequired?: number;
     riskScore?: number;
   };
@@ -59,7 +92,9 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
     <main className="mx-auto flex min-h-dvh max-w-4xl flex-col gap-6 px-6 py-10">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Discovery Results</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Discovery Results
+          </h1>
           <p className="mt-1 text-slate-600">
             {discovery.asset?.name
               ? `Regulations for ${discovery.asset.name}`
@@ -76,7 +111,7 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
           </Link>
           <Link
             href={`/layer3-application/assets/new?fromDiscovery=${id}`}
-            className="flex items-center gap-2 rounded bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
+            className="bg-navy-600 hover:bg-navy-500 flex items-center gap-2 rounded px-4 py-2 text-sm font-medium text-white"
           >
             <PlusCircle className="h-4 w-4" />
             Create Asset from this discovery
@@ -103,7 +138,9 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
           {results.estimatedMaturityRequired != null && (
             <div className="rounded-lg border border-slate-200 bg-white px-4 py-3">
               <span className="text-sm text-slate-600">Estimated maturity required</span>
-              <p className="text-xl font-bold text-slate-900">M{results.estimatedMaturityRequired}</p>
+              <p className="text-xl font-bold text-slate-900">
+                M{results.estimatedMaturityRequired}
+              </p>
             </div>
           )}
         </div>
@@ -126,7 +163,8 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">Single regulation summary</h2>
           <p className="mt-2 text-sm text-slate-600">
-            One applicable regulation ({applicableRegulations[0]?.name}) — no overlap analysis needed.
+            One applicable regulation ({applicableRegulations[0]?.name}) — no overlap analysis
+            needed.
           </p>
         </div>
       ) : null}
@@ -135,15 +173,15 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
       <div className="space-y-6">
         {mandatory.length > 0 && (
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="mb-3 text-sm font-medium text-slate-700">
-              MANDATORY — must comply
-            </h3>
+            <h3 className="mb-3 text-sm font-medium text-slate-700">MANDATORY — must comply</h3>
             <ul className="space-y-3">
               {mandatory.map((r) => (
                 <li key={r.code} className="rounded border border-slate-100 p-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className={`rounded border px-2 py-0.5 text-xs font-medium ${APPLICABILITY_COLORS.MANDATORY}`}>
+                      <span
+                        className={`rounded border px-2 py-0.5 text-xs font-medium ${APPLICABILITY_COLORS.MANDATORY}`}
+                      >
                         MANDATORY
                       </span>
                       <h4 className="mt-1 font-medium text-slate-900">{r.name}</h4>
@@ -173,7 +211,9 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
                 <li key={r.code} className="rounded border border-slate-100 p-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className={`rounded border px-2 py-0.5 text-xs font-medium ${APPLICABILITY_COLORS.LIKELY_APPLICABLE}`}>
+                      <span
+                        className={`rounded border px-2 py-0.5 text-xs font-medium ${APPLICABILITY_COLORS.LIKELY_APPLICABLE}`}
+                      >
                         LIKELY APPLICABLE
                       </span>
                       <h4 className="mt-1 font-medium text-slate-900">{r.name}</h4>
@@ -195,15 +235,15 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
 
         {recommended.length > 0 && (
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="mb-3 text-sm font-medium text-slate-700">
-              RECOMMENDED — best practice
-            </h3>
+            <h3 className="mb-3 text-sm font-medium text-slate-700">RECOMMENDED — best practice</h3>
             <ul className="space-y-3">
               {recommended.map((r) => (
                 <li key={r.code} className="rounded border border-slate-100 p-3">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className={`rounded border px-2 py-0.5 text-xs font-medium ${APPLICABILITY_COLORS.RECOMMENDED}`}>
+                      <span
+                        className={`rounded border px-2 py-0.5 text-xs font-medium ${APPLICABILITY_COLORS.RECOMMENDED}`}
+                      >
                         RECOMMENDED
                       </span>
                       <h4 className="mt-1 font-medium text-slate-900">{r.name}</h4>
@@ -226,7 +266,8 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="mb-3 text-sm font-medium text-slate-700">Required Controls</h3>
           <p className="mb-3 text-xs text-slate-500">
-            Controls needed, mapped to CoSAI layers. Compliance status shown when linked to an asset.
+            Controls needed, mapped to CoSAI layers. Compliance status shown when linked to an
+            asset.
           </p>
           <ul className="space-y-2">
             {requiredControls.map((c) => (
@@ -250,7 +291,6 @@ export default async function DiscoveryResultsPage({ params }: { params: Promise
           </ul>
         </div>
       )}
-
     </main>
   );
 }
