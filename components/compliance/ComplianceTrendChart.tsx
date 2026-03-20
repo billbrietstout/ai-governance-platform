@@ -86,16 +86,6 @@ export function ComplianceTrendChart({
 
   const snapshots = normalizeSnapshots(rawSnapshots as RawSnapshot[]);
 
-  if (snapshots.length < 2) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 py-12 text-center">
-        <Camera className="mx-auto h-10 w-10 text-slate-400" />
-        <p className="mt-2 text-sm text-slate-600">Take your first two snapshots to see trend data</p>
-        {emptyStateAction && <div className="mt-3">{emptyStateAction}</div>}
-      </div>
-    );
-  }
-
   const width = 680;
   const height = compact ? 60 : 240;
   const margin = { top: 20, right: 20, bottom: compact ? 8 : 50, left: 40 };
@@ -287,6 +277,16 @@ export function ComplianceTrendChart({
       svg.selectAll("*").remove();
     };
   }, [snapshots, compact, onSnapshotClick, hoverX]);
+
+  if (snapshots.length < 2) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 bg-slate-50 py-12 text-center">
+        <Camera className="mx-auto h-10 w-10 text-slate-400" />
+        <p className="mt-2 text-sm text-slate-600">Take your first two snapshots to see trend data</p>
+        {emptyStateAction && <div className="mt-3">{emptyStateAction}</div>}
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className="relative">

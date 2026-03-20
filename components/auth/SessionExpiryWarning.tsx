@@ -53,7 +53,7 @@ export function SessionExpiryWarning() {
         </div>
         <h2 className="text-center text-lg font-semibold text-gray-900 mb-1">Your session is expiring</h2>
         <p className="text-center text-sm text-gray-500 mb-6">
-          You'll be signed out in <span className="font-semibold text-amber-600">{minutesLeft} minute{minutesLeft !== 1 ? "s" : ""}</span>. Any unsaved changes may be lost.
+          You&apos;ll be signed out in <span className="font-semibold text-amber-600">{minutesLeft} minute{minutesLeft !== 1 ? "s" : ""}</span>. Any unsaved changes may be lost.
         </p>
         <div className="space-y-2">
           <button onClick={handleExtend} disabled={extending} className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors">

@@ -47,14 +47,6 @@ export function RiskTreemap({
     vendor: VendorTreemapNode;
   } | null>(null);
 
-  if (vendors.length === 0) {
-    return (
-      <div className="flex min-h-[280px] items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500">
-        No vendors. Add vendors to see risk scores.
-      </div>
-    );
-  }
-
   const displayVendors = compact ? vendors.slice(0, 8) : vendors;
   const totalValue = displayVendors.reduce((s, v) => s + Math.max(1, v.modelCount ?? 1), 0);
   const root = {
@@ -167,6 +159,14 @@ export function RiskTreemap({
       if (svgRef.current) d3.select(svgRef.current).selectAll("*").remove();
     };
   }, [displayVendors, onVendorClick]);
+
+  if (vendors.length === 0) {
+    return (
+      <div className="flex min-h-[280px] items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-slate-500">
+        No vendors. Add vendors to see risk scores.
+      </div>
+    );
+  }
 
   const minHeight = 280;
   return (

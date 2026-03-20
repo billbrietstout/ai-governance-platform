@@ -47,7 +47,7 @@ function UnsubscribeContent() {
         {resubscribed ? (
           <>
             <div className="text-4xl mb-4">✅</div>
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">You're back!</h1>
+            <h1 className="text-xl font-semibold text-gray-900 mb-2">You&apos;re back!</h1>
             <p className="text-gray-500 text-sm mb-6">
               Email notifications have been re-enabled for <strong>{email}</strong>.
             </p>
@@ -63,7 +63,7 @@ function UnsubscribeContent() {
         ) : (
           <>
             <div className="text-4xl mb-4">✉️</div>
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">You've been unsubscribed</h1>
+            <h1 className="text-xl font-semibold text-gray-900 mb-2">You&apos;ve been unsubscribed</h1>
             <p className="text-gray-500 text-sm mb-2">
               <strong>{email}</strong> will no longer receive emails from AI Readiness Platform.
             </p>
