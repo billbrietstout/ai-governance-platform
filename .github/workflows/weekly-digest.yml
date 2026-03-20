@@ -24,7 +24,10 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           APP_URL: ${{ vars.APP_URL || 'https://ai-governance-platform-staging.up.railway.app' }}
-        run: curl -X POST -H "Authorization: Bearer $CRON_SECRET" -f "$APP_URL/api/v1/notifications/send-digest"
+run: |
+          curl -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -f "$APP_URL/api/v1/notifications/send-digest"
 
       - name: Notify on failure
         if: failure()
