@@ -25,7 +25,7 @@ jobs:
           ref: develop
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
@@ -41,3 +41,16 @@ jobs:
           DRY_RUN: ${{ inputs.dry_run || 'false' }}
           NODE_ENV: production
         run: node scripts/jobs/weekly-digest.js
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Weekly Digest Failed — ${new Date().toISOString().split('T')[0]}`,
+              body: `The weekly digest workflow failed. [View run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              labels: ['bug', 'notifications']
+            })

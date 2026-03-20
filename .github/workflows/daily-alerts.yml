@@ -35,7 +35,7 @@ jobs:
           ref: develop
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'npm'
@@ -52,3 +52,16 @@ jobs:
           ALERT_SEVERITY: ${{ inputs.severity || 'medium' }}
           NODE_ENV: production
         run: node scripts/jobs/daily-alerts.js
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Daily Alerts Failed — ${new Date().toISOString().split('T')[0]}`,
+              body: `The daily alerts workflow failed. [View run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              labels: ['bug', 'notifications']
+            })
