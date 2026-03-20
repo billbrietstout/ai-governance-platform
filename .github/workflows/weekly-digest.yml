@@ -28,7 +28,6 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer $CRON_SECRET" \
             -f "$APP_URL/api/v1/notifications/send-digest"
-
       - name: Notify on failure
         if: failure()
         uses: actions/github-script@v8
