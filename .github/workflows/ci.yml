@@ -24,3 +24,10 @@ jobs:
         run: npm run format:check
       - name: Build
         run: npm run build
+        env:
+          # Dummy values for build-time env validation (not used at runtime)
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+          AUTH0_CLIENT_ID: dummy
+          AUTH0_CLIENT_SECRET: dummy
+          AUTH0_ISSUER: https://dummy.example.com/
+          AUTH_SECRET: dummy-secret-min-32-chars-for-build
