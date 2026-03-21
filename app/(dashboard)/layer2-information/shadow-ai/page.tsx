@@ -26,7 +26,7 @@ export default async function ShadowAIDetectionPage() {
           ← Layer 2: Information
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Shadow AI Detection</h1>
-        <p className="text-slatePro-300 mt-1">Discover and govern ungoverned AI systems.</p>
+        <p className="mt-1 text-gray-600">Discover and govern ungoverned AI systems.</p>
       </div>
 
       {/* Summary */}

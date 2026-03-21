@@ -20,10 +20,10 @@ export function EUCoverageBadge({ coverage }: Props) {
 
   const color =
     pct >= 80
-      ? "bg-emerald-500/20 text-emerald-400"
+      ? "bg-emerald-100 text-emerald-700"
       : pct >= 50
-        ? "bg-amber-500/20 text-amber-400"
-        : "bg-red-500/20 text-red-400";
+        ? "bg-amber-100 text-amber-700"
+        : "bg-red-100 text-red-700";
 
   return (
     <span

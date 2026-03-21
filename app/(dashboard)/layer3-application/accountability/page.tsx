@@ -42,7 +42,7 @@ export default async function AccountabilityPage({
 
       {data.gaps.length > 0 && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-          <h2 className="text-sm font-medium text-amber-400">
+          <h2 className="text-sm font-medium text-amber-700">
             Gaps — components without accountable party
           </h2>
           <ul className="mt-2 space-y-1">
@@ -80,7 +80,7 @@ export default async function AccountabilityPage({
                 </Link>
               </h2>
               {filtered.length === 0 ? (
-                <p className="text-sm text-amber-400">No assignments for this layer</p>
+                <p className="text-sm text-amber-700">No assignments for this layer</p>
               ) : (
                 <AccountabilityMatrix
                   assignments={filtered.map((a) => ({

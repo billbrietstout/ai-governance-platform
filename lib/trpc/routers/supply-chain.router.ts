@@ -2,7 +2,16 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
 import { prisma } from "@/lib/prisma";
-import { assessVendorPosture, checkEvidenceCurrency } from "@/lib/supply-chain/assurance";
+import {
+  assessVendorPosture,
+  checkEvidenceCurrency,
+  computeVraScore,
+  getVraStatus
+} from "@/lib/supply-chain/assurance";
+import {
+  getQuestionsForVendorType,
+  VRA_QUESTIONS
+} from "@/lib/supply-chain/vra-questions";
 import {
   getScanCoverage,
   getScanPolicy as getScanPolicyForAsset,
@@ -66,9 +75,19 @@ export const supplyChainRouter = createTRPCRouter({
     });
     const withScores = await Promise.all(
       list.map(async (v) => {
-        const score = await assessVendorPosture(prisma, ctx.orgId, v.id);
-        const expired = await checkEvidenceCurrency(prisma, ctx.orgId, v.id);
-        return { ...v, assuranceScore: score, expiredEvidence: expired };
+        const [score, expired, vraResult, vraStatus] = await Promise.all([
+          assessVendorPosture(prisma, ctx.orgId, v.id),
+          checkEvidenceCurrency(prisma, ctx.orgId, v.id),
+          computeVraScore(prisma, ctx.orgId, v.id, v.vendorType),
+          getVraStatus(prisma, ctx.orgId, v.id, v.vendorType)
+        ]);
+        return {
+          ...v,
+          assuranceScore: score,
+          expiredEvidence: expired,
+          vraScore: vraResult,
+          vraStatus
+        };
       })
     );
     return { data: withScores, meta: {} };
@@ -78,14 +97,102 @@ export const supplyChainRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const vendor = await prisma.vendorAssurance.findFirst({
-        where: { id: input.id, orgId: ctx.orgId }
+        where: { id: input.id, orgId: ctx.orgId },
+        include: { vraResponses: true }
       });
       if (!vendor) throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" });
-      const [assuranceScore, expiredEvidence] = await Promise.all([
+      const [assuranceScore, expiredEvidence, vraScore, vraStatus] = await Promise.all([
         assessVendorPosture(prisma, ctx.orgId, vendor.id),
-        checkEvidenceCurrency(prisma, ctx.orgId, vendor.id)
+        checkEvidenceCurrency(prisma, ctx.orgId, vendor.id),
+        computeVraScore(prisma, ctx.orgId, vendor.id, vendor.vendorType),
+        getVraStatus(prisma, ctx.orgId, vendor.id, vendor.vendorType)
       ]);
-      return { data: { ...vendor, assuranceScore, expiredEvidence }, meta: {} };
+      return {
+        data: {
+          ...vendor,
+          assuranceScore,
+          expiredEvidence,
+          vraScore,
+          vraStatus
+        },
+        meta: {}
+      };
+    }),
+
+  getVraQuestions: protectedProcedure
+    .input(z.object({ vendorId: z.string().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const vendorType = input?.vendorId
+        ? (
+            await prisma.vendorAssurance.findFirst({
+              where: { id: input.vendorId, orgId: ctx.orgId },
+              select: { vendorType: true }
+            })
+          )?.vendorType ?? null
+        : null;
+      const questions = getQuestionsForVendorType(vendorType);
+      return { data: questions, meta: {} };
+    }),
+
+  getVraResponses: protectedProcedure
+    .input(z.object({ vendorId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const vendor = await prisma.vendorAssurance.findFirst({
+        where: { id: input.vendorId, orgId: ctx.orgId }
+      });
+      if (!vendor) throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" });
+      const responses = await prisma.vendorVraResponse.findMany({
+        where: { vendorId: input.vendorId, orgId: ctx.orgId }
+      });
+      return { data: responses, meta: {} };
+    }),
+
+  saveVraResponse: protectedProcedure
+    .input(
+      z.object({
+        vendorId: z.string(),
+        questionId: z.string(),
+        answer: z.enum(["YES", "NO", "NA", "PARTIAL", "UNKNOWN"]),
+        evidenceUrl: z.union([z.string().url(), z.literal("")]).optional().nullable(),
+        notes: z.string().optional().nullable()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const vendor = await prisma.vendorAssurance.findFirst({
+        where: { id: input.vendorId, orgId: ctx.orgId }
+      });
+      if (!vendor) throw new TRPCError({ code: "NOT_FOUND", message: "Vendor not found" });
+      const validIds = new Set(VRA_QUESTIONS.map((q) => q.id));
+      if (!validIds.has(input.questionId)) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid questionId" });
+      }
+      const questions = getQuestionsForVendorType(vendor.vendorType);
+      const applicable = questions.some((q) => q.id === input.questionId);
+      if (!applicable) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Question not applicable to this vendor type"
+        });
+      }
+      await prisma.vendorVraResponse.upsert({
+        where: {
+          vendorId_questionId: { vendorId: input.vendorId, questionId: input.questionId }
+        },
+        create: {
+          vendorId: input.vendorId,
+          orgId: ctx.orgId,
+          questionId: input.questionId,
+          answer: input.answer as import("@prisma/client").VraAnswer,
+          evidenceUrl: input.evidenceUrl && input.evidenceUrl.length > 0 ? input.evidenceUrl : null,
+          notes: input.notes && input.notes.length > 0 ? input.notes : null
+        },
+        update: {
+          answer: input.answer as import("@prisma/client").VraAnswer,
+          evidenceUrl: input.evidenceUrl && input.evidenceUrl.length > 0 ? input.evidenceUrl : null,
+          notes: input.notes && input.notes.length > 0 ? input.notes : null
+        }
+      });
+      return { data: { ok: true }, meta: {} };
     }),
 
   getScanCoverage: protectedProcedure.query(async ({ ctx }) => {

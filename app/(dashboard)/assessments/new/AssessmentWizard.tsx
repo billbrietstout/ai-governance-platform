@@ -171,7 +171,7 @@ export function AssessmentWizard({ assets, frameworks, preselectedAssetId, creat
           <p className="text-slatePro-500 text-xs">
             Reviewers can be assigned per layer in the assessment workflow.
           </p>
-          {state?.error && <p className="text-sm text-red-400">{state.error}</p>}
+          {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
           <button
             type="submit"
             className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"

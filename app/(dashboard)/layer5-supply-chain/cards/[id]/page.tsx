@@ -31,24 +31,24 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">{card.asset.name}</h1>
         <div className="mt-1 flex items-center gap-2">
-          <span className="text-slatePro-400 text-sm">{card.cardType}</span>
+          <span className="text-sm text-gray-600">{card.cardType}</span>
           <CardSyncStatus status={card.syncStatus} lastSyncedAt={card.lastSyncedAt} />
           <EUCoverageBadge coverage={coverage} />
         </div>
       </div>
 
       <section>
-        <h2 className="mb-2 text-lg font-medium">EU AI Act Coverage</h2>
-        <div className="border-slatePro-700 bg-slatePro-900/30 space-y-1 rounded-lg border p-3">
+        <h2 className="mb-2 text-lg font-medium text-gray-900">EU AI Act Coverage</h2>
+        <div className="space-y-1 rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
           {coverage.map((r) => (
             <div
               key={`${r.article}-${r.field}`}
-              className={`flex items-center justify-between rounded px-2 py-1 ${
+              className={`flex items-center justify-between rounded px-3 py-2 ${
                 r.covered
-                  ? "bg-emerald-500/10 text-emerald-300"
+                  ? "bg-emerald-50 text-emerald-800"
                   : r.required
-                    ? "bg-red-500/10 text-red-300"
-                    : "bg-slatePro-800/50 text-slatePro-400"
+                    ? "bg-red-50 text-red-800"
+                    : "bg-gray-50 text-gray-600"
               }`}
             >
               <span>
@@ -62,8 +62,8 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
 
       {normalized && (
         <section>
-          <h2 className="mb-2 text-lg font-medium">Normalized Card</h2>
-          <div className="border-slatePro-700 bg-slatePro-900/30 space-y-3 rounded-lg border p-4">
+          <h2 className="mb-2 text-lg font-medium text-gray-900">Normalized Card</h2>
+          <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
             <Field label="Model" value={normalized.modelName ?? ""} />
             <Field label="Version" value={normalized.version ?? ""} />
             <Field label="Organization" value={normalized.organization ?? ""} />
@@ -89,8 +89,8 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
       )}
 
       <section>
-        <h2 className="mb-2 text-lg font-medium">Version History</h2>
-        <p className="border-slatePro-700 bg-slatePro-900/30 text-slatePro-400 rounded-lg border p-4 text-sm">
+        <h2 className="mb-2 text-lg font-medium text-gray-900">Version History</h2>
+        <p className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
           Version history and diff view coming soon.
         </p>
       </section>
@@ -102,8 +102,8 @@ function Field({ label, value }: { label: string; value: string }) {
   if (!value?.trim()) return null;
   return (
     <div>
-      <div className="text-slatePro-500 text-xs font-medium">{label}</div>
-      <div className="text-slatePro-200 text-sm">{value}</div>
+      <div className="text-xs font-medium text-gray-500">{label}</div>
+      <div className="mt-0.5 text-sm leading-relaxed text-gray-900">{value}</div>
     </div>
   );
 }

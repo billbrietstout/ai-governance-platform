@@ -32,7 +32,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Executive overview and strategic governance",
     defaultLandingPage: "/dashboard/executive",
     visibleLayers: ["L1"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 1: BUSINESS"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS"],
     primaryCapabilities: ["/", "/layer1-business", "/maturity", "/reports"],
     maturityGate: 1
   },
@@ -42,7 +42,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Financial views and ROI metrics",
     defaultLandingPage: "/dashboard/executive",
     visibleLayers: ["L1"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 1: BUSINESS"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS"],
     primaryCapabilities: ["/layer1-business", "/reports", "/"],
     maturityGate: 1
   },
@@ -52,7 +52,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Operations and asset oversight",
     defaultLandingPage: "/dashboard/executive",
     visibleLayers: ["L1", "L3"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 1: BUSINESS", "LAYER 3: APPLICATION"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS", "LAYER 3: APPLICATION"],
     primaryCapabilities: ["/layer1-business", "/layer3-application/assets", "/"],
     maturityGate: 1
   },
@@ -63,7 +63,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     defaultLandingPage: "/layer4-platform",
     visibleLayers: ["L1", "L3", "L4", "L5"],
     visibleSections: [
-      "GOVERNANCE OVERVIEW",
+      "READINESS OVERVIEW",
       "LAYER 1: BUSINESS",
       "LAYER 3: APPLICATION",
       "LAYER 4: PLATFORM",
@@ -85,7 +85,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     defaultLandingPage: "/dashboard/compliance-officer",
     visibleLayers: ["L1", "L2", "L5"],
     visibleSections: [
-      "GOVERNANCE OVERVIEW",
+      "READINESS OVERVIEW",
       "LAYER 1: BUSINESS",
       "LAYER 2: INFORMATION",
       "LAYER 5: SUPPLY CHAIN"
@@ -106,7 +106,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     defaultLandingPage: "/dashboard/caio",
     visibleLayers: ["L1", "L2", "L3", "L4", "L5"],
     visibleSections: [
-      "GOVERNANCE OVERVIEW",
+      "READINESS OVERVIEW",
       "LAYER 1: BUSINESS",
       "LAYER 2: INFORMATION",
       "LAYER 3: APPLICATION",
@@ -129,7 +129,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Data catalog, lineage, and information governance",
     defaultLandingPage: "/layer2-information",
     visibleLayers: ["L2"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 2: INFORMATION"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 2: INFORMATION"],
     primaryCapabilities: [
       "/layer2-information",
       "/layer2-information/data-catalog",
@@ -143,7 +143,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "AI assets, accountability, and application layer",
     defaultLandingPage: "/dashboard/developer",
     visibleLayers: ["L3", "L4"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 3: APPLICATION", "LAYER 4: PLATFORM"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 3: APPLICATION", "LAYER 4: PLATFORM"],
     primaryCapabilities: [
       "/layer3-application/assets",
       "/layer3-application/accountability",
@@ -159,7 +159,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Platform ops, telemetry, and supply chain",
     defaultLandingPage: "/dashboard/platform",
     visibleLayers: ["L4", "L5"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 4: PLATFORM", "LAYER 5: SUPPLY CHAIN"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 4: PLATFORM", "LAYER 5: SUPPLY CHAIN"],
     primaryCapabilities: [
       "/layer4-platform",
       "/layer4-platform/telemetry",
@@ -175,7 +175,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Supply chain, vendors, and L1 compliance",
     defaultLandingPage: "/dashboard/supply-chain",
     visibleLayers: ["L5", "L1"],
-    visibleSections: ["GOVERNANCE OVERVIEW", "LAYER 1: BUSINESS", "LAYER 5: SUPPLY CHAIN"],
+    visibleSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS", "LAYER 5: SUPPLY CHAIN"],
     primaryCapabilities: [
       "/layer5-supply-chain",
       "/layer5-supply-chain/vendors",

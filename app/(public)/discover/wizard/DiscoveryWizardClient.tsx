@@ -3,9 +3,27 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { HelpCircle, Loader2 } from "lucide-react";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { runDiscovery, type RegulationDiscoveryResult } from "@/lib/discovery/engine";
 import { GuestResultsView } from "./GuestResultsView";
+
+function LabelWithTooltip({
+  label,
+  tooltip
+}: {
+  label: string;
+  tooltip: string;
+}) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span>{label}</span>
+      <Tooltip content={tooltip} side="top">
+        <HelpCircle className="h-4 w-4 text-slate-400" aria-hidden />
+      </Tooltip>
+    </span>
+  );
+}
 const ASSET_TYPES = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"] as const;
 const BUSINESS_FUNCTIONS = [
   "HR",
@@ -43,6 +61,27 @@ const DATA_TYPES = [
   "Proprietary"
 ] as const;
 const RISK_LEVELS = ["Low", "Medium", "High", "Critical"] as const;
+const EU_ENTITY_TYPES = [
+  "PROVIDER",
+  "DEPLOYER",
+  "DISTRIBUTOR",
+  "IMPORTER",
+  "PRODUCT_MANUFACTURER",
+  "AUTHORISED_REPRESENTATIVE"
+] as const;
+const EU_EXCLUSIONS = [
+  { value: "none", label: "None of these" },
+  { value: "military", label: "Military purposes only" },
+  { value: "rd_only", label: "R&D only (not yet on market)" },
+  { value: "open_source", label: "Open source component only" },
+  { value: "personal_use", label: "Personal, non-professional use" }
+] as const;
+const EU_TRANSPARENCY_TYPES = [
+  { value: "deep_fake", label: "Deep-fake / manipulated image/audio/video" },
+  { value: "synthetic_content", label: "Synthetic text/image/audio/video" },
+  { value: "emotion_biometric", label: "Emotion recognition or biometric categorisation" },
+  { value: "natural_person", label: "Interacts directly with natural persons" }
+] as const;
 
 type WizardInputs = {
   assetType: (typeof ASSET_TYPES)[number] | "";
@@ -58,6 +97,10 @@ type WizardInputs = {
   euResidentsData: "Yes" | "No" | "Unknown" | "";
   expectedRiskLevel: (typeof RISK_LEVELS)[number] | "";
   vulnerablePopulations: boolean;
+  euEntityType: (typeof EU_ENTITY_TYPES)[number] | "" | "NOT_APPLICABLE";
+  euEstablishedInEU: boolean;
+  euExclusion: (typeof EU_EXCLUSIONS)[number]["value"] | "";
+  euTransparencyTypes: string[];
 };
 
 const VERTICAL_OPTIONS = [
@@ -86,7 +129,11 @@ const getInitialInputs = (
   dataTypes: [],
   euResidentsData: "",
   expectedRiskLevel: "",
-  vulnerablePopulations: false
+  vulnerablePopulations: false,
+  euEntityType: "",
+  euEstablishedInEU: false,
+  euExclusion: "",
+  euTransparencyTypes: []
 });
 
 type DiscoveryInputs = {
@@ -103,6 +150,10 @@ type DiscoveryInputs = {
   euResidentsData: string;
   expectedRiskLevel: string;
   vulnerablePopulations: boolean;
+  euEntityType?: string;
+  euEstablishedInEU?: boolean;
+  euExclusion?: string;
+  euTransparencyTypes?: string[];
 };
 
 type Props = {
@@ -152,6 +203,15 @@ export function DiscoveryWizardClient({
     }));
   };
 
+  const toggleTransparencyType = (t: string) => {
+    setInputs((prev) => ({
+      ...prev,
+      euTransparencyTypes: prev.euTransparencyTypes.includes(t)
+        ? prev.euTransparencyTypes.filter((x) => x !== t)
+        : [...prev.euTransparencyTypes, t]
+    }));
+  };
+
   const runDiscoveryHandler = useCallback(() => {
     const required = [
       { val: inputs.assetType, label: "AI system type" },
@@ -183,7 +243,20 @@ export function DiscoveryWizardClient({
           dataTypes: inputs.dataTypes,
           euResidentsData: inputs.euResidentsData as "Yes" | "No" | "Unknown",
           expectedRiskLevel: inputs.expectedRiskLevel as (typeof RISK_LEVELS)[number],
-          vulnerablePopulations: inputs.vulnerablePopulations
+          vulnerablePopulations: inputs.vulnerablePopulations,
+          euEntityType:
+            inputs.euEntityType && inputs.euEntityType !== "NOT_APPLICABLE"
+              ? (inputs.euEntityType as (typeof EU_ENTITY_TYPES)[number])
+              : undefined,
+          euEstablishedInEU: inputs.euEstablishedInEU || undefined,
+          euExclusion:
+            inputs.euExclusion && inputs.euExclusion !== "none"
+              ? (inputs.euExclusion as "military" | "rd_only" | "open_source" | "personal_use")
+              : undefined,
+          euTransparencyTypes:
+            inputs.euTransparencyTypes.length > 0
+              ? (inputs.euTransparencyTypes as ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[])
+              : undefined
         });
         setGuestResults(result);
       } catch (e) {
@@ -207,7 +280,14 @@ export function DiscoveryWizardClient({
         dataTypes: inputs.dataTypes,
         euResidentsData: inputs.euResidentsData,
         expectedRiskLevel: inputs.expectedRiskLevel,
-        vulnerablePopulations: inputs.vulnerablePopulations
+        vulnerablePopulations: inputs.vulnerablePopulations,
+        euEntityType:
+          inputs.euEntityType && inputs.euEntityType !== "NOT_APPLICABLE"
+            ? inputs.euEntityType
+            : undefined,
+        euEstablishedInEU: inputs.euEstablishedInEU || undefined,
+        euExclusion: inputs.euExclusion && inputs.euExclusion !== "none" ? inputs.euExclusion : undefined,
+        euTransparencyTypes: inputs.euTransparencyTypes.length > 0 ? inputs.euTransparencyTypes : undefined
       } as DiscoveryInputs)
         .then((id) => router.push(`/discover/results/${id}`))
         .catch((e) => {
@@ -247,7 +327,10 @@ export function DiscoveryWizardClient({
           <h2 className="font-medium text-slate-900">Step 1: System Description</h2>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              What type of AI system?
+              <LabelWithTooltip
+                label="What type of AI system?"
+                tooltip="MODEL: a single AI model (e.g. foundation model, fine-tuned). AGENT: an autonomous agent that acts on its own. APPLICATION: a user-facing app (e.g. chatbot, recommendation system). PIPELINE: a multi-step workflow (e.g. data → model → output)."
+              />
             </label>
             <select
               value={inputs.assetType}
@@ -269,7 +352,10 @@ export function DiscoveryWizardClient({
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              What does it do? (max 200 chars)
+              <LabelWithTooltip
+                label="What does it do? (max 200 chars)"
+                tooltip="A brief description helps identify regulations. Include use case, who it serves, and how it works (e.g. 'Chatbot for order status and returns')."
+              />
             </label>
             <textarea
               value={inputs.description}
@@ -285,7 +371,10 @@ export function DiscoveryWizardClient({
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              Which business function?
+              <LabelWithTooltip
+                label="Which business function?"
+                tooltip="The primary organizational area using this AI (e.g. HR for recruitment, Finance for credit scoring). Affects which regulations apply."
+              />
             </label>
             <select
               value={inputs.businessFunction}
@@ -305,8 +394,37 @@ export function DiscoveryWizardClient({
               ))}
             </select>
           </div>
+          <div>
+            <div className="mb-1.5 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+              <strong className="text-slate-700">#E1 Entity type</strong> – The EU AI Act assigns different obligations depending on your role. You can be more than one type (e.g. both Provider and Deployer). Select the one that best fits, or &quot;Not applicable&quot; if the Act doesn&apos;t apply.
+            </div>
+            <label className="block text-sm font-medium text-slate-700">
+              <LabelWithTooltip
+                label="EU AI Act entity type (flowchart #E1)"
+                tooltip="Select your role under the EU AI Act, or 'Not applicable' if your system is outside EU scope (e.g. US-only, internal use). Provider: develops and places on market. Deployer: uses under your authority. Distributor/Importer: supply chain roles. Product Manufacturer: AI in your product."
+              />
+            </label>
+            <select
+              value={inputs.euEntityType}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  euEntityType: e.target.value as (typeof EU_ENTITY_TYPES)[number] | "" | "NOT_APPLICABLE"
+                }))
+              }
+              className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            >
+              <option value="">— Select —</option>
+              <option value="NOT_APPLICABLE">Not applicable (outside EU scope)</option>
+              {EU_ENTITY_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2">
+            <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={inputs.decisionsAffectingPeople}
@@ -315,13 +433,16 @@ export function DiscoveryWizardClient({
                 }
                 className="rounded border-slate-300"
               />
-              <span className="text-sm text-slate-700">
+              <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Will it make or influence decisions affecting people?
+                <Tooltip content="e.g. hiring, credit, benefits, access to services. Triggers higher scrutiny under EU AI Act and employment regulations." side="top">
+                  <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                </Tooltip>
               </span>
             </label>
           </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2">
+            <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={inputs.interactsWithEndUsers}
@@ -330,8 +451,11 @@ export function DiscoveryWizardClient({
                 }
                 className="rounded border-slate-300"
               />
-              <span className="text-sm text-slate-700">
+              <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Will it interact directly with end users?
+                <Tooltip content="e.g. chatbots, virtual assistants, recommendation UIs. Often triggers transparency obligations (Art. 50)." side="top">
+                  <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                </Tooltip>
               </span>
             </label>
           </div>
@@ -343,7 +467,10 @@ export function DiscoveryWizardClient({
           <h2 className="font-medium text-slate-900">Step 2: Deployment Context</h2>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              Where will it be deployed?
+              <LabelWithTooltip
+                label="Where will it be deployed?"
+                tooltip="EU market: placed on market or put into service in the EU. US only: US jurisdictions only. Global: worldwide. Internal only: within your organisation."
+              />
             </label>
             <select
               value={inputs.deployment}
@@ -363,9 +490,61 @@ export function DiscoveryWizardClient({
               ))}
             </select>
           </div>
+          <div className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+            <strong className="text-slate-700">#S1 Scope</strong> – The EU AI Act applies if you place AI on the EU market, put it into service in the EU, are established in the EU, or if your AI&apos;s output is used in the EU. The questions below help determine whether you fall within scope.
+          </div>
+          <div className="flex items-center gap-4">
+            <label className="flex cursor-pointer items-center gap-2">
+              <input
+                type="checkbox"
+                checked={inputs.euEstablishedInEU}
+                onChange={(e) =>
+                  setInputs((p) => ({ ...p, euEstablishedInEU: e.target.checked }))
+                }
+                className="rounded border-slate-300"
+              />
+              <span className="flex items-center gap-1.5 text-sm text-slate-700">
+                Organisation established or located in the EU (scope #S1)
+                <Tooltip content="If your organisation has a legal presence in any EU member state, the EU AI Act may apply even if the system is deployed elsewhere." side="top">
+                  <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                </Tooltip>
+              </span>
+            </label>
+          </div>
+          <div className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+            <strong className="text-slate-700">#R2 Exclusions</strong> – Some systems are excluded from the EU AI Act (e.g. military AI, purely R&D, certain open source components, or personal non-professional use). If one applies, the Act generally does not apply.
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              Which verticals does your organization operate in?
+              <LabelWithTooltip
+                label="Does your system fall under any exclusions? (#R2)"
+                tooltip="Military: AI for defence only. R&D only: not yet on market. Open source: component under free/libre license. Personal use: non-professional deployment by individuals. If any apply, the system may be out of scope."
+              />
+            </label>
+            <select
+              value={inputs.euExclusion}
+              onChange={(e) =>
+                setInputs((p) => ({
+                  ...p,
+                  euExclusion: e.target.value as (typeof EU_EXCLUSIONS)[number]["value"] | ""
+                }))
+              }
+              className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            >
+              <option value="">— Select —</option>
+              {EU_EXCLUSIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              <LabelWithTooltip
+                label="Which verticals does your organization operate in?"
+                tooltip="Sectors you serve (e.g. healthcare, financial services). Some regulations apply only to specific verticals."
+              />
             </label>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
               {VERTICAL_OPTIONS.map((v) => (
@@ -382,7 +561,12 @@ export function DiscoveryWizardClient({
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Operating model?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              <LabelWithTooltip
+                label="Operating model?"
+                tooltip="IAAS: infrastructure. PAAS: platform. SAAS: software. AGENT_PAAS: agent platform. MIXED: combination. Affects supply chain and deployment obligations."
+              />
+            </label>
             <select
               value={inputs.operatingModel}
               onChange={(e) => setInputs((p) => ({ ...p, operatingModel: e.target.value }))}
@@ -397,7 +581,12 @@ export function DiscoveryWizardClient({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Autonomy level?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              <LabelWithTooltip
+                label="Autonomy level?"
+                tooltip="L0: human-only. L1: AI suggests, human decides. L2: partial automation. L3: conditional automation. L4: high automation. L5: full autonomy. Higher autonomy may trigger additional governance."
+              />
+            </label>
             <select
               value={inputs.autonomyLevel}
               onChange={(e) =>
@@ -424,7 +613,10 @@ export function DiscoveryWizardClient({
           <h2 className="font-medium text-slate-900">Step 3: Data & Risk Profile</h2>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              What data will it process?
+              <LabelWithTooltip
+                label="What data will it process?"
+                tooltip="PII: personally identifiable. Financial, Health, Biometric: sensitive categories. Employment: job-related. Public: open data. Proprietary: internal. Affects GDPR, sector rules."
+              />
             </label>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
               {DATA_TYPES.map((d) => (
@@ -442,7 +634,10 @@ export function DiscoveryWizardClient({
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
-              Does it process data about EU residents?
+              <LabelWithTooltip
+                label="Does it process data about EU residents?"
+                tooltip="Yes: output used in EU or processes EU persons' data — EU regulations apply. No: no EU link. Unknown: may apply; treat as likely."
+              />
             </label>
             <select
               value={inputs.euResidentsData}
@@ -461,7 +656,12 @@ export function DiscoveryWizardClient({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">Expected risk level?</label>
+            <label className="block text-sm font-medium text-slate-700">
+              <LabelWithTooltip
+                label="Expected risk level?"
+                tooltip="Your initial assessment: Low (minimal harm), Medium, High (significant impact), Critical (severe harm). Helps prioritise discovery results."
+              />
+            </label>
             <select
               value={inputs.expectedRiskLevel}
               onChange={(e) =>
@@ -480,8 +680,35 @@ export function DiscoveryWizardClient({
               ))}
             </select>
           </div>
+          <div>
+            <div className="mb-1.5 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+              <strong className="text-slate-700">#R4 Art. 50 Transparency</strong> – Limited-risk AI systems must inform users when they interact with AI. Art. 50 sets disclosure rules for: (1) deep-fakes / manipulated media, (2) synthetic content, (3) emotion recognition or biometric categorisation, (4) AI that interacts directly with people. Tick all that apply.
+            </div>
+            <label className="block text-sm font-medium text-slate-700">
+              <LabelWithTooltip
+                label="Transparency triggers (#R4 – Art. 50)"
+                tooltip="EU AI Act requires disclosure for: deep-fakes, synthetic content, emotion/biometric categorisation, and AI that interacts directly with people. Tick all that apply."
+              />
+            </label>
+            <p className="mt-0.5 text-xs text-slate-500">
+              Tick if your system performs any of these (limited-risk obligations)
+            </p>
+            <div className="mt-2 flex flex-col gap-2">
+              {EU_TRANSPARENCY_TYPES.map((t) => (
+                <label key={t.value} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={inputs.euTransparencyTypes.includes(t.value)}
+                    onChange={() => toggleTransparencyType(t.value)}
+                    className="shrink-0 rounded border-slate-300"
+                  />
+                  <span className="text-sm">{t.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-2">
+            <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={inputs.vulnerablePopulations}
@@ -490,8 +717,11 @@ export function DiscoveryWizardClient({
                 }
                 className="rounded border-slate-300"
               />
-              <span className="text-sm text-slate-700">
+              <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Will vulnerable populations be affected?
+                <Tooltip content="e.g. children, elderly, persons with disabilities, or others at greater risk. May require extra safeguards and monitoring." side="top">
+                  <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+                </Tooltip>
               </span>
             </label>
           </div>

@@ -60,7 +60,7 @@ export default async function VendorAssuranceReportPage() {
                   <td className="text-slatePro-200 px-4 py-2">{Math.round(v.score * 100)}%</td>
                   <td className="px-4 py-2">
                     {v.expiredCount > 0 ? (
-                      <span className="text-amber-400">{v.expiredCount}</span>
+                      <span className="text-amber-700">{v.expiredCount}</span>
                     ) : (
                       "—"
                     )}

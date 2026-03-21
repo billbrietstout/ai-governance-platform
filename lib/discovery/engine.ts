@@ -7,6 +7,14 @@
 import type { VerticalKey } from "@/lib/vertical-regulations";
 import { VERTICAL_REGULATIONS, assetAppliesToRegulation } from "@/lib/vertical-regulations";
 
+export type EuAIActEntityType =
+  | "PROVIDER"
+  | "DEPLOYER"
+  | "DISTRIBUTOR"
+  | "IMPORTER"
+  | "PRODUCT_MANUFACTURER"
+  | "AUTHORISED_REPRESENTATIVE";
+
 export type DiscoveryInputs = {
   assetType: "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE";
   description?: string;
@@ -28,6 +36,14 @@ export type DiscoveryInputs = {
   euResidentsData: "Yes" | "No" | "Unknown";
   expectedRiskLevel: "Low" | "Medium" | "High" | "Critical";
   vulnerablePopulations: boolean;
+  /** Scope #S1: Organisation established or located in EU */
+  euEstablishedInEU?: boolean;
+  /** Exclusions #R2: military, R&D, open source, personal use */
+  euExclusion?: "none" | "military" | "rd_only" | "open_source" | "personal_use";
+  /** Transparency #R4: deep-fake, synthetic content, emotion/biometric, natural-person interaction */
+  euTransparencyTypes?: ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[];
+  /** Entity type #E1 */
+  euEntityType?: EuAIActEntityType;
 };
 
 export type RegulationApplicability = "MANDATORY" | "LIKELY_APPLICABLE" | "RECOMMENDED";
@@ -63,14 +79,34 @@ export type RegulationDiscoveryResult = {
   riskScore: number;
 };
 
+/** Annex III high-risk use cases (flowchart #HR4) – expanded per FLI checker */
 const EU_AI_ACT_ANNEX_III_USE_CASES: Record<string, string[]> = {
-  HR: ["recruitment", "screening", "hiring", "employment", "workforce", "personnel"],
+  HR: [
+    "recruitment",
+    "screening",
+    "hiring",
+    "employment",
+    "workforce",
+    "personnel",
+    "biometric",
+    "biometrics"
+  ],
   Finance: ["credit", "scoring", "lending", "insurance", "underwriting", "claims"],
   Healthcare: ["medical", "clinical", "diagnosis", "treatment", "health"],
-  Operations: ["critical infrastructure", "safety", "transport", "energy"],
+  Operations: [
+    "critical infrastructure",
+    "safety",
+    "transport",
+    "energy",
+    "border",
+    "migration",
+    "asylum",
+    "law enforcement",
+    "policing"
+  ],
   Customer_Service: ["chatbot", "support"],
-  Legal: ["legal", "judicial"],
-  Other: []
+  Legal: ["legal", "judicial", "justice", "democratic", "essential service", "public service"],
+  Other: ["education", "vocational", "training", "school", "student"]
 };
 
 const COSAI_LAYERS = [
@@ -99,8 +135,23 @@ function mapVerticalToKey(v: string): VerticalKey {
 function isAnnexIIIHighRisk(inputs: DiscoveryInputs): boolean {
   const desc = (inputs.description ?? "").toLowerCase();
   const bf = inputs.businessFunction;
+  // Check business-function-specific triggers
   const triggers = EU_AI_ACT_ANNEX_III_USE_CASES[bf] ?? [];
   if (triggers.some((t) => desc.includes(t))) return true;
+  // Cross-function: description keywords for all Annex III domains
+  const annexIIIKeywords = [
+    "biometric",
+    "recruitment",
+    "credit",
+    "education",
+    "critical infrastructure",
+    "law enforcement",
+    "border",
+    "migration",
+    "justice",
+    "essential service"
+  ];
+  if (annexIIIKeywords.some((kw) => desc.includes(kw))) return true;
   if (inputs.decisionsAffectingPeople && (bf === "HR" || bf === "Finance" || bf === "Healthcare"))
     return true;
   return false;
@@ -157,14 +208,28 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
   const hrRelevant = inputs.businessFunction === "HR" || inputs.dataTypes.includes("Employment");
   const decisionsAboutPeople = inputs.decisionsAffectingPeople;
 
-  // EU AI Act – only applies when EU jurisdiction or EU residents' data
-  // MANDATORY: EU market deployment OR processing EU residents' data
-  const euJurisdiction = inputs.deployment === "EU_market" || inputs.euResidentsData === "Yes";
-  // LIKELY: Global deployment (may reach EU) OR unknown if EU data
-  const euPossible = inputs.euResidentsData === "Unknown" || inputs.deployment === "Global";
+  // EU AI Act – scope #S1: placing on market, established in EU, output used in EU
+  // Exclusions #R2: military, R&D only, open source, personal use → skip if applicable
+  const euExcluded =
+    inputs.euExclusion === "military" ||
+    inputs.euExclusion === "rd_only" ||
+    inputs.euExclusion === "open_source" ||
+    inputs.euExclusion === "personal_use";
 
-  // When euResidentsData=No AND deployment is US_only or Internal_only, do NOT add EU AI Act
-  if (euJurisdiction) {
+  const euJurisdiction =
+    !euExcluded &&
+    (inputs.deployment === "EU_market" ||
+      inputs.euResidentsData === "Yes" ||
+      inputs.euEstablishedInEU === true);
+  const euPossible =
+    !euExcluded &&
+    (inputs.euResidentsData === "Unknown" ||
+      inputs.deployment === "Global" ||
+      (inputs.euEstablishedInEU === undefined && inputs.deployment !== "US_only"));
+
+  if (!euExcluded) {
+
+    if (euJurisdiction) {
     // EU jurisdiction applies – add as MANDATORY
     if (annexIII) {
       mandatory.push({
@@ -177,13 +242,20 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
         deadline: "Aug 2026 (high-risk systems)",
         implementationEffort: "High"
       });
-    } else if (inputs.interactsWithEndUsers) {
+    } else if (
+      inputs.interactsWithEndUsers ||
+      (inputs.euTransparencyTypes?.length ?? 0) > 0
+    ) {
+      const transparencyTypes = inputs.euTransparencyTypes ?? [];
+      const transparencyList = transparencyTypes.length
+        ? transparencyTypes.join(", ").replace(/_/g, " ")
+        : "direct user interaction";
       mandatory.push({
         code: "EU_AI_ACT_LIMITED",
         name: "EU AI Act – Limited Risk (Transparency)",
         jurisdiction: "EU",
         applicability: "MANDATORY",
-        keyRequirements: "Transparency obligations (Art. 50–52) for AI interacting with humans",
+        keyRequirements: `Transparency obligations (Art. 50): ${transparencyList}`,
         deadline: "Feb 2026",
         implementationEffort: "Medium"
       });
@@ -210,7 +282,10 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
         deadline: "Aug 2026 (high-risk systems)",
         implementationEffort: "High"
       });
-    } else if (inputs.interactsWithEndUsers) {
+    } else if (
+      inputs.interactsWithEndUsers ||
+      (inputs.euTransparencyTypes?.length ?? 0) > 0
+    ) {
       likelyApplicable.push({
         code: "EU_AI_ACT_LIMITED",
         name: "EU AI Act – Limited Risk (Transparency)",
@@ -230,6 +305,7 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
         implementationEffort: "Low"
       });
     }
+  }
   }
 
   // GDPR AI implications

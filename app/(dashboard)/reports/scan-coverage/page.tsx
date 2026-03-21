@@ -16,10 +16,12 @@ export default async function ScanCoverageReportPage() {
           <Link href="/reports" className="text-navy-400 text-sm hover:underline">
             ← Reports
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">Scan Coverage Report</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+            Scan Coverage Report
+          </h1>
         </div>
         <div className="flex gap-2">
-          <button className="border-slatePro-600 text-slatePro-300 rounded border px-3 py-1 text-sm">
+          <button className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50">
             Export CSV
           </button>
         </div>

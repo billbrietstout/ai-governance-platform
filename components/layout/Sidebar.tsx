@@ -187,7 +187,7 @@ function getGovernanceOverviewItems(
 
 const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = [
   {
-    title: "GOVERNANCE OVERVIEW",
+    title: "READINESS OVERVIEW",
     items: GOVERNANCE_OVERVIEW_ITEMS
   },
   {
@@ -251,7 +251,7 @@ function getSectionForPath(
 ): string | null {
   for (const section of ALL_SECTIONS) {
     const items =
-      section.title === "GOVERNANCE OVERVIEW"
+      section.title === "READINESS OVERVIEW"
         ? getGovernanceOverviewItems(persona, consultantOrgId)
         : section.items;
     for (const item of items) {
@@ -605,7 +605,7 @@ export function Sidebar({
               <span className="text-slatePro-100 block truncate text-sm font-semibold">
                 AI Readiness
               </span>
-              <span className="text-slatePro-500 block text-[10px]">Readiness & Governance</span>
+              <span className="text-slatePro-500 block text-[10px]">Readiness</span>
             </div>
           </Link>
         )}
@@ -676,7 +676,7 @@ export function Sidebar({
                 )}
               </button>
               {(collapsed || isExpanded) &&
-                (section.title === "GOVERNANCE OVERVIEW"
+                (section.title === "READINESS OVERVIEW"
                   ? getGovernanceOverviewItems(persona ?? null, consultantOrgId)
                   : section.items
                 ).map((item) => {

@@ -26,7 +26,7 @@ export default async function DataCatalogPage() {
           ← Layer 2: Information
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Data Catalog</h1>
-        <p className="text-slatePro-300 mt-1">AI training and inference data sources.</p>
+        <p className="mt-1 text-gray-600">AI training and inference data sources.</p>
       </div>
 
       {/* Summary */}

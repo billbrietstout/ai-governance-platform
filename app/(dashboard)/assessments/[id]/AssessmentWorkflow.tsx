@@ -102,10 +102,10 @@ export function AssessmentWorkflow({ assessmentId, assetId, layers, byLayer, sta
                   <span
                     className={`inline-flex rounded px-2 py-0.5 text-xs ${
                       c.attestation?.status === "COMPLIANT"
-                        ? "bg-emerald-500/20 text-emerald-400"
+                        ? "bg-emerald-100 text-emerald-700"
                         : c.attestation?.status === "NOT_APPLICABLE"
-                          ? "bg-slatePro-600/30 text-slatePro-400"
-                          : "bg-amber-500/20 text-amber-400"
+                          ? "bg-gray-100 text-gray-600"
+                          : "bg-amber-100 text-amber-700"
                     }`}
                   >
                     {c.attestation?.status ?? "PENDING"}

@@ -30,6 +30,14 @@ export async function createAsset(formData: FormData) {
       euRiskLevel:
         (formData.get("euRiskLevel") as "MINIMAL" | "LIMITED" | "HIGH" | "UNACCEPTABLE") ||
         undefined,
+      euEntityType:
+        (formData.get("euEntityType") as
+          | "PROVIDER"
+          | "DEPLOYER"
+          | "DISTRIBUTOR"
+          | "IMPORTER"
+          | "PRODUCT_MANUFACTURER"
+          | "AUTHORISED_REPRESENTATIVE") || undefined,
       operatingModel:
         (formData.get("operatingModel") as "IN_HOUSE" | "VENDOR" | "HYBRID") || undefined,
       cosaiLayer:

@@ -112,10 +112,23 @@ export default async function VendorsPage() {
                   </div>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-1">
                   <span className={v.contractAligned ? "text-emerald-600" : "text-amber-600"}>
                     {v.contractAligned ? "Contract aligned" : "Contract gap"}
                   </span>
+                  {v.vraStatus && (
+                    <span
+                      className={`text-xs ${
+                        v.vraStatus === "COMPLETE"
+                          ? "text-emerald-600"
+                          : v.vraStatus === "IN_PROGRESS"
+                            ? "text-amber-600"
+                            : "text-gray-500"
+                      }`}
+                    >
+                      VRA {v.vraStatus === "COMPLETE" ? "✓" : v.vraStatus === "IN_PROGRESS" ? "⋯" : "—"}
+                    </span>
+                  )}
                   {daysToExpiry !== null && (
                     <span
                       className={`text-xs ${expiryWarning ? "text-amber-600" : "text-gray-500"}`}

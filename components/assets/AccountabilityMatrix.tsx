@@ -44,7 +44,7 @@ export function AccountabilityMatrix({ assignments, layers, onEdit }: Props) {
               return (
                 <tr key={layer} className="border-slatePro-800 border-b">
                   <td className="text-slatePro-400 px-4 py-2">{layer.replace(/_/g, " ")}</td>
-                  <td colSpan={onEdit ? 5 : 4} className="px-4 py-2 text-amber-400">
+                  <td colSpan={onEdit ? 5 : 4} className="px-4 py-2 text-amber-700">
                     No assignments — gap
                   </td>
                 </tr>

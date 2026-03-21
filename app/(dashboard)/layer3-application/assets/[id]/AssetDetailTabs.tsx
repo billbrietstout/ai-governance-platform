@@ -196,7 +196,7 @@ export function AssetDetailTabs({
           <div className="border-slatePro-700 bg-slatePro-900/30 rounded-lg border p-4">
             <div className="flex items-center gap-2">
               <span className="text-slatePro-400">Policy compliance:</span>
-              <span className={scanCompliance.compliant ? "text-emerald-400" : "text-amber-400"}>
+              <span className={scanCompliance.compliant ? "text-emerald-700" : "text-amber-700"}>
                 {scanCompliance.compliant ? "Compliant" : "Non-compliant"}
               </span>
               <span className="text-slatePro-300">({scanCompliance.score}%)</span>
@@ -205,7 +205,7 @@ export function AssetDetailTabs({
               Passed: {scanCompliance.passed.join(", ") || "—"}
             </div>
             {scanCompliance.missing.length > 0 && (
-              <div className="mt-1 text-sm text-amber-400">
+              <div className="mt-1 text-sm text-amber-700">
                 Missing: {scanCompliance.missing.join(", ")}
               </div>
             )}

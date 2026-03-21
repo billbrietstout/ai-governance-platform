@@ -130,84 +130,91 @@ export function MaturityAssessmentClient({ latestAssessment, lastAssessedAt }: P
 
       {/* One question at a time per layer */}
       {currentQ && (
-        <div className="mb-4 rounded border border-slate-200 bg-slate-50 p-4">
-          <p className="mb-2 font-medium text-slate-900">{currentQ.question}</p>
-          <p className="mb-3 text-xs text-slate-500">{currentQ.hint}</p>
-          <div className="space-y-2">
-            {currentQ.options.map((optionText, index) => {
-              const score = index + 1;
-              const isSelected = getAnswer(currentQ.id)?.score === score;
-              return (
-                <label
-                  key={index}
-                  className={`flex cursor-pointer items-start gap-3 rounded border px-3 py-2.5 transition ${
-                    isSelected
-                      ? "border-navy-500 bg-navy-50 ring-navy-500 ring-1"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name={`q-${currentQ.id}`}
-                    value={score}
-                    checked={isSelected}
-                    onChange={() => {
-                      setAnswer(currentQ.id, score);
-                      if (!isLastQuestionOverall) advanceToNext();
-                    }}
-                    className="text-navy-600 focus:ring-navy-500 mt-1 h-4 w-4 shrink-0 border-slate-300"
-                  />
-                  <span className="text-sm text-slate-800">{optionText}</span>
-                </label>
-              );
-            })}
-          </div>
-          {isLastQuestionOverall && getAnswer(currentQ.id) && (
-            <div className="mt-4">
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="bg-navy-600 hover:bg-navy-500 w-full rounded-lg px-4 py-3 text-base font-semibold text-white disabled:opacity-50"
-              >
-                {isSubmitting ? "Submitting…" : "Submit Assessment"}
-              </button>
-              <p className="mt-2 text-center text-xs text-slate-500">
-                All 25 questions answered. Submit to save your assessment.
-              </p>
+        <div className="mb-4 flex min-h-[320px] flex-col rounded border border-slate-200 bg-slate-50 p-4">
+          <div className="flex-1">
+            <p className="mb-2 font-medium text-slate-900">{currentQ.question}</p>
+            <p className="mb-3 text-xs text-slate-500">{currentQ.hint}</p>
+            <div className="space-y-2">
+              {currentQ.options.map((optionText, index) => {
+                const score = index + 1;
+                const isSelected = getAnswer(currentQ.id)?.score === score;
+                return (
+                  <label
+                    key={index}
+                    className={`flex cursor-pointer items-start gap-3 rounded border px-3 py-2.5 transition ${
+                      isSelected
+                        ? "border-navy-500 bg-navy-50 ring-navy-500 ring-1"
+                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name={`q-${currentQ.id}`}
+                      value={score}
+                      checked={isSelected}
+                      onChange={() => {
+                        setAnswer(currentQ.id, score);
+                        if (!isLastQuestionOverall) advanceToNext();
+                      }}
+                      className="text-navy-600 focus:ring-navy-500 mt-1 h-4 w-4 shrink-0 border-slate-300"
+                    />
+                    <span className="text-sm text-slate-800">{optionText}</span>
+                  </label>
+                );
+              })}
             </div>
-          )}
-          <div className="mt-2 flex gap-2">
-            {hasPrev && (
-              <button
-                type="button"
-                onClick={() => setQuestionIndex((i) => i - 1)}
-                className="text-navy-600 text-sm hover:underline"
-              >
-                ← Previous
-              </button>
+            {isLastQuestionOverall && getAnswer(currentQ.id) && (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="bg-navy-600 hover:bg-navy-500 w-full rounded-lg px-4 py-3 text-base font-semibold text-white disabled:opacity-50"
+                >
+                  {isSubmitting ? "Submitting…" : "Submit Assessment"}
+                </button>
+                <p className="mt-2 text-center text-xs text-slate-500">
+                  All 25 questions answered. Submit to save your assessment.
+                </p>
+              </div>
             )}
-            {hasNextInLayer && (
-              <button
-                type="button"
-                onClick={() => setQuestionIndex((i) => i + 1)}
-                className="text-navy-600 text-sm hover:underline"
-              >
-                Next →
-              </button>
-            )}
-            {!hasNextInLayer && hasNextLayer && (
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveLayer(LAYERS[currentLayerIndex + 1]!);
-                  setQuestionIndex(0);
-                }}
-                className="text-navy-600 text-sm hover:underline"
-              >
-                Next layer →
-              </button>
-            )}
+          </div>
+          {/* Fixed nav bar – stays in same location between questions */}
+          <div className="mt-4 flex shrink-0 items-center justify-between border-t border-slate-200 pt-3">
+            <div className="min-w-[6rem]">
+              {hasPrev && (
+                <button
+                  type="button"
+                  onClick={() => setQuestionIndex((i) => i - 1)}
+                  className="text-navy-600 text-sm hover:underline"
+                >
+                  ← Previous
+                </button>
+              )}
+            </div>
+            <div className="min-w-[6rem] text-right">
+              {hasNextInLayer && (
+                <button
+                  type="button"
+                  onClick={() => setQuestionIndex((i) => i + 1)}
+                  className="text-navy-600 text-sm hover:underline"
+                >
+                  Next →
+                </button>
+              )}
+              {!hasNextInLayer && hasNextLayer && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveLayer(LAYERS[currentLayerIndex + 1]!);
+                    setQuestionIndex(0);
+                  }}
+                  className="text-navy-600 text-sm hover:underline"
+                >
+                  Next layer →
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

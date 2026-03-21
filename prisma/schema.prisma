@@ -91,6 +91,16 @@ enum EuRiskLevel {
   UNACCEPTABLE
 }
 
+/// EU AI Act entity type (flowchart #E1): Provider, Deployer, Distributor, Importer, Product Manufacturer, Authorised Representative
+enum EuAIActEntityType {
+  PROVIDER
+  DEPLOYER
+  DISTRIBUTOR
+  IMPORTER
+  PRODUCT_MANUFACTURER
+  AUTHORISED_REPRESENTATIVE
+}
+
 enum OperatingModel {
   IN_HOUSE
   VENDOR
@@ -183,7 +193,17 @@ enum VendorType {
   DATA_PROVIDER
   INFRASTRUCTURE
   TOOLING
+  CONSULTING
+  RESELLER
   OTHER
+}
+
+enum VraAnswer {
+  YES
+  NO
+  NA
+  PARTIAL
+  UNKNOWN
 }
 
 enum Soc2Status {
@@ -574,6 +594,7 @@ model AIAsset {
   description           String?
   assetType             AssetType
   euRiskLevel           EuRiskLevel?
+  euEntityType          EuAIActEntityType?
   operatingModel        OperatingModel?
   cosaiLayer            CosaiLayer?
   autonomyLevel         AutonomyLevel?
@@ -802,10 +823,29 @@ model VendorAssurance {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  organization    Organization       @relation(fields: [orgId], references: [id], onDelete: Cascade)
   provenanceRecords ProvenanceRecord[]
+  vraResponses     VendorVraResponse[]
 
   @@index([orgId])
+}
+
+model VendorVraResponse {
+  id          String    @id @default(cuid())
+  vendorId    String
+  orgId       String
+  questionId  String
+  answer      VraAnswer
+  evidenceUrl String?
+  notes       String?
+  assessedAt  DateTime  @default(now())
+  assessedBy  String?
+
+  vendor VendorAssurance @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, questionId])
+  @@index([orgId])
+  @@index([vendorId])
 }
 
 model ProvenanceRecord {

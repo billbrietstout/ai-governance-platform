@@ -56,16 +56,16 @@ export function DataSourcesSection({ entities }: Props) {
               onChange={() => toggle(e.id)}
               className="border-slatePro-600 rounded"
             />
-            <span className="text-slatePro-200 text-sm">{e.name}</span>
+            <span className="text-sm text-gray-900">{e.name}</span>
             <span
               className={`rounded px-1.5 py-0.5 text-[10px] ${
                 e.classification === "RESTRICTED"
-                  ? "bg-red-500/20 text-red-300"
+                  ? "bg-red-100 text-red-700"
                   : e.classification === "CONFIDENTIAL"
-                    ? "bg-amber-500/20 text-amber-300"
+                    ? "bg-amber-100 text-amber-700"
                     : e.classification === "INTERNAL"
-                      ? "bg-blue-500/20 text-blue-300"
-                      : "bg-emerald-500/20 text-emerald-300"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-emerald-100 text-emerald-700"
               }`}
             >
               {e.classification}
@@ -74,9 +74,9 @@ export function DataSourcesSection({ entities }: Props) {
         ))}
       </div>
       {showRestrictedWarning && (
-        <div className="flex items-start gap-2 rounded border border-amber-500/30 bg-amber-500/10 p-3">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
-          <p className="text-sm text-amber-200">
+        <div className="flex items-start gap-2 rounded border border-amber-200 bg-amber-50 p-3">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+          <p className="text-sm text-amber-800">
             This asset accesses RESTRICTED data — enhanced controls required
           </p>
         </div>

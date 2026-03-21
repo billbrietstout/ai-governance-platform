@@ -8,7 +8,7 @@ export type SidebarMode = "full" | "focused" | "hidden";
 
 /** Section keys matching ALL_SECTIONS titles in Sidebar.tsx */
 export type SidebarSectionKey =
-  | "GOVERNANCE OVERVIEW"
+  | "READINESS OVERVIEW"
   | "COMPLIANCE"
   | "PLANNING TOOLS"
   | "LAYER 1: BUSINESS"
@@ -26,15 +26,15 @@ export type PersonaSidebarConfig = {
 export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   CEO: {
     mode: "hidden",
-    allowedSections: ["GOVERNANCE OVERVIEW"]
+    allowedSections: ["READINESS OVERVIEW"]
   },
   CFO: {
     mode: "hidden",
-    allowedSections: ["GOVERNANCE OVERVIEW"]
+    allowedSections: ["READINESS OVERVIEW"]
   },
   COO: {
     mode: "focused",
-    allowedSections: ["GOVERNANCE OVERVIEW", "COMPLIANCE"]
+    allowedSections: ["READINESS OVERVIEW", "COMPLIANCE"]
   },
   CAIO: {
     mode: "full",
@@ -43,7 +43,7 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   CISO: {
     mode: "focused",
     allowedSections: [
-      "GOVERNANCE OVERVIEW",
+      "READINESS OVERVIEW",
       "COMPLIANCE",
       "LAYER 4: PLATFORM",
       "LAYER 5: SUPPLY CHAIN"
@@ -51,23 +51,23 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   },
   LEGAL: {
     mode: "focused",
-    allowedSections: ["GOVERNANCE OVERVIEW", "COMPLIANCE", "PLANNING TOOLS"]
+    allowedSections: ["READINESS OVERVIEW", "COMPLIANCE", "PLANNING TOOLS"]
   },
   DATA_OWNER: {
     mode: "focused",
-    allowedSections: ["GOVERNANCE OVERVIEW", "LAYER 2: INFORMATION"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 2: INFORMATION"]
   },
   DEV_LEAD: {
     mode: "focused",
-    allowedSections: ["GOVERNANCE OVERVIEW", "LAYER 3: APPLICATION", "LAYER 2: INFORMATION"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 3: APPLICATION", "LAYER 2: INFORMATION"]
   },
   PLATFORM_ENG: {
     mode: "focused",
-    allowedSections: ["GOVERNANCE OVERVIEW", "LAYER 4: PLATFORM", "LAYER 5: SUPPLY CHAIN"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 4: PLATFORM", "LAYER 5: SUPPLY CHAIN"]
   },
   VENDOR_MGR: {
     mode: "focused",
-    allowedSections: ["GOVERNANCE OVERVIEW", "LAYER 5: SUPPLY CHAIN"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 5: SUPPLY CHAIN"]
   }
 };
 

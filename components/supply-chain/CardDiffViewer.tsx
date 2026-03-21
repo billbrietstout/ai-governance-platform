@@ -27,10 +27,10 @@ export function CardDiffViewer({ prev, next }: Props) {
         <div key={key} className="border-slatePro-700 bg-slatePro-900/30 rounded border p-2">
           <div className="text-slatePro-300 font-medium">{key}</div>
           <div className="mt-1 grid grid-cols-2 gap-2">
-            <div className="rounded bg-red-500/10 p-1.5 text-red-300 line-through">
+            <div className="rounded bg-red-50 p-1.5 text-red-700 line-through">
               {typeof p === "object" ? JSON.stringify(p) : String(p ?? "")}
             </div>
-            <div className="rounded bg-emerald-500/10 p-1.5 text-emerald-300">
+            <div className="rounded bg-emerald-50 p-1.5 text-emerald-700">
               {typeof n === "object" ? JSON.stringify(n) : String(n ?? "")}
             </div>
           </div>

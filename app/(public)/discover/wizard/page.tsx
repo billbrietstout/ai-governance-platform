@@ -74,7 +74,18 @@ export default async function DiscoveryWizardPage() {
                     | "Medium"
                     | "High"
                     | "Critical",
-                  vulnerablePopulations: inputs.vulnerablePopulations
+                  vulnerablePopulations: inputs.vulnerablePopulations,
+                  euEntityType: inputs.euEntityType,
+                  euEstablishedInEU: inputs.euEstablishedInEU,
+                  euExclusion: inputs.euExclusion as
+                    | "military"
+                    | "rd_only"
+                    | "open_source"
+                    | "personal_use"
+                    | undefined,
+                  euTransparencyTypes: inputs.euTransparencyTypes as
+                    | ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[]
+                    | undefined
                 });
               }
         }

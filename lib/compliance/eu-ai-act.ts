@@ -1,5 +1,6 @@
 /**
  * EU AI Act – risk classification, prohibited practices, high-risk validation.
+ * Aligned with Future of Life Institute Compliance Checker Flowchart v1.0 (July 2025).
  */
 import type { EuRiskLevel } from "@prisma/client";
 
@@ -19,6 +20,68 @@ export type ValidationResult = {
   passed: boolean;
   message: string;
 };
+
+/** Art. 5 prohibited practice keywords (flowchart #R3) */
+const PROHIBITED_KEYWORDS: { pattern: RegExp; article: string }[] = [
+  { pattern: /\bsubliminal\b/, article: "Art. 5(1)(a)" },
+  { pattern: /\bmanipulation\b|\bdeception\b|\bdeceptive\b/, article: "Art. 5(1)(a)" },
+  { pattern: /\bexploit(?:ing)?\s*vulnerab/i, article: "Art. 5(1)(b)" },
+  { pattern: /\bsocial\s*scoring\b/, article: "Art. 5(1)(c)" },
+  {
+    pattern: /\breal[- ]?time.*(?:remote\s+)?biometric|biometric.*real[- ]?time.*public/i,
+    article: "Art. 5(1)(d)"
+  },
+  { pattern: /\bbiometric\s*categoris/i, article: "Art. 5(1)(a)" },
+  { pattern: /\bpredictive\s*policing\b/, article: "Art. 5(1)(a)" },
+  {
+    pattern: /\b(?:expand(?:ing)?|grow)\s*(?:facial|face)\s*(?:recognition\s*)?(?:database|db)s?/i,
+    article: "Art. 5(1)(a)"
+  },
+  {
+    pattern: /\bemotion\s*recognition\b.*(?:workplace|education|school)/i,
+    article: "Art. 5(1)(a)"
+  }
+];
+
+/** Annex III high-risk use-case keywords by domain */
+const ANNEX_III_KEYWORDS: string[] = [
+  "biometric",
+  "biometrics",
+  "recruitment",
+  "screening",
+  "hiring",
+  "employment",
+  "workforce",
+  "personnel",
+  "credit",
+  "scoring",
+  "lending",
+  "insurance",
+  "underwriting",
+  "education",
+  "vocational",
+  "training",
+  "school",
+  "student",
+  "critical infrastructure",
+  "safety",
+  "transport",
+  "energy",
+  "law enforcement",
+  "policing",
+  "border",
+  "migration",
+  "asylum",
+  "justice",
+  "judicial",
+  "democratic",
+  "essential service",
+  "public service",
+  "health",
+  "medical",
+  "clinical",
+  "diagnosis"
+];
 
 type AssetInput = {
   assetType: string;
@@ -53,27 +116,26 @@ export function classifyEURiskLevel(asset: AssetInput): EURiskResult {
   }
 
   const desc = (asset.description ?? "").toLowerCase();
-  if (
-    desc.includes("subliminal") ||
-    desc.includes("manipulation") ||
-    desc.includes("exploit vulnerability")
-  ) {
-    reasons.push("Potential prohibited practice (Art. 5)");
-    return {
-      level: "UNACCEPTABLE",
-      rationale: "Indication of prohibited AI practices per Art. 5.",
-      requiredArticles: ["Art. 5"]
-    };
+
+  // Prohibited practices (#R3) – flowchart Art. 5
+  for (const { pattern, article } of PROHIBITED_KEYWORDS) {
+    if (pattern.test(desc) && !desc.includes("not ") && !desc.includes("excluding")) {
+      reasons.push(`Potential prohibited practice (${article})`);
+      return {
+        level: "UNACCEPTABLE",
+        rationale: `Indication of prohibited AI practices per ${article}.`,
+        requiredArticles: ["Art. 5"]
+      };
+    }
   }
 
-  if (
-    asset.assetType === "APPLICATION" &&
-    (desc.includes("recruitment") || desc.includes("credit") || desc.includes("border"))
-  ) {
+  // Annex III high-risk – expanded per flowchart #HR4
+  const annexIIIMatch = ANNEX_III_KEYWORDS.some((kw) => desc.includes(kw));
+  if (annexIIIMatch && ["APPLICATION", "AGENT", "MODEL"].includes(asset.assetType)) {
     reasons.push("Annex III high-risk use case");
     return {
       level: "HIGH",
-      rationale: "Likely Annex III high-risk AI system.",
+      rationale: "Likely Annex III high-risk AI system (biometrics, employment, education, critical infrastructure, law enforcement, migration, justice, essential services).",
       requiredArticles: ["Art. 8–15", "Annex III", "Annex IX"]
     };
   }
@@ -98,19 +160,11 @@ export function checkProhibitedPractices(asset: AssetInput): ProhibitedResult {
     return { prohibited: true, reasons };
   }
 
-  if (desc.includes("subliminal") && !desc.includes("not subliminal")) {
-    reasons.push("Subliminal techniques beyond awareness (Art. 5(1)(a)).");
-  }
-  if (desc.includes("exploit vulnerability") || desc.includes("exploiting vulnerability")) {
-    reasons.push("Exploitation of vulnerabilities (Art. 5(1)(b)).");
-  }
-  if (desc.includes("social scoring") || desc.includes("social scoring")) {
-    reasons.push("Social scoring (Art. 5(1)(c)).");
-  }
-  if (desc.includes("real-time") && desc.includes("biometric") && desc.includes("public")) {
-    reasons.push(
-      "Real-time remote biometric identification in publicly accessible spaces (Art. 5(1)(d))."
-    );
+  // Flowchart #R3 – full Art. 5 prohibited list
+  for (const { pattern, article } of PROHIBITED_KEYWORDS) {
+    if (pattern.test(desc) && !desc.includes("not ") && !desc.includes("excluding")) {
+      reasons.push(`Prohibited practice (${article}).`);
+    }
   }
 
   return { prohibited: reasons.length > 0, reasons };

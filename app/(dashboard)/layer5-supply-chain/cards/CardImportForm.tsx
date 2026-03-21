@@ -23,14 +23,14 @@ export function CardImportForm({
   return (
     <form action={formAction} className="flex flex-col gap-2 sm:flex-row sm:items-end">
       <div className="flex flex-col gap-1">
-        <label htmlFor="assetId" className="text-slatePro-400 text-xs">
+        <label htmlFor="assetId" className="text-xs font-medium text-gray-600">
           Asset
         </label>
         <select
           id="assetId"
           name="assetId"
           required
-          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 rounded border px-3 py-1.5 text-sm"
+          className="rounded border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900"
         >
           <option value="">Select asset</option>
           {assets.map((a) => (
@@ -41,14 +41,14 @@ export function CardImportForm({
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="type" className="text-slatePro-400 text-xs">
+        <label htmlFor="type" className="text-xs font-medium text-gray-600">
           Source type
         </label>
         <select
           id="type"
           name="type"
           required
-          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 rounded border px-3 py-1.5 text-sm"
+          className="rounded border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900"
         >
           <option value="HUGGINGFACE_MODEL">HuggingFace Model</option>
           <option value="HUGGINGFACE_DATASET">HuggingFace Dataset</option>
@@ -56,7 +56,7 @@ export function CardImportForm({
         </select>
       </div>
       <div className="flex flex-col gap-1">
-        <label htmlFor="source" className="text-slatePro-400 text-xs">
+        <label htmlFor="source" className="text-xs font-medium text-gray-600">
           Model ID or URL
         </label>
         <input
@@ -65,16 +65,18 @@ export function CardImportForm({
           type="text"
           required
           placeholder="e.g. meta-llama/Llama-2-7b or https://github.com/..."
-          className="border-slatePro-600 bg-slatePro-900 text-slatePro-100 placeholder:text-slatePro-500 w-64 rounded border px-3 py-1.5 text-sm"
+          className="w-64 rounded border border-gray-300 bg-white px-3 py-1.5 text-sm text-gray-900 placeholder:text-gray-500"
         />
       </div>
       <button
         type="submit"
-        className="bg-navy-600 hover:bg-navy-500 rounded px-3 py-1.5 text-sm font-medium text-white"
+        className="rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-700"
       >
         Import
       </button>
-      {state?.error && <p className="text-sm text-red-400 sm:self-center">{state.error}</p>}
+      {state?.error && (
+        <p className="text-sm text-red-600 sm:self-center">{state.error}</p>
+      )}
     </form>
   );
 }

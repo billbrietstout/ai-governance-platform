@@ -24,23 +24,23 @@ export default async function CardsPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Card Library</h1>
-          <p className="text-slatePro-300 mt-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Card Library</h1>
+          <p className="mt-1 text-gray-600">
             Model, data, and app cards with sync status and EU AI Act coverage.
           </p>
         </div>
         <CardImportForm assets={assets} importCardAction={importCard} />
       </div>
 
-      <div className="border-slatePro-700 overflow-x-auto rounded-lg border">
+      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-slatePro-700 bg-slatePro-900/50 border-b">
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Type</th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Source</th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Asset</th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Sync</th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">EU Coverage</th>
+            <tr className="border-b border-gray-200 bg-gray-50">
+              <th className="px-4 py-3 text-left font-medium text-gray-900">Type</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-900">Source</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-900">Asset</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-900">Sync</th>
+              <th className="px-4 py-3 text-left font-medium text-gray-900">EU Coverage</th>
             </tr>
           </thead>
           <tbody>
@@ -59,20 +59,23 @@ export default async function CardsPage() {
               </tr>
             ) : (
               cards.map((card) => (
-                <tr key={card.id} className="border-slatePro-800 border-b last:border-0">
-                  <td className="text-slatePro-200 px-4 py-2">{card.cardType}</td>
-                  <td className="text-slatePro-200 px-4 py-2">
+                <tr
+                  key={card.id}
+                  className="border-b border-gray-100 last:border-0 transition hover:bg-gray-50"
+                >
+                  <td className="px-4 py-3 font-medium text-gray-900">{card.cardType}</td>
+                  <td className="px-4 py-3 text-gray-700">
                     {card.sourceFormat ?? "—"}
                     {card.sourceRepo && (
                       <span
-                        className="text-slatePro-500 ml-1 inline-block max-w-[120px] truncate text-xs"
+                        className="ml-1 inline-block max-w-[180px] truncate text-xs text-gray-500"
                         title={card.sourceRepo}
                       >
                         {card.sourceRepo}
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-3">
                     <Link
                       href={`/layer5-supply-chain/cards/${card.id}`}
                       className="text-navy-400 hover:underline"
@@ -80,10 +83,10 @@ export default async function CardsPage() {
                       {card.asset.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-3">
                     <CardSyncStatus status={card.syncStatus} lastSyncedAt={card.lastSyncedAt} />
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-3">
                     <EUCoverageCell card={card} />
                   </td>
                 </tr>
@@ -102,7 +105,7 @@ function EUCoverageCell({
   card: { normalizedContent: unknown; asset: { euRiskLevel: string | null } };
 }) {
   const normalized = card.normalizedContent as NormalizedCard | null;
-  if (!normalized) return <span className="text-slatePro-500">—</span>;
+  if (!normalized) return <span className="text-gray-500">—</span>;
   const coverage = mapCardToEURequirements(
     normalized,
     card.asset.euRiskLevel as "HIGH" | "MINIMAL" | "LIMITED" | "UNACCEPTABLE" | null

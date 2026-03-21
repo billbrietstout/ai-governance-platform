@@ -23,6 +23,10 @@ export async function runDiscovery(inputs: {
   euResidentsData: "Yes" | "No" | "Unknown";
   expectedRiskLevel: "Low" | "Medium" | "High" | "Critical";
   vulnerablePopulations: boolean;
+  euEntityType?: string;
+  euEstablishedInEU?: boolean;
+  euExclusion?: "military" | "rd_only" | "open_source" | "personal_use";
+  euTransparencyTypes?: ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[];
 }) {
   const caller = await createServerCaller();
   const result = await caller.discovery.runDiscovery({ inputs });

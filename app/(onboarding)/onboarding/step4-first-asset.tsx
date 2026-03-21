@@ -34,6 +34,15 @@ const EU_RISK_LEVELS = [
   }
 ] as const;
 
+const EU_ENTITY_TYPES = [
+  { value: "PROVIDER", label: "Provider", desc: "Develops AI and places on market" },
+  { value: "DEPLOYER", label: "Deployer", desc: "Uses AI under your authority" },
+  { value: "DISTRIBUTOR", label: "Distributor", desc: "Makes AI available on EU market" },
+  { value: "IMPORTER", label: "Importer", desc: "Places non-EU AI on EU market" },
+  { value: "PRODUCT_MANUFACTURER", label: "Product Manufacturer", desc: "AI integrated with your product" },
+  { value: "AUTHORISED_REPRESENTATIVE", label: "Authorised Representative", desc: "Acts for provider in EU" }
+] as const;
+
 const AUTONOMY_LEVELS = [
   { value: "HUMAN_ONLY", label: "Human only" },
   { value: "ASSISTED", label: "Assisted" },
@@ -50,6 +59,7 @@ export function Step4FirstAsset({ onNext, isPending }: Props) {
   const [name, setName] = useState("");
   const [assetType, setAssetType] = useState("MODEL");
   const [euRiskLevel, setEuRiskLevel] = useState("LIMITED");
+  const [euEntityType, setEuEntityType] = useState("PROVIDER");
   const [autonomyLevel, setAutonomyLevel] = useState("ASSISTED");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,6 +75,13 @@ export function Step4FirstAsset({ onNext, isPending }: Props) {
         | "TOOL"
         | "PIPELINE",
       euRiskLevel: euRiskLevel as "MINIMAL" | "LIMITED" | "HIGH" | "UNACCEPTABLE",
+      euEntityType: euEntityType as
+        | "PROVIDER"
+        | "DEPLOYER"
+        | "DISTRIBUTOR"
+        | "IMPORTER"
+        | "PRODUCT_MANUFACTURER"
+        | "AUTHORISED_REPRESENTATIVE",
       autonomyLevel: autonomyLevel as "HUMAN_ONLY" | "ASSISTED" | "SEMI_AUTONOMOUS" | "AUTONOMOUS"
     });
     onNext();
@@ -99,6 +116,23 @@ export function Step4FirstAsset({ onNext, isPending }: Props) {
               {ASSET_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
                   {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              EU AI Act entity type
+            </label>
+            <select
+              value={euEntityType}
+              onChange={(e) => setEuEntityType(e.target.value)}
+              className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-slate-300 px-3 py-2 text-slate-900 shadow-sm focus:ring-1 focus:outline-none"
+            >
+              {EU_ENTITY_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label} – {t.desc}
                 </option>
               ))}
             </select>

@@ -1,10 +1,12 @@
 /**
- * Vendor detail – full profile, evidence library, contract checklist.
+ * Vendor detail – full profile, evidence library, VRA questionnaire.
  */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { VendorAssuranceScore } from "@/components/supply-chain/VendorAssuranceScore";
+import { VraQuestionnaireSection } from "@/components/supply-chain/VraQuestionnaireSection";
+import { getQuestionsForVendorType } from "@/lib/supply-chain/vra-questions";
 
 export default async function VendorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -95,12 +97,19 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ i
         </section>
       )}
 
-      <section>
-        <h2 className="mb-2 text-lg font-medium text-gray-900">Contract Checklist</h2>
-        <p className="rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-600 shadow-sm">
-          Contract alignment checklist coming soon.
-        </p>
-      </section>
+      <VraQuestionnaireSection
+        vendorId={v.id}
+        questions={getQuestionsForVendorType(v.vendorType)}
+        responses={v.vraResponses.map((r) => ({
+          questionId: r.questionId,
+          answer: r.answer,
+          evidenceUrl: r.evidenceUrl,
+          notes: r.notes,
+          assessedAt: r.assessedAt
+        }))}
+        vraScore={v.vraScore}
+        vraStatus={v.vraStatus}
+      />
     </main>
   );
 }

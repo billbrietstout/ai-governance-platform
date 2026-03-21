@@ -18,6 +18,16 @@ const assetTypeSchema = z.enum([
   "PIPELINE"
 ]);
 const euRiskSchema = z.enum(["MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"]).nullable();
+const euEntityTypeSchema = z
+  .enum([
+    "PROVIDER",
+    "DEPLOYER",
+    "DISTRIBUTOR",
+    "IMPORTER",
+    "PRODUCT_MANUFACTURER",
+    "AUTHORISED_REPRESENTATIVE"
+  ])
+  .nullable();
 const operatingModelSchema = z.enum(["IN_HOUSE", "VENDOR", "HYBRID"]).nullable();
 const cosaiLayerSchema = z
   .enum([
@@ -101,6 +111,7 @@ export const assetsRouter = createTRPCRouter({
         description: z.string().optional(),
         assetType: assetTypeSchema,
         euRiskLevel: euRiskSchema.optional(),
+        euEntityType: euEntityTypeSchema.optional(),
         operatingModel: operatingModelSchema.optional(),
         cosaiLayer: cosaiLayerSchema.optional(),
         autonomyLevel: autonomySchema.optional(),
@@ -119,6 +130,7 @@ export const assetsRouter = createTRPCRouter({
             description: input.description,
             assetType: input.assetType,
             euRiskLevel: input.euRiskLevel ?? null,
+            euEntityType: input.euEntityType ?? null,
             operatingModel: input.operatingModel ?? null,
             cosaiLayer: input.cosaiLayer ?? null,
             autonomyLevel: input.autonomyLevel ?? null,
@@ -161,6 +173,7 @@ export const assetsRouter = createTRPCRouter({
         description: z.string().optional(),
         assetType: assetTypeSchema.optional(),
         euRiskLevel: euRiskSchema.optional(),
+        euEntityType: euEntityTypeSchema.optional(),
         operatingModel: operatingModelSchema.optional(),
         cosaiLayer: cosaiLayerSchema.optional(),
         autonomyLevel: autonomySchema.optional(),
@@ -184,6 +197,7 @@ export const assetsRouter = createTRPCRouter({
             ...(data.description != null && { description: data.description }),
             ...(data.assetType != null && { assetType: data.assetType }),
             ...(data.euRiskLevel != null && { euRiskLevel: data.euRiskLevel }),
+            ...(data.euEntityType != null && { euEntityType: data.euEntityType }),
             ...(data.operatingModel != null && { operatingModel: data.operatingModel }),
             ...(data.cosaiLayer != null && { cosaiLayer: data.cosaiLayer }),
             ...(data.autonomyLevel != null && { autonomyLevel: data.autonomyLevel }),

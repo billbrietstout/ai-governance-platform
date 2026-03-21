@@ -24,6 +24,16 @@ const assetTypeSchema = z.enum([
   "PIPELINE"
 ]);
 const euRiskSchema = z.enum(["MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"]);
+const euEntityTypeSchema = z
+  .enum([
+    "PROVIDER",
+    "DEPLOYER",
+    "DISTRIBUTOR",
+    "IMPORTER",
+    "PRODUCT_MANUFACTURER",
+    "AUTHORISED_REPRESENTATIVE"
+  ])
+  .optional();
 const autonomySchema = z.enum(["HUMAN_ONLY", "ASSISTED", "SEMI_AUTONOMOUS", "AUTONOMOUS"]);
 const verticalKeySchema = z.string(); // VerticalKey from VERTICAL_REGULATIONS
 
@@ -94,6 +104,7 @@ export const onboardingRouter = createTRPCRouter({
           assetName: z.string().min(1),
           assetType: assetTypeSchema,
           euRiskLevel: euRiskSchema,
+          euEntityType: euEntityTypeSchema,
           autonomyLevel: autonomySchema
         }),
         z.object({
@@ -153,6 +164,7 @@ export const onboardingRouter = createTRPCRouter({
               description: "First AI asset from onboarding",
               assetType: input.assetType,
               euRiskLevel: input.euRiskLevel,
+              euEntityType: input.euEntityType ?? null,
               autonomyLevel: input.autonomyLevel,
               status: "DRAFT"
             }

@@ -55,7 +55,7 @@ export function ControlAttestationForm({
           Save
         </button>
       </div>
-      {state?.error && <p className="mt-1 text-xs text-red-400">{state.error}</p>}
+      {state?.error && <p className="mt-1 text-xs text-red-600">{state.error}</p>}
     </form>
   );
 }

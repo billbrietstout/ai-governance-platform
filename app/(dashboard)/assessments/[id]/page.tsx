@@ -78,7 +78,7 @@ export default async function AssessmentDetailPage({
             ← Assessments
           </Link>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight">{assessment.name}</h1>
-          <p className="text-slatePro-300 mt-1">
+          <p className="mt-1 text-gray-600">
             {assessment.asset.name} · {assessment.status}
           </p>
         </div>

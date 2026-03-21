@@ -28,7 +28,7 @@ export function TechnicalTooltip({ term, children }: Props) {
   if (!text) return <>{children}</>;
   return (
     <Tooltip content={text}>
-      <span className="border-slatePro-500 cursor-help border-b border-dashed">{children}</span>
+      <span className="cursor-help border-b border-dashed border-gray-400">{children}</span>
     </Tooltip>
   );
 }

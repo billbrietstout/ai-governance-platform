@@ -64,7 +64,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ id
           <EURiskBadge level={asset.euRiskLevel} />
           <AutonomyBadge level={asset.autonomyLevel} />
           <OperatingModelBadge model={asset.operatingModel} />
-          <span className="text-slatePro-400 text-sm">{asset.status}</span>
+          <span className="text-sm text-gray-600">{asset.status}</span>
           <ComplianceRing percentage={complianceRes.data.percentage} size={36} />
         </div>
       </div>

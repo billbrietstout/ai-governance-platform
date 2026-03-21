@@ -71,10 +71,10 @@ export default async function AssessmentsPage() {
                     <span
                       className={`inline-flex rounded px-2 py-0.5 text-xs ${
                         a.status === "APPROVED"
-                          ? "bg-emerald-500/20 text-emerald-400"
+                          ? "bg-emerald-100 text-emerald-700"
                           : a.status === "PENDING_REVIEW"
-                            ? "bg-amber-500/20 text-amber-400"
-                            : "bg-slatePro-600/30 text-slatePro-300"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       {a.status.replace("_", " ")}

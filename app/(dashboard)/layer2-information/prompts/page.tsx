@@ -59,7 +59,7 @@ export default async function PromptGovernancePage() {
           ← Layer 2: Information
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Prompt Governance</h1>
-        <p className="text-slatePro-300 mt-1">
+        <p className="mt-1 text-gray-600">
           Registry of prompt templates and governance policies.
         </p>
       </div>

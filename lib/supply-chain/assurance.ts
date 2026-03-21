@@ -1,7 +1,8 @@
 /**
- * Vendor assurance – posture score, evidence currency.
+ * Vendor assurance – posture score, evidence currency, VRA integration.
  */
 import type { PrismaClient } from "@prisma/client";
+import { getQuestionsForVendorType } from "./vra-questions";
 
 export type AssuranceScore = {
   total: number;
@@ -12,6 +13,7 @@ export type AssuranceScore = {
     slsa: number;
     vulnDisclosure: number;
     incidentSLA: number;
+    vra: number;
   };
 };
 
@@ -21,13 +23,21 @@ export type ExpiredEvidence = {
   expiredAt?: Date;
 };
 
+export type VraScoreResult = {
+  score: number;
+  applicableCount: number;
+  answeredCount: number;
+  completedCount: number;
+};
+
 const WEIGHTS = {
-  soc2: 0.3,
-  iso27001: 0.15,
-  modelCards: 0.2,
-  slsa: 0.15,
-  vulnDisclosure: 0.1,
-  incidentSLA: 0.1
+  soc2: 0.27,
+  iso27001: 0.13,
+  modelCards: 0.18,
+  slsa: 0.13,
+  vulnDisclosure: 0.09,
+  incidentSLA: 0.09,
+  vra: 0.11
 };
 
 function scoreSoc2(status: string | null, expiresAt: Date | null): number {
@@ -53,6 +63,66 @@ function scoreSlsa(level: string | null): number {
   return Math.min(1, l / 4);
 }
 
+function scoreVraAnswer(answer: string): number {
+  switch (answer) {
+    case "YES":
+      return 1;
+    case "PARTIAL":
+      return 0.5;
+    case "NO":
+    case "NA":
+    case "UNKNOWN":
+    default:
+      return 0;
+  }
+}
+
+export async function computeVraScore(
+  prisma: PrismaClient,
+  orgId: string,
+  vendorId: string,
+  vendorType: string | null
+): Promise<VraScoreResult> {
+  const [vendor, responses] = await Promise.all([
+    prisma.vendorAssurance.findFirst({ where: { id: vendorId, orgId } }),
+    prisma.vendorVraResponse.findMany({
+      where: { vendorId, orgId },
+      select: { questionId: true, answer: true }
+    })
+  ]);
+  if (!vendor) {
+    return { score: 0, applicableCount: 0, answeredCount: 0, completedCount: 0 };
+  }
+
+  const questions = getQuestionsForVendorType(
+    vendorType as import("@prisma/client").VendorType | null
+  );
+  const applicableCount = questions.length;
+  if (applicableCount === 0) {
+    return { score: 1, applicableCount: 0, answeredCount: 0, completedCount: 0 };
+  }
+
+  const responseMap = new Map(responses.map((r) => [r.questionId, r.answer]));
+  let totalScore = 0;
+  let completedCount = 0;
+
+  for (const q of questions) {
+    const answer = responseMap.get(q.id);
+    if (answer !== undefined) {
+      totalScore += scoreVraAnswer(answer);
+      if (answer === "YES" || answer === "PARTIAL") completedCount++;
+    }
+  }
+
+  const score = totalScore / applicableCount;
+  return {
+    score,
+    applicableCount,
+    answeredCount: responseMap.size,
+    completedCount
+  };
+}
+
 export async function assessVendorPosture(
   prisma: PrismaClient,
   orgId: string,
@@ -70,7 +140,8 @@ export async function assessVendorPosture(
         modelCards: 0,
         slsa: 0,
         vulnDisclosure: 0,
-        incidentSLA: 0
+        incidentSLA: 0,
+        vra: 0
       }
     };
   }
@@ -81,6 +152,8 @@ export async function assessVendorPosture(
   const slsaScore = scoreSlsa(vendor.slsaLevel);
   const vulnScore = 0.5;
   const incidentScore = vendor.contractAligned ? 1 : 0.5;
+  const vraResult = await computeVraScore(prisma, orgId, vendorId, vendor.vendorType);
+  const vraScore = vraResult.applicableCount === 0 ? 1 : vraResult.score;
 
   const total =
     soc2Score * WEIGHTS.soc2 +
@@ -88,7 +161,8 @@ export async function assessVendorPosture(
     modelScore * WEIGHTS.modelCards +
     slsaScore * WEIGHTS.slsa +
     vulnScore * WEIGHTS.vulnDisclosure +
-    incidentScore * WEIGHTS.incidentSLA;
+    incidentScore * WEIGHTS.incidentSLA +
+    vraScore * WEIGHTS.vra;
 
   return {
     total: Math.round(total * 100) / 100,
@@ -98,7 +172,8 @@ export async function assessVendorPosture(
       modelCards: modelScore * WEIGHTS.modelCards,
       slsa: slsaScore * WEIGHTS.slsa,
       vulnDisclosure: vulnScore * WEIGHTS.vulnDisclosure,
-      incidentSLA: incidentScore * WEIGHTS.incidentSLA
+      incidentSLA: incidentScore * WEIGHTS.incidentSLA,
+      vra: vraScore * WEIGHTS.vra
     }
   };
 }
@@ -145,4 +220,22 @@ export async function checkEvidenceCurrency(
   }
 
   return expired;
+}
+
+export async function getVraStatus(
+  prisma: PrismaClient,
+  orgId: string,
+  vendorId: string,
+  vendorType: string | null
+): Promise<"NOT_STARTED" | "IN_PROGRESS" | "COMPLETE"> {
+  const result = await computeVraScore(
+    prisma,
+    orgId,
+    vendorId,
+    vendorType as import("@prisma/client").VendorType | null
+  );
+  if (result.applicableCount === 0) return "COMPLETE";
+  if (result.answeredCount === 0) return "NOT_STARTED";
+  if (result.answeredCount >= result.applicableCount) return "COMPLETE";
+  return "IN_PROGRESS";
 }

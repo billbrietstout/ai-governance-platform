@@ -38,6 +38,13 @@ export async function saveStep4(data: {
   assetName: string;
   assetType: "MODEL" | "PROMPT" | "AGENT" | "DATASET" | "APPLICATION" | "TOOL" | "PIPELINE";
   euRiskLevel: "MINIMAL" | "LIMITED" | "HIGH" | "UNACCEPTABLE";
+  euEntityType?:
+    | "PROVIDER"
+    | "DEPLOYER"
+    | "DISTRIBUTOR"
+    | "IMPORTER"
+    | "PRODUCT_MANUFACTURER"
+    | "AUTHORISED_REPRESENTATIVE";
   autonomyLevel: "HUMAN_ONLY" | "ASSISTED" | "SEMI_AUTONOMOUS" | "AUTONOMOUS";
 }) {
   const caller = await createServerCaller();

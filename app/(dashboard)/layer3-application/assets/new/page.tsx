@@ -116,7 +116,7 @@ export default async function NewAssetPage({
           ← Asset Inventory
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">New Asset</h1>
-        <p className="text-slatePro-300 mt-1">
+        <p className="mt-1 text-gray-600">
           Create an AI asset with EU risk classification and accountability.
         </p>
         {defaults && (

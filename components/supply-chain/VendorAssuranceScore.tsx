@@ -9,6 +9,7 @@ type Props = {
     slsa: number;
     vulnDisclosure: number;
     incidentSLA: number;
+    vra?: number;
   };
 };
 

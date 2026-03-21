@@ -20,32 +20,34 @@ export default async function ExecutiveSummaryReportPage() {
           <Link href="/reports" className="text-navy-400 text-sm hover:underline">
             ← Reports
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">Executive Summary</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+            Executive Summary
+          </h1>
         </div>
         <button className="bg-navy-600 rounded px-3 py-1 text-sm text-white">Export PDF</button>
       </div>
 
-      <div className="border-slatePro-700 bg-slatePro-900/30 rounded-lg border p-6">
-        <h2 className="text-slatePro-200 text-lg font-medium">AI Readiness Posture</h2>
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-medium text-gray-900">AI Readiness Posture</h2>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
-            <span className="text-slatePro-500">Total AI Assets</span>
-            <div className="text-xl font-semibold">{kpis.totalAssets}</div>
+            <span className="text-sm text-gray-500">Total AI Assets</span>
+            <div className="text-xl font-semibold text-gray-900">{kpis.totalAssets}</div>
           </div>
           <div>
-            <span className="text-slatePro-500">Compliance Score</span>
-            <div className="text-xl font-semibold">{kpis.complianceScore}%</div>
+            <span className="text-sm text-gray-500">Compliance Score</span>
+            <div className="text-xl font-semibold text-gray-900">{kpis.complianceScore}%</div>
           </div>
           <div>
-            <span className="text-slatePro-500">Critical Risks</span>
-            <div className="text-xl font-semibold">{kpis.criticalRisks}</div>
+            <span className="text-sm text-gray-500">Critical Risks</span>
+            <div className="text-xl font-semibold text-gray-900">{kpis.criticalRisks}</div>
           </div>
           <div>
-            <span className="text-slatePro-500">Regulatory Cascade</span>
-            <div className="text-xl font-semibold">{cascade.pct}% met</div>
+            <span className="text-sm text-gray-500">Regulatory Cascade</span>
+            <div className="text-xl font-semibold text-gray-900">{cascade.pct}% met</div>
           </div>
         </div>
-        <p className="text-slatePro-500 mt-4 text-sm">
+        <p className="mt-4 text-sm text-gray-600">
           1-page board-ready summary. Full PDF export coming soon.
         </p>
       </div>
