@@ -41,7 +41,12 @@ export type DiscoveryInputs = {
   /** Exclusions #R2: military, R&D, open source, personal use */
   euExclusion?: "none" | "military" | "rd_only" | "open_source" | "personal_use";
   /** Transparency #R4: deep-fake, synthetic content, emotion/biometric, natural-person interaction */
-  euTransparencyTypes?: ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[];
+  euTransparencyTypes?: (
+    | "deep_fake"
+    | "synthetic_content"
+    | "emotion_biometric"
+    | "natural_person"
+  )[];
   /** Entity type #E1 */
   euEntityType?: EuAIActEntityType;
 };
@@ -228,84 +233,77 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
       (inputs.euEstablishedInEU === undefined && inputs.deployment !== "US_only"));
 
   if (!euExcluded) {
-
     if (euJurisdiction) {
-    // EU jurisdiction applies – add as MANDATORY
-    if (annexIII) {
-      mandatory.push({
-        code: "EU_AI_ACT_ANNEX_III",
-        name: "EU AI Act – High-Risk (Annex III)",
-        jurisdiction: "EU",
-        applicability: "MANDATORY",
-        keyRequirements:
-          "Conformity assessment, risk management, data governance, human oversight, transparency",
-        deadline: "Aug 2026 (high-risk systems)",
-        implementationEffort: "High"
-      });
-    } else if (
-      inputs.interactsWithEndUsers ||
-      (inputs.euTransparencyTypes?.length ?? 0) > 0
-    ) {
-      const transparencyTypes = inputs.euTransparencyTypes ?? [];
-      const transparencyList = transparencyTypes.length
-        ? transparencyTypes.join(", ").replace(/_/g, " ")
-        : "direct user interaction";
-      mandatory.push({
-        code: "EU_AI_ACT_LIMITED",
-        name: "EU AI Act – Limited Risk (Transparency)",
-        jurisdiction: "EU",
-        applicability: "MANDATORY",
-        keyRequirements: `Transparency obligations (Art. 50): ${transparencyList}`,
-        deadline: "Feb 2026",
-        implementationEffort: "Medium"
-      });
-    } else {
-      recommended.push({
-        code: "EU_AI_ACT_MINIMAL",
-        name: "EU AI Act – Minimal Risk",
-        jurisdiction: "EU",
-        applicability: "RECOMMENDED",
-        keyRequirements: "Voluntary codes of conduct; consider transparency for future changes",
-        implementationEffort: "Low"
-      });
+      // EU jurisdiction applies – add as MANDATORY
+      if (annexIII) {
+        mandatory.push({
+          code: "EU_AI_ACT_ANNEX_III",
+          name: "EU AI Act – High-Risk (Annex III)",
+          jurisdiction: "EU",
+          applicability: "MANDATORY",
+          keyRequirements:
+            "Conformity assessment, risk management, data governance, human oversight, transparency",
+          deadline: "Aug 2026 (high-risk systems)",
+          implementationEffort: "High"
+        });
+      } else if (inputs.interactsWithEndUsers || (inputs.euTransparencyTypes?.length ?? 0) > 0) {
+        const transparencyTypes = inputs.euTransparencyTypes ?? [];
+        const transparencyList = transparencyTypes.length
+          ? transparencyTypes.join(", ").replace(/_/g, " ")
+          : "direct user interaction";
+        mandatory.push({
+          code: "EU_AI_ACT_LIMITED",
+          name: "EU AI Act – Limited Risk (Transparency)",
+          jurisdiction: "EU",
+          applicability: "MANDATORY",
+          keyRequirements: `Transparency obligations (Art. 50): ${transparencyList}`,
+          deadline: "Feb 2026",
+          implementationEffort: "Medium"
+        });
+      } else {
+        recommended.push({
+          code: "EU_AI_ACT_MINIMAL",
+          name: "EU AI Act – Minimal Risk",
+          jurisdiction: "EU",
+          applicability: "RECOMMENDED",
+          keyRequirements: "Voluntary codes of conduct; consider transparency for future changes",
+          implementationEffort: "Low"
+        });
+      }
+    } else if (euPossible) {
+      // EU might apply – add as LIKELY (not mandatory)
+      if (annexIII) {
+        likelyApplicable.push({
+          code: "EU_AI_ACT_ANNEX_III",
+          name: "EU AI Act – High-Risk (Annex III)",
+          jurisdiction: "EU",
+          applicability: "LIKELY_APPLICABLE",
+          keyRequirements:
+            "Conformity assessment, risk management, data governance, human oversight, transparency",
+          deadline: "Aug 2026 (high-risk systems)",
+          implementationEffort: "High"
+        });
+      } else if (inputs.interactsWithEndUsers || (inputs.euTransparencyTypes?.length ?? 0) > 0) {
+        likelyApplicable.push({
+          code: "EU_AI_ACT_LIMITED",
+          name: "EU AI Act – Limited Risk (Transparency)",
+          jurisdiction: "EU",
+          applicability: "LIKELY_APPLICABLE",
+          keyRequirements: "Transparency obligations (Art. 50–52) for AI interacting with humans",
+          deadline: "Feb 2026",
+          implementationEffort: "Medium"
+        });
+      } else {
+        likelyApplicable.push({
+          code: "EU_AI_ACT_MINIMAL",
+          name: "EU AI Act – Minimal Risk",
+          jurisdiction: "EU",
+          applicability: "LIKELY_APPLICABLE",
+          keyRequirements: "Voluntary codes of conduct; consider transparency for future changes",
+          implementationEffort: "Low"
+        });
+      }
     }
-  } else if (euPossible) {
-    // EU might apply – add as LIKELY (not mandatory)
-    if (annexIII) {
-      likelyApplicable.push({
-        code: "EU_AI_ACT_ANNEX_III",
-        name: "EU AI Act – High-Risk (Annex III)",
-        jurisdiction: "EU",
-        applicability: "LIKELY_APPLICABLE",
-        keyRequirements:
-          "Conformity assessment, risk management, data governance, human oversight, transparency",
-        deadline: "Aug 2026 (high-risk systems)",
-        implementationEffort: "High"
-      });
-    } else if (
-      inputs.interactsWithEndUsers ||
-      (inputs.euTransparencyTypes?.length ?? 0) > 0
-    ) {
-      likelyApplicable.push({
-        code: "EU_AI_ACT_LIMITED",
-        name: "EU AI Act – Limited Risk (Transparency)",
-        jurisdiction: "EU",
-        applicability: "LIKELY_APPLICABLE",
-        keyRequirements: "Transparency obligations (Art. 50–52) for AI interacting with humans",
-        deadline: "Feb 2026",
-        implementationEffort: "Medium"
-      });
-    } else {
-      likelyApplicable.push({
-        code: "EU_AI_ACT_MINIMAL",
-        name: "EU AI Act – Minimal Risk",
-        jurisdiction: "EU",
-        applicability: "LIKELY_APPLICABLE",
-        keyRequirements: "Voluntary codes of conduct; consider transparency for future changes",
-        implementationEffort: "Low"
-      });
-    }
-  }
   }
 
   // GDPR AI implications

@@ -8,10 +8,7 @@ import {
   computeVraScore,
   getVraStatus
 } from "@/lib/supply-chain/assurance";
-import {
-  getQuestionsForVendorType,
-  VRA_QUESTIONS
-} from "@/lib/supply-chain/vra-questions";
+import { getQuestionsForVendorType, VRA_QUESTIONS } from "@/lib/supply-chain/vra-questions";
 import {
   getScanCoverage,
   getScanPolicy as getScanPolicyForAsset,
@@ -123,12 +120,12 @@ export const supplyChainRouter = createTRPCRouter({
     .input(z.object({ vendorId: z.string().optional() }).optional())
     .query(async ({ ctx, input }) => {
       const vendorType = input?.vendorId
-        ? (
+        ? ((
             await prisma.vendorAssurance.findFirst({
               where: { id: input.vendorId, orgId: ctx.orgId },
               select: { vendorType: true }
             })
-          )?.vendorType ?? null
+          )?.vendorType ?? null)
         : null;
       const questions = getQuestionsForVendorType(vendorType);
       return { data: questions, meta: {} };
@@ -153,7 +150,10 @@ export const supplyChainRouter = createTRPCRouter({
         vendorId: z.string(),
         questionId: z.string(),
         answer: z.enum(["YES", "NO", "NA", "PARTIAL", "UNKNOWN"]),
-        evidenceUrl: z.union([z.string().url(), z.literal("")]).optional().nullable(),
+        evidenceUrl: z
+          .union([z.string().url(), z.literal("")])
+          .optional()
+          .nullable(),
         notes: z.string().optional().nullable()
       })
     )

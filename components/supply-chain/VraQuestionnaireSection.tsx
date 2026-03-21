@@ -241,7 +241,7 @@ function QuestionRow({
               disabled={pending}
               className={`rounded px-2 py-1 text-xs font-medium transition ${
                 answer === opt.value
-                  ? "bg-navy-100 text-navy-700 ring-1 ring-navy-300"
+                  ? "bg-navy-100 text-navy-700 ring-navy-300 ring-1"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
@@ -255,7 +255,7 @@ function QuestionRow({
         <button
           type="button"
           onClick={() => setShowForm((s) => !s)}
-          className="text-xs text-navy-600 hover:underline"
+          className="text-navy-600 text-xs hover:underline"
         >
           {showForm ? "Hide" : "Add"} evidence link / notes
         </button>
@@ -280,7 +280,7 @@ function QuestionRow({
                 type="button"
                 onClick={handleSave}
                 disabled={pending}
-                className="flex items-center gap-1 rounded bg-navy-600 px-2 py-1 text-xs font-medium text-white hover:bg-navy-700 disabled:opacity-50"
+                className="bg-navy-600 hover:bg-navy-700 flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-white disabled:opacity-50"
               >
                 {pending ? "Saving…" : "Save"}
               </button>
@@ -294,7 +294,7 @@ function QuestionRow({
           href={response.evidenceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 block text-xs text-navy-600 hover:underline"
+          className="text-navy-600 mt-2 block text-xs hover:underline"
         >
           {response.evidenceUrl}
         </a>

@@ -120,9 +120,7 @@ export function CreateAssetForm({
           <option value="UNACCEPTABLE">Unacceptable</option>
         </select>
         {euRequiredArticles.length > 0 && (
-          <p className="mt-1 text-xs text-amber-700">
-            Required: {euRequiredArticles.join(", ")}
-          </p>
+          <p className="mt-1 text-xs text-amber-700">Required: {euRequiredArticles.join(", ")}</p>
         )}
       </div>
       <div>

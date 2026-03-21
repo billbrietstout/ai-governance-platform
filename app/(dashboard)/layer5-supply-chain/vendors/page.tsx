@@ -126,7 +126,8 @@ export default async function VendorsPage() {
                             : "text-gray-500"
                       }`}
                     >
-                      VRA {v.vraStatus === "COMPLETE" ? "✓" : v.vraStatus === "IN_PROGRESS" ? "⋯" : "—"}
+                      VRA{" "}
+                      {v.vraStatus === "COMPLETE" ? "✓" : v.vraStatus === "IN_PROGRESS" ? "⋯" : "—"}
                     </span>
                   )}
                   {daysToExpiry !== null && (

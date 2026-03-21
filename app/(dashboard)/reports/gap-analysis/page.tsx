@@ -50,7 +50,7 @@ export default async function GapAnalysisReportPage() {
               gaps.map((g) => (
                 <tr
                   key={`${g.assetId}-${g.controlId}`}
-                  className="border-b border-gray-100 last:border-0 transition hover:bg-gray-50"
+                  className="border-b border-gray-100 transition last:border-0 hover:bg-gray-50"
                 >
                   <td className="px-4 py-3">
                     <Link

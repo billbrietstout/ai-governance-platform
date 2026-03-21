@@ -135,7 +135,8 @@ export function classifyEURiskLevel(asset: AssetInput): EURiskResult {
     reasons.push("Annex III high-risk use case");
     return {
       level: "HIGH",
-      rationale: "Likely Annex III high-risk AI system (biometrics, employment, education, critical infrastructure, law enforcement, migration, justice, essential services).",
+      rationale:
+        "Likely Annex III high-risk AI system (biometrics, employment, education, critical infrastructure, law enforcement, migration, justice, essential services).",
       requiredArticles: ["Art. 8–15", "Annex III", "Annex IX"]
     };
   }

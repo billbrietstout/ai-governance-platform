@@ -26,7 +26,12 @@ export async function runDiscovery(inputs: {
   euEntityType?: string;
   euEstablishedInEU?: boolean;
   euExclusion?: "military" | "rd_only" | "open_source" | "personal_use";
-  euTransparencyTypes?: ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[];
+  euTransparencyTypes?: (
+    | "deep_fake"
+    | "synthetic_content"
+    | "emotion_biometric"
+    | "natural_person"
+  )[];
 }) {
   const caller = await createServerCaller();
   const result = await caller.discovery.runDiscovery({ inputs });

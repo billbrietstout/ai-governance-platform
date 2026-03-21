@@ -8,13 +8,7 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import { runDiscovery, type RegulationDiscoveryResult } from "@/lib/discovery/engine";
 import { GuestResultsView } from "./GuestResultsView";
 
-function LabelWithTooltip({
-  label,
-  tooltip
-}: {
-  label: string;
-  tooltip: string;
-}) {
+function LabelWithTooltip({ label, tooltip }: { label: string; tooltip: string }) {
   return (
     <span className="flex items-center gap-1.5">
       <span>{label}</span>
@@ -255,7 +249,12 @@ export function DiscoveryWizardClient({
               : undefined,
           euTransparencyTypes:
             inputs.euTransparencyTypes.length > 0
-              ? (inputs.euTransparencyTypes as ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[])
+              ? (inputs.euTransparencyTypes as (
+                  | "deep_fake"
+                  | "synthetic_content"
+                  | "emotion_biometric"
+                  | "natural_person"
+                )[])
               : undefined
         });
         setGuestResults(result);
@@ -286,8 +285,10 @@ export function DiscoveryWizardClient({
             ? inputs.euEntityType
             : undefined,
         euEstablishedInEU: inputs.euEstablishedInEU || undefined,
-        euExclusion: inputs.euExclusion && inputs.euExclusion !== "none" ? inputs.euExclusion : undefined,
-        euTransparencyTypes: inputs.euTransparencyTypes.length > 0 ? inputs.euTransparencyTypes : undefined
+        euExclusion:
+          inputs.euExclusion && inputs.euExclusion !== "none" ? inputs.euExclusion : undefined,
+        euTransparencyTypes:
+          inputs.euTransparencyTypes.length > 0 ? inputs.euTransparencyTypes : undefined
       } as DiscoveryInputs)
         .then((id) => router.push(`/discover/results/${id}`))
         .catch((e) => {
@@ -396,7 +397,10 @@ export function DiscoveryWizardClient({
           </div>
           <div>
             <div className="mb-1.5 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-              <strong className="text-slate-700">#E1 Entity type</strong> – The EU AI Act assigns different obligations depending on your role. You can be more than one type (e.g. both Provider and Deployer). Select the one that best fits, or &quot;Not applicable&quot; if the Act doesn&apos;t apply.
+              <strong className="text-slate-700">#E1 Entity type</strong> – The EU AI Act assigns
+              different obligations depending on your role. You can be more than one type (e.g. both
+              Provider and Deployer). Select the one that best fits, or &quot;Not applicable&quot;
+              if the Act doesn&apos;t apply.
             </div>
             <label className="block text-sm font-medium text-slate-700">
               <LabelWithTooltip
@@ -409,7 +413,10 @@ export function DiscoveryWizardClient({
               onChange={(e) =>
                 setInputs((p) => ({
                   ...p,
-                  euEntityType: e.target.value as (typeof EU_ENTITY_TYPES)[number] | "" | "NOT_APPLICABLE"
+                  euEntityType: e.target.value as
+                    | (typeof EU_ENTITY_TYPES)[number]
+                    | ""
+                    | "NOT_APPLICABLE"
                 }))
               }
               className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
@@ -435,7 +442,10 @@ export function DiscoveryWizardClient({
               />
               <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Will it make or influence decisions affecting people?
-                <Tooltip content="e.g. hiring, credit, benefits, access to services. Triggers higher scrutiny under EU AI Act and employment regulations." side="top">
+                <Tooltip
+                  content="e.g. hiring, credit, benefits, access to services. Triggers higher scrutiny under EU AI Act and employment regulations."
+                  side="top"
+                >
                   <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
                 </Tooltip>
               </span>
@@ -453,7 +463,10 @@ export function DiscoveryWizardClient({
               />
               <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Will it interact directly with end users?
-                <Tooltip content="e.g. chatbots, virtual assistants, recommendation UIs. Often triggers transparency obligations (Art. 50)." side="top">
+                <Tooltip
+                  content="e.g. chatbots, virtual assistants, recommendation UIs. Often triggers transparency obligations (Art. 50)."
+                  side="top"
+                >
                   <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
                 </Tooltip>
               </span>
@@ -491,28 +504,34 @@ export function DiscoveryWizardClient({
             </select>
           </div>
           <div className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-            <strong className="text-slate-700">#S1 Scope</strong> – The EU AI Act applies if you place AI on the EU market, put it into service in the EU, are established in the EU, or if your AI&apos;s output is used in the EU. The questions below help determine whether you fall within scope.
+            <strong className="text-slate-700">#S1 Scope</strong> – The EU AI Act applies if you
+            place AI on the EU market, put it into service in the EU, are established in the EU, or
+            if your AI&apos;s output is used in the EU. The questions below help determine whether
+            you fall within scope.
           </div>
           <div className="flex items-center gap-4">
             <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={inputs.euEstablishedInEU}
-                onChange={(e) =>
-                  setInputs((p) => ({ ...p, euEstablishedInEU: e.target.checked }))
-                }
+                onChange={(e) => setInputs((p) => ({ ...p, euEstablishedInEU: e.target.checked }))}
                 className="rounded border-slate-300"
               />
               <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Organisation established or located in the EU (scope #S1)
-                <Tooltip content="If your organisation has a legal presence in any EU member state, the EU AI Act may apply even if the system is deployed elsewhere." side="top">
+                <Tooltip
+                  content="If your organisation has a legal presence in any EU member state, the EU AI Act may apply even if the system is deployed elsewhere."
+                  side="top"
+                >
                   <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
                 </Tooltip>
               </span>
             </label>
           </div>
           <div className="rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-            <strong className="text-slate-700">#R2 Exclusions</strong> – Some systems are excluded from the EU AI Act (e.g. military AI, purely R&D, certain open source components, or personal non-professional use). If one applies, the Act generally does not apply.
+            <strong className="text-slate-700">#R2 Exclusions</strong> – Some systems are excluded
+            from the EU AI Act (e.g. military AI, purely R&D, certain open source components, or
+            personal non-professional use). If one applies, the Act generally does not apply.
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700">
@@ -682,7 +701,11 @@ export function DiscoveryWizardClient({
           </div>
           <div>
             <div className="mb-1.5 rounded border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-              <strong className="text-slate-700">#R4 Art. 50 Transparency</strong> – Limited-risk AI systems must inform users when they interact with AI. Art. 50 sets disclosure rules for: (1) deep-fakes / manipulated media, (2) synthetic content, (3) emotion recognition or biometric categorisation, (4) AI that interacts directly with people. Tick all that apply.
+              <strong className="text-slate-700">#R4 Art. 50 Transparency</strong> – Limited-risk AI
+              systems must inform users when they interact with AI. Art. 50 sets disclosure rules
+              for: (1) deep-fakes / manipulated media, (2) synthetic content, (3) emotion
+              recognition or biometric categorisation, (4) AI that interacts directly with people.
+              Tick all that apply.
             </div>
             <label className="block text-sm font-medium text-slate-700">
               <LabelWithTooltip
@@ -719,7 +742,10 @@ export function DiscoveryWizardClient({
               />
               <span className="flex items-center gap-1.5 text-sm text-slate-700">
                 Will vulnerable populations be affected?
-                <Tooltip content="e.g. children, elderly, persons with disabilities, or others at greater risk. May require extra safeguards and monitoring." side="top">
+                <Tooltip
+                  content="e.g. children, elderly, persons with disabilities, or others at greater risk. May require extra safeguards and monitoring."
+                  side="top"
+                >
                   <HelpCircle className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
                 </Tooltip>
               </span>

@@ -70,13 +70,11 @@ export function CardImportForm({
       </div>
       <button
         type="submit"
-        className="rounded bg-navy-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-navy-700"
+        className="bg-navy-600 hover:bg-navy-700 rounded px-3 py-1.5 text-sm font-medium text-white"
       >
         Import
       </button>
-      {state?.error && (
-        <p className="text-sm text-red-600 sm:self-center">{state.error}</p>
-      )}
+      {state?.error && <p className="text-sm text-red-600 sm:self-center">{state.error}</p>}
     </form>
   );
 }

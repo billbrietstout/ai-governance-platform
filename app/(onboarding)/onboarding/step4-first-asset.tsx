@@ -39,8 +39,16 @@ const EU_ENTITY_TYPES = [
   { value: "DEPLOYER", label: "Deployer", desc: "Uses AI under your authority" },
   { value: "DISTRIBUTOR", label: "Distributor", desc: "Makes AI available on EU market" },
   { value: "IMPORTER", label: "Importer", desc: "Places non-EU AI on EU market" },
-  { value: "PRODUCT_MANUFACTURER", label: "Product Manufacturer", desc: "AI integrated with your product" },
-  { value: "AUTHORISED_REPRESENTATIVE", label: "Authorised Representative", desc: "Acts for provider in EU" }
+  {
+    value: "PRODUCT_MANUFACTURER",
+    label: "Product Manufacturer",
+    desc: "AI integrated with your product"
+  },
+  {
+    value: "AUTHORISED_REPRESENTATIVE",
+    label: "Authorised Representative",
+    desc: "Acts for provider in EU"
+  }
 ] as const;
 
 const AUTONOMY_LEVELS = [

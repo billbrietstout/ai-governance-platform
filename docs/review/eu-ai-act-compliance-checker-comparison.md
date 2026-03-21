@@ -34,28 +34,30 @@ The flowchart uses a **decision-tree questionnaire** with these main sections:
 
 ### 1. Data Flow & Questionnaire Coverage
 
-| Flowchart Section | Readiness App | Notes |
-|-------------------|---------------|-------|
-| **Entity type** | ❌ Not captured | App assumes Provider/Deployer; no entity-type distinction |
-| **Scope (#S1)** | ✅ Partial | Discovery: `deployment` (EU_market, US_only, Global, Internal_only), `euResidentsData` (Yes/No/Unknown) |
-| **High-risk (#HR)** | ✅ Simplified | `euRiskLevel` (MINIMAL/LIMITED/HIGH/UNACCEPTABLE) or inferred from description/assetType |
-| **Annex III use cases** | ✅ Partial | Discovery: `businessFunction`, `decisionsAffectingPeople`; eu-ai-act.ts: keyword match (recruitment, credit, border) |
-| **Prohibited practices (#R3)** | ✅ Partial | eu-ai-act.ts: subliminal, manipulation, exploit vulnerability, social scoring, real-time biometric |
-| **Transparency (#R4)** | ✅ Partial | Discovery: `interactsWithEndUsers` → Limited risk |
-| **GPAI (#R1)** | ❌ Not captured | No high-impact capabilities, 10²⁵ FLOPs check |
-| **Exclusions (#R2)** | ❌ Not captured | No military, R&D, open source, personal-use branches |
-| **Annex I Sections A/B** | ❌ Not captured | No product-safety / machinery / medical device categories |
+| Flowchart Section              | Readiness App   | Notes                                                                                                                |
+| ------------------------------ | --------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Entity type**                | ❌ Not captured | App assumes Provider/Deployer; no entity-type distinction                                                            |
+| **Scope (#S1)**                | ✅ Partial      | Discovery: `deployment` (EU_market, US_only, Global, Internal_only), `euResidentsData` (Yes/No/Unknown)              |
+| **High-risk (#HR)**            | ✅ Simplified   | `euRiskLevel` (MINIMAL/LIMITED/HIGH/UNACCEPTABLE) or inferred from description/assetType                             |
+| **Annex III use cases**        | ✅ Partial      | Discovery: `businessFunction`, `decisionsAffectingPeople`; eu-ai-act.ts: keyword match (recruitment, credit, border) |
+| **Prohibited practices (#R3)** | ✅ Partial      | eu-ai-act.ts: subliminal, manipulation, exploit vulnerability, social scoring, real-time biometric                   |
+| **Transparency (#R4)**         | ✅ Partial      | Discovery: `interactsWithEndUsers` → Limited risk                                                                    |
+| **GPAI (#R1)**                 | ❌ Not captured | No high-impact capabilities, 10²⁵ FLOPs check                                                                        |
+| **Exclusions (#R2)**           | ❌ Not captured | No military, R&D, open source, personal-use branches                                                                 |
+| **Annex I Sections A/B**       | ❌ Not captured | No product-safety / machinery / medical device categories                                                            |
 
 ### 2. Scope Logic
 
 **Flowchart (#S1):**  
-In scope if *any* of: placing on market/putting into service in EU; placing GPAI on market; established in EU; importer (EU-established); output used in EU.
+In scope if _any_ of: placing on market/putting into service in EU; placing GPAI on market; established in EU; importer (EU-established); output used in EU.
 
 **Readiness App (lib/discovery/engine.ts):**
+
 ```typescript
-euJurisdiction = deployment === "EU_market" || euResidentsData === "Yes"
-euPossible   = euResidentsData === "Unknown" || deployment === "Global"
+euJurisdiction = deployment === "EU_market" || euResidentsData === "Yes";
+euPossible = euResidentsData === "Unknown" || deployment === "Global";
 ```
+
 - **Alignment:** Reasonable proxy. "EU_market" ≈ placing on market in EU; "euResidentsData=Yes" ≈ output/data used in EU.
 - **Gap:** No explicit "established in EU" or importer role.
 
@@ -67,12 +69,14 @@ euPossible   = euResidentsData === "Unknown" || deployment === "Global"
 #R3: Prohibited practices → Prohibited.
 
 **Readiness App (lib/compliance/eu-ai-act.ts):**
+
 - Uses `euRiskLevel` when set; otherwise infers from `description` and `assetType`.
 - Prohibited: subliminal, manipulation, exploit vulnerability, social scoring, real-time biometric.
 - Annex III proxy: APPLICATION + (recruitment | credit | border) in description.
 - Default: MINIMAL.
 
 **Gaps:**
+
 - Prohibited (#R3): Missing biometric categorisation, predictive policing, expanding facial recognition databases, emotion recognition (workplace/education).
 - No Annex III categories: biometrics, critical infrastructure, education, employment, essential services, law enforcement, migration, justice.
 - No #HR5-style “significant risk of harm” question.
@@ -91,6 +95,7 @@ Does not distinguish entity types; treats all as Provider-like.
 ### 5. Article Mapping
 
 **Readiness App (lib/cards/eu-ai-act-mapper.ts):**
+
 - Articles 10–15 (data governance, technical doc, transparency, human oversight, accuracy)
 - Annex IV (training data, bias, limitations)
 - Used for model-card / artifact-card coverage, not for full compliance assessment.
@@ -99,18 +104,18 @@ Does not distinguish entity types; treats all as Provider-like.
 
 ## Summary: Alignment & Gaps
 
-| Area | Alignment | Gap |
-|------|-----------|-----|
-| Scope (EU market / EU data) | ✅ Good | No "established in EU" / importer |
-| Prohibited practices (Art. 5) | ✅ Good | Missing emotion recognition, predictive policing, expanding facial DBs |
-| Annex III high-risk | ⚠️ Partial | Very narrow (recruitment, credit, border); missing many Annex III areas |
-| Transparency (Art. 50) | ⚠️ Partial | `interactsWithEndUsers` only; no deep-fake, emotion, synthetic content |
-| Entity type | ❌ Missing | No Provider/Deployer/Distributor/Importer/Product Manufacturer |
-| GPAI / systemic risk | ❌ Missing | No high-impact or systemic-risk path |
-| Exclusions | ❌ Missing | No military, R&D, open source, personal use |
-| Annex I (product safety) | ❌ Missing | No machinery, toys, medical devices, etc. |
-| Fundamental Rights IA | ❌ Missing | No public-body / deployer FRIA (Art. 27) |
-| Notify NCA (Art. 49) | ❌ Missing | No path for “not significant risk” registration |
+| Area                          | Alignment  | Gap                                                                     |
+| ----------------------------- | ---------- | ----------------------------------------------------------------------- |
+| Scope (EU market / EU data)   | ✅ Good    | No "established in EU" / importer                                       |
+| Prohibited practices (Art. 5) | ✅ Good    | Missing emotion recognition, predictive policing, expanding facial DBs  |
+| Annex III high-risk           | ⚠️ Partial | Very narrow (recruitment, credit, border); missing many Annex III areas |
+| Transparency (Art. 50)        | ⚠️ Partial | `interactsWithEndUsers` only; no deep-fake, emotion, synthetic content  |
+| Entity type                   | ❌ Missing | No Provider/Deployer/Distributor/Importer/Product Manufacturer          |
+| GPAI / systemic risk          | ❌ Missing | No high-impact or systemic-risk path                                    |
+| Exclusions                    | ❌ Missing | No military, R&D, open source, personal use                             |
+| Annex I (product safety)      | ❌ Missing | No machinery, toys, medical devices, etc.                               |
+| Fundamental Rights IA         | ❌ Missing | No public-body / deployer FRIA (Art. 27)                                |
+| Notify NCA (Art. 49)          | ❌ Missing | No path for “not significant risk” registration                         |
 
 ---
 

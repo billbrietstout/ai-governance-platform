@@ -98,7 +98,7 @@ async function PolicyComplianceTable() {
           {rows.map((r) => (
             <tr
               key={r.assetId}
-              className="border-b border-gray-100 last:border-0 transition hover:bg-gray-50"
+              className="border-b border-gray-100 transition last:border-0 hover:bg-gray-50"
             >
               <td className="px-4 py-3 font-medium text-gray-900">{r.assetName}</td>
               <td className="px-4 py-3 text-gray-700">{r.compliance.score}%</td>
@@ -109,12 +109,8 @@ async function PolicyComplianceTable() {
                   <span className="text-amber-700">No</span>
                 )}
               </td>
-              <td className="px-4 py-3 text-gray-700">
-                {r.compliance.passed.join(", ") || "—"}
-              </td>
-              <td className="px-4 py-3 text-amber-700">
-                {r.compliance.missing.join(", ") || "—"}
-              </td>
+              <td className="px-4 py-3 text-gray-700">{r.compliance.passed.join(", ") || "—"}</td>
+              <td className="px-4 py-3 text-amber-700">{r.compliance.missing.join(", ") || "—"}</td>
               <td className="px-4 py-3 text-red-700">{r.compliance.overdue.join(", ") || "—"}</td>
             </tr>
           ))}
