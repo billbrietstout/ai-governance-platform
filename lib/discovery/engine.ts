@@ -132,7 +132,11 @@ function mapVerticalToKey(v: string): VerticalKey {
     PUBLIC_SECTOR: "PUBLIC_SECTOR",
     ENERGY: "ENERGY",
     HR: "HR_SERVICES",
-    HR_SERVICES: "HR_SERVICES"
+    HR_SERVICES: "HR_SERVICES",
+    AUTOMOTIVE: "AUTOMOTIVE",
+    TELECOM: "TELECOM",
+    MANUFACTURING: "MANUFACTURING",
+    RETAIL: "RETAIL"
   };
   return (map[v] ?? "GENERAL") as VerticalKey;
 }
@@ -319,6 +323,45 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
     });
   }
 
+  // US: AI that makes decisions affecting people or interacts with end users
+  const usDecisionsOrInteraction =
+    usMarket &&
+    (decisionsAboutPeople || inputs.interactsWithEndUsers) &&
+    (inputs.expectedRiskLevel === "Medium" ||
+      inputs.expectedRiskLevel === "High" ||
+      inputs.expectedRiskLevel === "Critical");
+
+  if (usDecisionsOrInteraction) {
+    likelyApplicable.push({
+      code: "FTC_AI",
+      name: "FTC Act – AI & Consumer Protection",
+      jurisdiction: "US",
+      applicability: "LIKELY_APPLICABLE",
+      keyRequirements:
+        "No AI exemption from existing law. Ensure transparency, fairness, avoid deceptive claims. FTC enforces FCRA, ECOA, and unfair/deceptive practices for AI systems.",
+      implementationEffort: "Medium"
+    });
+    likelyApplicable.push({
+      code: "NIST_AI_RMF",
+      name: "NIST AI Risk Management Framework",
+      jurisdiction: "US",
+      applicability: "LIKELY_APPLICABLE",
+      keyRequirements: "Govern, map, manage, measure AI risks; recommended for systems affecting people",
+      implementationEffort: "Medium"
+    });
+    if (inputs.expectedRiskLevel === "High" || inputs.expectedRiskLevel === "Critical") {
+      likelyApplicable.push({
+        code: "STATE_AI_LAWS",
+        name: "State AI Laws (CO, CT, etc.)",
+        jurisdiction: "US_STATE",
+        applicability: "LIKELY_APPLICABLE",
+        keyRequirements:
+          "Colorado AI Act, Connecticut AI law, and other state requirements for high-impact AI. Check jurisdiction-specific obligations.",
+        implementationEffort: "Medium"
+      });
+    }
+  }
+
   // NYC LL144 / EEOC – employment decisions
   if (hrRelevant && (usMarket || inputs.deployment === "Global") && decisionsAboutPeople) {
     mandatory.push({
@@ -393,15 +436,18 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
     }
   }
 
-  // Recommended best practices
-  recommended.push({
-    code: "NIST_AI_RMF",
-    name: "NIST AI Risk Management Framework",
-    jurisdiction: "US",
-    applicability: "RECOMMENDED",
-    keyRequirements: "Govern, map, manage, measure AI risks",
-    implementationEffort: "Medium"
-  });
+  // Recommended best practices (skip NIST if already in likely)
+  const nistInLikely = likelyApplicable.some((r) => r.code === "NIST_AI_RMF");
+  if (!nistInLikely) {
+    recommended.push({
+      code: "NIST_AI_RMF",
+      name: "NIST AI Risk Management Framework",
+      jurisdiction: "US",
+      applicability: "RECOMMENDED",
+      keyRequirements: "Govern, map, manage, measure AI risks",
+      implementationEffort: "Medium"
+    });
+  }
   recommended.push({
     code: "ISO_42001",
     name: "ISO/IEC 42001 AI Management System",
@@ -419,7 +465,10 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
   if (gdprRelevant) riskScore += 20;
   if (inputs.expectedRiskLevel === "High" || inputs.expectedRiskLevel === "Critical")
     riskScore += 15;
+  else if (inputs.expectedRiskLevel === "Medium") riskScore += 10;
   if (inputs.vulnerablePopulations) riskScore += 10;
+  if (decisionsAboutPeople) riskScore += 15;
+  if (inputs.interactsWithEndUsers) riskScore += 10;
   riskScore = Math.min(100, riskScore);
 
   // Maturity 1–5
@@ -427,6 +476,11 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
   if (mandatory.length > 0) maturity = 3;
   if (mandatory.length >= 2 || annexIII) maturity = 4;
   if (annexIII && gdprRelevant) maturity = 5;
+  // Decisions affecting people + interacts with users → at least M2 even without mandatory regs
+  if (maturity === 1 && (decisionsAboutPeople || inputs.interactsWithEndUsers)) {
+    if (likelyApplicable.length > 0) maturity = 2;
+    else if (recommended.length > 0) maturity = 2;
+  }
 
   return {
     mandatory,

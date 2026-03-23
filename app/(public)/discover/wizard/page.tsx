@@ -3,7 +3,6 @@
  */
 import { auth } from "@/auth";
 import { DiscoveryWizardClient } from "./DiscoveryWizardClient";
-import { runDiscovery } from "./actions";
 
 export default async function DiscoveryWizardPage() {
   const session = await auth();
@@ -42,53 +41,6 @@ export default async function DiscoveryWizardPage() {
         defaultVerticals={defaultVerticals}
         defaultOperatingModel={defaultOperatingModel}
         isGuest={isGuest}
-        runDiscoveryAuthenticated={
-          isGuest
-            ? undefined
-            : async (inputs) => {
-                return runDiscovery({
-                  assetType: inputs.assetType as "MODEL" | "AGENT" | "APPLICATION" | "PIPELINE",
-                  description: inputs.description,
-                  businessFunction: inputs.businessFunction as
-                    | "HR"
-                    | "Finance"
-                    | "Operations"
-                    | "Customer Service"
-                    | "Healthcare"
-                    | "Legal"
-                    | "Other",
-                  decisionsAffectingPeople: inputs.decisionsAffectingPeople,
-                  interactsWithEndUsers: inputs.interactsWithEndUsers,
-                  deployment: inputs.deployment as
-                    | "EU_market"
-                    | "US_only"
-                    | "Global"
-                    | "Internal_only",
-                  verticals: inputs.verticals,
-                  operatingModel: inputs.operatingModel,
-                  autonomyLevel: inputs.autonomyLevel as "L0" | "L1" | "L2" | "L3" | "L4" | "L5",
-                  dataTypes: inputs.dataTypes,
-                  euResidentsData: inputs.euResidentsData as "Yes" | "No" | "Unknown",
-                  expectedRiskLevel: inputs.expectedRiskLevel as
-                    | "Low"
-                    | "Medium"
-                    | "High"
-                    | "Critical",
-                  vulnerablePopulations: inputs.vulnerablePopulations,
-                  euEntityType: inputs.euEntityType,
-                  euEstablishedInEU: inputs.euEstablishedInEU,
-                  euExclusion: inputs.euExclusion as
-                    | "military"
-                    | "rd_only"
-                    | "open_source"
-                    | "personal_use"
-                    | undefined,
-                  euTransparencyTypes: inputs.euTransparencyTypes as
-                    | ("deep_fake" | "synthetic_content" | "emotion_biometric" | "natural_person")[]
-                    | undefined
-                });
-              }
-        }
       />
     </main>
   );

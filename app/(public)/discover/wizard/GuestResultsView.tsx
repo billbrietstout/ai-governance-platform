@@ -21,6 +21,7 @@ type Props = {
 export function GuestResultsView({ results, onStartOver }: Props) {
   const mandatory = results.mandatory ?? [];
   const likelyApplicable = results.likelyApplicable ?? [];
+  const recommended = results.recommended ?? [];
   const requiredControls = results.requiredControls ?? [];
   const top3Controls = requiredControls.slice(0, 3);
 
@@ -79,6 +80,20 @@ export function GuestResultsView({ results, onStartOver }: Props) {
             <li key={r.code} className="flex items-center gap-2">
               <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
                 LIKELY
+              </span>
+              <span className="font-medium text-slate-900">{r.name}</span>
+              <span className="text-xs text-slate-500">({r.jurisdiction})</span>
+            </li>
+          ))}
+          {mandatory.length === 0 && likelyApplicable.length === 0 && recommended.length > 0 && (
+            <li className="text-sm text-slate-600">
+              No mandatory or likely regulations identified. Consider these frameworks:
+            </li>
+          )}
+          {recommended.map((r) => (
+            <li key={r.code} className="flex items-center gap-2">
+              <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700">
+                RECOMMENDED
               </span>
               <span className="font-medium text-slate-900">{r.name}</span>
               <span className="text-xs text-slate-500">({r.jurisdiction})</span>

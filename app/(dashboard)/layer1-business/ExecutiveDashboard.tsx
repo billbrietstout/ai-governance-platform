@@ -2,7 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Landmark, HeartPulse, Shield, Factory, Building2, Zap, Users } from "lucide-react";
+import {
+  Landmark,
+  HeartPulse,
+  Shield,
+  Factory,
+  Building2,
+  Zap,
+  Users,
+  Car,
+  Radio,
+  ShoppingCart
+} from "lucide-react";
 import { ComplianceRing } from "@/components/assets/ComplianceRing";
 import { ComplianceTrendChart } from "@/components/compliance/ComplianceTrendChart";
 import { RiskTreemap } from "@/components/supply-chain/RiskTreemap";
@@ -111,7 +122,11 @@ const VERTICAL_ICONS: Record<string, { icon: React.ReactNode; color: string }> =
   GENERAL: { icon: <Factory className="h-5 w-5" />, color: "text-gray-600" },
   PUBLIC_SECTOR: { icon: <Building2 className="h-5 w-5" />, color: "text-amber-600" },
   ENERGY: { icon: <Zap className="h-5 w-5" />, color: "text-yellow-600" },
-  HR_SERVICES: { icon: <Users className="h-5 w-5" />, color: "text-green-600" }
+  HR_SERVICES: { icon: <Users className="h-5 w-5" />, color: "text-green-600" },
+  AUTOMOTIVE: { icon: <Car className="h-5 w-5" />, color: "text-slate-700" },
+  TELECOM: { icon: <Radio className="h-5 w-5" />, color: "text-indigo-600" },
+  MANUFACTURING: { icon: <Factory className="h-5 w-5" />, color: "text-orange-600" },
+  RETAIL: { icon: <ShoppingCart className="h-5 w-5" />, color: "text-teal-600" }
 };
 
 export function ExecutiveDashboard({

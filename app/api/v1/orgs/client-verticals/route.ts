@@ -17,7 +17,11 @@ const verticalSchema = z.enum([
   "INSURANCE",
   "PUBLIC_SECTOR",
   "ENERGY",
-  "HR_SERVICES"
+  "HR_SERVICES",
+  "AUTOMOTIVE",
+  "TELECOM",
+  "MANUFACTURING",
+  "RETAIL"
 ]);
 
 const ClientVerticalsBody = z.object({

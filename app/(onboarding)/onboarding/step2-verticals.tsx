@@ -1,7 +1,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Building2, HeartPulse, Landmark, Shield, Building, Zap, Users } from "lucide-react";
+import {
+  Building2,
+  HeartPulse,
+  Landmark,
+  Shield,
+  Building,
+  Zap,
+  Users,
+  Car,
+  Radio,
+  Cog,
+  ShoppingCart
+} from "lucide-react";
 import { VERTICAL_OPTIONS } from "@/lib/onboarding/steps";
 import { VERTICAL_REGULATIONS } from "@/lib/vertical-regulations";
 import type { VerticalKey } from "@/lib/vertical-regulations";
@@ -14,7 +26,11 @@ const VERTICAL_ICONS: Record<string, React.ComponentType<{ className?: string }>
   INSURANCE: Shield,
   PUBLIC_SECTOR: Building,
   ENERGY: Zap,
-  HR_SERVICES: Users
+  HR_SERVICES: Users,
+  AUTOMOTIVE: Car,
+  TELECOM: Radio,
+  MANUFACTURING: Cog,
+  RETAIL: ShoppingCart
 };
 
 type Props = {
