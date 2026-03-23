@@ -10,7 +10,7 @@ import { DiscoverClient } from "./DiscoverClient";
 
 export default async function DiscoverPage() {
   const session = await auth();
-  let discoveries: { id: string; createdAt: Date; results: unknown; asset?: { name: string } }[] = [];
+  let discoveries: { id: string; createdAt: Date; results: unknown; asset: { name: string; id?: string } | null }[] = [];
   let assets: { id: string; name: string; assetType: string }[] = [];
 
   if (session?.user) {
