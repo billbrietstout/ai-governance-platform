@@ -1,25 +1,30 @@
 /**
  * Regulation Discovery – landing page with entry points and recent discoveries.
+ * Accessible without auth; discovery data only fetched when logged in.
  */
 import Link from "next/link";
 import { Sparkles, PlusCircle, FileSearch, Layers, BookOpen } from "lucide-react";
+import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { DiscoverClient } from "./DiscoverClient";
 
 export default async function DiscoverPage() {
-  const caller = await createServerCaller();
-  let discoveries: Awaited<ReturnType<typeof caller.discovery.getDiscoveries>>["data"] = [];
-  let assets: Awaited<ReturnType<typeof caller.discovery.getAssetsForReview>>["data"] = [];
+  const session = await auth();
+  let discoveries: { id: string; createdAt: Date; results: unknown; asset?: { name: string } }[] = [];
+  let assets: { id: string; name: string; assetType: string }[] = [];
 
-  try {
-    const [discoveriesRes, assetsRes] = await Promise.all([
-      caller.discovery.getDiscoveries({ limit: 3 }),
-      caller.discovery.getAssetsForReview()
-    ]);
-    discoveries = discoveriesRes.data;
-    assets = assetsRes.data;
-  } catch (err) {
-    console.error("Discover page data fetch failed:", err);
+  if (session?.user) {
+    try {
+      const caller = await createServerCaller();
+      const [discoveriesRes, assetsRes] = await Promise.all([
+        caller.discovery.getDiscoveries({ limit: 3 }),
+        caller.discovery.getAssetsForReview()
+      ]);
+      discoveries = discoveriesRes.data;
+      assets = assetsRes.data;
+    } catch (err) {
+      console.error("Discover page data fetch failed:", err);
+    }
   }
 
   return (

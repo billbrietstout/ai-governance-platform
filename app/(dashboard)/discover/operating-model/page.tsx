@@ -1,13 +1,23 @@
 /**
  * Operating Model Selector – understand shared responsibility boundaries.
+ * Accessible without auth; org context only fetched when logged in.
  */
+import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { OperatingModelClient } from "./OperatingModelClient";
 
 export default async function OperatingModelPage() {
-  const caller = await createServerCaller();
-  const { data } = await caller.discovery.getOrgContext();
-  const currentModel = data.operatingModel as string | null;
+  let currentModel: string | null = null;
+  const session = await auth();
+  if (session?.user) {
+    try {
+      const caller = await createServerCaller();
+      const { data } = await caller.discovery.getOrgContext();
+      currentModel = data.operatingModel as string | null;
+    } catch {
+      // Use default when org context unavailable
+    }
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-8 px-6 py-10">
