@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { Server, GitBranch, Bell } from "lucide-react";
+import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 
 export default async function Layer4PlatformPage() {
   const caller = await createServerCaller();
@@ -70,7 +71,7 @@ export default async function Layer4PlatformPage() {
   ];
 
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10">
+    <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 4: Platform</h1>
         <p className="mt-1 text-slate-600">
@@ -110,6 +111,8 @@ export default async function Layer4PlatformPage() {
           );
         })}
       </div>
+
+      <LayerSecurityStandardsCard layer="LAYER_4_PLATFORM" />
     </main>
   );
 }

@@ -152,20 +152,24 @@ export function LifecycleClient({ board }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Kanban */}
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {STAGES.map((stage) => (
-          <div
-            key={stage}
-            className={`min-w-[220px] flex-1 rounded-lg border-2 p-3 ${STAGE_COLORS[stage] ?? "border-slate-200 bg-white"}`}
-          >
-            <div className="mb-3 flex items-center justify-between">
+      {/* Kanban – constrained height so horizontal scroll is available without scrolling down */}
+      <div
+        className="-mx-6 overflow-x-auto px-6 pb-4"
+        style={{ scrollbarGutter: "stable" }}
+      >
+        <div className="flex h-[min(65vh,600px)] gap-4" style={{ width: "max-content", minWidth: "100%" }}>
+          {STAGES.map((stage) => (
+            <div
+              key={stage}
+              className={`flex min-w-[220px] max-w-[260px] flex-1 flex-col rounded-lg border-2 p-3 ${STAGE_COLORS[stage] ?? "border-slate-200 bg-white"}`}
+            >
+              <div className="mb-3 flex shrink-0 items-center justify-between">
               <h3 className="font-medium text-slate-900">{stage}</h3>
               <span className="rounded bg-white/80 px-2 py-0.5 text-xs text-slate-600">
                 {(byStage[stage] ?? []).length}
               </span>
             </div>
-            <div className="space-y-2">
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
               {(byStage[stage] ?? []).map((a) => {
                 const days = daysInStage(a.lifecycleUpdatedAt, stage);
                 const isProd90d = stage === "PRODUCTION" && days > 90;
@@ -244,6 +248,7 @@ export function LifecycleClient({ board }: Props) {
             </div>
           </div>
         ))}
+        </div>
       </div>
 
       {/* Promote confirmation modal */}

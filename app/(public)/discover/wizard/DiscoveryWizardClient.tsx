@@ -6,6 +6,11 @@ import Link from "next/link";
 import { HelpCircle, Loader2, X } from "lucide-react";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { runDiscovery as runDiscoveryClient, type RegulationDiscoveryResult } from "@/lib/discovery/engine";
+import {
+  ALL_VERTICAL_KEYS,
+  VERTICAL_REGULATIONS,
+  type VerticalKey
+} from "@/lib/vertical-regulations";
 import { runDiscovery } from "./actions";
 import { GuestResultsView } from "./GuestResultsView";
 
@@ -99,34 +104,6 @@ type WizardInputs = {
   euNotApplicable: boolean;
 };
 
-const VERTICAL_OPTIONS = [
-  "GENERAL",
-  "FINANCIAL_SERVICES",
-  "HEALTHCARE",
-  "INSURANCE",
-  "PUBLIC_SECTOR",
-  "ENERGY",
-  "HR_SERVICES",
-  "AUTOMOTIVE",
-  "TELECOM",
-  "MANUFACTURING",
-  "RETAIL"
-] as const;
-
-const VERTICAL_LABELS: Record<string, string> = {
-  GENERAL: "General",
-  FINANCIAL_SERVICES: "Financial Services",
-  HEALTHCARE: "Healthcare",
-  INSURANCE: "Insurance",
-  PUBLIC_SECTOR: "Public Sector",
-  ENERGY: "Energy & Utilities",
-  HR_SERVICES: "HR Services",
-  AUTOMOTIVE: "Automotive",
-  TELECOM: "Telecommunications",
-  MANUFACTURING: "Manufacturing",
-  RETAIL: "Retail"
-};
-
 const STEP_LABELS = ["Scope", "System", "Risk", "Run"] as const;
 
 const getInitialInputs = (
@@ -148,7 +125,7 @@ const getInitialInputs = (
   vulnerablePopulations: false,
   euEntityType: "",
   euEstablishedInEU: false,
-  euExclusion: "",
+  euExclusion: "none",
   euTransparencyTypes: [],
   euNotApplicable: false
 });
@@ -396,7 +373,7 @@ export function DiscoveryWizardClient({
               />
             </label>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-              {VERTICAL_OPTIONS.map((v) => (
+              {ALL_VERTICAL_KEYS.map((v) => (
                 <label key={v} className="flex shrink-0 items-center gap-2">
                   <input
                     type="checkbox"
@@ -405,7 +382,7 @@ export function DiscoveryWizardClient({
                     className="shrink-0 rounded border-slate-300"
                   />
                   <span className="text-sm whitespace-nowrap">
-                    {VERTICAL_LABELS[v] ?? v.replace(/_/g, " ")}
+                    {VERTICAL_REGULATIONS[v]?.label ?? v.replace(/_/g, " ")}
                   </span>
                 </label>
               ))}
@@ -913,7 +890,9 @@ export function DiscoveryWizardClient({
                 <dt className="text-slate-500">Verticals</dt>
                 <dd>
                   {inputs.verticals.length > 0
-                    ? inputs.verticals.map((v) => VERTICAL_LABELS[v] ?? v).join(", ")
+                    ? inputs.verticals
+                        .map((v) => VERTICAL_REGULATIONS[v as VerticalKey]?.label ?? v)
+                        .join(", ")
                     : "—"}
                 </dd>
               </div>

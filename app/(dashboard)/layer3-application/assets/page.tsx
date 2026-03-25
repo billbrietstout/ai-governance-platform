@@ -78,19 +78,44 @@ export default async function AssetsPage({
   );
 
   const riskPillColors: Record<string, string> = {
-    MINIMAL: "bg-gray-100 text-gray-700",
+    MINIMAL: "bg-emerald-100 text-emerald-700",
     LIMITED: "bg-amber-100 text-amber-700",
     HIGH: "bg-orange-100 text-orange-700",
     UNACCEPTABLE: "bg-red-100 text-red-700",
     UNSET: "bg-gray-100 text-gray-500"
   };
 
+  const riskLabels: Record<string, string> = {
+    MINIMAL: "Minimal",
+    LIMITED: "Limited",
+    HIGH: "High",
+    UNACCEPTABLE: "Unacceptable",
+    UNSET: "Unset"
+  };
+
+  const assetTypeLabels: Record<string, string> = {
+    MODEL: "Model",
+    PROMPT: "Prompt",
+    AGENT: "Agent",
+    DATASET: "Dataset",
+    APPLICATION: "Application",
+    TOOL: "Tool",
+    PIPELINE: "Pipeline"
+  };
+
+  const statusLabels: Record<string, string> = {
+    DRAFT: "Draft",
+    ACTIVE: "Active",
+    DEPRECATED: "Deprecated",
+    ARCHIVED: "Archived"
+  };
+
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Asset Inventory</h1>
-          <p className="mt-1 text-gray-600">Filterable asset table with compliance metrics.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Asset Inventory</h1>
+          <p className="mt-1 text-slate-600">Filterable asset table with compliance metrics.</p>
         </div>
         <Link
           href="/layer3-application/assets/new"
@@ -101,14 +126,15 @@ export default async function AssetsPage({
       </div>
 
       {/* Summary bar with risk pills */}
-      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
-        <span className="text-sm font-medium text-gray-600">Total: {data.length}</span>
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <span className="text-sm font-medium text-slate-700">Total: {data.length}</span>
+        <span className="h-4 w-px bg-gray-200" aria-hidden />
         {Object.entries(byEuRisk).map(([k, v]) => (
           <span
             key={k}
             className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${riskPillColors[k] ?? riskPillColors.UNSET}`}
           >
-            {k === "UNSET" ? "—" : k}: {v}
+            {riskLabels[k] ?? "—"}: {v}
           </span>
         ))}
       </div>
@@ -123,15 +149,15 @@ export default async function AssetsPage({
           ctaHref="/layer3-application/assets/new"
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="px-4 py-2 text-left font-medium text-gray-600">Asset</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">EU Risk</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">Owner</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">Compliance</th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">Autonomy</th>
+              <tr className="border-b border-slate-200 bg-slate-50">
+                <th className="px-4 py-2 text-left font-medium text-slate-600">Asset</th>
+                <th className="px-4 py-2 text-left font-medium text-slate-600">EU Risk</th>
+                <th className="px-4 py-2 text-left font-medium text-slate-600">Owner</th>
+                <th className="px-4 py-2 text-left font-medium text-slate-600">Compliance</th>
+                <th className="px-4 py-2 text-left font-medium text-slate-600">Autonomy</th>
               </tr>
             </thead>
             <tbody>
@@ -144,11 +170,11 @@ export default async function AssetsPage({
                 return (
                   <tr
                     key={a.id}
-                    className="border-b border-gray-100 bg-white transition last:border-0"
+                    className="border-b border-slate-100 bg-white transition last:border-0"
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100">
                           <AssetTypeIcon type={a.assetType} />
                         </div>
                         <div>
@@ -158,8 +184,9 @@ export default async function AssetsPage({
                           >
                             {a.name}
                           </Link>
-                          <div className="text-xs text-gray-500">
-                            {a.assetType} · {a.status}
+                          <div className="text-xs text-slate-500">
+                            {assetTypeLabels[a.assetType] ?? a.assetType} ·{" "}
+                            {statusLabels[a.status] ?? a.status}
                           </div>
                           {a.clientVertical && (
                             <span className="bg-navy-100 text-navy-700 mt-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-medium">
@@ -182,10 +209,10 @@ export default async function AssetsPage({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-200 text-[10px] font-medium text-gray-600">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[10px] font-medium text-slate-600">
                           {ownerInitials}
                         </div>
-                        <span className="text-gray-700">{ownerEmail}</span>
+                        <span className="text-slate-700">{ownerEmail}</span>
                       </div>
                     </td>
                     <td className="px-4 py-3">

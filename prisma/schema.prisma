@@ -135,6 +135,7 @@ enum FrameworkCode {
   COSAI_SRF
   NIST_CSF
   ISO_42001
+  OWASP_LLM
   CUSTOM
 }
 

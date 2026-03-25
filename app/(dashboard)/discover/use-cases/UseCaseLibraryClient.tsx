@@ -1,9 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { ChevronRight, Play, Plus } from "lucide-react";
 import type { UseCase } from "@/lib/use-cases/catalog";
+import {
+  useCaseMatchesVerticalFilter,
+  type VerticalFilterSelectValue
+} from "@/lib/use-cases/org-vertical-filter";
 
 const VERTICAL_COLORS: Record<string, string> = {
   MANUFACTURING: "bg-slate-100 text-slate-700",
@@ -27,18 +31,26 @@ const COMPLEXITY_COLORS: Record<string, string> = {
   HIGH: "bg-red-100 text-red-700"
 };
 
-type Props = { useCases: UseCase[] };
+type Props = {
+  useCases: UseCase[];
+  verticalFilterOptions: { value: VerticalFilterSelectValue; label: string }[];
+};
 
-export function UseCaseLibraryClient({ useCases }: Props) {
-  const [vertical, setVertical] = useState("ALL");
+export function UseCaseLibraryClient({ useCases, verticalFilterOptions }: Props) {
+  const [vertical, setVertical] = useState<VerticalFilterSelectValue>("ALL");
   const [riskLevel, setRiskLevel] = useState("ALL");
   const [assetType, setAssetType] = useState("ALL");
   const [autonomy, setAutonomy] = useState("ALL");
   const [selected, setSelected] = useState<UseCase | null>(null);
 
+  useEffect(() => {
+    const allowed = new Set(verticalFilterOptions.map((o) => o.value));
+    if (!allowed.has(vertical)) setVertical("ALL");
+  }, [verticalFilterOptions, vertical]);
+
   const filtered = useMemo(() => {
     return useCases.filter((u) => {
-      if (vertical !== "ALL" && u.vertical !== vertical) return false;
+      if (!useCaseMatchesVerticalFilter(u, vertical)) return false;
       if (riskLevel !== "ALL" && u.euRiskLevel !== riskLevel) return false;
       if (assetType !== "ALL" && u.assetType !== assetType) return false;
       if (autonomy !== "ALL" && u.autonomyLevel !== autonomy) return false;
@@ -71,16 +83,14 @@ export function UseCaseLibraryClient({ useCases }: Props) {
             <select
               id="filter-vertical"
               value={vertical}
-              onChange={(e) => setVertical(e.target.value)}
-              className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+              onChange={(e) => setVertical(e.target.value as VerticalFilterSelectValue)}
+              className="min-w-[180px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
             >
-              <option value="ALL">All Verticals</option>
-              <option value="MANUFACTURING">Manufacturing</option>
-              <option value="FINANCIAL">Financial</option>
-              <option value="HEALTHCARE">Healthcare</option>
-              <option value="HR">HR</option>
-              <option value="RETAIL">Retail</option>
-              <option value="CUSTOMER_SERVICE">Customer Service</option>
+              {verticalFilterOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex items-center gap-2">

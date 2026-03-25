@@ -1,17 +1,39 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 
-const TYPES = ["MODEL", "PROMPT", "AGENT", "DATASET", "APPLICATION", "TOOL", "PIPELINE"];
-const EU_RISKS = ["MINIMAL", "LIMITED", "HIGH", "UNACCEPTABLE"];
-const LAYERS = [
-  "LAYER_1_BUSINESS",
-  "LAYER_2_INFORMATION",
-  "LAYER_3_APPLICATION",
-  "LAYER_4_PLATFORM",
-  "LAYER_5_SUPPLY_CHAIN"
+const TYPE_OPTIONS: { value: string; label: string }[] = [
+  { value: "MODEL", label: "Model" },
+  { value: "PROMPT", label: "Prompt" },
+  { value: "AGENT", label: "Agent" },
+  { value: "DATASET", label: "Dataset" },
+  { value: "APPLICATION", label: "Application" },
+  { value: "TOOL", label: "Tool" },
+  { value: "PIPELINE", label: "Pipeline" }
 ];
-const STATUSES = ["DRAFT", "ACTIVE", "DEPRECATED", "ARCHIVED"];
+
+const EU_RISK_OPTIONS: { value: string; label: string }[] = [
+  { value: "MINIMAL", label: "Minimal" },
+  { value: "LIMITED", label: "Limited" },
+  { value: "HIGH", label: "High" },
+  { value: "UNACCEPTABLE", label: "Unacceptable" }
+];
+
+const LAYER_OPTIONS: { value: string; label: string }[] = [
+  { value: "LAYER_1_BUSINESS", label: "L1 Business" },
+  { value: "LAYER_2_INFORMATION", label: "L2 Information" },
+  { value: "LAYER_3_APPLICATION", label: "L3 Application" },
+  { value: "LAYER_4_PLATFORM", label: "L4 Platform" },
+  { value: "LAYER_5_SUPPLY_CHAIN", label: "L5 Supply Chain" }
+];
+
+const STATUS_OPTIONS: { value: string; label: string }[] = [
+  { value: "DRAFT", label: "Draft" },
+  { value: "ACTIVE", label: "Active" },
+  { value: "DEPRECATED", label: "Deprecated" },
+  { value: "ARCHIVED", label: "Archived" }
+];
 
 export function AssetFilters() {
   const router = useRouter();
@@ -24,61 +46,100 @@ export function AssetFilters() {
     router.push(`/layer3-application/assets?${next.toString()}`);
   }
 
+  function clearAll() {
+    router.push("/layer3-application/assets");
+  }
+
   const typeVal = params.get("type") ?? "";
   const euRiskVal = params.get("euRisk") ?? "";
   const layerVal = params.get("layer") ?? "";
   const statusVal = params.get("status") ?? "";
 
-  const pill = "rounded-full px-3 py-1 text-xs font-medium transition";
-  const inactive = "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800";
-  const active = "bg-navy-600 text-white";
+  const hasFilters = typeVal || euRiskVal || layerVal || statusVal;
+
+  const pill =
+    "rounded-full px-3 py-1.5 text-xs font-medium transition border border-transparent";
+  const inactive =
+    "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50";
+  const active = "border-navy-600 bg-navy-600 text-white hover:bg-navy-500";
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <span className="text-xs font-medium text-gray-500">Type:</span>
-      {TYPES.map((t) => (
-        <button
-          key={t}
-          type="button"
-          onClick={() => setFilter("type", typeVal === t ? "" : t)}
-          className={`${pill} ${typeVal === t ? active : inactive}`}
-        >
-          {t}
-        </button>
-      ))}
-      <span className="ml-2 text-xs font-medium text-gray-500">EU Risk:</span>
-      {EU_RISKS.map((r) => (
-        <button
-          key={r}
-          type="button"
-          onClick={() => setFilter("euRisk", euRiskVal === r ? "" : r)}
-          className={`${pill} ${euRiskVal === r ? active : inactive}`}
-        >
-          {r}
-        </button>
-      ))}
-      <span className="ml-2 text-xs font-medium text-gray-500">Layer:</span>
-      {LAYERS.map((l) => (
-        <button
-          key={l}
-          type="button"
-          onClick={() => setFilter("layer", layerVal === l ? "" : l)}
-          className={`${pill} ${layerVal === l ? active : inactive}`}
-        >
-          {l.replace("LAYER_", "L")}
-        </button>
-      ))}
-      <span className="ml-2 text-xs font-medium text-gray-500">Status:</span>
-      {STATUSES.map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => setFilter("status", statusVal === s ? "" : s)}
-          className={`${pill} ${statusVal === s ? active : inactive}`}
-        >
-          {s}
-        </button>
-      ))}
+    <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="text-sm font-medium text-slate-700">Filters</span>
+        {hasFilters && (
+          <button
+            type="button"
+            onClick={clearAll}
+            className="flex items-center gap-1.5 rounded px-2 py-1 text-xs font-medium text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+          >
+            <X className="h-3.5 w-3.5" />
+            Clear all
+          </button>
+        )}
+      </div>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-16 shrink-0 text-xs font-medium text-slate-500">Type</span>
+          <div className="flex flex-wrap gap-1.5">
+            {TYPE_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setFilter("type", typeVal === value ? "" : value)}
+                className={`${pill} ${typeVal === value ? active : inactive}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-16 shrink-0 text-xs font-medium text-slate-500">EU Risk</span>
+          <div className="flex flex-wrap gap-1.5">
+            {EU_RISK_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setFilter("euRisk", euRiskVal === value ? "" : value)}
+                className={`${pill} ${euRiskVal === value ? active : inactive}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-16 shrink-0 text-xs font-medium text-slate-500">Layer</span>
+          <div className="flex flex-wrap gap-1.5">
+            {LAYER_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setFilter("layer", layerVal === value ? "" : value)}
+                className={`${pill} ${layerVal === value ? active : inactive}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-16 shrink-0 text-xs font-medium text-slate-500">Status</span>
+          <div className="flex flex-wrap gap-1.5">
+            {STATUS_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setFilter("status", statusVal === value ? "" : value)}
+                className={`${pill} ${statusVal === value ? active : inactive}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

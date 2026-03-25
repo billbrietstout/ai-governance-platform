@@ -13,6 +13,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 
 const CLASSIFICATION_COLORS: Record<string, string> = {
   PUBLIC: "bg-emerald-100 text-emerald-700",
@@ -179,6 +180,8 @@ export default async function Layer2InformationPage() {
           </Link>
         ))}
       </div>
+
+      <LayerSecurityStandardsCard layer="LAYER_2_INFORMATION" />
     </main>
   );
 }

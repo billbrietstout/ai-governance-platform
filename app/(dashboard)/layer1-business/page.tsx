@@ -3,6 +3,8 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { Layer1VerticalsSummary } from "@/components/layers/Layer1VerticalsSummary";
+import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 import { ExecutiveDashboard } from "./ExecutiveDashboard";
 
 export default async function Layer1BusinessPage() {
@@ -58,6 +60,8 @@ export default async function Layer1BusinessPage() {
         </Link>
       </div>
 
+      <Layer1VerticalsSummary verticals={portfolioRes.data.verticals} />
+
       <ExecutiveDashboard
         ceo={ceoRes.data}
         cfo={cfoRes.data}
@@ -68,6 +72,8 @@ export default async function Layer1BusinessPage() {
         recentSnapshots={recentSnapshotsRes.data}
         vendorRiskScores={vendorScoresRes.data}
       />
+
+      <LayerSecurityStandardsCard layer="LAYER_1_BUSINESS" />
     </main>
   );
 }

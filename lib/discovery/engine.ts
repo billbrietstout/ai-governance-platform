@@ -456,6 +456,20 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
     keyRequirements: "AI management system, context, leadership, support",
     implementationEffort: "High"
   });
+  // OWASP LLM for agents and applications with user interaction
+  if (
+    inputs.assetType === "AGENT" ||
+    (inputs.assetType === "APPLICATION" && inputs.interactsWithEndUsers)
+  ) {
+    recommended.push({
+      code: "OWASP_LLM",
+      name: "OWASP Top 10 for LLM Applications",
+      jurisdiction: "INTERNATIONAL",
+      applicability: "RECOMMENDED",
+      keyRequirements: "Prompt injection, output validation, supply chain, excessive agency",
+      implementationEffort: "Medium"
+    });
+  }
 
   const requiredControls = deriveControlsFromRegulations([...mandatory, ...likelyApplicable]);
 

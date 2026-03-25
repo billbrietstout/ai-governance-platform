@@ -134,7 +134,7 @@ export function GuestResultsView({ results, onStartOver }: Props) {
 
       {/* Blurred/locked section */}
       <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-sm">
           <Lock className="h-12 w-12 text-white/80" />
           <p className="mt-2 text-sm font-medium text-white">
             Full control list, evidence requirements, and implementation roadmap
@@ -142,7 +142,7 @@ export function GuestResultsView({ results, onStartOver }: Props) {
           <p className="mt-1 text-xs text-white/70">Create a free account to unlock</p>
           <Link
             href="/login?callbackUrl=/discover/wizard"
-            className="bg-navy-600 hover:bg-navy-500 mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white"
+            className="relative z-20 mt-4 inline-flex items-center gap-2 rounded-lg bg-navy-600 px-4 py-2 text-sm font-medium text-white hover:bg-navy-500"
           >
             <Unlock className="h-4 w-4" />
             Unlock full results — free forever for up to 10 assets

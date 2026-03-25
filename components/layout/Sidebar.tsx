@@ -166,6 +166,13 @@ function getGovernanceOverviewItems(
   consultantOrgId?: string | null
 ): NavItem[] {
   const base = [...GOVERNANCE_OVERVIEW_ITEMS];
+  // When no persona, Posture Overview should go to full dashboard (not redirect to persona-select)
+  if (!persona) {
+    const postureIdx = base.findIndex((i) => i.href === "/dashboard");
+    if (postureIdx >= 0) {
+      base[postureIdx] = { ...base[postureIdx], href: "/dashboard?view=full" };
+    }
+  }
   if (consultantOrgId) {
     base.unshift(CLIENT_WORKSPACES_ITEM);
   }
@@ -265,7 +272,12 @@ function getSectionForPath(
 
 function isActive(href: string, pathname: string): boolean {
   if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const pathOnly = href.split("?")[0];
+  return (
+    pathname === href ||
+    pathname === pathOnly ||
+    pathname.startsWith(`${pathOnly}/`)
+  );
 }
 
 function ChevronDown({ className }: { className?: string }) {

@@ -55,8 +55,8 @@ export default async function VendorsPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Vendor Registry</h1>
-        <p className="mt-1 text-gray-600">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Vendor Registry</h1>
+        <p className="mt-1 text-slate-600">
           Vendor assurance scores, evidence expiry, and contract alignment.
         </p>
       </div>

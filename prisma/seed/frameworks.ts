@@ -36,7 +36,8 @@ const FRAMEWORK_FILES: Record<string, string> = {
   NIST_AI_RMF: "nist-ai-rmf.json",
   EU_AI_ACT: "eu-ai-act.json",
   COSAI_SRF: "cosai-srf.json",
-  NIST_CSF: "nist-csf.json"
+  NIST_CSF: "nist-csf.json",
+  OWASP_LLM: "owasp-llm.json"
 };
 
 function loadFrameworkData(code: string): FrameworkData {
@@ -65,11 +66,19 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
 
     const fw = await prisma.complianceFramework.upsert({
       where: {
-        orgId_code: { orgId, code: code as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF" }
+        orgId_code: {
+          orgId,
+          code: code as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF" | "OWASP_LLM"
+        }
       },
       create: {
         orgId,
-        code: framework.code as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF",
+        code: framework.code as
+          | "NIST_AI_RMF"
+          | "EU_AI_ACT"
+          | "COSAI_SRF"
+          | "NIST_CSF"
+          | "OWASP_LLM",
         version: framework.version,
         name: framework.name,
         description: framework.description ?? null,
