@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 
 import { prisma } from "@/lib/prisma";
 import { calculateKPI, calculateEUPenaltyExposure, type KpiName } from "@/lib/value/kpi-engine";
+import { loadActiveFrameworksForOrg } from "@/lib/compliance/framework-queries";
 import * as engine from "@/lib/compliance/engine";
 import * as verticalCascade from "@/lib/compliance/vertical-cascade";
 import { getExecutiveBriefingData } from "@/lib/executive-briefing";
@@ -134,10 +135,7 @@ export const dashboardRouter = createTRPCRouter({
   }),
 
   getComplianceHeatmap: protectedProcedure.query(async ({ ctx }) => {
-    const frameworks = await prisma.complianceFramework.findMany({
-      where: { orgId: ctx.orgId, isActive: true },
-      select: { id: true, code: true }
-    });
+    const frameworks = await loadActiveFrameworksForOrg(prisma, ctx.orgId);
     const assets = await prisma.aIAsset.findMany({
       where: { orgId: ctx.orgId, deletedAt: null },
       select: { id: true, assetType: true }

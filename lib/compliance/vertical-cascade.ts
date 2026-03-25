@@ -3,6 +3,11 @@
  */
 import type { PrismaClient } from "@prisma/client";
 
+import {
+  loadActiveFrameworksWithControlCount,
+  loadFrameworkMetaByIds
+} from "@/lib/compliance/framework-queries";
+
 const COSAI_LAYER_ORDER = [
   "LAYER_1_BUSINESS",
   "LAYER_2_INFORMATION",
@@ -41,9 +46,15 @@ export async function getVerticalControls(
   vertical: string,
   cosaiLayer: string | null
 ): Promise<ControlSummary[]> {
+  const orgFwRows = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id FROM "ComplianceFramework" WHERE "orgId" = ${orgId} AND "isActive" = true
+  `;
+  const orgFwIds = orgFwRows.map((r) => r.id);
+  if (orgFwIds.length === 0) return [];
+
   const controls = await prisma.control.findMany({
     where: {
-      framework: { orgId, isActive: true },
+      frameworkId: { in: orgFwIds },
       ...(cosaiLayer
         ? {
             cosaiLayer: cosaiLayer as
@@ -54,9 +65,14 @@ export async function getVerticalControls(
               | "LAYER_5_SUPPLY_CHAIN"
           }
         : {})
-    },
-    include: { framework: { select: { code: true } } }
+    }
   });
+
+  const meta = await loadFrameworkMetaByIds(
+    prisma,
+    [...new Set(controls.map((c) => c.frameworkId))]
+  );
+  const fwCode = new Map(meta.map((m) => [m.id, m.code]));
 
   const filtered = vertical
     ? controls.filter((c) => {
@@ -69,7 +85,7 @@ export async function getVerticalControls(
     id: c.id,
     controlId: c.controlId,
     title: c.title,
-    frameworkCode: c.framework.code,
+    frameworkCode: fwCode.get(c.frameworkId) ?? "",
     cosaiLayer: c.cosaiLayer
   }));
 }
@@ -93,22 +109,20 @@ export async function getCascadeChain(
   );
   const layersInRange = COSAI_LAYER_ORDER.slice(Math.min(start, end), Math.max(start, end) + 1);
 
-  const frameworks = await prisma.complianceFramework.findMany({
-    where: {
-      orgId,
-      isActive: true,
-      code: regulation as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF"
-    },
-    select: { id: true }
-  });
+  const frameworks = await prisma.$queryRaw<{ id: string }[]>`
+    SELECT id FROM "ComplianceFramework"
+    WHERE "orgId" = ${orgId} AND "isActive" = true AND code::text = ${regulation}
+  `;
   if (frameworks.length === 0) {
     return { regulation, fromLayer, toLayer, steps: [] };
   }
 
+  const fwIds = frameworks.map((f) => f.id);
   const controls = await prisma.control.findMany({
-    where: { frameworkId: { in: frameworks.map((f) => f.id) } },
-    include: { framework: { select: { code: true } } }
+    where: { frameworkId: { in: fwIds } }
   });
+  const meta = await loadFrameworkMetaByIds(prisma, [...new Set(controls.map((c) => c.frameworkId))]);
+  const fwCode = new Map(meta.map((m) => [m.id, m.code]));
 
   const steps = layersInRange.map((layer) => {
     const layerControls = controls.filter((c) => c.cosaiLayer === layer);
@@ -118,7 +132,7 @@ export async function getCascadeChain(
         id: c.id,
         controlId: c.controlId,
         title: c.title,
-        frameworkCode: c.framework.code,
+        frameworkCode: fwCode.get(c.frameworkId) ?? "",
         cosaiLayer: c.cosaiLayer
       }))
     };
@@ -131,45 +145,39 @@ export async function getRegulationMap(
   prisma: PrismaClient,
   orgId: string
 ): Promise<RegulationMap> {
-  const frameworks = await prisma.complianceFramework.findMany({
-    where: { orgId, isActive: true },
-    select: { id: true, code: true, name: true },
-    take: 50
-  });
+  const frameworks = await loadActiveFrameworksWithControlCount(prisma, orgId);
+  const fwIds = frameworks.map((f) => f.id);
+  if (fwIds.length === 0) {
+    return { frameworks: [], byLayer: {} };
+  }
 
   const controls = await prisma.control.findMany({
-    where: { frameworkId: { in: frameworks.map((f) => f.id) } },
-    include: { framework: { select: { code: true } } }
+    where: { frameworkId: { in: fwIds } }
+  });
+
+  const meta = await loadFrameworkMetaByIds(prisma, [...new Set(controls.map((c) => c.frameworkId))]);
+  const fwCode = new Map(meta.map((m) => [m.id, m.code]));
+
+  const mapControl = (c: (typeof controls)[number]): ControlSummary => ({
+    id: c.id,
+    controlId: c.controlId,
+    title: c.title,
+    frameworkCode: fwCode.get(c.frameworkId) ?? "",
+    cosaiLayer: c.cosaiLayer
   });
 
   const byLayer: Record<string, ControlSummary[]> = {};
   for (const layer of COSAI_LAYER_ORDER) {
-    byLayer[layer] = controls
-      .filter((c) => c.cosaiLayer === layer)
-      .map((c) => ({
-        id: c.id,
-        controlId: c.controlId,
-        title: c.title,
-        frameworkCode: c.framework.code,
-        cosaiLayer: c.cosaiLayer
-      }));
+    byLayer[layer] = controls.filter((c) => c.cosaiLayer === layer).map(mapControl);
   }
-  byLayer.UNSPECIFIED = controls
-    .filter((c) => !c.cosaiLayer)
-    .map((c) => ({
-      id: c.id,
-      controlId: c.controlId,
-      title: c.title,
-      frameworkCode: c.framework.code,
-      cosaiLayer: c.cosaiLayer
-    }));
+  byLayer.UNSPECIFIED = controls.filter((c) => !c.cosaiLayer).map(mapControl);
 
   return {
     frameworks: frameworks.map((f) => ({
       id: f.id,
       code: f.code,
       name: f.name,
-      controlCount: controls.filter((c) => c.frameworkId === f.id).length
+      controlCount: f.controlCount
     })),
     byLayer
   };

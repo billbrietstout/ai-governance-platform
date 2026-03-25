@@ -1,7 +1,7 @@
 /**
  * AI Security Frameworks Integration
  *
- * Integrates NIST AI RMF, OWASP LLM, MITRE ATLAS, ISO 42001, CSA AICM,
+ * Integrates NIST AI RMF, OWASP LLM, OWASP AIVSS, MITRE ATLAS, ISO 42001, CSA AICM,
  * and NIST COSAIS into the CoSAI layer model.
  */
 
@@ -20,3 +20,5 @@ export {
   getOwaspRisksByLayer,
   type OwaspLlmRisk
 } from "./owasp-llm";
+
+export { AIVSS_FACTORS, getAivssFactorsByLayer, type AivssFactor } from "./aivss";

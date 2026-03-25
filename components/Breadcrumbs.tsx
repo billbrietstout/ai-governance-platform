@@ -57,6 +57,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   compliance: "Compliance",
   iso42001: "ISO 42001",
   "eu-ai-act": "EU AI Act Conformity",
+  aivss: "OWASP AIVSS",
   topology: "Integration Topology",
   provenance: "Model Provenance",
   "risk-score": "Risk Scoring"

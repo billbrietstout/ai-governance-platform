@@ -182,7 +182,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     layer: "L3",
     name: "Agent Telemetry",
     category: "Technical",
-    requiredFor: ["EU_AI_ACT", "NIST_AI_RMF"],
+    requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "OWASP_AIVSS"],
     howToCollect: "Telemetry & Monitoring",
     prismaModel: "ScanRecord",
     prismaQuery: "scanRecord.findMany"
@@ -192,7 +192,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     layer: "L3",
     name: "Control Attestations",
     category: "Attestation",
-    requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "ISO_42001", "COSAI_SRF"],
+    requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "ISO_42001", "COSAI_SRF", "OWASP_AIVSS", "OWASP_LLM"],
     howToCollect: "Assessments, Asset detail",
     prismaModel: "ControlAttestation",
     prismaQuery: "controlAttestation.findMany"
@@ -346,6 +346,8 @@ export const REGULATION_OPTIONS = [
   { value: "NIST_AI_RMF", label: "NIST AI RMF" },
   { value: "ISO_42001", label: "ISO 42001" },
   { value: "COSAI_SRF", label: "CoSAI SRF" },
+  { value: "OWASP_LLM", label: "OWASP Top 10 for LLM" },
+  { value: "OWASP_AIVSS", label: "OWASP AIVSS" },
   { value: "SR_11_7", label: "SR 11-7" },
   { value: "CUSTOM", label: "Custom" }
 ] as const;

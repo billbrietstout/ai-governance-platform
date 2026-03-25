@@ -3,6 +3,8 @@
  */
 import type { PrismaClient } from "@prisma/client";
 
+import { loadActiveFrameworksForOrg, loadFrameworkMetaByIds } from "./framework-queries";
+
 export type ScoreResult = {
   score: number;
   total: number;
@@ -17,12 +19,16 @@ export type Gap = {
   frameworkCode: string;
   title: string;
   cosaiLayer: string | null;
+  /** NIST SP 800-53 Rev 5 control family — semantic backbone for SSP/RMF alignment */
+  nist80053Family: string | null;
   status: string;
 };
 
 export type GapReport = {
   byFramework: Record<string, { attested: number; total: number; gaps: Gap[] }>;
   byLayer: Record<string, { attested: number; total: number; gaps: Gap[] }>;
+  /** Open gaps grouped by NIST SP 800-53 family (UNSPECIFIED if unmapped) */
+  gapsByNist80053Family: Record<string, Gap[]>;
   criticalGaps: Gap[];
   recommendations: string[];
 };
@@ -47,15 +53,20 @@ export async function calculateComplianceScore(
     return { score: 0, total: 0, percentage: 0, gaps: [], byLayer: {} };
   }
 
-  const frameworks = await prisma.complianceFramework.findMany({
-    where: { orgId: asset.orgId, isActive: true, ...(frameworkId ? { id: frameworkId } : {}) },
-    select: { id: true, code: true },
-    take: frameworkId ? 1 : 100
+  const frameworks = await loadActiveFrameworksForOrg(prisma, asset.orgId, {
+    frameworkId
   });
 
   const controlIds = await prisma.control.findMany({
     where: { frameworkId: { in: frameworks.map((f) => f.id) } },
-    select: { id: true, controlId: true, frameworkId: true, title: true, cosaiLayer: true }
+    select: {
+      id: true,
+      controlId: true,
+      frameworkId: true,
+      title: true,
+      cosaiLayer: true,
+      nist80053Family: true
+    }
   });
 
   const attestations = await prisma.controlAttestation.findMany({
@@ -87,6 +98,7 @@ export async function calculateComplianceScore(
         frameworkCode: fw?.code ?? "",
         title: c.title,
         cosaiLayer: c.cosaiLayer,
+        nist80053Family: c.nist80053Family ?? null,
         status: status ?? "PENDING"
       });
     }
@@ -125,10 +137,8 @@ export async function getGapAnalysis(prisma: PrismaClient, assetId: string): Pro
     byLayer[layer].gaps.push(g);
   }
 
-  const frameworks = await prisma.complianceFramework.findMany({
-    where: { id: { in: [...new Set(result.gaps.map((g) => g.frameworkId))] } },
-    select: { id: true, code: true }
-  });
+  const fwIdsForStats = [...new Set(result.gaps.map((g) => g.frameworkId))];
+  const frameworks = await loadFrameworkMetaByIds(prisma, fwIdsForStats);
   const controls = await prisma.control.findMany({
     where: { frameworkId: { in: frameworks.map((f) => f.id) } },
     select: { frameworkId: true, cosaiLayer: true }
@@ -150,16 +160,25 @@ export async function getGapAnalysis(prisma: PrismaClient, assetId: string): Pro
   const criticalGaps = result.gaps.filter(
     (g) => g.status === "PENDING" || g.status === "NON_COMPLIANT"
   );
+  const gapsByNist80053Family: Record<string, Gap[]> = {};
+  for (const g of result.gaps) {
+    const fam = g.nist80053Family ?? "UNSPECIFIED";
+    if (!gapsByNist80053Family[fam]) gapsByNist80053Family[fam] = [];
+    gapsByNist80053Family[fam].push(g);
+  }
+
   const recommendations = criticalGaps.length
     ? [
         `Address ${criticalGaps.length} unattested or non-compliant control(s).`,
-        "Prioritize by CoSAI layer (Business → Supply Chain) for cascade alignment."
+        "Prioritize by CoSAI layer (Business → Supply Chain) for cascade alignment.",
+        "Consider NIST SP 800-53 control families (e.g. SR, SC, AC) when planning compensating controls and SSP narratives."
       ]
     : ["No critical gaps. Maintain attestations and schedule next reviews."];
 
   return {
     byFramework,
     byLayer,
+    gapsByNist80053Family,
     criticalGaps,
     recommendations
   };
@@ -180,12 +199,20 @@ export async function getCrossFrameworkMapping(
 
   const related = await prisma.control.findMany({
     where: { controlId: { in: ids }, id: { not: controlId } },
-    include: { framework: { select: { code: true, name: true } } }
+    select: { controlId: true, title: true, frameworkId: true }
   });
-  return related.map((c) => ({
-    controlId: c.controlId,
-    frameworkCode: c.framework.code,
-    frameworkName: c.framework.name,
-    title: c.title
-  }));
+  const fwMeta = await loadFrameworkMetaByIds(
+    prisma,
+    [...new Set(related.map((c) => c.frameworkId))]
+  );
+  const fwMap = new Map(fwMeta.map((m) => [m.id, m]));
+  return related.map((c) => {
+    const fw = fwMap.get(c.frameworkId);
+    return {
+      controlId: c.controlId,
+      frameworkCode: fw?.code ?? "",
+      frameworkName: fw?.name ?? "",
+      title: c.title
+    };
+  });
 }

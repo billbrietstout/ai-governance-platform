@@ -59,9 +59,13 @@ export default async function RegulatoryCascadePage({
   > = {};
 
   if (frameworkId && orgId) {
+    const [fwRow] = await prisma.$queryRaw<{ code: string }[]>`
+      SELECT code::text AS code FROM "ComplianceFramework" WHERE id = ${frameworkId}
+    `;
+    const frameworkCodeStr = fwRow?.code ?? "";
+
     const controls = await prisma.control.findMany({
       where: { frameworkId },
-      include: { framework: { select: { code: true } } },
       orderBy: [{ cosaiLayer: "asc" }, { controlId: "asc" }]
     });
 
@@ -73,7 +77,7 @@ export default async function RegulatoryCascadePage({
           id: c.id,
           controlId: c.controlId,
           title: c.title,
-          frameworkCode: c.framework.code
+          frameworkCode: frameworkCodeStr
         }))
       });
     }

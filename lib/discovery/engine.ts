@@ -470,6 +470,17 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
       implementationEffort: "Medium"
     });
   }
+  if (inputs.assetType === "AGENT") {
+    recommended.push({
+      code: "OWASP_AIVSS",
+      name: "OWASP Agentic AI Vulnerability Scoring System (AIVSS)",
+      jurisdiction: "INTERNATIONAL",
+      applicability: "RECOMMENDED",
+      keyRequirements:
+        "0–10 composite scores from base severity plus agentic amplification (autonomy, tools, memory, delegation, exposure)",
+      implementationEffort: "Medium"
+    });
+  }
 
   const requiredControls = deriveControlsFromRegulations([...mandatory, ...likelyApplicable]);
 

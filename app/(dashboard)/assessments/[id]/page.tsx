@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { loadFrameworkMetaByIds } from "@/lib/compliance/framework-queries";
 import { prisma } from "@/lib/prisma";
 import { AssessmentWorkflow } from "./AssessmentWorkflow";
 
@@ -21,7 +22,7 @@ export default async function AssessmentDetailPage({
   const frameworkIds = assessment.frameworkIds as string[];
   const layersInScope = assessment.layersInScope as string[];
 
-  const controls = await prisma.control.findMany({
+  const controlsRaw = await prisma.control.findMany({
     where: {
       frameworkId: { in: frameworkIds },
       ...(layersInScope.length > 0
@@ -38,9 +39,20 @@ export default async function AssessmentDetailPage({
           }
         : {})
     },
-    include: { framework: { select: { code: true, name: true } } },
     orderBy: [{ cosaiLayer: "asc" }, { controlId: "asc" }]
   });
+  const fwMeta = await loadFrameworkMetaByIds(
+    prisma,
+    [...new Set(controlsRaw.map((c) => c.frameworkId))]
+  );
+  const fwById = new Map(fwMeta.map((m) => [m.id, m]));
+  const controls = controlsRaw.map((c) => ({
+    ...c,
+    framework: {
+      code: fwById.get(c.frameworkId)?.code ?? "",
+      name: fwById.get(c.frameworkId)?.name ?? ""
+    }
+  }));
 
   const attestations = await prisma.controlAttestation.findMany({
     where: { assetId, controlId: { in: controls.map((c) => c.id) } }

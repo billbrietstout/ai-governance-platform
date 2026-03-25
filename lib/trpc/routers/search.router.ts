@@ -10,6 +10,7 @@ const STATIC_PAGES = [
   { href: "/compliance/regulation-feed", label: "Regulation Watch", category: "pages" },
   { href: "/compliance/iso42001", label: "ISO 42001", category: "pages" },
   { href: "/compliance/eu-ai-act", label: "EU AI Act Conformity", category: "pages" },
+  { href: "/compliance/aivss", label: "OWASP AIVSS", category: "pages" },
   { href: "/audit-package", label: "Audit Package", category: "pages" },
   { href: "/audit", label: "Audit Log", category: "pages" },
   { href: "/discover", label: "Regulation Discovery", category: "pages" },

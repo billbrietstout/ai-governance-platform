@@ -67,10 +67,11 @@ export default async function DashboardLayout({
         where: { orgId: effectiveOrgId },
         select: { name: true, enabled: true }
       }),
-      prisma.complianceFramework.findMany({
-        where: { orgId: effectiveOrgId, isActive: true },
-        select: { code: true }
-      }),
+      prisma.$queryRaw<{ code: string }[]>`
+        SELECT code::text AS code
+        FROM "ComplianceFramework"
+        WHERE "orgId" = ${effectiveOrgId} AND "isActive" = true
+      `,
       userId
         ? prisma.user.findUnique({
             where: { id: userId },

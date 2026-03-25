@@ -5,29 +5,49 @@ import { prisma } from "@/lib/prisma";
 import { writeAuditLog } from "@/lib/audit";
 import type { AuditTransactionClient } from "@/lib/audit";
 import * as engine from "@/lib/compliance/engine";
+import {
+  loadActiveFrameworksWithControlCount,
+  loadFrameworkMetaByIds
+} from "@/lib/compliance/framework-queries";
 import * as verticalCascade from "@/lib/compliance/vertical-cascade";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const complianceRouter = createTRPCRouter({
   getFrameworks: protectedProcedure.input(z.object({}).optional()).query(async ({ ctx }) => {
-    const list = await prisma.complianceFramework.findMany({
-      where: { orgId: ctx.orgId, isActive: true },
-      include: { _count: { select: { controls: true } } }
-    });
-    return { data: list.map((f) => ({ ...f, controlCount: f._count.controls })), meta: {} };
+    const list = await loadActiveFrameworksWithControlCount(prisma, ctx.orgId);
+    return { data: list, meta: {} };
   }),
 
   getControls: protectedProcedure
     .input(z.object({ frameworkId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
+      const orgFwRows = await prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "ComplianceFramework" WHERE "orgId" = ${ctx.orgId}
+      `;
+      const orgFwIds = orgFwRows.map((r) => r.id);
+      if (orgFwIds.length === 0) {
+        return { data: [], meta: {} };
+      }
+      if (input.frameworkId && !orgFwIds.includes(input.frameworkId)) {
+        return { data: [], meta: {} };
+      }
       const where = input.frameworkId
-        ? { frameworkId: input.frameworkId, framework: { orgId: ctx.orgId } }
-        : { framework: { orgId: ctx.orgId } };
+        ? { frameworkId: input.frameworkId }
+        : { frameworkId: { in: orgFwIds } };
       const list = await prisma.control.findMany({
-        where,
-        include: { framework: { select: { code: true, name: true } } }
+        where
       });
-      return { data: list, meta: {} };
+      const fwIds = [...new Set(list.map((c) => c.frameworkId))];
+      const meta = await loadFrameworkMetaByIds(prisma, fwIds);
+      const fwById = new Map(meta.map((m) => [m.id, m]));
+      const data = list.map((c) => {
+        const m = fwById.get(c.frameworkId);
+        return {
+          ...c,
+          framework: { code: m?.code ?? "", name: m?.name ?? "" }
+        };
+      });
+      return { data, meta: {} };
     }),
 
   getAttestation: protectedProcedure

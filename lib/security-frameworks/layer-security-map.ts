@@ -1,8 +1,10 @@
 /**
  * AI Security Standards by CoSAI Layer
  *
- * Maps authoritative frameworks (NIST AI RMF, OWASP LLM, MITRE ATLAS,
+ * Maps authoritative frameworks (NIST AI RMF, OWASP LLM, OWASP AIVSS, MITRE ATLAS,
  * ISO 42001, CSA AICM) to the five-layer model for secure-by-design AI.
+ * Cross-framework controls are also tagged with NIST SP 800-53 control families
+ * (see `lib/compliance/nist80053-families.ts`) for RMF / SSP alignment.
  */
 
 export type CosaiLayer =
@@ -15,6 +17,7 @@ export type CosaiLayer =
 export type SecurityStandard =
   | "NIST_AI_RMF"
   | "OWASP_LLM"
+  | "OWASP_AIVSS"
   | "MITRE_ATLAS"
   | "ISO_42001"
   | "CSA_AICM"
@@ -58,12 +61,13 @@ export const LAYER_SECURITY_MAP: Record<CosaiLayer, LayerSecurityProfile> = {
         id: "policy",
         title: "Policy & Risk Management",
         description: "AI-specific policies aligned with broader security programs",
-        standards: ["NIST_AI_RMF", "ISO_42001", "NIST_COSAIS"],
+        standards: ["NIST_AI_RMF", "ISO_42001", "NIST_COSAIS", "OWASP_AIVSS"],
         keyControls: [
           "AI incident response and escalation plan",
           "Regulatory mapping (EU AI Act, sector rules)",
           "Integrate AI risk with enterprise risk management",
-          "Define autonomy levels and human oversight requirements"
+          "Define autonomy levels and human oversight requirements",
+          "AIVSS scoring methodology and periodic reassessment for agentic systems"
         ]
       }
     ],
@@ -131,12 +135,13 @@ export const LAYER_SECURITY_MAP: Record<CosaiLayer, LayerSecurityProfile> = {
         id: "plugins-tools",
         title: "Plugins & Tools",
         description: "Secure orchestration and agent design",
-        standards: ["OWASP_LLM", "MITRE_ATLAS"],
+        standards: ["OWASP_LLM", "MITRE_ATLAS", "OWASP_AIVSS"],
         keyControls: [
           "Insecure Plugin Design (OWASP LLM07) – least-privilege tool access",
           "Excessive Agency (OWASP LLM08) – human-in-the-loop for high-risk actions",
           "Overreliance (OWASP LLM09) – validation and fallbacks",
-          "Model Theft (OWASP LLM10) – rate limiting, watermarking"
+          "Model Theft (OWASP LLM10) – rate limiting, watermarking",
+          "AIVSS: tool scope, identity boundaries, delegation depth for agents"
         ]
       },
       {
@@ -153,6 +158,7 @@ export const LAYER_SECURITY_MAP: Record<CosaiLayer, LayerSecurityProfile> = {
     ],
     references: [
       { standard: "OWASP_LLM", name: "OWASP Top 10 for LLM Applications 2025" },
+      { standard: "OWASP_AIVSS", name: "OWASP AIVSS – Agentic vulnerability scoring" },
       { standard: "MITRE_ATLAS", name: "MITRE ATLAS – Adversarial Techniques" }
     ]
   },
@@ -251,6 +257,7 @@ export function getLayerSecurityProfile(layer: CosaiLayer): LayerSecurityProfile
 export const ALL_SECURITY_STANDARDS: { id: SecurityStandard; name: string }[] = [
   { id: "NIST_AI_RMF", name: "NIST AI Risk Management Framework" },
   { id: "OWASP_LLM", name: "OWASP Top 10 for LLM Applications" },
+  { id: "OWASP_AIVSS", name: "OWASP Agentic AI Vulnerability Scoring System (AIVSS)" },
   { id: "MITRE_ATLAS", name: "MITRE ATLAS" },
   { id: "ISO_42001", name: "ISO/IEC 42001 AI Management System" },
   { id: "CSA_AICM", name: "Cloud Security Alliance AI Controls Matrix" },

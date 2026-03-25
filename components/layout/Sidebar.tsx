@@ -201,7 +201,8 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
     title: "COMPLIANCE",
     items: [
       { href: "/compliance/iso42001", label: "ISO 42001", icon: FileText },
-      { href: "/compliance/eu-ai-act", label: "EU AI Act Conformity", icon: Shield }
+      { href: "/compliance/eu-ai-act", label: "EU AI Act Conformity", icon: Shield },
+      { href: "/compliance/aivss", label: "OWASP AIVSS", icon: Bot }
     ]
   },
   {
@@ -240,6 +241,7 @@ const TIER_GATED_HREFS: Record<string, GatedFeature> = {
   "/audit-package/evidence-workbook": "evidence_workbook",
   "/compliance/iso42001": "compliance_snapshots",
   "/compliance/eu-ai-act": "compliance_snapshots",
+  "/compliance/aivss": "compliance_snapshots",
   "/reports": "compliance_snapshots"
 };
 
@@ -248,7 +250,9 @@ const FRAMEWORK_COLORS: Record<string, string> = {
   EU_AI_ACT: "bg-amber-500/20 text-amber-300 border-amber-500/30",
   COSAI_SRF: "bg-purple-500/20 text-purple-300 border-purple-500/30",
   NIST_CSF: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  ISO_42001: "bg-slatePro-500/20 text-slatePro-300 border-slatePro-500/30"
+  ISO_42001: "bg-slatePro-500/20 text-slatePro-300 border-slatePro-500/30",
+  OWASP_LLM: "bg-rose-500/20 text-rose-300 border-rose-500/30",
+  OWASP_AIVSS: "bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30"
 };
 
 function getSectionForPath(

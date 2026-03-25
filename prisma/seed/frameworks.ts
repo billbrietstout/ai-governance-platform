@@ -1,10 +1,10 @@
 /**
- * Framework definitions – NIST_AI_RMF, EU_AI_ACT, COSAI_SRF, NIST_CSF.
+ * Framework definitions – NIST_AI_RMF, EU_AI_ACT, COSAI_SRF, NIST_CSF, OWASP_LLM, OWASP_AIVSS.
  */
 import path from "node:path";
 import { readFileSync } from "node:fs";
 
-import type { PrismaClient } from "@prisma/client";
+import type { Nist80053Family, PrismaClient } from "@prisma/client";
 
 //const DATA_DIR = path.join(__dirname, "data");
 import { fileURLToPath } from "url";
@@ -17,6 +17,8 @@ type ControlInput = {
   title: string;
   description?: string;
   category?: string;
+  /** NIST SP 800-53 Rev 5 control family — semantic backbone */
+  nist80053Family?: string;
   cosaiLayer?: string;
   personaAccountable?: string;
   operatingModelApplicability?: string[];
@@ -37,7 +39,8 @@ const FRAMEWORK_FILES: Record<string, string> = {
   EU_AI_ACT: "eu-ai-act.json",
   COSAI_SRF: "cosai-srf.json",
   NIST_CSF: "nist-csf.json",
-  OWASP_LLM: "owasp-llm.json"
+  OWASP_LLM: "owasp-llm.json",
+  OWASP_AIVSS: "owasp-aivss.json"
 };
 
 function loadFrameworkData(code: string): FrameworkData {
@@ -59,6 +62,34 @@ function mapCosaiLayer(layer?: string): string | null {
   return map[layer] ?? null;
 }
 
+const VALID_NIST_FAMILIES = new Set([
+  "AC",
+  "AU",
+  "AT",
+  "CA",
+  "CM",
+  "CP",
+  "IA",
+  "IR",
+  "MA",
+  "MP",
+  "PE",
+  "PL",
+  "PM",
+  "PS",
+  "PT",
+  "RA",
+  "SA",
+  "SC",
+  "SI",
+  "SR"
+]);
+
+function mapNistFamily(raw?: string): Nist80053Family | undefined {
+  if (!raw || !VALID_NIST_FAMILIES.has(raw)) return undefined;
+  return raw as Nist80053Family;
+}
+
 export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promise<void> {
   for (const code of Object.keys(FRAMEWORK_FILES)) {
     const data = loadFrameworkData(code);
@@ -68,7 +99,13 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
       where: {
         orgId_code: {
           orgId,
-          code: code as "NIST_AI_RMF" | "EU_AI_ACT" | "COSAI_SRF" | "NIST_CSF" | "OWASP_LLM"
+          code: code as
+            | "NIST_AI_RMF"
+            | "EU_AI_ACT"
+            | "COSAI_SRF"
+            | "NIST_CSF"
+            | "OWASP_LLM"
+            | "OWASP_AIVSS"
         }
       },
       create: {
@@ -78,7 +115,8 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           | "EU_AI_ACT"
           | "COSAI_SRF"
           | "NIST_CSF"
-          | "OWASP_LLM",
+          | "OWASP_LLM"
+          | "OWASP_AIVSS",
         version: framework.version,
         name: framework.name,
         description: framework.description ?? null,
@@ -102,6 +140,7 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           title: c.title,
           description: c.description ?? null,
           category: c.category ?? null,
+          nist80053Family: mapNistFamily(c.nist80053Family),
           cosaiLayer: mapCosaiLayer(c.cosaiLayer) as
             | "LAYER_1_BUSINESS"
             | "LAYER_2_INFORMATION"
@@ -120,6 +159,7 @@ export async function seedFrameworks(prisma: PrismaClient, orgId: string): Promi
           title: c.title,
           description: c.description ?? null,
           category: c.category ?? null,
+          nist80053Family: mapNistFamily(c.nist80053Family),
           cosaiLayer: mapCosaiLayer(c.cosaiLayer) as
             | "LAYER_1_BUSINESS"
             | "LAYER_2_INFORMATION"

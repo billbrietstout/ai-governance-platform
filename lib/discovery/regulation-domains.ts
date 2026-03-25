@@ -112,6 +112,23 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Incident Response"
   ],
 
+  // OWASP
+  OWASP_LLM: [
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Supply Chain",
+    "Incident Response"
+  ],
+  OWASP_AIVSS: [
+    "Risk Management",
+    "Human Oversight",
+    "Documentation",
+    "Monitoring",
+    "Incident Response"
+  ],
+
   // NIST
   NIST_AI_RMF: [
     "Risk Management",
@@ -174,6 +191,8 @@ export function getDomainsForRegulation(code: string): ControlDomain[] {
   if (code.includes("EU") || code.includes("GDPR")) return REGULATION_TO_DOMAINS.EU_AI_ACT;
   if (code.includes("NIST")) return REGULATION_TO_DOMAINS.NIST_AI_RMF;
   if (code.includes("ISO")) return REGULATION_TO_DOMAINS.ISO_42001;
+  if (code.includes("AIVSS") || code.includes("OWASP_AIVSS")) return REGULATION_TO_DOMAINS.OWASP_AIVSS;
+  if (code.includes("OWASP")) return REGULATION_TO_DOMAINS.OWASP_LLM;
   if (code.includes("NYC") || code.includes("LL144")) return REGULATION_TO_DOMAINS.NYC_LL144;
   if (code.includes("COSAI") || code.includes("CoSAI")) return REGULATION_TO_DOMAINS.COSAI_SRF;
   return ["Documentation", "Risk Management"];

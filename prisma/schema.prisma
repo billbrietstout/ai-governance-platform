@@ -136,7 +136,32 @@ enum FrameworkCode {
   NIST_CSF
   ISO_42001
   OWASP_LLM
+  OWASP_AIVSS
   CUSTOM
+}
+
+/// NIST SP 800-53 Rev 5 control families — semantic backbone for cross-framework controls
+enum Nist80053Family {
+  AC // Access Control
+  AU // Audit and Accountability
+  AT // Awareness and Training
+  CA // Assessment, Authorization, and Monitoring
+  CM // Configuration Management
+  CP // Contingency Planning
+  IA // Identification and Authentication
+  IR // Incident Response
+  MA // Maintenance
+  MP // Media Protection
+  PE // Physical and Environmental Protection
+  PL // Planning
+  PM // Program Management
+  PS // Personnel Security
+  PT // PII Processing and Transparency
+  RA // Risk Assessment
+  SA // System and Services Acquisition
+  SC // System and Communications Protection
+  SI // System and Information Integrity
+  SR // Supply Chain Risk Management
 }
 
 enum AttestationStatus {
@@ -693,6 +718,8 @@ model Control {
   title                        String
   description                  String?
   category                     String?
+  /// Primary NIST SP 800-53 control family for RMF / SSP alignment
+  nist80053Family              Nist80053Family?
   cosaiLayer                   CosaiLayer?
   personaAccountable           String?
   operatingModelApplicability  Json?
@@ -709,6 +736,7 @@ model Control {
   @@unique([frameworkId, controlId])
   @@index([frameworkId])
   @@index([cosaiLayer])
+  @@index([nist80053Family])
 }
 
 model ControlAttestation {

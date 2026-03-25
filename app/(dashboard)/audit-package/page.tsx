@@ -17,6 +17,8 @@ export default async function AuditPackagePage() {
       { value: "NIST_AI_RMF", label: "NIST AI RMF" },
       { value: "ISO_42001", label: "ISO 42001" },
       { value: "COSAI_SRF", label: "CoSAI SRF" },
+      { value: "OWASP_LLM", label: "OWASP Top 10 for LLM" },
+      { value: "OWASP_AIVSS", label: "OWASP AIVSS" },
       { value: "SR_11_7", label: "SR 11-7" },
       { value: "CUSTOM", label: "Custom" }
     ])

@@ -9,7 +9,8 @@ const mockPrisma = {
   aIAsset: { findFirst: vi.fn() },
   complianceFramework: { findMany: vi.fn() },
   control: { findMany: vi.fn(), findUnique: vi.fn() },
-  controlAttestation: { findMany: vi.fn() }
+  controlAttestation: { findMany: vi.fn() },
+  $queryRaw: vi.fn()
 };
 
 describe("calculateComplianceScore", () => {
@@ -25,23 +26,23 @@ describe("calculateComplianceScore", () => {
 
   it("returns score and byLayer when frameworks and attestations exist", async () => {
     mockPrisma.aIAsset.findFirst.mockResolvedValue({ orgId: "org-1" });
-    mockPrisma.complianceFramework.findMany.mockResolvedValue([
-      { id: "fw-1", code: "NIST_AI_RMF" }
-    ]);
+    mockPrisma.$queryRaw.mockResolvedValue([{ id: "fw-1", code: "NIST_AI_RMF" }]);
     mockPrisma.control.findMany.mockResolvedValue([
       {
         id: "c1",
         controlId: "GOV-1",
         frameworkId: "fw-1",
         title: "Governance",
-        cosaiLayer: "LAYER_1_BUSINESS"
+        cosaiLayer: "LAYER_1_BUSINESS",
+        nist80053Family: "PL"
       },
       {
         id: "c2",
         controlId: "MAP-1",
         frameworkId: "fw-1",
         title: "Mapping",
-        cosaiLayer: "LAYER_2_INFORMATION"
+        cosaiLayer: "LAYER_2_INFORMATION",
+        nist80053Family: "RA"
       }
     ]);
     mockPrisma.controlAttestation.findMany.mockResolvedValue([
@@ -54,6 +55,7 @@ describe("calculateComplianceScore", () => {
     expect(result.percentage).toBe(50);
     expect(result.gaps).toHaveLength(1);
     expect(result.gaps[0].controlId).toBe("MAP-1");
+    expect(result.gaps[0].nist80053Family).toBe("RA");
     expect(Object.keys(result.byLayer).length).toBeGreaterThan(0);
   });
 });
@@ -61,9 +63,9 @@ describe("calculateComplianceScore", () => {
 describe("getGapAnalysis", () => {
   it("returns byFramework, byLayer, criticalGaps, recommendations", async () => {
     mockPrisma.aIAsset.findFirst.mockResolvedValue({ orgId: "org-1" });
-    mockPrisma.complianceFramework.findMany.mockResolvedValue([
-      { id: "fw-1", code: "NIST_AI_RMF" }
-    ]);
+    mockPrisma.$queryRaw
+      .mockResolvedValueOnce([{ id: "fw-1", code: "NIST_AI_RMF" }])
+      .mockResolvedValueOnce([{ id: "fw-1", code: "NIST_AI_RMF", name: "NIST AI RMF" }]);
     mockPrisma.control.findMany
       .mockResolvedValueOnce([
         {
@@ -71,7 +73,8 @@ describe("getGapAnalysis", () => {
           controlId: "GOV-1",
           frameworkId: "fw-1",
           title: "G",
-          cosaiLayer: "LAYER_1_BUSINESS"
+          cosaiLayer: "LAYER_1_BUSINESS",
+          nist80053Family: "PL"
         }
       ])
       .mockResolvedValueOnce([{ id: "c1", frameworkId: "fw-1", cosaiLayer: "LAYER_1_BUSINESS" }]);
@@ -80,6 +83,7 @@ describe("getGapAnalysis", () => {
     const result = await getGapAnalysis(mockPrisma as never, "asset-1");
     expect(result).toHaveProperty("byFramework");
     expect(result).toHaveProperty("byLayer");
+    expect(result).toHaveProperty("gapsByNist80053Family");
     expect(result).toHaveProperty("criticalGaps");
     expect(result).toHaveProperty("recommendations");
     expect(Array.isArray(result.recommendations)).toBe(true);
@@ -108,8 +112,11 @@ describe("getCrossFrameworkMapping", () => {
         id: "c2",
         controlId: "AC-1",
         title: "Access Control",
-        framework: { code: "NIST_CSF", name: "NIST CSF" }
+        frameworkId: "fw-2"
       }
+    ]);
+    mockPrisma.$queryRaw.mockResolvedValue([
+      { id: "fw-2", code: "NIST_CSF", name: "NIST CSF" }
     ]);
     const result = await getCrossFrameworkMapping(mockPrisma as never, "c1");
     expect(result).toHaveLength(1);

@@ -5,6 +5,8 @@
  */
 import type { PrismaClient } from "@prisma/client";
 
+import { loadActiveFrameworksForOrg } from "@/lib/compliance/framework-queries";
+
 export type BulkLayerPosture = {
   layer: string;
   compliancePct: number;
@@ -40,10 +42,9 @@ export async function getBulkLayerPosture(
       where: { orgId, deletedAt: null },
       select: { id: true, cosaiLayer: true }
     }),
-    prisma.complianceFramework.findMany({
-      where: { orgId, isActive: true },
-      select: { id: true }
-    }),
+    prisma.$queryRaw<{ id: string }[]>`
+      SELECT id FROM "ComplianceFramework" WHERE "orgId" = ${orgId} AND "isActive" = true
+    `,
     prisma.accountabilityAssignment.findMany({
       where: { asset: { orgId, deletedAt: null } },
       select: { cosaiLayer: true, accountableParty: true, updatedAt: true },
@@ -152,10 +153,7 @@ export async function getBulkComplianceHeatmap(
   orgId: string
 ): Promise<BulkHeatmapRow[]> {
   const [frameworks, assets] = await Promise.all([
-    prisma.complianceFramework.findMany({
-      where: { orgId, isActive: true },
-      select: { id: true, code: true }
-    }),
+    loadActiveFrameworksForOrg(prisma, orgId),
     prisma.aIAsset.findMany({
       where: { orgId, deletedAt: null },
       select: { id: true, assetType: true }

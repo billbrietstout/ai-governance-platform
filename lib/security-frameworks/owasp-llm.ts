@@ -27,7 +27,7 @@ export const OWASP_LLM_TOP_10: OwaspLlmRisk[] = [
       "Privilege separation between user input and system instructions",
       "Input validation and output validation before execution"
     ],
-    relatedStandards: ["OWASP_LLM", "MITRE_ATLAS"]
+    relatedStandards: ["OWASP_LLM", "MITRE_ATLAS", "OWASP_AIVSS"]
   },
   {
     id: "LLM02",
@@ -40,7 +40,7 @@ export const OWASP_LLM_TOP_10: OwaspLlmRisk[] = [
       "Treat LLM output as untrusted; no direct execution",
       "Output encoding and escaping"
     ],
-    relatedStandards: ["OWASP_LLM"]
+    relatedStandards: ["OWASP_LLM", "OWASP_AIVSS"]
   },
   {
     id: "LLM03",
@@ -92,7 +92,7 @@ export const OWASP_LLM_TOP_10: OwaspLlmRisk[] = [
       "Data classification; limit context to necessity",
       "PII detection and redaction"
     ],
-    relatedStandards: ["OWASP_LLM"]
+    relatedStandards: ["OWASP_LLM", "OWASP_AIVSS"]
   },
   {
     id: "LLM07",
@@ -105,7 +105,7 @@ export const OWASP_LLM_TOP_10: OwaspLlmRisk[] = [
       "Explicit user approval for sensitive actions",
       "Secure orchestration layer"
     ],
-    relatedStandards: ["OWASP_LLM"]
+    relatedStandards: ["OWASP_LLM", "OWASP_AIVSS"]
   },
   {
     id: "LLM08",
@@ -118,7 +118,7 @@ export const OWASP_LLM_TOP_10: OwaspLlmRisk[] = [
       "Bounded memory/tokens; no root/system access",
       "Agent identity management; RBAC with scopes"
     ],
-    relatedStandards: ["OWASP_LLM", "NIST_AI_RMF"]
+    relatedStandards: ["OWASP_LLM", "NIST_AI_RMF", "OWASP_AIVSS"]
   },
   {
     id: "LLM09",

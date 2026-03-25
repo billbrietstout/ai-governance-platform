@@ -615,24 +615,17 @@ async function computeSnapshotData(
   const gapCount = topGaps.length;
   const layerScores = evidenceData.byLayer;
 
-  const frameworks = await prisma.complianceFramework.findMany({
-    where: {
-      orgId,
-      isActive: true,
-      ...(frameworkCode
-        ? {
-            code: frameworkCode as
-              | "NIST_AI_RMF"
-              | "EU_AI_ACT"
-              | "COSAI_SRF"
-              | "NIST_CSF"
-              | "ISO_42001"
-              | "CUSTOM"
-          }
-        : {})
-    },
-    select: { id: true }
-  });
+  const frameworks = frameworkCode
+    ? await prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "ComplianceFramework"
+        WHERE "orgId" = ${orgId}
+          AND "isActive" = true
+          AND code::text = ${frameworkCode}
+      `
+    : await prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "ComplianceFramework"
+        WHERE "orgId" = ${orgId} AND "isActive" = true
+      `;
   let controlsTotal = 0;
   let controlsCompliant = 0;
   if (frameworks.length > 0) {

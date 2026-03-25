@@ -7,18 +7,23 @@ import {
 
 const mockPrisma = {
   control: { findMany: vi.fn() },
-  complianceFramework: { findMany: vi.fn() }
+  complianceFramework: { findMany: vi.fn() },
+  $queryRaw: vi.fn()
 };
 
 describe("getVerticalControls", () => {
   it("returns controls for org and optional cosaiLayer", async () => {
+    mockPrisma.$queryRaw
+      .mockResolvedValueOnce([{ id: "fw-1" }])
+      .mockResolvedValueOnce([{ id: "fw-1", code: "NIST_AI_RMF", name: "NIST AI RMF" }]);
     mockPrisma.control.findMany.mockResolvedValue([
       {
         id: "c1",
         controlId: "GOV-1",
         title: "Governance",
-        framework: { code: "NIST_AI_RMF" },
-        cosaiLayer: "LAYER_1_BUSINESS"
+        frameworkId: "fw-1",
+        cosaiLayer: "LAYER_1_BUSINESS",
+        verticalApplicability: null
       }
     ]);
     const result = await getVerticalControls(
@@ -33,12 +38,15 @@ describe("getVerticalControls", () => {
   });
 
   it("filters by verticalApplicability when vertical provided", async () => {
+    mockPrisma.$queryRaw
+      .mockResolvedValueOnce([{ id: "fw-1" }])
+      .mockResolvedValueOnce([{ id: "fw-1", code: "NIST_AI_RMF", name: "NIST AI RMF" }]);
     mockPrisma.control.findMany.mockResolvedValue([
       {
         id: "c1",
         controlId: "GOV-1",
         title: "Governance",
-        framework: { code: "NIST_AI_RMF" },
+        frameworkId: "fw-1",
         cosaiLayer: "LAYER_1_BUSINESS",
         verticalApplicability: ["GENERAL", "HEALTHCARE"]
       }
@@ -50,7 +58,7 @@ describe("getVerticalControls", () => {
 
 describe("getCascadeChain", () => {
   it("returns empty steps when no framework for regulation", async () => {
-    mockPrisma.complianceFramework.findMany.mockResolvedValue([]);
+    mockPrisma.$queryRaw.mockResolvedValueOnce([]);
     const result = await getCascadeChain(
       mockPrisma as never,
       "org-1",
@@ -63,13 +71,15 @@ describe("getCascadeChain", () => {
   });
 
   it("returns steps with controls per layer when framework exists", async () => {
-    mockPrisma.complianceFramework.findMany.mockResolvedValue([{ id: "fw-1" }]);
+    mockPrisma.$queryRaw
+      .mockResolvedValueOnce([{ id: "fw-1" }])
+      .mockResolvedValueOnce([{ id: "fw-1", code: "NIST_AI_RMF", name: "NIST AI RMF" }]);
     mockPrisma.control.findMany.mockResolvedValue([
       {
         id: "c1",
         controlId: "GOV-1",
         title: "Governance",
-        framework: { code: "NIST_AI_RMF" },
+        frameworkId: "fw-1",
         cosaiLayer: "LAYER_1_BUSINESS"
       }
     ]);
@@ -86,23 +96,37 @@ describe("getCascadeChain", () => {
 
 describe("getRegulationMap", () => {
   it("returns frameworks and byLayer", async () => {
-    mockPrisma.complianceFramework.findMany.mockResolvedValue([
-      { id: "fw-1", code: "NIST_AI_RMF", name: "NIST AI RMF" }
-    ]);
+    const now = new Date();
+    mockPrisma.$queryRaw
+      .mockResolvedValueOnce([
+        {
+          id: "fw-1",
+          orgId: "org-1",
+          code: "NIST_AI_RMF",
+          version: "1.0",
+          name: "NIST AI RMF",
+          description: null,
+          verticalApplicability: null,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now,
+          controlCount: 1
+        }
+      ])
+      .mockResolvedValueOnce([{ id: "fw-1", code: "NIST_AI_RMF", name: "NIST AI RMF" }]);
     mockPrisma.control.findMany.mockResolvedValue([
       {
         id: "c1",
         controlId: "GOV-1",
         title: "Governance",
         frameworkId: "fw-1",
-        framework: { code: "NIST_AI_RMF" },
         cosaiLayer: "LAYER_1_BUSINESS"
       }
     ]);
     const result = await getRegulationMap(mockPrisma as never, "org-1");
     expect(result.frameworks).toHaveLength(1);
     expect(result.frameworks[0].code).toBe("NIST_AI_RMF");
-    expect(result.frameworks[0].controlCount).toBeGreaterThanOrEqual(0);
+    expect(result.frameworks[0].controlCount).toBe(1);
     expect(result.byLayer).toHaveProperty("LAYER_1_BUSINESS");
   });
 });

@@ -9,6 +9,8 @@ const TERM_DEFINITIONS: Record<string, string> = {
     "NIST AI Risk Management Framework. Voluntary governance framework for trustworthy AI systems.",
   "CoSAI SRF":
     "CoSAI Security Reference Framework. Five-layer model: Business, Information, Application, Platform, Supply Chain.",
+  "OWASP AIVSS":
+    "OWASP Agentic AI Vulnerability Scoring System. Combines base vulnerability severity with agentic amplification factors into a 0–10 score for autonomous AI.",
   SLSA: "Supply-chain Levels for Software Artifacts. Framework for ensuring supply chain integrity (L0–L4).",
   L0: "Human-only: No AI autonomy. Human makes all decisions.",
   L1: "Assisted: AI suggests; human decides.",
