@@ -25,6 +25,16 @@ function LabelWithTooltip({ label, tooltip }: { label: string; tooltip: string }
   );
 }
 const ASSET_TYPES = ["MODEL", "AGENT", "APPLICATION", "PIPELINE"] as const;
+/** Select label — stored values stay enum tokens for AssetType / discovery APIs */
+function assetTypeSelectLabel(t: (typeof ASSET_TYPES)[number]): string {
+  const labels: Record<(typeof ASSET_TYPES)[number], string> = {
+    MODEL: "Model",
+    AGENT: "Agent",
+    APPLICATION: "Application",
+    PIPELINE: "Workflow"
+  };
+  return labels[t];
+}
 const BUSINESS_FUNCTIONS = [
   "HR",
   "Finance",
@@ -35,13 +45,20 @@ const BUSINESS_FUNCTIONS = [
   "Other"
 ] as const;
 const DEPLOYMENTS = ["EU_market", "US_only", "Global", "Internal_only"] as const;
-const DEPLOYMENT_LABELS: Record<string, string> = {
+const DEPLOYMENT_LABELS: Record<(typeof DEPLOYMENTS)[number], string> = {
   EU_market: "EU market",
   US_only: "US only",
   Global: "Global",
   Internal_only: "Internal only"
 };
 const OPERATING_MODELS = ["IAAS", "PAAS", "SAAS", "AGENT_PAAS", "MIXED"] as const;
+const OPERATING_MODEL_LABELS: Record<(typeof OPERATING_MODELS)[number], string> = {
+  IAAS: "IaaS",
+  PAAS: "PaaS",
+  SAAS: "SaaS",
+  AGENT_PAAS: "Agent PaaS",
+  MIXED: "Mixed"
+};
 const AUTONOMY_LEVELS = ["L0", "L1", "L2", "L3", "L4", "L5"] as const;
 const AUTONOMY_DESCRIPTIONS: Record<string, string> = {
   L0: "No automation – human performs all actions",
@@ -69,6 +86,14 @@ const EU_ENTITY_TYPES = [
   "PRODUCT_MANUFACTURER",
   "AUTHORISED_REPRESENTATIVE"
 ] as const;
+const EU_ENTITY_LABELS: Record<(typeof EU_ENTITY_TYPES)[number], string> = {
+  PROVIDER: "Provider",
+  DEPLOYER: "Deployer",
+  DISTRIBUTOR: "Distributor",
+  IMPORTER: "Importer",
+  PRODUCT_MANUFACTURER: "Product manufacturer",
+  AUTHORISED_REPRESENTATIVE: "Authorised representative"
+};
 const EU_EXCLUSIONS = [
   { value: "none", label: "None of these" },
   { value: "military", label: "Military purposes only" },
@@ -528,7 +553,7 @@ export function DiscoveryWizardClient({
             <label className="block text-sm font-medium text-slate-700">
               <LabelWithTooltip
                 label="What type of AI system?"
-                tooltip="MODEL: a single AI model (e.g. foundation model, fine-tuned). AGENT: an autonomous agent that acts on its own. APPLICATION: a user-facing app (e.g. chatbot, recommendation system). PIPELINE: a multi-step workflow (e.g. data → model → output)."
+                tooltip="Model: a single AI model (e.g. foundation model, fine-tuned). Agent: an autonomous agent that acts on its own. Application: a user-facing app (e.g. chatbot, recommendation system). Workflow: a multi-step flow (e.g. data → model → output)."
               />
             </label>
             <select
@@ -544,7 +569,7 @@ export function DiscoveryWizardClient({
               <option value="">— Select type —</option>
               {ASSET_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {t}
+                  {assetTypeSelectLabel(t)}
                 </option>
               ))}
             </select>
@@ -625,7 +650,7 @@ export function DiscoveryWizardClient({
               <option value="NOT_APPLICABLE">Not applicable (outside EU scope)</option>
               {EU_ENTITY_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {t.replace(/_/g, " ")}
+                  {EU_ENTITY_LABELS[t]}
                 </option>
               ))}
             </select>
@@ -645,7 +670,7 @@ export function DiscoveryWizardClient({
               <option value="">— Select operating model —</option>
               {OPERATING_MODELS.map((m) => (
                 <option key={m} value={m}>
-                  {m}
+                  {OPERATING_MODEL_LABELS[m]}
                 </option>
               ))}
             </select>
@@ -902,7 +927,11 @@ export function DiscoveryWizardClient({
               </div>
               <div>
                 <dt className="text-slate-500">System type</dt>
-                <dd>{inputs.assetType || "—"}</dd>
+                <dd>
+                  {inputs.assetType
+                    ? assetTypeSelectLabel(inputs.assetType as (typeof ASSET_TYPES)[number])
+                    : "—"}
+                </dd>
               </div>
               <div>
                 <dt className="text-slate-500">Risk level</dt>
