@@ -6,7 +6,6 @@ import type { PrismaClient } from "@prisma/client";
 import { calculateKPI } from "@/lib/value/kpi-engine";
 import { calculateEUPenaltyExposure } from "@/lib/value/kpi-engine";
 import * as engine from "@/lib/compliance/engine";
-import * as verticalCascade from "@/lib/compliance/vertical-cascade";
 
 export type ExecutiveBriefingData = {
   compliancePct: number;
@@ -30,26 +29,46 @@ export async function getExecutiveBriefingData(
   const [
     kpis,
     maturity,
-    cascade,
     penalty,
-    gaps,
     highRiskWithoutAccountability,
     assetsByRisk,
     lastAudit
   ] = await Promise.all([
+    /**
+     * One pass per asset: compliance % average + critical gap rows.
+     * Avoids (layers × assets) compliance calls (timeouts on deploy) and duplicate
+     * COMPLIANCE_SCORE + getGapAnalysis work per asset.
+     */
     (async () => {
       const c = { orgId, prisma };
-      const [total, compliance, withoutAcc, euHigh] = await Promise.all([
-        calculateKPI("TOTAL_AI_ASSETS", c),
-        calculateKPI("COMPLIANCE_SCORE", c),
+      const assets = await prisma.aIAsset.findMany({
+        where: { orgId, deletedAt: null },
+        select: { id: true, name: true }
+      });
+      const totalAssets = assets.length;
+      let complianceSum = 0;
+      const gapRows: { assetId: string; assetName: string }[] = [];
+      for (const a of assets) {
+        const r = await engine.calculateComplianceScore(prisma, a.id);
+        complianceSum += r.percentage;
+        for (const g of r.gaps) {
+          if (g.status === "PENDING" || g.status === "NON_COMPLIANT") {
+            gapRows.push({ assetId: a.id, assetName: a.name });
+          }
+        }
+      }
+      const complianceScore =
+        totalAssets > 0 ? Math.round(complianceSum / totalAssets) : 0;
+      const [withoutAcc, euHigh] = await Promise.all([
         calculateKPI("ASSETS_WITHOUT_ACCOUNTABILITY", c),
         calculateKPI("EU_HIGH_RISK_ASSETS", c)
       ]);
       return {
-        totalAssets: total,
-        complianceScore: compliance,
+        totalAssets,
+        complianceScore,
         withoutAccountability: withoutAcc,
-        euHighRisk: euHigh
+        euHighRisk: euHigh,
+        gapRows
       };
     })(),
     prisma.maturityAssessment.findFirst({
@@ -57,44 +76,13 @@ export async function getExecutiveBriefingData(
       orderBy: { createdAt: "desc" },
       select: { maturityLevel: true, scores: true }
     }),
-    (async () => {
-      const map = await verticalCascade.getRegulationMap(prisma, orgId);
-      const assets = await prisma.aIAsset.findMany({
-        where: { orgId, deletedAt: null },
-        select: { id: true }
-      });
-      let total = 0,
-        met = 0;
-      for (const layer of Object.keys(map.byLayer)) {
-        const controls = map.byLayer[layer] ?? [];
-        total += controls.length * Math.max(1, assets.length);
-        for (const a of assets) {
-          const r = await engine.calculateComplianceScore(prisma, a.id);
-          met += Math.round((controls.length * (r.byLayer[layer]?.percentage ?? 0)) / 100);
-        }
-      }
-      return { pct: total > 0 ? Math.round((met / total) * 100) : 100 };
-    })(),
     calculateEUPenaltyExposure(prisma, orgId),
-    (async () => {
-      const assets = await prisma.aIAsset.findMany({
-        where: { orgId, deletedAt: null },
-        select: { id: true, name: true }
-      });
-      const allGaps: { assetId: string; assetName: string }[] = [];
-      for (const a of assets) {
-        const report = await engine.getGapAnalysis(prisma, a.id);
-        for (const g of report.criticalGaps) {
-          allGaps.push({ assetId: a.id, assetName: a.name });
-        }
-      }
-      return allGaps;
-    })(),
     (async () => {
       const highRisk = await prisma.aIAsset.findMany({
         where: { orgId, deletedAt: null, euRiskLevel: "HIGH" },
         select: { id: true }
       });
+      if (highRisk.length === 0) return 0;
       const withAssignments = await prisma.accountabilityAssignment.groupBy({
         by: ["assetId"],
         where: { assetId: { in: highRisk.map((a) => a.id) } }
@@ -115,6 +103,7 @@ export async function getExecutiveBriefingData(
   ]);
 
   const totalAssets = kpis.totalAssets;
+  const gaps = kpis.gapRows;
   const missingControlsPct =
     totalAssets > 0 && gaps.length > 0 ? Math.round((gaps.length / (totalAssets * 5)) * 100) : 0;
   const byRisk: Record<string, number> = {};
@@ -123,7 +112,7 @@ export async function getExecutiveBriefingData(
   }
 
   return {
-    compliancePct: cascade.pct,
+    compliancePct: kpis.complianceScore,
     penaltyMin: penalty.totalMin,
     penaltyMax: penalty.totalMax,
     euHighRisk: kpis.euHighRisk,
