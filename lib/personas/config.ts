@@ -32,7 +32,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Executive overview and strategic governance",
     defaultLandingPage: "/dashboard/executive",
     visibleLayers: ["L1"],
-    visibleSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS"],
+    visibleSections: ["READINESS OVERVIEW"],
     primaryCapabilities: ["/", "/layer1-business", "/maturity", "/reports"],
     maturityGate: 1
   },
@@ -42,7 +42,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     description: "Financial views and ROI metrics",
     defaultLandingPage: "/dashboard/executive",
     visibleLayers: ["L1"],
-    visibleSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS"],
+    visibleSections: ["READINESS OVERVIEW"],
     primaryCapabilities: ["/layer1-business", "/reports", "/"],
     maturityGate: 1
   },
@@ -64,7 +64,7 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     visibleLayers: ["L1", "L3", "L4", "L5"],
     visibleSections: [
       "READINESS OVERVIEW",
-      "LAYER 1: BUSINESS",
+      "COMPLIANCE",
       "LAYER 3: APPLICATION",
       "LAYER 4: PLATFORM",
       "LAYER 5: SUPPLY CHAIN"
@@ -86,6 +86,8 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     visibleLayers: ["L1", "L2", "L5"],
     visibleSections: [
       "READINESS OVERVIEW",
+      "COMPLIANCE",
+      "PLANNING TOOLS",
       "LAYER 1: BUSINESS",
       "LAYER 2: INFORMATION",
       "LAYER 5: SUPPLY CHAIN"

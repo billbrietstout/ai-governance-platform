@@ -727,16 +727,22 @@ model Control {
   implementationGuidance       String?
   evidenceGuidance             String?
   crossFrameworkIds            Json?    // array of external control IDs
+  parentControlId              String?
+  layerImpactSummary           String?
   createdAt                    DateTime @default(now())
   updatedAt                    DateTime @updatedAt
 
-  framework     ComplianceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
-  attestations  ControlAttestation[]
+  framework      ComplianceFramework @relation(fields: [frameworkId], references: [id], onDelete: Cascade)
+  attestations   ControlAttestation[]
+  parentControl  Control?            @relation("ControlHierarchy", fields: [parentControlId], references: [id])
+  childControls  Control[]           @relation("ControlHierarchy")
+  vraLinks       VraRegulationLink[]
 
   @@unique([frameworkId, controlId])
   @@index([frameworkId])
   @@index([cosaiLayer])
   @@index([nist80053Family])
+  @@index([parentControlId])
 }
 
 model ControlAttestation {
@@ -875,6 +881,22 @@ model VendorVraResponse {
   @@unique([vendorId, questionId])
   @@index([orgId])
   @@index([vendorId])
+}
+
+/// Links static VRA questions (see lib/supply-chain/vra-questions.ts) to controls per framework
+model VraRegulationLink {
+  id             String        @id @default(cuid())
+  questionId     String
+  riskArea       String
+  frameworkCode  FrameworkCode
+  controlId      String?
+  createdAt      DateTime      @default(now())
+
+  control Control? @relation(fields: [controlId], references: [id], onDelete: SetNull)
+
+  @@unique([questionId, frameworkCode])
+  @@index([frameworkCode])
+  @@index([controlId])
 }
 
 model ProvenanceRecord {

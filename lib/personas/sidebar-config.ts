@@ -34,7 +34,7 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   },
   COO: {
     mode: "focused",
-    allowedSections: ["READINESS OVERVIEW", "COMPLIANCE"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS", "LAYER 3: APPLICATION"]
   },
   CAIO: {
     mode: "full",
@@ -45,13 +45,21 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
     allowedSections: [
       "READINESS OVERVIEW",
       "COMPLIANCE",
+      "LAYER 3: APPLICATION",
       "LAYER 4: PLATFORM",
       "LAYER 5: SUPPLY CHAIN"
     ]
   },
   LEGAL: {
     mode: "focused",
-    allowedSections: ["READINESS OVERVIEW", "COMPLIANCE", "PLANNING TOOLS"]
+    allowedSections: [
+      "READINESS OVERVIEW",
+      "COMPLIANCE",
+      "PLANNING TOOLS",
+      "LAYER 1: BUSINESS",
+      "LAYER 2: INFORMATION",
+      "LAYER 5: SUPPLY CHAIN"
+    ]
   },
   DATA_OWNER: {
     mode: "focused",
@@ -59,7 +67,7 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   },
   DEV_LEAD: {
     mode: "focused",
-    allowedSections: ["READINESS OVERVIEW", "LAYER 3: APPLICATION", "LAYER 2: INFORMATION"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 3: APPLICATION", "LAYER 4: PLATFORM"]
   },
   PLATFORM_ENG: {
     mode: "focused",
@@ -67,7 +75,7 @@ export const PERSONA_SIDEBAR_CONFIG: Record<PersonaId, PersonaSidebarConfig> = {
   },
   VENDOR_MGR: {
     mode: "focused",
-    allowedSections: ["READINESS OVERVIEW", "LAYER 5: SUPPLY CHAIN"]
+    allowedSections: ["READINESS OVERVIEW", "LAYER 1: BUSINESS", "LAYER 5: SUPPLY CHAIN"]
   }
 };
 

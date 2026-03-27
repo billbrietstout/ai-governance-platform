@@ -12,6 +12,7 @@ import { getPersonaSidebarConfig, type SidebarMode } from "@/lib/personas/sideba
 import { isPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { SessionExpiryWarning } from "@/components/auth/SessionExpiryWarning";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
+import { getPersonaConfig } from "@/lib/personas/config";
 
 const STORAGE_KEY = "sidebar-mode";
 
@@ -37,15 +38,11 @@ type DashboardShellProps = {
 
 function getEffectiveMode(
   persona: string | null,
-  pathname: string,
+  _pathname: string,
   storedMode: string | null
 ): SidebarMode {
-  const isPersonaDashboard = isPersonaDashboardPath(pathname);
-  if (!isPersonaDashboard) return "full";
-
   const config = persona ? getPersonaSidebarConfig(persona) : null;
   const personaMode = config?.mode ?? "full";
-
   if (storedMode === "full") return "full";
   return personaMode;
 }
@@ -101,10 +98,34 @@ export function DashboardShell({
   }, []);
 
   const personaDashboardPath = getPersonaDashboardPath(persona ?? null);
+  const personaConfig = getPersonaConfig(persona ?? null);
 
   if (effectiveMode === "hidden") {
     return (
       <div className="flex min-h-dvh flex-col">
+        <SessionExpiryWarning />
+        {!isPersonaDashboardPath(pathname) && (
+          <div className="bg-slatePro-900 border-slatePro-800 flex items-center justify-between border-b px-4 py-1.5">
+            <span className="text-slatePro-400 text-xs">
+              Viewing outside your {personaConfig?.label ?? "executive"} dashboard
+            </span>
+            <div className="flex items-center gap-3">
+              <Link
+                href={personaDashboardPath ?? "/dashboard"}
+                className="text-navy-400 hover:text-navy-300 text-xs hover:underline"
+              >
+                ← Back to my view
+              </Link>
+              <button
+                type="button"
+                onClick={expandToFull}
+                className="text-slatePro-400 hover:text-slatePro-200 text-xs hover:underline"
+              >
+                Show full nav
+              </button>
+            </div>
+          </div>
+        )}
         <TopBar userEmail={userEmail} orgName={orgName} persona={persona} />
         <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
           <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">

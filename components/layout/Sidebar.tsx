@@ -345,9 +345,12 @@ export function Sidebar({
   const currentSection = getSectionForPath(pathname, persona ?? null, consultantOrgId);
 
   const [collapsed, setCollapsedState] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    () => new Set([currentSection ?? ALL_SECTIONS[0].title])
-  );
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+    if (!persona) {
+      return new Set(["READINESS OVERVIEW", "COMPLIANCE"]);
+    }
+    return new Set([currentSection ?? ALL_SECTIONS[0].title]);
+  });
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -442,6 +445,13 @@ export function Sidebar({
   const isSectionPrimary = (title: string) => showFullOpacity || primarySections.has(title);
 
   const isFocused = sidebarMode === "focused";
+
+  const isOutOfPersonaScope =
+    !!persona &&
+    sidebarConfig?.mode === "focused" &&
+    sidebarMode === "full" &&
+    !!onResetToPersonaView;
+
   const allowedSectionSet =
     sidebarConfig?.allowedSections === "all"
       ? new Set(ALL_SECTIONS.map((s) => s.title))
@@ -460,15 +470,21 @@ export function Sidebar({
         role="navigation"
         aria-label="Main navigation"
       >
-        {/* Banner */}
-        <div className="border-slatePro-800 border-b px-2 py-2">
-          <button
-            type="button"
-            onClick={onExpandToFull}
-            className="text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300 w-full rounded px-1 py-1 text-[10px] leading-tight"
+        {/* Banner — expand to full */}
+        <div className="border-slatePro-800 flex h-10 items-center justify-center border-b">
+          <Tooltip
+            content={`${personaConfig?.label ?? persona} view — show full nav`}
+            side="right"
           >
-            {personaConfig?.label ?? persona} view · Show all →
-          </button>
+            <button
+              type="button"
+              onClick={onExpandToFull}
+              className="text-slatePro-400 hover:text-navy-300 flex h-8 w-8 items-center justify-center rounded"
+              aria-label="Show full navigation"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
+          </Tooltip>
         </div>
 
         {/* Logo */}
@@ -500,19 +516,6 @@ export function Sidebar({
               </Tooltip>
             );
           })}
-        </div>
-
-        {/* Expand button */}
-        <div className="border-slatePro-800 border-t p-2">
-          <Tooltip content="Show full navigation" side="right">
-            <button
-              type="button"
-              onClick={onExpandToFull}
-              className="text-slatePro-400 hover:bg-slatePro-800 hover:text-navy-300 flex h-10 w-full items-center justify-center rounded"
-            >
-              <Maximize2 className="h-5 w-5" />
-            </button>
-          </Tooltip>
         </div>
 
         {/* User avatar */}
@@ -621,7 +624,7 @@ export function Sidebar({
               <span className="text-slatePro-100 block truncate text-sm font-semibold">
                 AI Readiness
               </span>
-              <span className="text-slatePro-500 block text-[10px]">Readiness</span>
+              <span className="text-slatePro-500 block text-[10px]">Governance Platform</span>
             </div>
           </Link>
         )}
@@ -659,6 +662,19 @@ export function Sidebar({
             consultantWorkspaces={consultantWorkspaces}
             activeWorkspaceOrgId={null}
           />
+        </div>
+      )}
+
+      {isOutOfPersonaScope && !collapsed && (
+        <div className="border-slatePro-700 bg-navy-500/10 flex items-center justify-between border-b px-3 py-2">
+          <span className="text-navy-300 text-xs">Viewing full navigation</span>
+          <button
+            type="button"
+            onClick={onResetToPersonaView}
+            className="text-navy-400 hover:text-navy-300 text-xs hover:underline"
+          >
+            ← My view
+          </button>
         </div>
       )}
 

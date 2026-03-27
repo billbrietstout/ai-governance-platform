@@ -165,6 +165,14 @@ export default async function RegulatoryCascadePage({
           How {regName} flows through CoSAI layers. Controls at each layer. Unmet requirements with
           owner and remediation.
         </p>
+        <p className="mt-3">
+          <Link
+            href={`/layer1-business/regulatory-cascade/tree?framework=${encodeURIComponent(regulation)}`}
+            className="text-navy-600 text-sm font-medium hover:underline"
+          >
+            View impact tree →
+          </Link>
+        </p>
       </div>
 
       {/* Framework overlap chord */}

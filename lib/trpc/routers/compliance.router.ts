@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { CosaiLayer } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
 import { writeAuditLog } from "@/lib/audit";
@@ -190,6 +191,31 @@ export const complianceRouter = createTRPCRouter({
     const result = await verticalCascade.getRegulationMap(prisma, ctx.orgId);
     return { data: result, meta: {} };
   }),
+
+  getRegulationImpactTree: protectedProcedure
+    .input(
+      z.object({
+        frameworkCode: z.string(),
+        startLayer: z
+          .enum([
+            "LAYER_1_BUSINESS",
+            "LAYER_2_INFORMATION",
+            "LAYER_3_APPLICATION",
+            "LAYER_4_PLATFORM",
+            "LAYER_5_SUPPLY_CHAIN"
+          ])
+          .optional()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const data = await verticalCascade.getRegulationImpactTree(
+        prisma,
+        ctx.orgId,
+        input.frameworkCode,
+        (input.startLayer as CosaiLayer) ?? CosaiLayer.LAYER_1_BUSINESS
+      );
+      return { data, meta: {} };
+    }),
 
   getCrossFrameworkMapping: protectedProcedure
     .input(z.object({ controlId: z.string() }))

@@ -1,7 +1,12 @@
 /**
  * Vertical cascade – controls by vertical/layer, regulation flow, regulation map.
  */
-import type { PrismaClient } from "@prisma/client";
+import {
+  AttestationStatus,
+  CosaiLayer,
+  type FrameworkCode,
+  type PrismaClient
+} from "@prisma/client";
 
 import {
   loadActiveFrameworksWithControlCount,
@@ -181,4 +186,96 @@ export async function getRegulationMap(
     })),
     byLayer
   };
+}
+
+export type CascadeNode = {
+  layer: CosaiLayer;
+  controlId: string;
+  controlRef: string;
+  label: string;
+  frameworkCode: string;
+  layerImpactSummary: string | null;
+  attestationStatus: AttestationStatus | "NO_DATA";
+  children: CascadeNode[];
+  vraQuestions?: Array<{ questionId: string; text: string; riskArea: string }>;
+};
+
+/**
+ * Regulation → control tree with attestations and optional VRA links (flat fetch + in-memory tree).
+ */
+export async function getRegulationImpactTree(
+  prisma: PrismaClient,
+  orgId: string,
+  frameworkCode: string,
+  startLayer: CosaiLayer = CosaiLayer.LAYER_1_BUSINESS
+): Promise<CascadeNode[]> {
+  const fw = await prisma.complianceFramework.findFirst({
+    where: {
+      orgId,
+      code: frameworkCode as FrameworkCode,
+      isActive: true
+    }
+  });
+  if (!fw) return [];
+
+  const rows = await prisma.control.findMany({
+    where: { frameworkId: fw.id },
+    include: {
+      vraLinks: true,
+      attestations: {
+        where: { asset: { orgId } },
+        orderBy: { updatedAt: "desc" },
+        take: 1
+      }
+    },
+    orderBy: [{ cosaiLayer: "asc" }, { controlId: "asc" }]
+  });
+
+  const { VRA_QUESTIONS } = await import("@/lib/supply-chain/vra-questions");
+  const vraLookup = new Map(VRA_QUESTIONS.map((q) => [q.id, q]));
+
+  const childrenMap = new Map<string | null, typeof rows>();
+  for (const r of rows) {
+    const pid = r.parentControlId ?? null;
+    const list = childrenMap.get(pid) ?? [];
+    list.push(r);
+    childrenMap.set(pid, list);
+  }
+
+  const fcStr = String(fw.code);
+
+  function toNode(c: (typeof rows)[0]): CascadeNode {
+    const att = c.attestations[0];
+    const status: AttestationStatus | "NO_DATA" = att?.status ?? "NO_DATA";
+    const vraQs = c.vraLinks
+      .map((link) => {
+        const q = vraLookup.get(link.questionId);
+        return q
+          ? { questionId: link.questionId, text: q.text, riskArea: link.riskArea }
+          : null;
+      })
+      .filter(Boolean) as CascadeNode["vraQuestions"];
+
+    const childRows = (childrenMap.get(c.id) ?? []).sort((a, b) =>
+      a.controlId.localeCompare(b.controlId)
+    );
+
+    return {
+      layer: c.cosaiLayer!,
+      controlId: c.id,
+      controlRef: c.controlId,
+      label: c.title,
+      frameworkCode: fcStr,
+      layerImpactSummary: c.layerImpactSummary ?? null,
+      attestationStatus: status,
+      children: childRows.map(toNode),
+      vraQuestions: vraQs?.length ? vraQs : undefined
+    };
+  }
+
+  const roots = (childrenMap.get(null) ?? [])
+    .filter((c) => c.cosaiLayer === startLayer)
+    .sort((a, b) => a.controlId.localeCompare(b.controlId));
+
+  return roots.map(toNode);
 }
