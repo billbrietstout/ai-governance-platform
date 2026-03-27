@@ -6,6 +6,8 @@ import { Shield, AlertTriangle, Server, Building } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
 import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
+import { complianceSurfaceClass, complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 const LAYER_LABELS: Record<string, string> = {
   LAYER_1_BUSINESS: "L1 Business",
@@ -14,13 +16,6 @@ const LAYER_LABELS: Record<string, string> = {
   LAYER_4_PLATFORM: "L4 Platform",
   LAYER_5_SUPPLY_CHAIN: "L5 Supply Chain"
 };
-
-function scoreColor(pct: number): string {
-  if (pct <= 30) return "bg-red-500";
-  if (pct <= 60) return "bg-amber-500";
-  if (pct <= 80) return "bg-blue-500";
-  return "bg-emerald-500";
-}
 
 export default async function CISODashboardPage() {
   const caller = await createServerCaller();
@@ -49,31 +44,18 @@ export default async function CISODashboardPage() {
       <div className="flex flex-col gap-6">
         {/* Section 1 – Security posture */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Layer compliance scores</h3>
-          <div className="grid grid-cols-5 gap-3">
+          <h3 className={SECTION_HEADING_CLASS}>Layer compliance scores</h3>
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {layers.map((l) => {
               const label =
                 LAYER_LABELS[l.layer] ?? l.layer.replace("LAYER_", "L").replace("_", " ");
               const pct = l.compliancePct;
-              const bg =
-                pct <= 30
-                  ? "bg-red-50 border-red-200"
-                  : pct <= 60
-                    ? "bg-amber-50 border-amber-200"
-                    : pct <= 80
-                      ? "bg-blue-50 border-blue-200"
-                      : "bg-emerald-50 border-emerald-200";
-              const text =
-                pct <= 30
-                  ? "text-red-700"
-                  : pct <= 60
-                    ? "text-amber-700"
-                    : pct <= 80
-                      ? "text-blue-700"
-                      : "text-emerald-700";
               return (
-                <div key={l.layer} className={`rounded-lg border p-4 text-center ${bg}`}>
-                  <div className={`text-2xl font-bold ${text}`}>{pct}%</div>
+                <div
+                  key={l.layer}
+                  className={`rounded-lg border p-4 text-center ${complianceSurfaceClass(pct)}`}
+                >
+                  <div className={`text-2xl font-bold ${complianceTextClass(pct)}`}>{pct}%</div>
                   <div className="mt-1 text-xs font-medium text-slate-600">{label}</div>
                 </div>
               );
@@ -105,7 +87,7 @@ export default async function CISODashboardPage() {
 
         {/* Section 2 – Radar chart */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-3 text-sm font-medium text-slate-700">
+          <h3 className={SECTION_HEADING_CLASS}>
             Current vs target maturity (M3 minimum compliance)
           </h3>
           <div className="flex justify-center">
@@ -129,28 +111,39 @@ export default async function CISODashboardPage() {
 
         {/* Section 3 – Priority actions */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Top 5 security gaps</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Top 5 security gaps</h3>
           {gaps.length === 0 ? (
-            <p className="text-sm text-slate-500">No critical security gaps</p>
+            <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-4 py-6 text-center">
+              <p className="text-sm text-slate-600">No critical security gaps right now.</p>
+              <p className="mt-1 text-xs text-slate-500">
+                Keep scanning and attesting controls to maintain posture.
+              </p>
+              <Link
+                href="/layer3-application/gaps"
+                className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
+              >
+                Open gap analysis →
+              </Link>
+            </div>
           ) : (
             <ul className="space-y-2">
               {gaps.map((g) => (
                 <li
-                  key={`${g.assetId}-${g.controlId}`}
-                  className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2"
+                  key={`${g.assetId}-${g.controlId}-${g.title}`}
+                  className="flex items-start justify-between gap-3 rounded border border-slate-200 bg-slate-50 px-3 py-2"
                 >
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <Link
                       href={`/layer3-application/assets/${g.assetId}`}
-                      className="text-navy-600 font-medium hover:underline"
+                      className="text-navy-600 block text-sm font-medium hover:underline"
                     >
-                      {g.assetName}
+                      {g.controlId}: {g.title}
                     </Link>
-                    <span className="ml-2 text-xs text-slate-500">
-                      {g.cosaiLayer ?? "—"} • Owner: —
+                    <span className="mt-0.5 block text-xs text-slate-500">
+                      {g.assetName} · {g.cosaiLayer ?? "—"}
                     </span>
                   </div>
-                  <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                  <span className="shrink-0 rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
                     Critical
                   </span>
                 </li>

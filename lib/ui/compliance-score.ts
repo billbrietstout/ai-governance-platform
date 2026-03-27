@@ -21,3 +21,10 @@ export function complianceHeatmapCellClass(value: number): string {
   if (value >= 40) return "bg-amber-400 text-white";
   return "bg-red-500 text-white";
 }
+
+/** Subtle bordered tile for compact % displays (e.g. persona layer cards) */
+export function complianceSurfaceClass(pct: number): string {
+  if (pct < 40) return "border-red-200 bg-red-50";
+  if (pct < 70) return "border-amber-200 bg-amber-50";
+  return "border-green-200 bg-green-50";
+}

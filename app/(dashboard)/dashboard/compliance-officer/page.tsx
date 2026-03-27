@@ -2,9 +2,11 @@
  * Regulatory Compliance Status – for LEGAL.
  */
 import Link from "next/link";
-import { Scale, FileCheck, Calendar, FileDown } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
+import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 const REGULATIONS = [
   {
@@ -28,7 +30,13 @@ const REGULATIONS = [
     deadline: "—",
     status: "AT RISK" as const
   }
-];
+] as const;
+
+function regulationDemoPct(status: (typeof REGULATIONS)[number]["status"]): number {
+  if (status === "ON TRACK") return 75;
+  if (status === "AT RISK") return 45;
+  return 20;
+}
 
 export default async function ComplianceOfficerDashboardPage() {
   const caller = await createServerCaller();
@@ -51,60 +59,67 @@ export default async function ComplianceOfficerDashboardPage() {
       <div className="flex flex-col gap-6">
         {/* Section 1 – Regulation dashboard */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Regulation dashboard</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Regulation dashboard</h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {REGULATIONS.map((r) => (
-              <div key={r.code} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium text-slate-900">{r.name}</p>
-                    <p className="text-xs text-slate-500">{r.jurisdiction}</p>
-                    <p className="mt-1 text-xs text-amber-600">Deadline: {r.deadline}</p>
+            {REGULATIONS.map((r) => {
+              const demoPct = regulationDemoPct(r.status);
+              return (
+                <div key={r.code} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-900">{r.name}</p>
+                      <p className="text-xs text-slate-500">
+                        {r.code} · {r.jurisdiction}
+                      </p>
+                      <p className="mt-1 text-xs text-amber-600">Deadline: {r.deadline}</p>
+                    </div>
+                    <span
+                      className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
+                        r.status === "ON TRACK"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : r.status === "AT RISK"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {r.status}
+                    </span>
                   </div>
-                  <span
-                    className={`rounded px-2 py-0.5 text-xs font-medium ${
-                      r.status === "ON TRACK"
-                        ? "bg-emerald-100 text-emerald-700"
-                        : r.status === "AT RISK"
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {r.status}
-                  </span>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                    <div
+                      className={`h-full rounded-full ${complianceBarBgClass(demoPct)}`}
+                      style={{
+                        width: `${demoPct}%`
+                      }}
+                    />
+                  </div>
+                  <p className={`mt-1 text-xs font-medium ${complianceTextClass(demoPct)}`}>
+                    {demoPct}% compliance (illustrative)
+                  </p>
                 </div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-                  <div
-                    className="bg-navy-500 h-full rounded-full"
-                    style={{
-                      width: `${r.status === "ON TRACK" ? 75 : r.status === "AT RISK" ? 45 : 20}%`
-                    }}
-                  />
-                </div>
-                <p className="mt-1 text-xs text-slate-500">
-                  {r.status === "ON TRACK" ? 75 : r.status === "AT RISK" ? 45 : 20}% compliance
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Section 2 – Evidence status */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Evidence status</h3>
-          <div className="flex items-center gap-4">
+          <h3 className={SECTION_HEADING_CLASS}>Evidence status</h3>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <p className="text-2xl font-bold text-slate-900">
               {cascade.met} / {cascade.totalRequirements} requirements met
             </p>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                 <div
-                  className="bg-navy-500 h-full rounded-full"
+                  className={`h-full rounded-full ${complianceBarBgClass(compliancePct)}`}
                   style={{ width: `${compliancePct}%` }}
                 />
               </div>
             </div>
-            <span className="text-sm font-medium">{compliancePct}%</span>
+            <span className={`shrink-0 text-sm font-medium ${complianceTextClass(compliancePct)}`}>
+              {compliancePct}%
+            </span>
           </div>
           <p className="mt-2 text-sm text-slate-600">
             Missing critical evidence: {cascade.totalRequirements - cascade.met} items
@@ -119,10 +134,15 @@ export default async function ComplianceOfficerDashboardPage() {
 
         {/* Section 3 – Upcoming deadlines */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Upcoming deadlines</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Upcoming deadlines</h3>
           <p className="text-sm text-slate-600">
             EU AI Act: August 2026 • ISO 42001: Certification timeline
           </p>
+          {snapshots.length > 0 && (
+            <p className="mt-2 text-xs text-slate-500">
+              {snapshots.length} compliance snapshot{snapshots.length !== 1 ? "s" : ""} on file
+            </p>
+          )}
           <div className="mt-4 flex gap-3">
             <a
               href="/api/v1/export/audit-package"

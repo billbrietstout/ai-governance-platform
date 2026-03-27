@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Building, Package, Shield } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default async function SupplyChainDashboardPage() {
   const caller = await createServerCaller();
@@ -48,27 +50,46 @@ export default async function SupplyChainDashboardPage() {
           </Link>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Vendor assurance</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Vendor assurance</h3>
           {vendors.length === 0 ? (
-            <p className="text-sm text-slate-500">No vendors on record</p>
+            <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-4 py-6 text-center">
+              <p className="text-sm text-slate-600">No vendors on record yet.</p>
+              <Link
+                href="/layer5-supply-chain/vendors"
+                className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
+              >
+                Register vendors →
+              </Link>
+            </div>
           ) : (
             <ul className="space-y-2">
-              {vendors.slice(0, 5).map((v) => (
-                <li
-                  key={v.id}
-                  className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2"
-                >
-                  <Link
-                    href={`/layer5-supply-chain/vendors/${v.id}`}
-                    className="text-navy-600 font-medium hover:underline"
+              {vendors.slice(0, 5).map((v) => {
+                const pct = Math.round((v.score ?? 0) * 100);
+                return (
+                  <li
+                    key={v.id}
+                    className="flex items-center justify-between gap-3 rounded border border-slate-200 bg-slate-50 px-3 py-2"
                   >
-                    {v.name}
-                  </Link>
-                  <span className={v.expiredCount > 0 ? "text-amber-600" : "text-emerald-600"}>
-                    {Math.round((v.score ?? 0) * 100)}%{v.expiredCount > 0 && " ⚠"}
-                  </span>
-                </li>
-              ))}
+                    <div className="min-w-0">
+                      <Link
+                        href={`/layer5-supply-chain/vendors/${v.id}`}
+                        className="text-navy-600 block truncate font-medium hover:underline"
+                      >
+                        {v.name}
+                      </Link>
+                      <span className="text-xs text-slate-500">Vendor ID · {v.id.slice(0, 8)}…</span>
+                    </div>
+                    <span className="flex shrink-0 items-center gap-1">
+                      <span className={`font-medium ${complianceTextClass(pct)}`}>{pct}%</span>
+                      {v.expiredCount > 0 && (
+                        <span className="text-amber-600" title="Expired evidence">
+                          ⚠
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           )}
           <Link

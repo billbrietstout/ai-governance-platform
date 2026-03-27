@@ -6,6 +6,8 @@ import { Bot, CheckCircle, AlertTriangle } from "lucide-react";
 import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
+import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default async function DeveloperDashboardPage() {
   const session = await auth();
@@ -39,26 +41,40 @@ export default async function DeveloperDashboardPage() {
       <div className="flex flex-col gap-6">
         {/* Section 1 – My assets */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">My assets</h3>
+          <h3 className={SECTION_HEADING_CLASS}>My assets</h3>
           {myAssets.length === 0 ? (
-            <p className="text-sm text-slate-500">No assets assigned to you</p>
+            <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-4 py-6 text-center">
+              <p className="text-sm text-slate-600">No assets assigned to you yet.</p>
+              <Link
+                href="/layer3-application/assets"
+                className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
+              >
+                Browse AI assets →
+              </Link>
+            </div>
           ) : (
             <ul className="space-y-2">
               {myAssets.map((a) => {
                 const missingCount = gapsByAsset.get(a.id) ?? 0;
+                const assetType = (a as { assetType?: string }).assetType ?? "—";
                 return (
                   <li
                     key={a.id}
                     className="flex items-center justify-between gap-4 rounded border border-slate-200 bg-slate-50 px-3 py-2"
                   >
-                    <div className="flex items-center gap-2">
-                      <Bot className="h-4 w-4 text-slate-500" />
-                      <Link
-                        href={`/layer3-application/assets/${a.id}`}
-                        className="text-navy-600 font-medium hover:underline"
-                      >
-                        {a.name}
-                      </Link>
+                    <div className="min-w-0 flex items-center gap-2">
+                      <Bot className="h-4 w-4 shrink-0 text-slate-500" />
+                      <div className="min-w-0">
+                        <Link
+                          href={`/layer3-application/assets/${a.id}`}
+                          className="text-navy-600 block truncate font-medium hover:underline"
+                        >
+                          {a.name}
+                        </Link>
+                        <span className="text-xs text-slate-500">
+                          {assetType} · {a.id.slice(0, 8)}…
+                        </span>
+                      </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                       <span
@@ -86,7 +102,7 @@ export default async function DeveloperDashboardPage() {
 
         {/* Section 2 – Deployment readiness */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Deployment readiness</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Deployment readiness</h3>
           <p className="mb-4 text-sm text-slate-600">Required controls vs implemented per asset</p>
           {myAssets.length === 0 ? (
             <p className="text-sm text-slate-500">No assets to assess</p>
@@ -97,17 +113,17 @@ export default async function DeveloperDashboardPage() {
                 const total = 5;
                 const pct = Math.round(((total - missing) / total) * 100);
                 return (
-                  <div key={a.id} className="flex items-center gap-4">
-                    <span className="w-40 truncate text-sm text-slate-700">{a.name}</span>
-                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-200">
+                  <div key={a.id} className="flex min-w-0 items-center gap-4">
+                    <span className="w-40 shrink-0 truncate text-sm text-slate-700">{a.name}</span>
+                    <div className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-slate-200">
                       <div
-                        className={`h-full rounded-full ${
-                          pct >= 80 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-red-500"
-                        }`}
+                        className={`h-full rounded-full ${complianceBarBgClass(pct)}`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <span className="w-12 text-right text-sm font-medium">{pct}%</span>
+                    <span className={`w-12 shrink-0 text-right text-sm font-medium ${complianceTextClass(pct)}`}>
+                      {pct}%
+                    </span>
                   </div>
                 );
               })}
@@ -120,7 +136,7 @@ export default async function DeveloperDashboardPage() {
 
         {/* Section 3 – Agentic systems */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Agentic systems</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Agentic systems</h3>
           <div className="space-y-2">
             <p className="text-sm text-slate-600">
               L3+ agents with missing override mechanisms: {agenticWithMissingOverride}

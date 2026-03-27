@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Server, Cpu, AlertTriangle } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default async function PlatformDashboardPage() {
   const caller = await createServerCaller();
@@ -31,7 +33,9 @@ export default async function PlatformDashboardPage() {
             className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
             <Server className="text-navy-600 h-5 w-5" />
-            <p className="mt-2 text-2xl font-bold text-slate-900">
+            <p
+              className={`mt-2 text-2xl font-bold ${complianceTextClass(l4?.compliancePct ?? 0)}`}
+            >
               L4 compliance: {l4?.compliancePct ?? 0}%
             </p>
             <p className="text-xs text-slate-500">Platform layer</p>
@@ -41,7 +45,9 @@ export default async function PlatformDashboardPage() {
             className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition"
           >
             <Cpu className="text-navy-600 h-5 w-5" />
-            <p className="mt-2 text-2xl font-bold text-slate-900">
+            <p
+              className={`mt-2 text-2xl font-bold ${complianceTextClass(l5?.compliancePct ?? 0)}`}
+            >
               L5 compliance: {l5?.compliancePct ?? 0}%
             </p>
             <p className="text-xs text-slate-500">Supply chain</p>
@@ -64,7 +70,7 @@ export default async function PlatformDashboardPage() {
           </Link>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-medium text-slate-700">Quick links</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Quick links</h3>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/layer4-platform/telemetry"
