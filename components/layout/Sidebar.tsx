@@ -456,7 +456,7 @@ export function Sidebar({
   if (isFocused) {
     return (
       <aside
-        className="border-slatePro-800 bg-slatePro-950 flex w-12 shrink-0 flex-col border-r"
+        className="border-slatePro-800 bg-slatePro-800 flex w-12 shrink-0 flex-col border-r"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -603,7 +603,7 @@ export function Sidebar({
 
   return (
     <aside
-      className={`border-slatePro-800 bg-slatePro-950 relative flex shrink-0 flex-col overflow-hidden border-r transition-[width] ${
+      className={`border-slatePro-800 bg-slatePro-800 relative flex shrink-0 flex-col overflow-hidden border-r transition-[width] ${
         collapsed ? "w-16" : "w-64"
       }`}
       role="navigation"

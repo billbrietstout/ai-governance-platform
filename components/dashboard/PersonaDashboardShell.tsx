@@ -19,7 +19,7 @@ export function PersonaDashboardShell({ title, subtitle, children }: Props) {
         </div>
         <Link
           href="/dashboard?view=full"
-          className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          className="bg-navy-600 hover:bg-navy-500 focus:ring-navy-500 flex shrink-0 items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition focus:ring-2 focus:ring-offset-2 focus:outline-none"
         >
           <ExternalLink className="h-4 w-4" />
           Switch to full platform →

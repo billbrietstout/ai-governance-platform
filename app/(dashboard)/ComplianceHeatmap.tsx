@@ -1,15 +1,10 @@
 "use client";
 
+import { complianceHeatmapCellClass } from "@/lib/ui/compliance-score";
+
 type HeatmapRow = { framework: string; [key: string]: string | number };
 
 type Props = { data: HeatmapRow[] };
-
-function cellColor(value: number): string {
-  if (value === 0) return "bg-slate-200 text-slate-500";
-  if (value >= 70) return "bg-emerald-500 text-white";
-  if (value >= 30) return "bg-amber-400 text-white";
-  return "bg-red-500 text-white";
-}
 
 export function ComplianceHeatmap({ data }: Props) {
   const assetTypes = new Set<string>();
@@ -51,7 +46,7 @@ export function ComplianceHeatmap({ data }: Props) {
                 return (
                   <td key={t} className="px-1 py-1">
                     <div
-                      className={`rounded border border-white px-2 py-1 text-center font-medium ${cellColor(val)}`}
+                      className={`rounded border border-white px-2 py-1 text-center font-medium ${complianceHeatmapCellClass(val)}`}
                       title={`${row.framework} / ${t}: ${val}%`}
                     >
                       {val}%
@@ -63,15 +58,15 @@ export function ComplianceHeatmap({ data }: Props) {
           ))}
         </tbody>
       </table>
-      <div className="mt-2 flex gap-4 text-[10px] text-slate-500">
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500">
         <span className="flex items-center gap-1">
-          <span className="h-2 w-4 rounded bg-emerald-500" /> ≥70%
+          <span className="h-2 w-4 rounded bg-green-500" /> ≥70%
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2 w-4 rounded bg-amber-400" /> 30–70%
+          <span className="h-2 w-4 rounded bg-amber-400" /> 40–70%
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2 w-4 rounded bg-red-500" /> &lt;30%
+          <span className="h-2 w-4 rounded bg-red-500" /> &lt;40%
         </span>
         <span className="flex items-center gap-1">
           <span className="h-2 w-4 rounded bg-slate-200" /> 0%
