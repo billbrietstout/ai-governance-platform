@@ -1,6 +1,7 @@
 /**
  * Org user invite emails — sent when an admin creates a pending invite.
  */
+import { env } from "@/env";
 import { sendEmail } from "@/lib/email/resend";
 
 function escapeHtml(s: string): string {
@@ -12,7 +13,7 @@ function escapeHtml(s: string): string {
 }
 
 const baseUrl = () =>
-  (process.env.NEXTAUTH_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  (env.NEXTAUTH_URL ?? env.AUTH_URL ?? "http://localhost:3000").replace(/\/$/, "");
 
 export async function sendOrgInviteEmail(params: {
   to: string;

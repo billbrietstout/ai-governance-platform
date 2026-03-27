@@ -6,7 +6,14 @@ import { useRouter } from "next/navigation";
 const ROLES = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"] as const;
 
 async function createInvite(
-  _prev: { error?: string; success?: boolean; emailSent?: boolean } | undefined,
+  _prev:
+    | {
+        error?: string;
+        success?: boolean;
+        emailSent?: boolean;
+        emailSkipReason?: "not_configured" | "provider_error";
+      }
+    | undefined,
   formData: FormData
 ) {
   const email = formData.get("email") as string;
@@ -19,19 +26,32 @@ async function createInvite(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: email.trim(), role })
   });
-  const data = (await res.json()) as { error?: string; emailSent?: boolean };
+  const data = (await res.json()) as {
+    error?: string;
+    emailSent?: boolean;
+    emailSkipReason?: "not_configured" | "provider_error";
+  };
 
   if (!res.ok) {
     return { error: data.error ?? "Failed to create invite" };
   }
-  return { success: true, emailSent: data.emailSent === true };
+  return {
+    success: true,
+    emailSent: data.emailSent === true,
+    emailSkipReason: data.emailSkipReason
+  };
 }
 
 export function InviteForm() {
   const router = useRouter();
   const [state, formAction] = useActionState(
     createInvite,
-    {} as { error?: string; success?: boolean; emailSent?: boolean }
+    {} as {
+      error?: string;
+      success?: boolean;
+      emailSent?: boolean;
+      emailSkipReason?: "not_configured" | "provider_error";
+    }
   );
 
   useEffect(() => {
@@ -73,10 +93,27 @@ export function InviteForm() {
       {state?.success && state.emailSent && (
         <p className="text-sm text-emerald-600">Invite sent by email. Expires in 7 days.</p>
       )}
-      {state?.success && !state.emailSent && (
+      {state?.success && !state.emailSent && state.emailSkipReason === "provider_error" && (
         <p className="text-sm text-amber-700">
-          Invite saved. Email was not sent — set <code className="rounded bg-amber-100 px-1">RESEND_API_KEY</code>{" "}
-          on the server, or ask the user to sign in with this email (invite expires in 7 days).
+          Invite saved. Resend rejected the email — open <strong>Railway → Deployments → Logs</strong>{" "}
+          and search for <code className="rounded bg-amber-100 px-1">[resend]</code>. Typical fixes:
+          verify <code className="rounded bg-amber-100 px-1">RESEND_FROM_EMAIL</code> domain in Resend,
+          or check API key scope.
+        </p>
+      )}
+      {state?.success && !state.emailSent && state.emailSkipReason === "not_configured" && (
+        <p className="text-sm text-amber-700">
+          Invite saved. The server still cannot read <code className="rounded bg-amber-100 px-1">RESEND_API_KEY</code>{" "}
+          at runtime — check Railway <strong>ai-governance-platform</strong> service → Variables (exact
+          name, full <code className="rounded bg-amber-100 px-1">re_</code> value), then redeploy. Logs
+          show <code className="rounded bg-amber-100 px-1">[email] RESEND_API_KEY missing</code> with
+          length hints.
+        </p>
+      )}
+      {state?.success && !state.emailSent && !state.emailSkipReason && (
+        <p className="text-sm text-amber-700">
+          Invite saved. Email was not sent — redeploy to pick up the latest diagnostics, or ask the user
+          to sign in with this email (invite expires in 7 days).
         </p>
       )}
       <button

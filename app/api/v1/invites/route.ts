@@ -12,6 +12,8 @@ import { sendOrgInviteEmail } from "@/lib/email/org-invite";
 import { prisma } from "@/lib/prisma";
 import { withCors } from "@/lib/security";
 
+export const runtime = "nodejs";
+
 const ROLES: UserRole[] = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"];
 const INVITE_EXPIRY_DAYS = 7;
 
@@ -145,13 +147,20 @@ export async function POST(req: NextRequest) {
     console.error("Invite email failed:", emailResult.error ?? emailResult);
   }
 
+  const emailSkipReason = emailResult.success
+    ? undefined
+    : "reason" in emailResult && emailResult.reason === "not_configured"
+      ? ("not_configured" as const)
+      : ("provider_error" as const);
+
   const res = NextResponse.json(
     {
       id: invite.id,
       email: invite.email,
       role: invite.role,
       expiresAt: invite.expiresAt.toISOString(),
-      emailSent: emailResult.success === true
+      emailSent: emailResult.success === true,
+      emailSkipReason
     },
     { status: 201 }
   );
