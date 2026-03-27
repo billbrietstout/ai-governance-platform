@@ -24,7 +24,7 @@ export default async function ReportsPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-6 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Reports</h1>
-        <p className="mt-1 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           Generate governance reports for board presentations and compliance tracking.
         </p>
       </div>

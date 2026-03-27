@@ -15,6 +15,8 @@ import {
 import { Camera, Eye, GitCompare } from "lucide-react";
 import { takeSnapshot, compareSnapshots } from "./actions";
 import { ComplianceTrendChart } from "@/components/compliance/ComplianceTrendChart";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 type Snapshot = {
   id: string;
@@ -135,7 +137,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
 
       {/* Trend chart */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <h3 className="mb-4 text-sm font-medium text-slate-700">Compliance trend</h3>
+        <h3 className={SECTION_HEADING_CLASS}>Compliance trend</h3>
         <ComplianceTrendChart
           snapshots={snapshots}
           onSnapshotClick={handleSnapshotClick}
@@ -155,7 +157,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
 
       {/* Compare snapshots */}
       <div className="rounded-lg border border-slate-200 bg-white p-4">
-        <h3 className="mb-4 flex items-center gap-2 text-sm font-medium text-slate-700">
+        <h3 className={`${SECTION_HEADING_CLASS} flex items-center gap-2`}>
           <GitCompare className="h-4 w-4" />
           Compare two snapshots
         </h3>
@@ -168,7 +170,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
             <option value="">— Select snapshot 1 —</option>
             {snapshots.map((s) => (
               <option key={s.id} value={s.id}>
-                {new Date(s.createdAt).toLocaleString()} ({s.overallScore}%)
+                {new Date(s.createdAt).toLocaleString()} · {s.overallScore}% · {s.id.slice(0, 8)}…
               </option>
             ))}
           </select>
@@ -181,7 +183,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
             <option value="">— Select snapshot 2 —</option>
             {snapshots.map((s) => (
               <option key={s.id} value={s.id}>
-                {new Date(s.createdAt).toLocaleString()} ({s.overallScore}%)
+                {new Date(s.createdAt).toLocaleString()} · {s.overallScore}% · {s.id.slice(0, 8)}…
               </option>
             ))}
           </select>
@@ -189,7 +191,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
             type="button"
             onClick={handleCompare}
             disabled={!compareIds[0] || !compareIds[1]}
-            className="rounded bg-slate-600 px-3 py-1.5 text-sm text-white hover:bg-slate-500 disabled:opacity-50"
+            className="rounded bg-navy-600 px-3 py-1.5 text-sm text-white hover:bg-navy-500 disabled:opacity-50"
           >
             Compare
           </button>
@@ -225,13 +227,13 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
             <div className="text-xs font-medium text-slate-500">Delta</div>
             <div className="mt-2 flex flex-wrap gap-4 text-sm">
               <span
-                className={compareResult.overallDelta >= 0 ? "text-emerald-600" : "text-red-600"}
+                className={compareResult.overallDelta >= 0 ? "text-green-600" : "text-red-600"}
               >
                 Score: {compareResult.overallDelta >= 0 ? "+" : ""}
                 {compareResult.overallDelta}%
               </span>
               <span
-                className={compareResult.gapCountDelta <= 0 ? "text-emerald-600" : "text-red-600"}
+                className={compareResult.gapCountDelta <= 0 ? "text-green-600" : "text-red-600"}
               >
                 Gaps: {compareResult.gapCountDelta >= 0 ? "+" : ""}
                 {compareResult.gapCountDelta}
@@ -251,7 +253,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
                   <div className="font-medium">{d.layer}</div>
                   <div className="text-slate-600">
                     {d.score1} → {d.score2}
-                    <span className={d.delta >= 0 ? "text-emerald-600" : "text-red-600"}>
+                    <span className={d.delta >= 0 ? "text-green-600" : "text-red-600"}>
                       {" "}
                       ({d.delta >= 0 ? "+" : ""}
                       {d.delta})
@@ -318,7 +320,9 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-sm text-slate-600">{s.frameworkCode ?? "—"}</td>
-                <td className="px-4 py-3 text-sm font-medium text-slate-900">{s.overallScore}%</td>
+                <td className={`px-4 py-3 text-sm font-medium ${complianceTextClass(s.overallScore)}`}>
+                  {s.overallScore}%
+                </td>
                 <td className="px-4 py-3">
                   <Sparkline scores={(s.layerScores ?? {}) as Record<string, number>} />
                 </td>
@@ -339,8 +343,11 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
           </tbody>
         </table>
         {snapshots.length === 0 && (
-          <div className="px-4 py-12 text-center text-sm text-slate-500">
-            No snapshots yet. Take a snapshot to capture your current compliance state.
+          <div className="px-4 py-12 text-center">
+            <p className="text-sm text-slate-600">No snapshots yet.</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Take a snapshot to capture your current compliance state for audit trail and trends.
+            </p>
           </div>
         )}
       </div>

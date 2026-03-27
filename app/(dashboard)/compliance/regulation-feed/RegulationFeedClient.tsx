@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Bell, Calendar, ExternalLink } from "lucide-react";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 type Item = {
   id: string;
@@ -55,7 +56,7 @@ export function RegulationFeedClient({ items }: Props) {
     <div className="space-y-8">
       {/* Your deadlines */}
       <div className="border-navy-200 bg-navy-50 rounded-lg border p-4">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-900">
+        <h2 className={`${SECTION_HEADING_CLASS} flex items-center gap-2`}>
           <Calendar className="text-navy-600 h-4 w-4" />
           Your deadlines
         </h2>
@@ -111,7 +112,7 @@ export function RegulationFeedClient({ items }: Props) {
 
       {/* Regulation feed */}
       <div>
-        <h2 className="mb-2 text-sm font-medium text-slate-900">Regulatory deadlines & changes</h2>
+        <h2 className={SECTION_HEADING_CLASS}>Regulatory deadlines & changes</h2>
         <p className="mb-4 text-xs text-slate-500">
           Last updated March 2026. This is a static feed for demonstration.
         </p>
@@ -122,8 +123,10 @@ export function RegulationFeedClient({ items }: Props) {
               className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-4"
             >
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-slate-900">{r.name}</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-slate-900">
+                    {r.name} — {r.item}
+                  </span>
                   <span
                     className={`rounded px-2 py-0.5 text-xs font-medium ${JURISDICTION_COLORS[r.jurisdiction] ?? "bg-slate-100 text-slate-700"}`}
                   >
@@ -135,8 +138,9 @@ export function RegulationFeedClient({ items }: Props) {
                     {r.impact}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-slate-600">{r.item}</p>
-                <p className="mt-1 text-xs text-slate-500">{r.deadline}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {r.deadline} · {r.id}
+                </p>
               </div>
               <div className="flex items-center gap-2">
                 {r.affectedCount != null && (

@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 const CLASSIFICATION_COLORS: Record<string, string> = {
   PUBLIC: "bg-emerald-100 text-emerald-700",
@@ -54,14 +56,16 @@ export default async function Layer2InformationPage() {
       </div>
 
       {/* Summary metric cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Link
           href="/layer2-information/master-data"
           className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
         >
           <div className="flex items-center gap-2">
             <Database className="text-navy-600 h-5 w-5" />
-            <span className="text-sm font-medium text-slate-600">Total Entities</span>
+            <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Total Entities
+            </span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalEntities}</p>
         </Link>
@@ -71,7 +75,9 @@ export default async function Layer2InformationPage() {
         >
           <div className="flex items-center gap-2">
             <GitBranch className="text-navy-600 h-5 w-5" />
-            <span className="text-sm font-medium text-slate-600">Lineage Records</span>
+            <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Lineage Records
+            </span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalLineage}</p>
         </Link>
@@ -81,7 +87,9 @@ export default async function Layer2InformationPage() {
         >
           <div className="flex items-center gap-2">
             <FileText className="text-navy-600 h-5 w-5" />
-            <span className="text-sm font-medium text-slate-600">Governance Policies</span>
+            <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Governance Policies
+            </span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalPolicies}</p>
         </Link>
@@ -91,9 +99,13 @@ export default async function Layer2InformationPage() {
         >
           <div className="flex items-center gap-2">
             <Shield className="text-navy-600 h-5 w-5" />
-            <span className="text-sm font-medium text-slate-600">Governance Coverage</span>
+            <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Governance Coverage
+            </span>
           </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900">
+          <p
+            className={`mt-2 text-2xl font-bold ${complianceTextClass(data.governanceCoveragePct ?? 0)}`}
+          >
             {data.governanceCoveragePct ?? 0}%
           </p>
           <p className="mt-0.5 text-xs text-slate-500">entities with classification + steward</p>
@@ -116,16 +128,20 @@ export default async function Layer2InformationPage() {
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2">
             <Users className="text-navy-600 h-5 w-5" />
-            <span className="text-sm font-medium text-slate-600">Stewardship Coverage</span>
+            <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Stewardship Coverage
+            </span>
           </div>
-          <p className="mt-2 text-2xl font-bold text-slate-900">{data.stewardshipPct}%</p>
+          <p className={`mt-2 text-2xl font-bold ${complianceTextClass(data.stewardshipPct)}`}>
+            {data.stewardshipPct}%
+          </p>
           <p className="mt-0.5 text-xs text-slate-500">entities with assigned stewards</p>
         </div>
       </div>
 
       {/* Classification breakdown (pie-style counts) */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-3 text-sm font-medium text-slate-700">Classification Breakdown</h3>
+        <h3 className={SECTION_HEADING_CLASS}>Classification Breakdown</h3>
         <div className="flex flex-wrap gap-3">
           {(["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] as const).map((c) => {
             const count = data.byClassification[c] ?? 0;
@@ -143,7 +159,7 @@ export default async function Layer2InformationPage() {
 
       {/* AI Access Policy summary */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
+        <h3 className={`${SECTION_HEADING_CLASS} flex items-center gap-2`}>
           <Shield className="text-navy-600 h-4 w-4" />
           AI Access Policy Summary
         </h3>
