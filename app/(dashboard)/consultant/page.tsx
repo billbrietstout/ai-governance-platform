@@ -3,13 +3,16 @@
  */
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { getConsultantFeatureTier } from "@/lib/tiers/check-tier";
+import { tierMeets } from "@/lib/tiers/tier-utils";
 import { UpgradeGate } from "@/components/tiers/UpgradeGate";
 import { ConsultantWorkspaceList } from "./ConsultantWorkspaceList";
 
 export default async function ConsultantPage() {
   const orgTier = await getConsultantFeatureTier();
   const caller = await createServerCaller();
-  const workspaces = await caller.consultant.getWorkspaces();
+  const workspaces = tierMeets(orgTier, "CONSULTANT")
+    ? await caller.consultant.getWorkspaces()
+    : [];
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-8 px-6 py-10">
