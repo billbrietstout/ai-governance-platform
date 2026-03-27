@@ -6,6 +6,7 @@ import { Bot, ShieldCheck, AlertTriangle, TrendingUp, Layers } from "lucide-reac
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { MaturityRadarChart, type LayerScores } from "@/components/maturity/MaturityRadarChart";
 import { PersonaDashboardShell } from "@/components/dashboard/PersonaDashboardShell";
+import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
 
 const LAYER_LABELS: Record<string, string> = {
   LAYER_1_BUSINESS: "Layer 1: Business",
@@ -39,12 +40,9 @@ const MATURITY_COLORS: Record<number, string> = {
   5: "#10b981"
 };
 
-function scoreColor(pct: number): string {
-  if (pct <= 30) return "bg-red-500";
-  if (pct <= 60) return "bg-amber-500";
-  if (pct <= 80) return "bg-blue-500";
-  return "bg-emerald-500";
-}
+/** Card / panel section label — matches Posture Overview scale */
+const SECTION_HEADING =
+  "mb-3 flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-slate-500";
 
 export default async function CAIODashboardPage() {
   const caller = await createServerCaller();
@@ -78,22 +76,18 @@ export default async function CAIODashboardPage() {
           >
             <div className="flex items-center gap-2">
               <Bot className="text-navy-600 h-5 w-5" />
-              <span className="text-sm font-medium text-slate-600">Total Assets</span>
+              <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                Total Assets
+              </span>
             </div>
             <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.totalAssets}</p>
           </Link>
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center gap-2">
-              <ShieldCheck
-                className={`h-5 w-5 ${
-                  kpis.complianceScore >= 70
-                    ? "text-emerald-600"
-                    : kpis.complianceScore >= 30
-                      ? "text-amber-600"
-                      : "text-red-600"
-                }`}
-              />
-              <span className="text-sm font-medium text-slate-600">Compliance Score</span>
+              <ShieldCheck className={`h-5 w-5 ${complianceTextClass(kpis.complianceScore)}`} />
+              <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                Compliance Score
+              </span>
             </div>
             <p className="mt-2 text-2xl font-bold text-slate-900">{kpis.complianceScore}%</p>
           </div>
@@ -106,7 +100,9 @@ export default async function CAIODashboardPage() {
                 className="h-5 w-5"
                 style={{ color: MATURITY_COLORS[maturity.maturityLevel] ?? "#fbbf24" }}
               />
-              <span className="text-sm font-medium text-slate-600">Maturity</span>
+              <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                Maturity
+              </span>
             </div>
             <p className="mt-2 text-2xl font-bold text-slate-900">M{maturity.maturityLevel}</p>
           </Link>
@@ -116,7 +112,9 @@ export default async function CAIODashboardPage() {
           >
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-600" />
-              <span className="text-sm font-medium text-slate-600">Critical Gaps</span>
+              <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+                Critical Gaps
+              </span>
             </div>
             <p className="mt-2 text-2xl font-bold text-slate-900">{gaps.length}</p>
           </Link>
@@ -124,7 +122,7 @@ export default async function CAIODashboardPage() {
 
         <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
+            <h2 className={SECTION_HEADING}>
               <TrendingUp className="text-navy-600 h-4 w-4" />
               Maturity by Layer
             </h2>
@@ -147,11 +145,11 @@ export default async function CAIODashboardPage() {
             </Link>
           </div>
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900">
+            <h2 className={SECTION_HEADING}>
               <Layers className="text-navy-600 h-5 w-5" />
               Cross-Layer Summary
             </h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {COSAI_LAYERS.map((layer) => {
                 const data = layerMap.get(layer);
                 const topRisk = topRisks[layer];
@@ -164,22 +162,27 @@ export default async function CAIODashboardPage() {
                   <Link
                     key={layer}
                     href={href}
-                    className="hover:border-navy-300 hover:bg-navy-50/30 flex flex-col rounded-lg border border-slate-200 bg-slate-50 p-4 transition"
+                    className="hover:border-navy-300 hover:bg-navy-50/30 flex min-w-0 flex-col rounded-lg border border-slate-200 bg-slate-50 p-4 transition"
                   >
-                    <span className="text-sm font-medium text-slate-700">{label}</span>
+                    <span className="truncate text-sm font-medium text-slate-700">{label}</span>
                     <div className="mt-2 flex items-baseline gap-2">
-                      <span className="text-2xl font-bold text-slate-900">{compliancePct}%</span>
+                      <span
+                        className={`text-2xl font-bold ${complianceTextClass(compliancePct)}`}
+                      >
+                        {compliancePct}%
+                      </span>
                       <span className="text-xs text-slate-500">compliance</span>
                     </div>
                     <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200">
                       <div
-                        className={`h-full rounded-full ${scoreColor(compliancePct)}`}
+                        className={`h-full rounded-full ${complianceBarBgClass(compliancePct)}`}
                         style={{ width: `${compliancePct}%` }}
                       />
                     </div>
-                    <div className="mt-3 space-y-1 text-xs">
+                    <div className="mt-3 min-w-0 space-y-1 text-xs">
                       <div className="text-slate-600">
-                        <span className="font-medium">Top risk:</span> {topRisk?.title ?? "None"}
+                        <span className="font-medium">Top risk:</span>{" "}
+                        <span className="break-words">{topRisk?.title ?? "None"}</span>
                       </div>
                       <div className="text-slate-500">
                         <span className="font-medium">Owner:</span> {owner}
@@ -193,28 +196,39 @@ export default async function CAIODashboardPage() {
         </div>
 
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-slate-900">
+          <h2 className={SECTION_HEADING}>
             <AlertTriangle className="h-5 w-5 text-red-600" />
             Critical Gaps
           </h2>
           {gaps.length === 0 ? (
-            <p className="text-sm text-slate-500">No critical gaps</p>
+            <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-4 py-6 text-center">
+              <p className="text-sm text-slate-600">No critical gaps right now.</p>
+              <p className="mt-1 text-xs text-slate-500">
+                Run gap analysis from AI Assets when you add or change systems.
+              </p>
+              <Link
+                href="/layer3-application/gaps"
+                className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
+              >
+                Open gap analysis →
+              </Link>
+            </div>
           ) : (
             <ul className="space-y-2">
               {gaps.map((g) => (
                 <li
-                  key={`${g.assetId}-${g.controlId}`}
-                  className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2"
+                  key={`${g.assetId}-${g.controlId}-${g.title}`}
+                  className="flex items-start justify-between gap-3 rounded border border-slate-200 bg-slate-50 px-3 py-2"
                 >
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <Link
                       href={`/layer3-application/assets/${g.assetId}`}
-                      className="text-navy-600 font-medium hover:underline"
+                      className="text-navy-600 block text-sm font-medium hover:underline"
                     >
-                      {g.assetName}
+                      {g.controlId}: {g.title}
                     </Link>
-                    <span className="ml-2 text-xs text-slate-500">
-                      {g.controlId} ({g.cosaiLayer ?? "—"})
+                    <span className="mt-0.5 block text-xs text-slate-500">
+                      {g.assetName} · {g.cosaiLayer ?? "—"}
                     </span>
                   </div>
                   <Link
