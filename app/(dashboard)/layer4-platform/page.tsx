@@ -5,6 +5,8 @@ import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { Server, GitBranch, Bell } from "lucide-react";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default async function Layer4PlatformPage() {
   const caller = await createServerCaller();
@@ -22,7 +24,11 @@ export default async function Layer4PlatformPage() {
       description: "Scan activity, coverage, and findings across all AI assets.",
       stats: [
         { label: "Total Scans", value: telemetry.data.summary.totalScans },
-        { label: "Coverage", value: `${telemetry.data.summary.coveragePercent}%` },
+        {
+          label: "Coverage",
+          value: `${telemetry.data.summary.coveragePercent}%`,
+          scorePct: telemetry.data.summary.coveragePercent
+        },
         {
           label: "Critical Findings",
           value: telemetry.data.summary.criticalFindings,
@@ -74,20 +80,22 @@ export default async function Layer4PlatformPage() {
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 4: Platform</h1>
-        <p className="mt-1 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           Operational intelligence — telemetry, drift detection, and alert management for your AI
           platform.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div>
+        <h2 className={SECTION_HEADING_CLASS}>Modules</h2>
+        <div className="grid min-w-0 gap-4 sm:grid-cols-3">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
             <Link
               key={card.href}
               href={card.href}
-              className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+              className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
             >
               <div className="flex items-center gap-2">
                 <Icon className="text-navy-600 h-5 w-5" />
@@ -98,7 +106,13 @@ export default async function Layer4PlatformPage() {
                 {card.stats.map((stat) => (
                   <div key={stat.label}>
                     <p
-                      className={`text-lg font-bold ${stat.alert ? "text-red-600" : "text-slate-900"}`}
+                      className={`text-lg font-bold ${
+                        stat.alert
+                          ? "text-red-600"
+                          : "scorePct" in stat && stat.scorePct !== undefined
+                            ? complianceTextClass(stat.scorePct)
+                            : "text-slate-900"
+                      }`}
                     >
                       {stat.value}
                     </p>
@@ -110,6 +124,7 @@ export default async function Layer4PlatformPage() {
             </Link>
           );
         })}
+        </div>
       </div>
 
       <LayerSecurityStandardsCard layer="LAYER_4_PLATFORM" />

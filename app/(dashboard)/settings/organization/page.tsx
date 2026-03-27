@@ -39,7 +39,7 @@ export default async function OrganizationSettingsPage() {
           ← Settings
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Organization</h1>
-        <p className="mt-1 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           Configure your organization&apos;s client verticals and regulatory scope.
         </p>
       </div>

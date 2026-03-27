@@ -7,6 +7,8 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 import { VendorAssuranceScore } from "@/components/supply-chain/VendorAssuranceScore";
 import { ScanCoverageMatrix } from "@/components/supply-chain/ScanCoverageMatrix";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default async function Layer5SupplyChainPage() {
   const caller = await createServerCaller();
@@ -18,15 +20,19 @@ export default async function Layer5SupplyChainPage() {
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Layer 5: Supply Chain
         </h1>
-        <p className="mt-1 text-slate-600">Vendor assurance, artifact cards, and scan coverage.</p>
+        <p className="mt-1 text-sm text-slate-600">
+          Vendor assurance, artifact cards, and scan coverage.
+        </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid min-w-0 gap-6 md:grid-cols-3">
         <Link
           href="/layer5-supply-chain/cards"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50"
         >
-          <div className="text-sm font-medium text-slate-600">Card Library</div>
+          <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+            Card Library
+          </div>
           <div className="mt-1 text-2xl font-semibold text-slate-900">{data.cardCount}</div>
           {data.staleCardCount > 0 && (
             <div className="mt-1 text-xs text-amber-600">{data.staleCardCount} stale</div>
@@ -34,20 +40,26 @@ export default async function Layer5SupplyChainPage() {
         </Link>
         <Link
           href="/layer5-supply-chain/vendors"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50"
         >
-          <div className="text-sm font-medium text-slate-600">Vendors</div>
+          <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">Vendors</div>
           <div className="mt-1 text-2xl font-semibold text-slate-900">{data.vendorCount}</div>
         </Link>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <div className="text-sm font-medium text-slate-600">Scan Policy Pass</div>
-          <div className="mt-1 text-2xl font-semibold text-slate-900">{data.scanPolicyPassPct}%</div>
+          <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+            Scan Policy Pass
+          </div>
+          <div
+            className={`mt-1 text-2xl font-semibold ${complianceTextClass(data.scanPolicyPassPct)}`}
+          >
+            {data.scanPolicyPassPct}%
+          </div>
         </div>
       </div>
 
       <div>
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-slate-900">Scan Coverage</h2>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <h2 className={SECTION_HEADING_CLASS}>Scan Coverage</h2>
           <Link
             href="/layer5-supply-chain/scanning"
             className="text-navy-600 text-sm hover:underline"
@@ -59,7 +71,7 @@ export default async function Layer5SupplyChainPage() {
       </div>
 
       <div>
-        <h2 className="mb-2 text-lg font-medium text-slate-900">Top Vendors</h2>
+        <h2 className={SECTION_HEADING_CLASS}>Top Vendors</h2>
         <VendorList />
       </div>
 
@@ -75,13 +87,15 @@ async function VendorList() {
 
   if (top.length === 0) {
     return (
-      <p className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm">
-        No vendors registered.{" "}
-        <Link href="/layer5-supply-chain/vendors" className="text-navy-600 hover:underline">
-          Add vendors
+      <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 p-6 text-center shadow-sm">
+        <p className="text-sm text-slate-600">No vendors registered.</p>
+        <Link
+          href="/layer5-supply-chain/vendors"
+          className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
+        >
+          Add vendors →
         </Link>
-        .
-      </p>
+      </div>
     );
   }
 
@@ -91,9 +105,12 @@ async function VendorList() {
         <Link
           key={v.id}
           href={`/layer5-supply-chain/vendors/${v.id}`}
-          className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          className="hover:border-navy-300 flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2 shadow-sm transition hover:bg-slate-50"
         >
-          <span className="font-medium text-slate-900">{v.vendorName}</span>
+          <span className="min-w-0">
+            <span className="block truncate font-medium text-slate-900">{v.vendorName}</span>
+            <span className="text-xs text-slate-400">{v.id.slice(0, 10)}…</span>
+          </span>
           <VendorAssuranceScore
             total={v.assuranceScore.total}
             breakdown={v.assuranceScore.breakdown}

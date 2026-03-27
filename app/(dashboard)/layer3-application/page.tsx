@@ -3,6 +3,7 @@
  */
 import Link from "next/link";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default function Layer3ApplicationPage() {
   return (
@@ -11,40 +12,51 @@ export default function Layer3ApplicationPage() {
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Layer 3: Application
         </h1>
-        <p className="mt-1 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           AI asset inventory, accountability matrix, and compliance assessments.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Link
-          href="/layer3-application/assets"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-        >
-          <div className="text-sm font-medium text-slate-600">Asset Inventory</div>
-          <div className="mt-1 text-slate-900">Filterable asset table</div>
-        </Link>
-        <Link
-          href="/layer3-application/accountability"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-        >
-          <div className="text-sm font-medium text-slate-600">Accountability</div>
-          <div className="mt-1 text-slate-900">Cross-asset RACI matrix</div>
-        </Link>
-        <Link
-          href="/layer3-application/gaps"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-        >
-          <div className="text-sm font-medium text-slate-600">Gap Analysis</div>
-          <div className="mt-1 text-slate-900">Compliance gaps by asset</div>
-        </Link>
-        <Link
-          href="/assessments"
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-        >
-          <div className="text-sm font-medium text-slate-600">Assessments</div>
-          <div className="mt-1 text-slate-900">Assessment workflow</div>
-        </Link>
+      <div>
+        <h2 className={SECTION_HEADING_CLASS}>Capabilities</h2>
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Link
+            href="/layer3-application/assets"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50"
+          >
+            <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Asset Inventory
+            </div>
+            <div className="mt-1 text-sm text-slate-800">Filterable asset table</div>
+          </Link>
+          <Link
+            href="/layer3-application/accountability"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50"
+          >
+            <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Accountability
+            </div>
+            <div className="mt-1 text-sm text-slate-800">Cross-asset RACI matrix</div>
+          </Link>
+          <Link
+            href="/layer3-application/gaps"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50"
+          >
+            <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Gap Analysis
+            </div>
+            <div className="mt-1 text-sm text-slate-800">Compliance gaps by asset</div>
+          </Link>
+          <Link
+            href="/assessments"
+            className="hover:border-navy-300 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:bg-slate-50"
+          >
+            <div className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+              Assessments
+            </div>
+            <div className="mt-1 text-sm text-slate-800">Assessment workflow</div>
+          </Link>
+        </div>
       </div>
 
       <LayerSecurityStandardsCard layer="LAYER_3_APPLICATION" />

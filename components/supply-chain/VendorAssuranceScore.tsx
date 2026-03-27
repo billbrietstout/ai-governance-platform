@@ -1,5 +1,7 @@
 "use client";
 
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+
 type Props = {
   total: number;
   breakdown?: {
@@ -15,13 +17,12 @@ type Props = {
 
 export function VendorAssuranceScore({ total, breakdown }: Props) {
   const pct = Math.round(total * 100);
-  const color = pct >= 70 ? "text-emerald-600" : pct >= 40 ? "text-amber-600" : "text-red-600";
 
   return (
-    <div className="flex items-center gap-2">
-      <span className={`text-lg font-semibold ${color}`}>{pct}%</span>
+    <div className="flex min-w-0 flex-col items-end gap-0.5 sm:flex-row sm:items-center sm:gap-2">
+      <span className={`text-lg font-semibold ${complianceTextClass(pct)}`}>{pct}%</span>
       {breakdown && (
-        <span className="text-xs text-gray-500">
+        <span className="max-w-[12rem] truncate text-right text-xs text-slate-500 sm:max-w-none">
           SOC2 {Math.round(breakdown.soc2 * 100)}% · ISO {Math.round(breakdown.iso27001 * 100)}% ·
           Cards {Math.round(breakdown.modelCards * 100)}%
         </span>

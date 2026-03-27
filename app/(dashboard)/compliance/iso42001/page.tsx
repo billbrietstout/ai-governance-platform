@@ -26,7 +26,7 @@ export default async function ISO42001Page() {
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           ISO 42001 Certification Readiness
         </h1>
-        <p className="mt-1 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           Track progress toward ISO/IEC 42001 AI Management System certification.
         </p>
       </div>
