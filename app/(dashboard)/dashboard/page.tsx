@@ -38,6 +38,7 @@ import {
   getCachedRiskMatrix,
   getCachedMaturity
 } from "@/lib/dashboard/cached-queries";
+import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
 
 const MATURITY_COLORS: Record<number, string> = {
   1: "#fbbf24",
@@ -54,6 +55,9 @@ const LAYER_LINKS: Record<string, string> = {
   LAYER_4_PLATFORM: "/layer4-platform",
   LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
 };
+
+/** Section / card title — uppercase label per design scale */
+const SECTION_HEADING = "mb-3 text-xs font-medium uppercase tracking-wide text-slate-500";
 
 // ─── Skeleton components ──────────────────────────────────────────────────────
 
@@ -105,9 +109,7 @@ async function KpiCards({ orgId }: { orgId: string }) {
         label="Compliance Score"
         value={`${kpis.complianceScore}%`}
         icon={
-          <ShieldCheck
-            className={`h-4 w-4 ${kpis.complianceScore >= 70 ? "text-emerald-600" : kpis.complianceScore >= 30 ? "text-amber-600" : "text-red-600"}`}
-          />
+          <ShieldCheck className={`h-4 w-4 ${complianceTextClass(kpis.complianceScore)}`} />
         }
       />
       <KpiCard
@@ -159,7 +161,8 @@ async function SankeySection({ orgId }: { orgId: string }) {
   ]);
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-medium text-slate-700">Governance dependency flow</h3>
+      <h3 className={SECTION_HEADING}>Governance dependency flow</h3>
+      <div className="overflow-x-auto pb-1">
       <LayerSankeyDiagram
         layerData={sankeyRes.data.nodes.map((n, i) => {
           const layerKey = [
@@ -181,6 +184,7 @@ async function SankeySection({ orgId }: { orgId: string }) {
           L5: "/layer5-supply-chain"
         }}
       />
+      </div>
       <div className="mt-3 flex flex-wrap gap-2">
         {layerRes.data.map((l) => {
           const label =
@@ -208,7 +212,9 @@ async function SankeySection({ orgId }: { orgId: string }) {
                   0 risks
                 </span>
               )}
-              <span className="text-slate-500">{l.compliancePct}%</span>
+              <span className={`font-medium ${complianceTextClass(l.compliancePct)}`}>
+                {l.compliancePct}%
+              </span>
             </Link>
           );
         })}
@@ -221,7 +227,7 @@ async function MaturitySection({ orgId }: { orgId: string }) {
   const maturityRes = await getCachedMaturity(orgId);
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-sm font-medium text-slate-700">Maturity Progress</h3>
+      <h3 className={SECTION_HEADING}>Maturity Progress</h3>
       {!maturityRes.data.lastAssessedAt ? (
         <div className="flex items-center justify-between rounded border border-amber-200 bg-amber-50/50 px-4 py-3">
           <p className="text-sm text-slate-700">No maturity assessment yet.</p>
@@ -275,11 +281,11 @@ async function HeatmapAndRisk({ orgId }: { orgId: string }) {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-3 text-sm font-medium text-slate-700">Compliance Heatmap</h3>
+        <h3 className={SECTION_HEADING}>Compliance Heatmap</h3>
         <ComplianceHeatmap data={heatmapRes.data} />
       </div>
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-3 text-sm font-medium text-slate-700">Risk 5×5 Matrix</h3>
+        <h3 className={SECTION_HEADING}>Risk 5×5 Matrix</h3>
         <RiskMatrix data={riskRes.data} />
       </div>
     </div>
@@ -298,7 +304,7 @@ async function BottomPanels() {
     <>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-3 text-sm font-medium text-slate-700">Regulatory Cascade Status</h3>
+          <h3 className={SECTION_HEADING}>Regulatory Cascade Status</h3>
           <div className="flex items-center gap-4">
             <p className="text-2xl font-semibold text-gray-900">
               {cascadeRes.data.met} / {cascadeRes.data.totalRequirements} met
@@ -306,7 +312,7 @@ async function BottomPanels() {
             <div className="flex-1">
               <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                 <div
-                  className="bg-navy-500 h-full rounded-full transition-all"
+                  className={`h-full rounded-full transition-all ${complianceBarBgClass(cascadeRes.data.pct)}`}
                   style={{ width: `${cascadeRes.data.pct}%` }}
                 />
               </div>
@@ -320,25 +326,25 @@ async function BottomPanels() {
           </Link>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-3 text-sm font-medium text-slate-700">Top 5 Critical Gaps</h3>
+          <h3 className={SECTION_HEADING}>Top 5 Critical Gaps</h3>
           <ul className="space-y-2">
             {gapsRes.data.length === 0 ? (
               <li className="text-sm text-slate-500">No critical gaps</li>
             ) : (
               gapsRes.data.map((g) => (
                 <li
-                  key={`${g.assetId}-${g.controlId}`}
-                  className="flex items-center justify-between gap-2 rounded border border-slate-200 bg-slate-50 px-3 py-2"
+                  key={`${g.assetId}-${g.controlId}-${g.title}`}
+                  className="flex items-start justify-between gap-3 rounded border border-slate-200 bg-slate-50 px-3 py-2"
                 >
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <Link
                       href={`/layer3-application/assets/${g.assetId}`}
-                      className="text-navy-600 font-medium hover:underline"
+                      className="text-navy-600 block text-sm font-medium hover:underline"
                     >
-                      {g.assetName}
+                      {g.controlId}: {g.title}
                     </Link>
-                    <span className="ml-2 text-xs text-slate-500">
-                      {g.controlId} ({g.cosaiLayer ?? "—"})
+                    <span className="mt-0.5 block text-xs text-slate-500">
+                      {g.assetName} · {g.cosaiLayer ?? "—"}
                     </span>
                   </div>
                   <span className="shrink-0 rounded bg-red-100 px-2 py-0.5 text-xs text-red-700">
@@ -359,7 +365,7 @@ async function BottomPanels() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-3 text-sm font-medium text-slate-700">Vendor Assurance Summary</h3>
+          <h3 className={SECTION_HEADING}>Vendor Assurance Summary</h3>
           <div className="mb-2 flex gap-4 text-xs text-slate-600">
             <span>{vendorRes.data.length} vendors</span>
             <span
@@ -385,10 +391,17 @@ async function BottomPanels() {
                   >
                     {v.name}
                   </Link>
-                  <span
-                    className={`text-sm ${v.expiredCount > 0 ? "text-amber-600" : "text-emerald-600"}`}
-                  >
-                    {Math.round(v.score * 100)}% {v.expiredCount > 0 && "⚠"}
+                  <span className="flex items-center gap-1">
+                    <span
+                      className={`text-sm font-medium ${complianceTextClass(Math.round(v.score * 100))}`}
+                    >
+                      {Math.round(v.score * 100)}%
+                    </span>
+                    {v.expiredCount > 0 && (
+                      <span className="text-amber-600" title="Expired evidence">
+                        ⚠
+                      </span>
+                    )}
                   </span>
                 </div>
               ))
@@ -402,7 +415,7 @@ async function BottomPanels() {
           </Link>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="mb-3 text-sm font-medium text-slate-700">Recent Audit Activity</h3>
+          <h3 className={SECTION_HEADING}>Recent Audit Activity</h3>
           <AuditFeed entries={auditRes.data} />
         </div>
       </div>
@@ -625,7 +638,7 @@ function KpiCard({
     <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition hover:border-slate-300 hover:shadow">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <span className="text-xs font-medium text-slate-500">{label}</span>
+          <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">{label}</span>
           {tooltip && (
             <Tooltip content={tooltip}>
               <Info className="h-3 w-3 text-slate-400" />
