@@ -7,6 +7,8 @@ import { MaturityAssessmentClient } from "./MaturityAssessmentClient";
 import { MaturityRadarSection } from "./MaturityRadarSection";
 import type { LayerScores } from "@/components/maturity/MaturityRadarChart";
 import { LAYER_LABELS, MATURITY_LEVEL_LABELS } from "@/lib/maturity/questions";
+import { complianceBarBgClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 /** Color for a given score (1.0–5.0) based on maturity level thresholds */
 function getScoreColor(score: number): string {
@@ -65,7 +67,7 @@ export default async function MaturityPage() {
 
       {/* Progress indicator */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="mb-2 text-sm font-medium text-slate-700">Readiness score</h2>
+        <h2 className={SECTION_HEADING_CLASS}>Readiness score</h2>
         <div className="flex items-center gap-4">
           <div
             className="rounded-lg px-3 py-1.5 text-sm font-semibold text-white"
@@ -78,13 +80,9 @@ export default async function MaturityPage() {
           <div className="flex-1">
             <div className="h-2 overflow-hidden rounded-full bg-slate-200">
               <div
-                className="h-full rounded-full transition-all"
+                className={`h-full rounded-full transition-all ${complianceBarBgClass(progressToNext)}`}
                 style={{
-                  width: `${progressToNext}%`,
-                  backgroundColor:
-                    maturityLevel >= 5
-                      ? "#10b981"
-                      : (MATURITY_LEVEL_COLORS[maturityLevel + 1] ?? "#3b82f6")
+                  width: `${progressToNext}%`
                 }}
               />
             </div>
@@ -100,8 +98,8 @@ export default async function MaturityPage() {
       {/* Next steps panel */}
       {nextSteps.length > 0 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="mb-3 text-sm font-medium text-slate-700">Next Steps</h2>
-          <p className="mb-3 text-xs text-slate-500">
+          <h2 className={SECTION_HEADING_CLASS}>Next Steps</h2>
+          <p className="mb-3 text-xs font-normal text-slate-500">
             Recommended actions to advance to the next maturity level.
           </p>
           <ul className="space-y-2">

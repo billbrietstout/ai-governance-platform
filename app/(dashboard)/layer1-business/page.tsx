@@ -54,7 +54,7 @@ export default async function Layer1BusinessPage() {
         </div>
         <Link
           href="/layer1-business/regulatory-cascade"
-          className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          className="bg-navy-600 hover:bg-navy-500 inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition"
         >
           Regulatory Cascade →
         </Link>

@@ -7,6 +7,7 @@ import { Sparkles, PlusCircle, FileSearch, Layers, BookOpen } from "lucide-react
 import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { DiscoverClient } from "./DiscoverClient";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 export default async function DiscoverPage() {
   const session = await auth();
@@ -75,7 +76,9 @@ export default async function DiscoverPage() {
       </div>
 
       {/* Planning tools quick links */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <h2 className={SECTION_HEADING_CLASS}>Planning tools</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
         <Link
           href="/discover/operating-model"
           className="hover:border-navy-300 flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
@@ -107,17 +110,24 @@ export default async function DiscoverPage() {
           </div>
         </Link>
       </div>
+      </div>
 
       {/* Recent discoveries */}
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-slate-700">
+        <h3 className={`${SECTION_HEADING_CLASS} flex items-center gap-2`}>
           <Sparkles className="text-navy-600 h-4 w-4" />
           Recent discoveries
         </h3>
         {discoveries.length === 0 ? (
-          <p className="text-sm text-slate-500">
-            No discoveries yet. Run the wizard or review an asset to get started.
-          </p>
+          <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-4 py-6 text-center">
+            <p className="text-sm text-slate-600">No discoveries yet.</p>
+            <Link
+              href="/discover/wizard"
+              className="text-navy-600 mt-3 inline-block text-sm font-medium hover:underline"
+            >
+              Run the discovery wizard →
+            </Link>
+          </div>
         ) : (
           <ul className="space-y-2">
             {discoveries.map((d) => {
@@ -128,11 +138,16 @@ export default async function DiscoverPage() {
                 <li key={d.id}>
                   <Link
                     href={`/discover/results/${d.id}`}
-                    className="flex items-center justify-between rounded border border-slate-200 px-3 py-2 text-sm transition hover:bg-slate-50"
+                    className="flex items-center justify-between gap-3 rounded border border-slate-200 px-3 py-2 text-sm transition hover:bg-slate-50"
                   >
-                    <span className="font-medium text-slate-900">
-                      {assetName ? `${assetName} — ` : ""}
-                      {new Date(d.createdAt).toLocaleDateString()}
+                    <span className="min-w-0 font-medium text-slate-900">
+                      <span className="block truncate">
+                        {assetName ?? "Discovery run"}{" "}
+                        <span className="font-normal text-slate-500">
+                          · {new Date(d.createdAt).toLocaleDateString()}
+                        </span>
+                      </span>
+                      <span className="text-xs text-slate-400">{d.id.slice(0, 12)}…</span>
                     </span>
                     <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
                       {mandatoryCount} mandatory

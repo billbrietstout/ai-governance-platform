@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { DecisionModal } from "./DecisionModal";
+import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 const MATURITY_PLAIN: Record<number, string> = {
   1: "aware of AI risks but no formal governance yet",
@@ -15,7 +17,6 @@ const MATURITY_PLAIN: Record<number, string> = {
 };
 
 const EU_DEADLINE = new Date("2026-08-02");
-const DAYS_TO_DEADLINE = Math.ceil((EU_DEADLINE.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
 
 type BriefingData = {
   orgName: string;
@@ -41,7 +42,7 @@ function TrafficLight({ status }: { status: "red" | "amber" | "green" }) {
   const colors = {
     red: "bg-red-500",
     amber: "bg-amber-500",
-    green: "bg-emerald-500"
+    green: "bg-green-500"
   };
   return <div className={`h-4 w-4 shrink-0 rounded-full ${colors[status]}`} aria-label={status} />;
 }
@@ -147,10 +148,25 @@ export function AIRiskBriefingClient({ data }: Props) {
 
   const currentDecision = successMessage !== null ? null : decision;
 
+  const daysToDeadline = Math.max(
+    0,
+    Math.ceil((EU_DEADLINE.getTime() - Date.now()) / (24 * 60 * 60 * 1000))
+  );
+  const maturityPct = Math.round((data.maturityLevel / 5) * 100);
+
   const legalSummary =
-    data.euHighRisk > 0
-      ? `EU high-risk AI rules apply to ${data.euHighRisk} of your AI systems. Deadline: August 2026. Current readiness: ${data.compliancePct}%.`
-      : "No AI systems fall under mandatory EU high-risk rules. Voluntary standards apply.";
+    data.euHighRisk > 0 ? (
+      <>
+        EU high-risk AI rules apply to {data.euHighRisk} of your AI systems. Deadline: August
+        2026. Current readiness:{" "}
+        <span className={`font-semibold ${complianceTextClass(data.compliancePct)}`}>
+          {data.compliancePct}%
+        </span>
+        .
+      </>
+    ) : (
+      "No AI systems fall under mandatory EU high-risk rules. Voluntary standards apply."
+    );
 
   const safetySummary =
     data.totalAssets > 0
@@ -195,7 +211,7 @@ export function AIRiskBriefingClient({ data }: Props) {
 
       {/* Card 1 — Legal & Regulatory Exposure */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-medium text-slate-700">Legal & Regulatory Exposure</h2>
+        <h2 className={SECTION_HEADING_CLASS}>Legal & Regulatory Exposure</h2>
         <div className="flex items-start gap-4">
           <TrafficLight status={legalStatus} />
           <p className="flex-1 text-slate-800">{legalSummary}</p>
@@ -209,14 +225,14 @@ export function AIRiskBriefingClient({ data }: Props) {
               </p>
             )}
             <p>Applicable: EU high-risk AI rules (August 2026)</p>
-            <p>Days to nearest deadline: {Math.max(0, DAYS_TO_DEADLINE)}</p>
+            <p>Days to nearest deadline: {daysToDeadline}</p>
           </div>
         )}
       </div>
 
       {/* Card 2 — Operational Safety */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-medium text-slate-700">Operational Safety</h2>
+        <h2 className={SECTION_HEADING_CLASS}>Operational Safety</h2>
         <div className="flex items-start gap-4">
           <TrafficLight status={safetyStatus} />
           <p className="flex-1 text-slate-800">{safetySummary}</p>
@@ -234,7 +250,7 @@ export function AIRiskBriefingClient({ data }: Props) {
 
       {/* Card 3 — Readiness Progress */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-medium text-slate-700">Readiness Progress</h2>
+        <h2 className={SECTION_HEADING_CLASS}>Readiness Progress</h2>
         <div className="flex items-start gap-4">
           <TrafficLight status={readinessStatus} />
           <p className="flex-1 text-slate-800">{readinessSummary}</p>
@@ -249,8 +265,8 @@ export function AIRiskBriefingClient({ data }: Props) {
               {[1, 2, 3, 4, 5].map((i) => (
                 <div
                   key={i}
-                  className={`h-2 flex-1 rounded ${
-                    i <= data.maturityLevel ? "bg-navy-500" : "bg-slate-200"
+                  className={`h-2 flex-1 rounded-full ${
+                    i <= data.maturityLevel ? complianceBarBgClass(maturityPct) : "bg-slate-200"
                   }`}
                 />
               ))}
@@ -295,11 +311,17 @@ export function AIRiskBriefingClient({ data }: Props) {
       )}
 
       {/* Footer links */}
-      <div className="flex flex-wrap gap-4 text-xs text-slate-500">
-        <Link href="/dashboard?view=full" className="hover:text-navy-600 hover:underline">
+      <div className="flex flex-wrap items-center gap-3 text-xs">
+        <Link
+          href="/dashboard?view=full"
+          className="bg-navy-600 hover:bg-navy-500 inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition"
+        >
           Full governance dashboard →
         </Link>
-        <a href="/api/v1/export/governance-report" className="hover:text-navy-600 hover:underline">
+        <a
+          href="/api/v1/export/governance-report"
+          className="inline-flex items-center rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+        >
           Export board briefing →
         </a>
         <span className="text-slate-400">View last week&apos;s briefing →</span>
