@@ -8,10 +8,17 @@ import { auth } from "@/auth";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { DiscoverClient } from "./DiscoverClient";
 import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
+import { regulationDiscoveryTitle } from "@/lib/discovery/discovery-label";
 
 export default async function DiscoverPage() {
   const session = await auth();
-  let discoveries: { id: string; createdAt: Date; results: unknown; asset: { name: string; id?: string } | null }[] = [];
+  let discoveries: {
+    id: string;
+    createdAt: Date;
+    inputs: unknown;
+    results: unknown;
+    asset: { name: string; id?: string } | null;
+  }[] = [];
   let assets: { id: string; name: string; assetType: string }[] = [];
 
   if (session?.user) {
@@ -133,7 +140,8 @@ export default async function DiscoverPage() {
             {discoveries.map((d) => {
               const results = d.results as { mandatory?: unknown[]; riskScore?: number };
               const mandatoryCount = results?.mandatory?.length ?? 0;
-              const assetName = d.asset?.name;
+              const title = regulationDiscoveryTitle(d.asset, d.inputs);
+              const ranAt = new Date(d.createdAt).toLocaleString();
               return (
                 <li key={d.id}>
                   <Link
@@ -141,13 +149,10 @@ export default async function DiscoverPage() {
                     className="flex items-center justify-between gap-3 rounded border border-slate-200 px-3 py-2 text-sm transition hover:bg-slate-50"
                   >
                     <span className="min-w-0 font-medium text-slate-900">
-                      <span className="block truncate">
-                        {assetName ?? "Discovery run"}{" "}
-                        <span className="font-normal text-slate-500">
-                          · {new Date(d.createdAt).toLocaleDateString()}
-                        </span>
+                      <span className="block truncate" title={title}>
+                        {title}
                       </span>
-                      <span className="text-xs text-slate-400">{d.id.slice(0, 12)}…</span>
+                      <span className="mt-0.5 block text-xs font-normal text-slate-500">{ranAt}</span>
                     </span>
                     <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
                       {mandatoryCount} mandatory

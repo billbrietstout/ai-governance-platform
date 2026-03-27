@@ -7,6 +7,7 @@ import { loadActiveFrameworksForOrg } from "@/lib/compliance/framework-queries";
 import * as engine from "@/lib/compliance/engine";
 import * as verticalCascade from "@/lib/compliance/vertical-cascade";
 import { getExecutiveBriefingData } from "@/lib/executive-briefing";
+import { enrichAuditFeedForDisplay } from "@/lib/audit/enrich-feed";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const COSAI_LAYERS = [
@@ -280,7 +281,8 @@ export const dashboardRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
         take: input?.limit ?? 20
       });
-      return { data: entries, meta: {} };
+      const data = await enrichAuditFeedForDisplay(prisma, ctx.orgId, entries);
+      return { data, meta: {} };
     }),
 
   getTopRisksByLayer: protectedProcedure.query(async ({ ctx }) => {

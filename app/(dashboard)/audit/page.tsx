@@ -35,8 +35,13 @@ export default async function AuditLogPage() {
               >
                 <span className="shrink-0 font-medium text-gray-600">{e.action}</span>
                 <span className="text-gray-900">{e.resourceType}</span>
-                <span className="text-gray-500">{e.resourceId.slice(0, 8)}…</span>
-                <span className="ml-auto text-gray-500">
+                <span className="min-w-0 truncate text-gray-700" title={e.resourceLabel}>
+                  {e.resourceLabel}
+                </span>
+                {e.actorEmail ? (
+                  <span className="hidden shrink-0 text-gray-500 sm:inline">{e.actorEmail}</span>
+                ) : null}
+                <span className="ml-auto shrink-0 text-gray-500">
                   {new Date(e.createdAt).toLocaleString()}
                 </span>
               </li>

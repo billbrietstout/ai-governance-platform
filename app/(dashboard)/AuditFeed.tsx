@@ -6,6 +6,8 @@ type Entry = {
   resourceType: string;
   resourceId: string;
   createdAt: Date;
+  resourceLabel?: string;
+  actorEmail?: string | null;
 };
 
 type Props = { entries: Entry[] };
@@ -55,6 +57,14 @@ export function AuditFeed({ entries }: Props) {
             <div className="min-w-0 flex-1">
               <span className="font-medium text-gray-900">{e.action}</span>{" "}
               <span className="text-gray-500">{e.resourceType}</span>
+              {e.resourceLabel ? (
+                <span className="mt-0.5 block truncate text-gray-700" title={e.resourceLabel}>
+                  {e.resourceLabel}
+                </span>
+              ) : null}
+              {e.actorEmail ? (
+                <span className="mt-0.5 block text-xs text-gray-500">{e.actorEmail}</span>
+              ) : null}
             </div>
             <span className="shrink-0 text-xs text-gray-500">
               {new Date(e.createdAt).toLocaleString()}
