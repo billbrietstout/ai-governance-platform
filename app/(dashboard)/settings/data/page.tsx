@@ -20,7 +20,7 @@ export default async function DataSettingsPage() {
           ← Settings
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">Data & Privacy</h1>
-        <p className="mt-1 text-gray-600">Retention policy and GDPR requests.</p>
+        <p className="mt-1 text-sm text-gray-600">Retention policy and GDPR requests.</p>
       </div>
 
       <DataRetentionConfig retention={retention} />

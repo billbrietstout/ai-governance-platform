@@ -3,6 +3,11 @@
  */
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
+
+const EXPORT_BTN =
+  "rounded border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50";
 
 export default async function VendorAssuranceReportPage() {
   const caller = await createServerCaller();
@@ -10,69 +15,91 @@ export default async function VendorAssuranceReportPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <Link href="/reports" className="text-navy-400 text-sm hover:underline">
+          <Link href="/reports" className="text-navy-600 text-sm hover:underline">
             ← Reports
           </Link>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight">Vendor Assurance Report</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
+            Vendor Assurance Report
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Assurance posture, evidence expiry, and next review dates by vendor.
+          </p>
         </div>
-        <div className="flex gap-2">
-          <button className="border-slatePro-600 text-slatePro-300 rounded border px-3 py-1 text-sm">
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <button type="button" className={EXPORT_BTN}>
             Export PDF
           </button>
-          <button className="border-slatePro-600 text-slatePro-300 rounded border px-3 py-1 text-sm">
+          <button type="button" className={EXPORT_BTN}>
             Export CSV
           </button>
         </div>
       </div>
 
-      <div className="border-slatePro-700 overflow-x-auto rounded-lg border">
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr className="border-slatePro-700 bg-slatePro-900/50 border-b">
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Vendor</th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Score</th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">
-                Expired Evidence
-              </th>
-              <th className="text-slatePro-300 px-4 py-2 text-left font-medium">Next Review</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-slatePro-500 px-4 py-8 text-center">
-                  No vendors
-                </td>
+      <div>
+        <h2 className={SECTION_HEADING_CLASS}>Vendors</h2>
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-slate-500 uppercase">
+                  Vendor
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-slate-500 uppercase">
+                  Score
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-slate-500 uppercase">
+                  Expired Evidence
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wide text-slate-500 uppercase">
+                  Next Review
+                </th>
               </tr>
-            ) : (
-              data.map((v) => (
-                <tr key={v.id} className="border-slatePro-800 border-b">
-                  <td className="px-4 py-2">
-                    <Link
-                      href={`/layer5-supply-chain/vendors/${v.id}`}
-                      className="text-navy-400 hover:underline"
-                    >
-                      {v.name}
-                    </Link>
-                  </td>
-                  <td className="text-slatePro-200 px-4 py-2">{Math.round(v.score * 100)}%</td>
-                  <td className="px-4 py-2">
-                    {v.expiredCount > 0 ? (
-                      <span className="text-amber-700">{v.expiredCount}</span>
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td className="text-slatePro-400 px-4 py-2">
-                    {v.nextReviewAt?.toLocaleDateString() ?? "—"}
+            </thead>
+            <tbody>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-4 py-10 text-center text-slate-500">
+                    No vendors
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                data.map((v) => {
+                  const pct = Math.round(v.score * 100);
+                  return (
+                    <tr key={v.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50">
+                      <td className="px-4 py-3">
+                        <Link
+                          href={`/layer5-supply-chain/vendors/${v.id}`}
+                          className="text-navy-600 font-medium hover:underline"
+                        >
+                          {v.name}
+                        </Link>
+                        <span className="mt-0.5 block font-mono text-xs text-slate-500">
+                          {v.id.slice(0, 8)}…
+                        </span>
+                      </td>
+                      <td className={`px-4 py-3 font-semibold tabular-nums ${complianceTextClass(pct)}`}>
+                        {pct}%
+                      </td>
+                      <td className="px-4 py-3">
+                        {v.expiredCount > 0 ? (
+                          <span className="font-medium text-amber-700">{v.expiredCount}</span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 text-slate-700">
+                        {v.nextReviewAt?.toLocaleDateString() ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
   );

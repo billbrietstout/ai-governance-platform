@@ -63,7 +63,7 @@ export default async function NotificationsSettingsPage() {
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
           Notification Preferences
         </h1>
-        <p className="mt-1 text-gray-600">
+        <p className="mt-1 text-sm text-gray-600">
           Manage how you receive AI posture alerts and weekly briefings.
         </p>
       </div>

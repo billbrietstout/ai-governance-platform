@@ -1,5 +1,7 @@
 "use client";
 
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+
 type Props = {
   percentage: number;
   size?: number;
@@ -7,16 +9,17 @@ type Props = {
   label?: string;
 };
 
+/** Ring stroke aligns with app compliance ramp: &lt;40% red, 40–70% amber, &gt;70% green */
 export function ComplianceRing({ percentage, size = 40, strokeWidth = 4, label }: Props) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
 
   const color =
-    percentage >= 80
-      ? "stroke-emerald-500"
-      : percentage >= 50
-        ? "stroke-amber-500"
+    percentage > 70
+      ? "stroke-green-500"
+      : percentage >= 40
+        ? "stroke-amber-400"
         : "stroke-red-500";
 
   return (
@@ -46,7 +49,9 @@ export function ComplianceRing({ percentage, size = 40, strokeWidth = 4, label }
       {label !== undefined ? (
         <span className="absolute text-xs font-medium text-gray-900">{label}</span>
       ) : (
-        <span className="absolute text-xs font-medium text-gray-900">{percentage}%</span>
+        <span className={`absolute text-xs font-medium ${complianceTextClass(percentage)}`}>
+          {percentage}%
+        </span>
       )}
     </div>
   );

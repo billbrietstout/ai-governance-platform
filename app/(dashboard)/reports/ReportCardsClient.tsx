@@ -139,7 +139,7 @@ export function ReportCardsClient({ maturityLevel, scores, snapshots, gaps }: Pr
           return (
             <div
               key={r.id}
-              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
+              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-200"
             >
               <div className="flex items-start gap-3">
                 <div className="bg-navy-100 rounded-lg p-2">

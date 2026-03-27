@@ -11,6 +11,8 @@ import {
 } from "@/lib/vertical-regulations";
 import { prisma } from "@/lib/prisma";
 import { ComplianceRing } from "@/components/assets/ComplianceRing";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 import { notFound } from "next/navigation";
 
 const REGULATORY_CALENDAR = [
@@ -68,13 +70,13 @@ export default async function VerticalDetailPage({
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           {profile.label}
         </h1>
-        <p className="mt-1 text-slate-600">{profile.description}</p>
+        <p className="mt-1 text-sm text-slate-600">{profile.description}</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Regulations */}
         <div className="space-y-4">
-          <h2 className="text-sm font-medium text-slate-700">Applicable Regulations</h2>
+          <h2 className={SECTION_HEADING_CLASS}>Applicable Regulations</h2>
           {profile.regulations.map((reg) => {
             const inScopeAssets = assetsFiltered.filter(
               (a) =>
@@ -153,7 +155,7 @@ export default async function VerticalDetailPage({
 
         {/* Regulatory Calendar */}
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-medium text-slate-700">Regulatory Calendar</h2>
+          <h2 className={SECTION_HEADING_CLASS}>Regulatory Calendar</h2>
           <p className="mt-1 text-xs text-slate-500">Upcoming deadlines</p>
           <ul className="mt-3 space-y-2">
             {REGULATORY_CALENDAR.map((item) => (
@@ -174,10 +176,13 @@ export default async function VerticalDetailPage({
 
       {verticalData && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="text-sm font-medium text-slate-700">Overall Compliance</h2>
-          <div className="mt-2 flex items-center gap-4">
+          <h2 className={SECTION_HEADING_CLASS}>Overall Compliance</h2>
+          <div className="mt-2 flex flex-wrap items-center gap-4">
             <ComplianceRing percentage={verticalData.complianceScore} size={48} strokeWidth={4} />
             <div>
+              <p className={`text-lg font-semibold tabular-nums ${complianceTextClass(verticalData.complianceScore)}`}>
+                {verticalData.complianceScore}%
+              </p>
               <p className="text-sm text-slate-600">
                 {verticalData.assetCount} asset(s) in scope for this vertical
               </p>

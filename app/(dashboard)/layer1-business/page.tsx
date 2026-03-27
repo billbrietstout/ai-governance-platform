@@ -42,7 +42,7 @@ export default async function Layer1BusinessPage() {
               Layer 1 — Business
             </span>
           </div>
-          <p className="mt-1 text-slate-600">
+          <p className="mt-1 text-sm text-slate-600">
             L1 — Strategy, compliance, and accountability oversight.
           </p>
           <p className="mt-2 text-sm text-slate-500">

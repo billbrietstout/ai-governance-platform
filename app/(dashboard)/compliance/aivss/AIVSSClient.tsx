@@ -1,6 +1,7 @@
 "use client";
 
 import { AIVSS_FACTORS } from "@/lib/security-frameworks/aivss";
+import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 const LAYER_LABEL: Record<string, string> = {
   LAYER_1_BUSINESS: "Layer 1 · Business",
@@ -18,26 +19,32 @@ export function AIVSSClient() {
         <span className="font-medium text-slate-800">OWASP Top 10 for LLM Applications</span> by scoring how
         agent capabilities (autonomy, tools, memory, delegation) increase exposure from a base vulnerability.
       </p>
-      <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
-        {AIVSS_FACTORS.map((f) => (
-          <li key={f.id} className="px-4 py-4 first:rounded-t-lg last:rounded-b-lg">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="font-semibold text-slate-900">
-                {f.id}. {f.name}
-              </h2>
-              <span className="rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                {LAYER_LABEL[f.cosaiLayer] ?? f.cosaiLayer}
-              </span>
-            </div>
-            <p className="mt-1 text-sm text-slate-600">{f.description}</p>
-            {f.relatedOwaspLlm && f.relatedOwaspLlm.length > 0 ? (
-              <p className="mt-2 text-xs text-slate-500">
-                Related OWASP LLM: {f.relatedOwaspLlm.join(", ")}
-              </p>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+      <div>
+        <h2 className={SECTION_HEADING_CLASS}>Amplification factors (AIVSS-A1 … AIVSS-A9)</h2>
+        <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-sm">
+          {AIVSS_FACTORS.map((f) => (
+            <li
+              key={f.id}
+              className="px-4 py-4 transition first:rounded-t-lg last:rounded-b-lg hover:bg-slate-50"
+            >
+              <div className="flex min-w-0 flex-wrap items-baseline justify-between gap-2">
+                <h3 className="min-w-0 font-semibold text-slate-900">
+                  {f.id}. {f.name}
+                </h3>
+                <span className="shrink-0 rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                  {LAYER_LABEL[f.cosaiLayer] ?? f.cosaiLayer}
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-slate-600">{f.description}</p>
+              {f.relatedOwaspLlm && f.relatedOwaspLlm.length > 0 ? (
+                <p className="mt-2 text-xs text-slate-500">
+                  Related OWASP LLM: {f.relatedOwaspLlm.join(", ")}
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

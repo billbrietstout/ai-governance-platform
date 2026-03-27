@@ -60,7 +60,7 @@ export default async function UsersSettingsPage() {
           ← Settings
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">Users & Invites</h1>
-        <p className="mt-1 text-gray-600">Manage organization members and pending invites.</p>
+        <p className="mt-1 text-sm text-gray-600">Manage organization members and pending invites.</p>
       </div>
 
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">

@@ -17,6 +17,9 @@ import {
 import { ComplianceRing } from "@/components/assets/ComplianceRing";
 import { ComplianceTrendChart } from "@/components/compliance/ComplianceTrendChart";
 import { RiskTreemap } from "@/components/supply-chain/RiskTreemap";
+import { complianceTextClass } from "@/lib/ui/compliance-score";
+
+const SUBSECTION_LABEL = "mb-2 text-xs font-medium uppercase tracking-wide text-slate-500";
 
 const TABS = [
   { id: "ceo", label: "CEO View" },
@@ -226,7 +229,11 @@ function CEOView({ data: d }: { data: CEOData }) {
         />
         <MetricCard label="Regulatory Exposure" value={d.regulatoryExposure} />
         <MetricCard label="AI Incidents (90d)" value={d.aiIncidents} />
-        <MetricCard label="Governance Coverage" value={`${d.governanceCoverage}%`} />
+        <MetricCard
+          label="Governance Coverage"
+          value={`${d.governanceCoverage}%`}
+          valueClassName={complianceTextClass(d.governanceCoverage)}
+        />
       </div>
     </div>
   );
@@ -245,7 +252,7 @@ function CFOView({
     <div className="space-y-6">
       {chartSnapshots.length >= 2 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h4 className="mb-2 text-sm font-medium text-slate-700">Compliance trend</h4>
+          <h4 className={SUBSECTION_LABEL}>Compliance trend</h4>
           <ComplianceTrendChart snapshots={chartSnapshots} compact />
           <Link
             href="/compliance/snapshots"
@@ -258,14 +265,16 @@ function CFOView({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {d.complianceCostExposure && (
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <h4 className="text-sm font-medium text-slate-600">Compliance Cost Exposure</h4>
+            <h4 className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              Compliance Cost Exposure
+            </h4>
             <p className="mt-1 text-2xl font-bold text-slate-900">
               {d.complianceCostExposure.range}
             </p>
           </div>
         )}
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h4 className="text-sm font-medium text-slate-600">Assets by Autonomy</h4>
+          <h4 className="text-xs font-medium uppercase tracking-wide text-slate-500">Assets by Autonomy</h4>
           <div className="mt-2 space-y-1 text-sm text-slate-700">
             {Object.entries(d.assetsByAutonomy).map(([k, v]) => (
               <div key={k}>
@@ -279,6 +288,7 @@ function CFOView({
           label="AI Spend Governance"
           value={`${d.aiSpendGovernance}%`}
           sub="contracts aligned"
+          valueClassName={complianceTextClass(d.aiSpendGovernance)}
         />
         <MetricCard label="Failed Scan Policies" value={d.failedScanCount} />
       </div>
@@ -299,7 +309,7 @@ function COOView({ data: d }: { data: COOData }) {
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h4 className="mb-3 text-sm font-medium text-slate-700">Business Process Coverage</h4>
+        <h4 className={SUBSECTION_LABEL}>Business Process Coverage</h4>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
@@ -325,7 +335,7 @@ function COOView({ data: d }: { data: COOData }) {
       </div>
 
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h4 className="mb-2 text-sm font-medium text-slate-700">Autonomy Distribution</h4>
+        <h4 className={SUBSECTION_LABEL}>Autonomy Distribution</h4>
         <div className="flex flex-wrap gap-4 text-sm text-slate-700">
           {Object.entries(d.autonomyDistribution).map(([k, v]) => (
             <span key={k}>
@@ -360,7 +370,7 @@ function CISOView({
     <div className="space-y-6">
       {treemapVendors.length >= 1 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h4 className="mb-2 text-sm font-medium text-slate-700">Supply chain risk exposure</h4>
+          <h4 className={SUBSECTION_LABEL}>Supply chain risk exposure</h4>
           <RiskTreemap vendors={treemapVendors} compact />
           <Link
             href="/layer5-supply-chain/risk-score"
@@ -380,7 +390,7 @@ function CISOView({
 
       {Object.keys(d.failedScanPolicies).length > 0 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h4 className="mb-2 text-sm font-medium text-slate-700">Failed Scans by Type</h4>
+          <h4 className={SUBSECTION_LABEL}>Failed Scans by Type</h4>
           <div className="flex flex-wrap gap-4 text-sm">
             {Object.entries(d.failedScanPolicies).map(([k, v]) => (
               <span key={k} className="rounded bg-red-100 px-2 py-0.5 text-red-700">
@@ -393,7 +403,7 @@ function CISOView({
 
       {d.vendorSecurityPosture.length > 0 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h4 className="mb-2 text-sm font-medium text-slate-700">Vendors with Expired Evidence</h4>
+          <h4 className={SUBSECTION_LABEL}>Vendors with Expired Evidence</h4>
           <ul className="space-y-1 text-sm text-slate-700">
             {d.vendorSecurityPosture.map((v, i) => (
               <li key={i}>
@@ -415,6 +425,7 @@ function LegalCLOView({ data: d }: { data: LegalData }) {
           label="Accountability Completeness"
           value={`${d.accountabilityCompleteness.pct}%`}
           sub={`${d.accountabilityCompleteness.complete}/${d.accountabilityCompleteness.total} HIGH risk`}
+          valueClassName={complianceTextClass(d.accountabilityCompleteness.pct)}
         />
         <MetricCard label="No Appeals Process" value={d.noAppealsProcess} sub="HIGH risk assets" />
         <MetricCard label="Contract Alignment Gaps" value={d.contractAlignmentGaps} />
@@ -422,7 +433,7 @@ function LegalCLOView({ data: d }: { data: LegalData }) {
 
       {d.annexIIIAssets.length > 0 && (
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-          <h4 className="mb-3 text-sm font-medium text-slate-700">EU AI Act Annex III Assets</h4>
+          <h4 className={`${SUBSECTION_LABEL} mb-3`}>EU AI Act Annex III Assets</h4>
           <ul className="space-y-2">
             {d.annexIIIAssets.map((a) => (
               <li
@@ -452,7 +463,7 @@ function LegalCLOView({ data: d }: { data: LegalData }) {
       )}
 
       <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h4 className="mb-3 text-sm font-medium text-slate-700">
+        <h4 className={`${SUBSECTION_LABEL} mb-3`}>
           Vertical Compliance Requirements ({d.verticalLabel})
         </h4>
         <p className="mb-3 text-xs text-slate-500">
@@ -510,7 +521,7 @@ function VerticalPortfolioView({ data }: { data: PortfolioData }) {
           return (
             <div
               key={v.verticalKey}
-              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300"
+              className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-navy-200"
             >
               <div className="flex items-center gap-2">
                 <span className={meta.color}>{meta.icon}</span>
@@ -519,8 +530,11 @@ function VerticalPortfolioView({ data }: { data: PortfolioData }) {
               <p className="mt-2 text-sm text-slate-600">
                 {v.assetCount} asset{v.assetCount !== 1 ? "s" : ""} in scope
               </p>
-              <div className="mt-2">
+              <div className="mt-2 flex items-center gap-2">
                 <ComplianceRing percentage={v.complianceScore} size={32} strokeWidth={3} />
+                <span className={`text-sm font-semibold ${complianceTextClass(v.complianceScore)}`}>
+                  {v.complianceScore}%
+                </span>
               </div>
               <ul className="mt-3 space-y-1">
                 {v.regulations.slice(0, 3).map((r) => (
@@ -559,16 +573,20 @@ function VerticalPortfolioView({ data }: { data: PortfolioData }) {
 function MetricCard({
   label,
   value,
-  sub
+  sub,
+  valueClassName
 }: {
   label: string;
   value: string | number;
   sub?: string;
+  valueClassName?: string;
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h4 className="text-sm font-medium text-slate-600">{label}</h4>
-      <p className="mt-1 text-2xl font-bold text-slate-900">{value}</p>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-slate-300">
+      <h4 className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</h4>
+      <p className={`mt-1 text-2xl font-bold tabular-nums ${valueClassName ?? "text-slate-900"}`}>
+        {value}
+      </p>
       {sub && <p className="mt-0.5 text-xs text-slate-500">{sub}</p>}
     </div>
   );

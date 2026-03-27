@@ -18,7 +18,7 @@ export default async function AivssPage() {
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">
           OWASP AIVSS (Agentic AI Vulnerability Scoring)
         </h1>
-        <p className="mt-1 text-slate-600">
+        <p className="mt-1 text-sm text-slate-600">
           Assessment dimensions for agentic AI: base severity plus amplification factors that inform a 0–10
           composite score. Controls are seeded for attestation and gap analysis alongside other frameworks.
         </p>
