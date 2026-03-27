@@ -8,6 +8,7 @@ import { randomBytes } from "crypto";
 import { z } from "zod";
 
 import { auth } from "@/auth";
+import { sendOrgInviteEmail } from "@/lib/email/org-invite";
 import { prisma } from "@/lib/prisma";
 import { withCors } from "@/lib/security";
 
@@ -122,12 +123,35 @@ export async function POST(req: NextRequest) {
     }
   });
 
+  const [org, inviter] = await Promise.all([
+    prisma.organization.findUnique({
+      where: { id: orgId },
+      select: { name: true }
+    }),
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true }
+    })
+  ]);
+
+  const emailResult = await sendOrgInviteEmail({
+    to: email,
+    orgName: org?.name ?? "your organization",
+    role,
+    inviterEmail: inviter?.email ?? "An administrator",
+    expiresInDays: INVITE_EXPIRY_DAYS
+  });
+  if (!emailResult.success && emailResult.reason !== "not_configured") {
+    console.error("Invite email failed:", emailResult.error ?? emailResult);
+  }
+
   const res = NextResponse.json(
     {
       id: invite.id,
       email: invite.email,
       role: invite.role,
-      expiresAt: invite.expiresAt.toISOString()
+      expiresAt: invite.expiresAt.toISOString(),
+      emailSent: emailResult.success === true
     },
     { status: 201 }
   );

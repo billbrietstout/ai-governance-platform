@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 const ROLES = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"] as const;
 
 async function createInvite(
-  _prev: { error?: string; success?: boolean } | undefined,
+  _prev: { error?: string; success?: boolean; emailSent?: boolean } | undefined,
   formData: FormData
 ) {
   const email = formData.get("email") as string;
@@ -19,19 +19,19 @@ async function createInvite(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: email.trim(), role })
   });
-  const data = (await res.json()) as { error?: string };
+  const data = (await res.json()) as { error?: string; emailSent?: boolean };
 
   if (!res.ok) {
     return { error: data.error ?? "Failed to create invite" };
   }
-  return { success: true };
+  return { success: true, emailSent: data.emailSent === true };
 }
 
 export function InviteForm() {
   const router = useRouter();
   const [state, formAction] = useActionState(
     createInvite,
-    {} as { error?: string; success?: boolean }
+    {} as { error?: string; success?: boolean; emailSent?: boolean }
   );
 
   useEffect(() => {
@@ -70,8 +70,14 @@ export function InviteForm() {
         </select>
       </div>
       {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
-      {state?.success && (
-        <p className="text-sm text-emerald-600">Invite sent. Expires in 7 days.</p>
+      {state?.success && state.emailSent && (
+        <p className="text-sm text-emerald-600">Invite sent by email. Expires in 7 days.</p>
+      )}
+      {state?.success && !state.emailSent && (
+        <p className="text-sm text-amber-700">
+          Invite saved. Email was not sent — set <code className="rounded bg-amber-100 px-1">RESEND_API_KEY</code>{" "}
+          on the server, or ask the user to sign in with this email (invite expires in 7 days).
+        </p>
       )}
       <button
         type="submit"
