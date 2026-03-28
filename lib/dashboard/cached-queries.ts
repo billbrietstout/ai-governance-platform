@@ -82,6 +82,14 @@ const LAYER_POSTURE_ORDER: CosaiLayerKey[] = [
   "LAYER_5_SUPPLY_CHAIN"
 ];
 
+const LAYER_POSTURE_HREF: Record<CosaiLayerKey, string> = {
+  LAYER_1_BUSINESS: "/layer1-business",
+  LAYER_2_INFORMATION: "/layer2-information",
+  LAYER_3_APPLICATION: "/layer3-application/assets",
+  LAYER_4_PLATFORM: "/layer4-platform",
+  LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
+};
+
 const SCORE_KEY_FOR_LAYER: Record<CosaiLayerKey, string> = {
   LAYER_1_BUSINESS: "L1",
   LAYER_2_INFORMATION: "L2",
@@ -115,7 +123,8 @@ export async function getLayerPostureSummary(orgId: string): Promise<LayerPostur
       layer,
       maturityLevel,
       compliancePct: lp !== undefined ? lp.compliancePct : null,
-      gapCount: lp?.riskCount ?? 0
+      gapCount: lp?.riskCount ?? 0,
+      href: LAYER_POSTURE_HREF[layer]
     };
   });
 }

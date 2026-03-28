@@ -195,10 +195,16 @@ function getReadinessOverviewItems(
 }
 
 const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = [
+  // ── CoSAI framework layers (primary navigation) ──────────────────────────
   {
-    title: "READINESS OVERVIEW",
-    items: GOVERNANCE_OVERVIEW_ITEMS
+    title: "LAYER 1: BUSINESS",
+    items: [
+      { href: "/layer1-business", label: "L1 Business Overview", icon: Building2 },
+      { href: "/layer1-business/regulatory-cascade", label: "Regulatory Cascade", icon: GitBranch }
+    ]
   },
+  ...GATED_SECTIONS,
+  // ── Outputs & tools (secondary navigation) ───────────────────────────────
   {
     title: "COMPLIANCE",
     items: [
@@ -208,6 +214,10 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
     ]
   },
   {
+    title: "READINESS OVERVIEW",
+    items: GOVERNANCE_OVERVIEW_ITEMS
+  },
+  {
     title: "PLANNING TOOLS",
     items: [
       { href: "/discover", label: "Regulation Discovery", icon: Sparkles },
@@ -215,14 +225,7 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
       { href: "/discover/use-cases", label: "Use Case Library", icon: BookOpen }
     ]
   },
-  {
-    title: "LAYER 1: BUSINESS",
-    items: [
-      { href: "/layer1-business", label: "L1 Business Overview", icon: Building2 },
-      { href: "/layer1-business/regulatory-cascade", label: "Regulatory Cascade", icon: GitBranch }
-    ]
-  },
-  ...GATED_SECTIONS,
+  // ── Settings (footer zone — rendered separately) ──────────────────────────
   {
     title: "SETTINGS",
     items: [
@@ -369,7 +372,7 @@ export function Sidebar({
   const [collapsed, setCollapsedState] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
     if (!persona) {
-      return new Set(["READINESS OVERVIEW", "COMPLIANCE"]);
+      return new Set(["LAYER 1: BUSINESS", "LAYER 3: APPLICATION"]);
     }
     return new Set([currentSection ?? ALL_SECTIONS[0].title]);
   });

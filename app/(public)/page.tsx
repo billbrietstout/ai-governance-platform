@@ -165,12 +165,9 @@ export default async function PublicLandingPage() {
         </div>
       </section>
 
-      {/* CoSAI framework */}
-      <section
-        id="framework"
-        className="public-section-pad border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6"
-      >
-        <div className="public-max-w-3xl mx-auto max-w-3xl">
+      {/* CoSAI framework — vertical stack (Track 4) */}
+      <section id="framework" className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
+        <div className="mx-auto max-w-3xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">
             The CoSAI five-layer model
           </h2>
@@ -180,34 +177,34 @@ export default async function PublicLandingPage() {
           </p>
 
           {/* Vertical stack — each layer slightly narrower than the one above */}
-          <div className="public-framework-stack mt-10 flex w-full flex-col items-stretch gap-0">
+          <div className="mt-10 flex flex-col items-center gap-0">
             {COSAI_LAYERS.map((layer, i) => {
               const widthPct = 100 - i * 6; // 100%, 94%, 88%, 82%, 76%
-              const layerTone = `public-layer-l${i + 1}` as const;
               return (
-                <div
-                  key={layer.id}
-                  className="public-framework-layer-row flex w-full flex-col items-center"
-                >
+                <div key={layer.id} className="flex w-full flex-col items-center">
                   {i > 0 && (
                     // Connector arrow between layers
-                    <div className="public-framework-connector flex h-5 w-px flex-col items-center justify-center">
+                    <div className="flex h-5 w-px flex-col items-center justify-center">
                       <div className="h-4 w-px bg-slate-300" />
                       <div className="h-0 w-0 border-x-4 border-t-4 border-x-transparent border-t-slate-300" />
                     </div>
                   )}
                   <div
-                    className={`public-layer-card ${layerTone} box-border w-full max-w-full px-5 py-4`}
-                    style={{ maxWidth: `${widthPct}%` }}
+                    className="rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm"
+                    style={{ width: `${widthPct}%` }}
                   >
-                    <div className="public-framework-layer-card-inner flex items-center justify-between">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <span className="public-layer-id">{layer.id}</span>
-                        <div className="public-layer-title">{layer.name}</div>
-                        <div className="public-layer-desc">{layer.desc}</div>
+                        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                          {layer.id}
+                        </span>
+                        <div className="mt-0.5 font-semibold text-slate-900">{layer.name}</div>
+                        <div className="mt-1 text-sm text-slate-500">{layer.desc}</div>
                       </div>
                       {i > 0 && (
-                        <div className="public-layer-governed ml-4">governed by L{i}</div>
+                        <div className="ml-4 shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500">
+                          governed by L{i}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -216,15 +213,15 @@ export default async function PublicLandingPage() {
             })}
           </div>
 
-          <div className="public-cta-row-wrap mt-8 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <a
               href="https://coalitionforsecureai.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="public-coai-footer-link text-navy-600 inline-flex items-center space-x-2 text-sm font-medium hover:underline"
+              className="text-navy-600 inline-flex items-center gap-2 text-sm font-medium hover:underline"
             >
-              <Shield className="h-4 w-4 shrink-0" />
-              <span>Learn more about CoSAI</span>
+              <Shield className="h-4 w-4" />
+              Learn more about CoSAI
             </a>
           </div>
         </div>

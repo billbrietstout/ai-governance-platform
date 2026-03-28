@@ -9,6 +9,27 @@ const config: Config = {
         mono: ["var(--font-dm-mono)", "ui-monospace", "monospace"]
       },
       colors: {
+        // CoSAI layer tokens — mirror :root in app/globals.css
+        "layer-1-bg": "var(--layer-1-bg)",
+        "layer-1-border": "var(--layer-1-border)",
+        "layer-1-text": "var(--layer-1-text)",
+        "layer-1-accent": "var(--layer-1-accent)",
+        "layer-2-bg": "var(--layer-2-bg)",
+        "layer-2-border": "var(--layer-2-border)",
+        "layer-2-text": "var(--layer-2-text)",
+        "layer-2-accent": "var(--layer-2-accent)",
+        "layer-3-bg": "var(--layer-3-bg)",
+        "layer-3-border": "var(--layer-3-border)",
+        "layer-3-text": "var(--layer-3-text)",
+        "layer-3-accent": "var(--layer-3-accent)",
+        "layer-4-bg": "var(--layer-4-bg)",
+        "layer-4-border": "var(--layer-4-border)",
+        "layer-4-text": "var(--layer-4-text)",
+        "layer-4-accent": "var(--layer-4-accent)",
+        "layer-5-bg": "var(--layer-5-bg)",
+        "layer-5-border": "var(--layer-5-border)",
+        "layer-5-text": "var(--layer-5-text)",
+        "layer-5-accent": "var(--layer-5-accent)",
         navy: {
           50: "#eef3ff",
           100: "#dbe7ff",

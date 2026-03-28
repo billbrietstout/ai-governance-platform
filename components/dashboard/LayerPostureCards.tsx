@@ -6,14 +6,7 @@ export type LayerPosture = {
   maturityLevel: number | null; // 1–5, null = no data
   compliancePct: number | null; // 0–100
   gapCount: number;
-};
-
-const LAYER_HREFS: Record<CosaiLayerKey, string> = {
-  LAYER_1_BUSINESS: "/layer1-business",
-  LAYER_2_INFORMATION: "/layer2-information",
-  LAYER_3_APPLICATION: "/layer3-application/assets",
-  LAYER_4_PLATFORM: "/layer4-platform",
-  LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
+  href: string;
 };
 
 export function LayerPostureCards({ postures }: { postures: LayerPosture[] }) {
@@ -25,7 +18,7 @@ export function LayerPostureCards({ postures }: { postures: LayerPosture[] }) {
         return (
           <Link
             key={p.layer}
-            href={LAYER_HREFS[p.layer]}
+            href={p.href}
             className={`group rounded-lg border p-4 transition hover:shadow-md ${meta.bg} ${meta.border}`}
           >
             <div
