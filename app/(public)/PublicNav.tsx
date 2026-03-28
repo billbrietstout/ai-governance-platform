@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 export function PublicNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   if (isLoggedIn) {
     return (
-      <nav className="flex items-center gap-4">
+      <nav className="flex items-center space-x-4">
         <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">
           Dashboard
         </Link>
@@ -25,7 +25,7 @@ export function PublicNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   }
 
   return (
-    <nav className="flex items-center gap-4">
+    <nav className="flex items-center space-x-4">
       <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900">
         Sign in
       </Link>

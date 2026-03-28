@@ -13,9 +13,11 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { LayerStackContext } from "@/components/layers/LayerStackContext";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 import { complianceTextClass } from "@/lib/ui/compliance-score";
 import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
+import { getLayerMeta } from "@/lib/ui/layer-colors";
 
 const CLASSIFICATION_COLORS: Record<string, string> = {
   PUBLIC: "bg-emerald-100 text-emerald-700",
@@ -41,18 +43,27 @@ const NAV_CARDS = [
 ] as const;
 
 export default async function Layer2InformationPage() {
+  const meta = getLayerMeta("LAYER_2_INFORMATION");
   const caller = await createServerCaller();
   const { data } = await caller.layer2.getL2Summary();
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-          Layer 2: Information
-        </h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+            Layer 2: Information
+          </h1>
+          <span
+            className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
+          >
+            Layer {meta.number} — {meta.shortLabel}
+          </span>
+        </div>
         <p className="mt-1 text-slate-600">
           Master data, lineage, governance policies, and AI-ready data assets.
         </p>
+        <LayerStackContext activeLayer="LAYER_2_INFORMATION" />
       </div>
 
       {/* Summary metric cards */}

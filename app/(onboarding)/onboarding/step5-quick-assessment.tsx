@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { MATURITY_QUESTIONS, LAYER_LABELS, MATURITY_LEVEL_LABELS } from "@/lib/maturity/questions";
+import { MATURITY_QUESTIONS, MATURITY_LEVEL_LABELS } from "@/lib/maturity/questions";
+import { LAYER_META, type CosaiLayerKey } from "@/lib/ui/layer-colors";
 import { QUICK_MATURITY_QUESTION_IDS } from "@/lib/onboarding/steps";
 import { scoreAssessment, getMaturityLevel } from "@/lib/maturity/scoring";
 import { saveStep5 } from "./actions";
@@ -9,6 +10,14 @@ import { saveStep5 } from "./actions";
 const QUESTIONS = QUICK_MATURITY_QUESTION_IDS.map((id) =>
   MATURITY_QUESTIONS.find((q) => q.id === id)
 ).filter(Boolean) as typeof MATURITY_QUESTIONS;
+
+const LAYER_ORDER: CosaiLayerKey[] = [
+  "LAYER_1_BUSINESS",
+  "LAYER_2_INFORMATION",
+  "LAYER_3_APPLICATION",
+  "LAYER_4_PLATFORM",
+  "LAYER_5_SUPPLY_CHAIN"
+];
 
 type Props = {
   onComplete: () => void;
@@ -32,6 +41,9 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
   };
 
   const allAnswered = QUESTIONS.every((q) => getAnswer(q.id));
+
+  const firstUnanswered = QUESTIONS.findIndex((q) => !getAnswer(q.id));
+  const activeLayerIndex = firstUnanswered === -1 ? QUESTIONS.length - 1 : firstUnanswered;
 
   const [resultLevel, setResultLevel] = useState<number | null>(null);
 
@@ -82,13 +94,38 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
         Answer one question per CoSAI layer to establish your baseline.
       </p>
 
+      <div className="mb-6 flex items-center gap-2">
+        {LAYER_ORDER.map((key, i) => {
+          const meta = LAYER_META[key];
+          const status =
+            i < activeLayerIndex ? "done" : i === activeLayerIndex ? "active" : "todo";
+          return (
+            <div
+              key={key}
+              className={`flex-1 rounded py-2 text-center text-xs font-medium transition ${
+                status === "done"
+                  ? `${meta.bg} ${meta.text} opacity-70`
+                  : status === "active"
+                    ? `${meta.bg} ${meta.border} ${meta.text} border-2`
+                    : "bg-slate-100 text-slate-400"
+              }`}
+            >
+              L{meta.number}
+              <span className="hidden sm:inline"> · {meta.shortLabel}</span>
+            </div>
+          );
+        })}
+      </div>
+
       <div className="space-y-6">
-        {QUESTIONS.map((q) => (
+        {QUESTIONS.map((q, idx) => {
+          const activeMeta = LAYER_META[LAYER_ORDER[idx]];
+          return (
           <div key={q.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="bg-navy-100 text-navy-700 rounded px-2 py-0.5 text-xs font-medium">
-                {LAYER_LABELS[q.layer]}
-              </span>
+            <div
+              className={`mb-2 text-xs font-semibold uppercase tracking-widest ${activeMeta.text}`}
+            >
+              Layer {activeMeta.number} · {activeMeta.label}
             </div>
             <p className="mb-2 font-medium text-slate-900">{q.question}</p>
             <p className="mb-3 text-xs text-slate-500">{q.hint}</p>
@@ -119,7 +156,8 @@ export function Step5QuickAssessment({ onComplete, isPending }: Props) {
               })}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

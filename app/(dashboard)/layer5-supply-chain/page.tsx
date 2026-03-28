@@ -10,8 +10,11 @@ import { ScanCoverageMatrix } from "@/components/supply-chain/ScanCoverageMatrix
 import { complianceTextClass } from "@/lib/ui/compliance-score";
 import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { LayerStackContext } from "@/components/layers/LayerStackContext";
+import { getLayerMeta } from "@/lib/ui/layer-colors";
 
 export default async function Layer5SupplyChainPage() {
+  const meta = getLayerMeta("LAYER_5_SUPPLY_CHAIN");
   const caller = await createServerCaller();
   const { data } = await caller.supplyChain.getOverview();
 
@@ -20,7 +23,16 @@ export default async function Layer5SupplyChainPage() {
       <PageHeader
         title="Layer 5: Supply Chain"
         subtitle="Vendor assurance, artifact cards, and scan coverage."
+        badge={
+          <span
+            className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
+          >
+            Layer {meta.number} — {meta.shortLabel}
+          </span>
+        }
       />
+
+      <LayerStackContext activeLayer="LAYER_5_SUPPLY_CHAIN" />
 
       <div className="grid min-w-0 gap-6 md:grid-cols-3">
         <Link

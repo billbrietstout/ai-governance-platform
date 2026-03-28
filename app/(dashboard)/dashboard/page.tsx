@@ -39,8 +39,11 @@ import {
   getCachedSankey,
   getCachedHeatmap,
   getCachedRiskMatrix,
-  getCachedMaturity
+  getCachedMaturity,
+  getLayerPostureSummary
 } from "@/lib/dashboard/cached-queries";
+import { LayerPostureCards } from "@/components/dashboard/LayerPostureCards";
+import { FrameworkWelcomeBanner } from "@/components/dashboard/FrameworkWelcomeBanner";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
 
@@ -72,6 +75,11 @@ function KpiSkeleton() {
       <div className="h-6 w-12 rounded bg-slate-200" />
     </div>
   );
+}
+
+async function LayerPostureCardsAsync({ orgId }: { orgId: string }) {
+  const postures = await getLayerPostureSummary(orgId);
+  return <LayerPostureCards postures={postures} />;
 }
 
 function CardSkeleton({ height = "h-48" }: { height?: string }) {
@@ -501,7 +509,7 @@ export default async function CommandCenterPage({
   searchParams: Promise<{ welcome?: string; view?: string }>;
 }) {
   const params = await searchParams;
-  const showWelcome = params.welcome === "1";
+  const isFirstVisit = params.welcome === "1";
   const viewFull = params.view === "full";
 
   const session = await auth();
@@ -530,39 +538,9 @@ export default async function CommandCenterPage({
 
   // ── Full dashboard (view=full or no persona path) ──
   const caller = await createServerCaller();
-  const [personaRes, maturityForWelcome] = await Promise.all([
-    caller.user.getUserPersona(),
-    getCachedMaturity(orgId)
-  ]);
+  const personaRes = await caller.user.getUserPersona();
 
   const persona = personaRes.data.persona;
-  const displayName = user?.email
-    ? user.email
-        .split("@")[0]
-        .replace(/[._]/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase())
-    : "there";
-  const personaLabel = persona
-    ? ({
-        CEO: "CEO",
-        CFO: "CFO",
-        COO: "COO",
-        CISO: "CISO",
-        LEGAL: "Legal",
-        CAIO: "CAIO",
-        DATA_OWNER: "Data Owner",
-        DEV_LEAD: "Dev Lead",
-        PLATFORM_ENG: "Platform Engineer",
-        VENDOR_MGR: "Vendor Manager"
-      }[persona] ?? persona)
-    : null;
-
-  const nextSteps = maturityForWelcome.data.nextSteps as {
-    layer: string;
-    action: string;
-    priority: string;
-  }[];
-  const topNextSteps = nextSteps.slice(0, 3);
 
   let penaltyRes: { data: { totalMin: number; totalMax: number } } | null = null;
   if (role === "CAIO" || role === "ADMIN") {
@@ -575,33 +553,12 @@ export default async function CommandCenterPage({
     <main className="flex flex-col gap-6">
       {viewFull && persona && <PersonaShortcutBanner persona={persona} />}
 
-      {showWelcome && (
-        <div className="border-navy-200 bg-navy-50 rounded-lg border p-4">
-          <h3 className="text-navy-900 text-lg font-semibold">
-            {personaLabel
-              ? `Welcome, ${displayName}. As ${personaLabel}, your priority this week is ${topNextSteps[0]?.action ?? "maintaining your governance posture"}.`
-              : `Welcome to AI Readiness Platform`}
-          </h3>
-          <ul className="mt-3 space-y-2">
-            {(personaLabel ? topNextSteps.slice(1) : topNextSteps).map((s, i) => (
-              <li
-                key={`${s.layer}-${s.action}`}
-                className="text-navy-700 flex items-center gap-2 text-sm"
-              >
-                <span className="bg-navy-200 text-navy-800 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
-                  {i + 1}
-                </span>
-                {s.action}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       <PageHeader
         title="Posture Overview"
         subtitle="Your AI readiness posture across the CoSAI five-layer framework"
       />
+
+      {isFirstVisit && <FrameworkWelcomeBanner />}
 
       {showFinancial(role) && penaltyRes && (
         <div className="overflow-visible rounded-lg border border-l-4 border-slate-200 border-l-red-600 bg-white shadow-sm">
@@ -630,6 +587,21 @@ export default async function CommandCenterPage({
           </div>
         </div>
       )}
+
+      <div>
+        <h2 className="mb-3 text-sm font-medium text-slate-600">Framework posture</h2>
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-28 animate-pulse rounded-lg bg-slate-200" />
+              ))}
+            </div>
+          }
+        >
+          <LayerPostureCardsAsync orgId={orgId} />
+        </Suspense>
+      </div>
 
       {/* KPI cards — stream in */}
       <Suspense

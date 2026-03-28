@@ -7,6 +7,8 @@ import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { calculateKPI } from "@/lib/value/kpi-engine";
 import { getBulkLayerPosture, getBulkComplianceHeatmap } from "@/lib/compliance/bulk-engine";
+import type { CosaiLayerKey } from "@/lib/ui/layer-colors";
+import type { LayerPosture } from "@/components/dashboard/LayerPostureCards";
 
 // ─── KPIs ─────────────────────────────────────────────────────────────────────
 
@@ -70,6 +72,52 @@ export function getCachedLayerPosture(orgId: string) {
     [`dashboard-layer-posture-v2-${orgId}`],
     { revalidate: 300, tags: [`org-${orgId}`, "layer-posture"] }
   )();
+}
+
+const LAYER_POSTURE_ORDER: CosaiLayerKey[] = [
+  "LAYER_1_BUSINESS",
+  "LAYER_2_INFORMATION",
+  "LAYER_3_APPLICATION",
+  "LAYER_4_PLATFORM",
+  "LAYER_5_SUPPLY_CHAIN"
+];
+
+const SCORE_KEY_FOR_LAYER: Record<CosaiLayerKey, string> = {
+  LAYER_1_BUSINESS: "L1",
+  LAYER_2_INFORMATION: "L2",
+  LAYER_3_APPLICATION: "L3",
+  LAYER_4_PLATFORM: "L4",
+  LAYER_5_SUPPLY_CHAIN: "L5"
+};
+
+/**
+ * Per-layer posture for dashboard cards — derived from `getCachedLayerPosture` and
+ * `getCachedMaturity` only (no extra DB round-trips beyond those caches).
+ */
+export async function getLayerPostureSummary(orgId: string): Promise<LayerPosture[]> {
+  const [layerRes, maturityRes] = await Promise.all([
+    getCachedLayerPosture(orgId),
+    getCachedMaturity(orgId)
+  ]);
+  const scores = maturityRes.data.scores as Record<string, number>;
+  const hasAssessment = maturityRes.data.lastAssessedAt !== null;
+
+  return LAYER_POSTURE_ORDER.map((layer) => {
+    const lp = layerRes.data.find((l) => l.layer === layer);
+    const key = SCORE_KEY_FOR_LAYER[layer];
+    const raw = scores[key];
+    const maturityLevel =
+      hasAssessment && typeof raw === "number" && !Number.isNaN(raw)
+        ? Math.min(5, Math.max(1, Math.round(raw)))
+        : null;
+
+    return {
+      layer,
+      maturityLevel,
+      compliancePct: lp !== undefined ? lp.compliancePct : null,
+      gapCount: lp?.riskCount ?? 0
+    };
+  });
 }
 
 // ─── Compliance heatmap ───────────────────────────────────────────────────────

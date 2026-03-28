@@ -8,7 +8,9 @@ import { prisma } from "@/lib/prisma";
 import { EmptyState } from "@/components/EmptyState";
 import { AssetFilters } from "./AssetFilters";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { getLayerMeta } from "@/lib/ui/layer-colors";
 import { AssetsInventoryTable } from "@/components/assets/AssetsInventoryTable";
+import { LayerStackContext } from "@/components/layers/LayerStackContext";
 
 /** Matches `assets.list` tRPC input (filters + pagination). */
 type AssetListInput = {
@@ -98,6 +100,7 @@ export default async function AssetsPage({
   ]);
 
   const { data, meta } = assetsRes;
+  const layerMeta = getLayerMeta("LAYER_3_APPLICATION");
   const listInput: AssetListInput = {
     assetType: params.type as AssetListInput["assetType"],
     euRiskLevel: params.euRisk as AssetListInput["euRiskLevel"],
@@ -113,6 +116,13 @@ export default async function AssetsPage({
       <PageHeader
         title="Asset Inventory"
         subtitle="Filterable asset table with compliance metrics."
+        badge={
+          <span
+            className={`rounded-full border px-3 py-1 text-sm font-medium ${layerMeta.bg} ${layerMeta.border} ${layerMeta.text}`}
+          >
+            Layer {layerMeta.number} — {layerMeta.shortLabel}
+          </span>
+        }
         actions={
           <Link
             href="/layer3-application/assets/new"
@@ -122,6 +132,8 @@ export default async function AssetsPage({
           </Link>
         }
       />
+
+      <LayerStackContext activeLayer="LAYER_3_APPLICATION" />
 
       <AssetFilters />
 

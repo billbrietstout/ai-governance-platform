@@ -16,10 +16,10 @@ export default async function PublicLayout({
   const isLoggedIn = !!session?.user;
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-screen min-h-dvh flex-col">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href={isLoggedIn ? "/dashboard" : "/"} className="flex items-center gap-2">
+          <Link href={isLoggedIn ? "/dashboard" : "/"} className="flex items-center space-x-2">
             <ShieldLogo className="h-8 w-8" />
             <span className="font-semibold text-slate-900">AI Readiness</span>
           </Link>
@@ -31,7 +31,7 @@ export default async function PublicLayout({
 
       <footer className="border-t border-slate-200 bg-slate-50 py-8">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <p className="text-sm text-slate-600">
               Built on the{" "}
               <a
@@ -43,7 +43,7 @@ export default async function PublicLayout({
                 CoSAI Shared Responsibility Framework
               </a>
             </p>
-            <div className="flex gap-6 text-sm text-slate-600">
+            <div className="flex space-x-6 text-sm text-slate-600">
               <Link href="/privacy" className="hover:text-slate-900">
                 Privacy Policy
               </Link>

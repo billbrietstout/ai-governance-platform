@@ -11,6 +11,7 @@ import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaSidebarConfig, type SidebarMode } from "@/lib/personas/sidebar-config";
 import { isPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { SessionExpiryWarning } from "@/components/auth/SessionExpiryWarning";
+import { LayerContextStrip } from "./LayerContextStrip";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { getPersonaConfig } from "@/lib/personas/config";
 
@@ -161,25 +162,29 @@ export function DashboardShell({
         onResetToPersonaView={persona ? resetToPersonaView : undefined}
         isSuperAdmin={isSuperAdmin}
       />
-      <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
-        <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <Breadcrumbs />
-            {persona && (
-              <Tooltip content="Switch to your focused view" side="bottom">
-                <Link
-                  href={personaDashboardPath ?? "/persona-select"}
-                  className="hover:text-navy-600 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                  My view
-                </Link>
-              </Tooltip>
-            )}
+      <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
+        <TopBar userEmail={userEmail} orgName={orgName} persona={persona} />
+        <LayerContextStrip />
+        <main className="dashboard-content flex-1 overflow-auto bg-slate-100">
+          <div className="mx-auto max-w-6xl px-4 py-6 lg:px-6 lg:py-10">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <Breadcrumbs />
+              {persona && (
+                <Tooltip content="Switch to your focused view" side="bottom">
+                  <Link
+                    href={personaDashboardPath ?? "/persona-select"}
+                    className="hover:text-navy-600 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200"
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                    My view
+                  </Link>
+                </Tooltip>
+              )}
+            </div>
+            <div className="page-fade-in">{children}</div>
           </div>
-          <div className="page-fade-in">{children}</div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

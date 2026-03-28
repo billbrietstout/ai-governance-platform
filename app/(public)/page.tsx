@@ -66,8 +66,8 @@ export default async function PublicLandingPage() {
             The only platform built on the CoSAI Shared Responsibility Framework — assess readiness,
             discover regulations, and build governance that satisfies auditors
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4">
-            <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-10 flex flex-col items-center justify-center space-y-4">
+            <div className="flex flex-wrap items-center justify-center [&>a]:m-2">
               <Link
                 href="/discover/wizard"
                 className="bg-navy-600 hover:bg-navy-500 rounded-lg px-6 py-3 text-base font-medium text-white shadow-sm"
@@ -88,7 +88,7 @@ export default async function PublicLandingPage() {
               </Link>
             </p>
           </div>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-6">
+          <div className="mt-12 flex flex-wrap items-center justify-center [&>span]:m-3">
             {TRUST_BADGES.map((badge) => (
               <span
                 key={badge}
@@ -165,7 +165,7 @@ export default async function PublicLandingPage() {
             {FREE_FEATURES.map(({ label, icon: Icon }) => (
               <div
                 key={label}
-                className="flex items-start gap-3 rounded-lg border border-slate-200 bg-white p-4"
+                className="flex items-start space-x-3 rounded-lg border border-slate-200 bg-white p-4"
               >
                 <Icon className="h-5 w-5 shrink-0 text-emerald-600" />
                 <span className="text-sm font-medium text-slate-900">{label}</span>
@@ -183,7 +183,7 @@ export default async function PublicLandingPage() {
             {PRO_FEATURES.map(({ label, icon: Icon }) => (
               <div
                 key={label}
-                className="border-navy-200 bg-navy-50/30 flex items-start gap-3 rounded-lg border p-4"
+                className="border-navy-200 bg-navy-50/30 flex items-start space-x-3 rounded-lg border p-4"
               >
                 <Icon className="text-navy-600 h-5 w-5 shrink-0" />
                 <span className="text-sm font-medium text-slate-900">{label}</span>
@@ -195,35 +195,61 @@ export default async function PublicLandingPage() {
 
       {/* CoSAI framework */}
       <section id="framework" className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-3xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">
             The CoSAI five-layer model
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-center text-slate-600">
-            Accountability flows from business strategy down through data, applications, platform,
-            and supply chain. Each layer depends on the one above.
+          <p className="mx-auto mt-4 max-w-xl text-center text-slate-600">
+            Accountability flows from business strategy downward. Each layer is constrained by the
+            policy set in the layers above it.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            {COSAI_LAYERS.map((layer) => (
-              <div
-                key={layer.id}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
-              >
-                <div className="font-semibold text-slate-900">{layer.id}</div>
-                <div className="text-sm text-slate-600">{layer.name}</div>
-                <div className="mt-1 text-xs text-slate-500">{layer.desc}</div>
-              </div>
-            ))}
+
+          {/* Vertical stack — each layer slightly narrower than the one above */}
+          <div className="mt-10 flex flex-col items-center gap-0">
+            {COSAI_LAYERS.map((layer, i) => {
+              const widthPct = 100 - i * 6; // 100%, 94%, 88%, 82%, 76%
+              return (
+                <div key={layer.id} className="flex w-full flex-col items-center">
+                  {i > 0 && (
+                    // Connector arrow between layers
+                    <div className="flex h-5 w-px flex-col items-center justify-center">
+                      <div className="h-4 w-px bg-slate-300" />
+                      <div className="h-0 w-0 border-x-4 border-t-4 border-x-transparent border-t-slate-300" />
+                    </div>
+                  )}
+                  <div
+                    className="rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm"
+                    style={{ width: `${widthPct}%` }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                          {layer.id}
+                        </span>
+                        <div className="mt-0.5 font-semibold text-slate-900">{layer.name}</div>
+                        <div className="mt-1 text-sm text-slate-500">{layer.desc}</div>
+                      </div>
+                      {i > 0 && (
+                        <div className="ml-4 shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500">
+                          governed by L{i}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
+
           <div className="mt-8 flex justify-center">
             <a
               href="https://coalitionforsecureai.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-navy-600 inline-flex items-center gap-2 text-sm font-medium hover:underline"
+              className="text-navy-600 inline-flex items-center space-x-2 text-sm font-medium hover:underline"
             >
-              <Shield className="h-4 w-4" />
-              Learn more about CoSAI
+              <Shield className="h-4 w-4 shrink-0" />
+              <span>Learn more about CoSAI</span>
             </a>
           </div>
         </div>

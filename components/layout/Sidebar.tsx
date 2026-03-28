@@ -45,9 +45,18 @@ import {
   User
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
+import { getLayerMeta, type CosaiLayerKey } from "@/lib/ui/layer-colors";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { WorkspaceContextBanner } from "./WorkspaceContextBanner";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
+
+const SIDEBAR_TITLE_TO_LAYER: Record<string, CosaiLayerKey> = {
+  "LAYER 1: BUSINESS": "LAYER_1_BUSINESS",
+  "LAYER 2: INFORMATION": "LAYER_2_INFORMATION",
+  "LAYER 3: APPLICATION": "LAYER_3_APPLICATION",
+  "LAYER 4: PLATFORM": "LAYER_4_PLATFORM",
+  "LAYER 5: SUPPLY CHAIN": "LAYER_5_SUPPLY_CHAIN"
+};
 import { Tooltip } from "@/components/ui/Tooltip";
 import { getPersonaConfig, type PersonaId } from "@/lib/personas/config";
 import { getPersonaSidebarConfig } from "@/lib/personas/sidebar-config";
@@ -687,6 +696,9 @@ export function Sidebar({
           const isPrimary = isSectionPrimary(section.title);
           const sectionOpacity = isPrimary ? "opacity-100" : "opacity-60";
 
+          const layerKey = SIDEBAR_TITLE_TO_LAYER[section.title];
+          const layerMeta = layerKey ? getLayerMeta(layerKey) : null;
+
           return (
             <div key={section.title} className={`mb-1 ${sectionOpacity}`}>
               <button
@@ -703,7 +715,12 @@ export function Sidebar({
                     ) : (
                       <ChevronRight className="h-3.5 w-3.5 shrink-0" />
                     )}
-                    <span className="truncate">{section.title}</span>
+                    <div
+                      className={layerMeta ? "min-w-0 border-l-2 pl-2" : "min-w-0"}
+                      style={layerMeta ? { borderColor: layerMeta.accentHex } : undefined}
+                    >
+                      <span className="truncate">{section.title}</span>
+                    </div>
                   </>
                 )}
               </button>

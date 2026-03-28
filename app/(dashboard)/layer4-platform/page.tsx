@@ -4,11 +4,14 @@
 import Link from "next/link";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { Server, GitBranch, Bell } from "lucide-react";
+import { LayerStackContext } from "@/components/layers/LayerStackContext";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 import { complianceTextClass } from "@/lib/ui/compliance-score";
 import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
+import { getLayerMeta } from "@/lib/ui/layer-colors";
 
 export default async function Layer4PlatformPage() {
+  const meta = getLayerMeta("LAYER_4_PLATFORM");
   const caller = await createServerCaller();
   const [telemetry, drift, alerts] = await Promise.all([
     caller.layer4.getTelemetry(),
@@ -79,11 +82,19 @@ export default async function Layer4PlatformPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 4: Platform</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 4: Platform</h1>
+          <span
+            className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
+          >
+            Layer {meta.number} — {meta.shortLabel}
+          </span>
+        </div>
         <p className="mt-1 text-sm text-slate-600">
           Operational intelligence — telemetry, drift detection, and alert management for your AI
           platform.
         </p>
+        <LayerStackContext activeLayer="LAYER_4_PLATFORM" />
       </div>
 
       <div>

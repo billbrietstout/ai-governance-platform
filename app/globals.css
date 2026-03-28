@@ -8,6 +8,38 @@
   --color-background-primary: #ffffff;
   --color-border-secondary: #cbd5e1;
   --border-radius-md: 6px;
+
+  /* CoSAI layer color tokens */
+  --layer-1-hue: 168; /* teal */
+  --layer-2-hue: 38; /* amber */
+  --layer-3-hue: 220; /* navy (brand) */
+  --layer-4-hue: 215; /* steel blue */
+  --layer-5-hue: 142; /* sage green */
+
+  --layer-1-bg: hsl(168 40% 94%);
+  --layer-1-border: hsl(168 35% 72%);
+  --layer-1-text: hsl(168 55% 28%);
+  --layer-1-accent: hsl(168 50% 38%);
+
+  --layer-2-bg: hsl(38 80% 94%);
+  --layer-2-border: hsl(38 60% 72%);
+  --layer-2-text: hsl(38 70% 30%);
+  --layer-2-accent: hsl(38 65% 44%);
+
+  --layer-3-bg: hsl(220 60% 95%);
+  --layer-3-border: hsl(220 50% 72%);
+  --layer-3-text: hsl(220 60% 28%);
+  --layer-3-accent: hsl(220 75% 46%);
+
+  --layer-4-bg: hsl(215 25% 93%);
+  --layer-4-border: hsl(215 20% 68%);
+  --layer-4-text: hsl(215 30% 32%);
+  --layer-4-accent: hsl(215 35% 46%);
+
+  --layer-5-bg: hsl(142 35% 93%);
+  --layer-5-border: hsl(142 30% 65%);
+  --layer-5-text: hsl(142 45% 26%);
+  --layer-5-accent: hsl(142 42% 38%);
 }
 
 @theme {

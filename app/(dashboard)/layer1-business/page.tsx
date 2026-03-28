@@ -2,12 +2,15 @@
  * Layer 1 – Business & Governance Layer. Strategy, compliance, and accountability oversight.
  */
 import Link from "next/link";
+import { getLayerMeta } from "@/lib/ui/layer-colors";
 import { createServerCaller } from "@/lib/trpc/server-caller";
+import { LayerStackContext } from "@/components/layers/LayerStackContext";
 import { Layer1VerticalsSummary } from "@/components/layers/Layer1VerticalsSummary";
 import { LayerSecurityStandardsCard } from "@/components/layers/LayerSecurityStandardsCard";
 import { ExecutiveDashboard } from "./ExecutiveDashboard";
 
 export default async function Layer1BusinessPage() {
+  const meta = getLayerMeta("LAYER_1_BUSINESS");
   const caller = await createServerCaller();
 
   const [
@@ -38,8 +41,10 @@ export default async function Layer1BusinessPage() {
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
               Business & Governance Layer
             </h1>
-            <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-              Layer 1 — Business
+            <span
+              className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
+            >
+              Layer {meta.number} — {meta.shortLabel}
             </span>
           </div>
           <p className="mt-1 text-sm text-slate-600">
@@ -59,6 +64,8 @@ export default async function Layer1BusinessPage() {
           Regulatory Cascade →
         </Link>
       </div>
+
+      <LayerStackContext activeLayer="LAYER_1_BUSINESS" />
 
       <Layer1VerticalsSummary verticals={portfolioRes.data.verticals} />
 
