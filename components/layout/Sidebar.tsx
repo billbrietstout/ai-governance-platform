@@ -692,7 +692,7 @@ export function Sidebar({
               <button
                 type="button"
                 onClick={() => toggleSection(section.title)}
-                className="text-slatePro-500 hover:bg-slatePro-800/50 hover:text-slatePro-400 flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium tracking-wider uppercase"
+                className="text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-300 focus-visible:ring-navy-400 flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] font-semibold tracking-widest uppercase focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none"
               >
                 {collapsed ? (
                   <span className="text-slatePro-500 mx-auto">•••</span>
@@ -749,7 +749,9 @@ export function Sidebar({
                         title={collapsed ? item.label : isTierLocked ? "Upgrade to Pro" : undefined}
                         className={`flex items-center gap-2 px-3 py-2 text-sm ${
                           collapsed ? "justify-center pl-2" : "pl-6"
-                        } ${active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"}`}
+                        } focus-visible:ring-navy-400 focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none ${
+                          active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
+                        }`}
                         aria-current={active ? "page" : undefined}
                       >
                         {isTierLocked ? (

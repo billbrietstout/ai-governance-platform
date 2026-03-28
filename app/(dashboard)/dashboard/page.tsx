@@ -18,7 +18,10 @@ import {
   XCircle,
   Building,
   Info,
-  TrendingUp
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Plus
 } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -38,6 +41,7 @@ import {
   getCachedRiskMatrix,
   getCachedMaturity
 } from "@/lib/dashboard/cached-queries";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-score";
 
 const MATURITY_COLORS: Record<number, string> = {
@@ -56,8 +60,8 @@ const LAYER_LINKS: Record<string, string> = {
   LAYER_5_SUPPLY_CHAIN: "/layer5-supply-chain"
 };
 
-/** Section / card title — uppercase label per design scale */
-const SECTION_HEADING = "mb-3 text-xs font-medium uppercase tracking-wide text-slate-500";
+/** Section labels in page content — sentence case for readability */
+const SECTION_HEADING = "mb-3 text-sm font-medium text-slate-600";
 
 // ─── Skeleton components ──────────────────────────────────────────────────────
 
@@ -97,13 +101,14 @@ async function KpiCards({ orgId }: { orgId: string }) {
   const deltas = deltasRes.data;
 
   return (
-    <div className="grid gap-3 overflow-visible sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+    <div className="grid gap-3 overflow-visible sm:grid-cols-2 lg:grid-cols-4">
       <KpiCard
         label="Total AI Assets"
         value={kpis.totalAssets}
         href="/layer3-application/assets"
         icon={<Bot className="h-4 w-4 text-blue-600" />}
         delta={deltas.totalAssetsDelta}
+        trend={deltaToTrend(deltas.totalAssetsDelta)}
       />
       <KpiCard
         label="Compliance Score"
@@ -111,6 +116,7 @@ async function KpiCards({ orgId }: { orgId: string }) {
         icon={
           <ShieldCheck className={`h-4 w-4 ${complianceTextClass(kpis.complianceScore)}`} />
         }
+        trend="neutral"
       />
       <KpiCard
         label="Critical Risks"
@@ -118,30 +124,35 @@ async function KpiCards({ orgId }: { orgId: string }) {
         href="/layer3-application/assets"
         icon={<AlertOctagon className="h-4 w-4 text-red-600" />}
         delta={deltas.criticalRisksDelta}
+        trend={deltaToTrend(deltas.criticalRisksDelta, true)}
       />
       <KpiCard
         label="EU High-Risk"
         value={kpis.euHighRisk}
         icon={<Scale className="h-4 w-4 text-amber-600" />}
         tooltip="EU AI Act: classification of AI systems requiring conformity assessment"
+        trend="neutral"
       />
       <KpiCard
         label="No Accountability"
         value={kpis.withoutAccountability}
         href="/layer3-application/accountability"
         icon={<UserX className="h-4 w-4 text-red-600" />}
+        trend="neutral"
       />
       <KpiCard
         label="Stale Cards (>30d)"
         value={kpis.staleCards}
         href="/layer5-supply-chain/cards"
         icon={<Clock className="h-4 w-4 text-amber-600" />}
+        trend="neutral"
       />
       <KpiCard
         label="Failed Scan Policies"
         value={kpis.failedScans}
         href="/layer5-supply-chain/scanning"
         icon={<XCircle className="h-4 w-4 text-red-600" />}
+        trend="neutral"
       />
       <KpiCard
         label="Vendors Expiring"
@@ -149,9 +160,24 @@ async function KpiCards({ orgId }: { orgId: string }) {
         href="/layer5-supply-chain/vendors"
         icon={<Building className="h-4 w-4 text-amber-600" />}
         delta={deltas.vendorsExpiringDelta}
+        trend={deltaToTrend(deltas.vendorsExpiringDelta)}
       />
     </div>
   );
+}
+
+function deltaToTrend(
+  delta: string | null | undefined,
+  invertRiskDirection = false
+): "up" | "down" | "neutral" {
+  if (!delta) return "neutral";
+  if (delta.includes("↑") || delta.includes("+")) {
+    return invertRiskDirection ? "down" : "up";
+  }
+  if (delta.includes("↓")) {
+    return invertRiskDirection ? "up" : "down";
+  }
+  return "neutral";
 }
 
 async function SankeySection({ orgId }: { orgId: string }) {
@@ -292,6 +318,50 @@ async function HeatmapAndRisk({ orgId }: { orgId: string }) {
   );
 }
 
+/** When there are no assets, show onboarding CTA instead of empty charts. */
+async function DashboardMainCharts({ orgId }: { orgId: string }) {
+  const kpisRes = await getCachedKPIs(orgId);
+  if (kpisRes.data.totalAssets === 0) {
+    return (
+      <div className="border-navy-200 bg-navy-50 mb-6 rounded-lg border px-6 py-8 text-center">
+        <Bot className="text-navy-400 mx-auto mb-3 h-10 w-10" />
+        <h2 className="text-navy-900 mb-1 text-lg font-semibold">Register your first AI asset</h2>
+        <p className="text-navy-700 mx-auto mb-4 max-w-md text-sm">
+          Your governance posture will appear here once you have at least one AI asset registered.
+          Start by adding a model, application, or data pipeline.
+        </p>
+        <Link
+          href="/layer3-application/assets/new"
+          className="bg-navy-600 hover:bg-navy-500 focus-visible:ring-navy-500 inline-flex items-center gap-1.5 rounded px-4 py-2 text-sm font-medium text-white focus-visible:ring-2 focus-visible:ring-offset-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add first asset
+        </Link>
+      </div>
+    );
+  }
+  return (
+    <>
+      <Suspense fallback={<CardSkeleton height="h-64" />}>
+        <SankeySection orgId={orgId} />
+      </Suspense>
+      <Suspense fallback={<CardSkeleton height="h-80" />}>
+        <MaturitySection orgId={orgId} />
+      </Suspense>
+      <Suspense
+        fallback={
+          <div className="grid gap-6 lg:grid-cols-2">
+            <CardSkeleton height="h-48" />
+            <CardSkeleton height="h-48" />
+          </div>
+        }
+      >
+        <HeatmapAndRisk orgId={orgId} />
+      </Suspense>
+    </>
+  );
+}
+
 async function BottomPanels() {
   const caller = await createServerCaller();
   const [cascadeRes, gapsRes, vendorRes, auditRes] = await Promise.all([
@@ -306,7 +376,7 @@ async function BottomPanels() {
         <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className={SECTION_HEADING}>Regulatory Cascade Status</h3>
           <div className="flex items-center gap-4">
-            <p className="text-2xl font-semibold text-gray-900">
+            <p className="data-value text-2xl font-semibold text-gray-900">
               {cascadeRes.data.met} / {cascadeRes.data.totalRequirements} met
             </p>
             <div className="flex-1">
@@ -528,14 +598,10 @@ export default async function CommandCenterPage({
         </div>
       )}
 
-      <div className="flex items-start justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-gray-900">Posture Overview</h2>
-          <p className="mt-0.5 text-sm text-slate-600">
-            Your AI readiness posture across the CoSAI five-layer framework
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Posture Overview"
+        subtitle="Your AI readiness posture across the CoSAI five-layer framework"
+      />
 
       {showFinancial(role) && penaltyRes && (
         <div className="overflow-visible rounded-lg border border-l-4 border-slate-200 border-l-red-600 bg-white shadow-sm">
@@ -551,7 +617,7 @@ export default async function CommandCenterPage({
                 <Info className="h-4 w-4 text-red-600" />
               </Tooltip>
             </div>
-            <p className="mt-1 text-2xl font-bold text-red-600">
+            <p className="data-value mt-1 text-2xl font-bold text-red-600">
               €{(penaltyRes.data.totalMin / 1_000_000).toFixed(1)}M – €
               {(penaltyRes.data.totalMax / 1_000_000).toFixed(1)}M
             </p>
@@ -568,8 +634,8 @@ export default async function CommandCenterPage({
       {/* KPI cards — stream in */}
       <Suspense
         fallback={
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
-            {Array.from({ length: 9 }).map((_, i) => (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
               <KpiSkeleton key={i} />
             ))}
           </div>
@@ -578,26 +644,19 @@ export default async function CommandCenterPage({
         <KpiCards orgId={orgId} />
       </Suspense>
 
-      {/* Sankey — stream in */}
-      <Suspense fallback={<CardSkeleton height="h-64" />}>
-        <SankeySection orgId={orgId} />
-      </Suspense>
-
-      {/* Maturity — stream in */}
-      <Suspense fallback={<CardSkeleton height="h-80" />}>
-        <MaturitySection orgId={orgId} />
-      </Suspense>
-
-      {/* Heatmap + Risk matrix — stream in */}
       <Suspense
         fallback={
-          <div className="grid gap-6 lg:grid-cols-2">
-            <CardSkeleton height="h-48" />
-            <CardSkeleton height="h-48" />
+          <div className="space-y-6">
+            <CardSkeleton height="h-64" />
+            <CardSkeleton height="h-80" />
+            <div className="grid gap-6 lg:grid-cols-2">
+              <CardSkeleton height="h-48" />
+              <CardSkeleton height="h-48" />
+            </div>
           </div>
         }
       >
-        <HeatmapAndRisk orgId={orgId} />
+        <DashboardMainCharts orgId={orgId} />
       </Suspense>
 
       {/* Bottom panels — stream in last */}
@@ -625,7 +684,8 @@ function KpiCard({
   href,
   icon,
   delta,
-  tooltip
+  tooltip,
+  trend = "neutral"
 }: {
   label: string;
   value: string | number;
@@ -633,7 +693,13 @@ function KpiCard({
   icon?: React.ReactNode;
   delta?: string | null;
   tooltip?: string;
+  trend?: "up" | "down" | "neutral";
 }) {
+  const TrendIcon =
+    trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Minus;
+  const trendColor =
+    trend === "up" ? "text-emerald-600" : trend === "down" ? "text-red-600" : "text-slate-400";
+
   const content = (
     <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition hover:border-slate-300 hover:shadow">
       <div className="flex items-center justify-between">
@@ -647,9 +713,21 @@ function KpiCard({
         </div>
         {icon}
       </div>
-      <div className="mt-1 text-xl font-semibold text-slate-900">{value}</div>
+      <div className="mt-1 flex items-baseline gap-1.5">
+        <span className="data-value text-xl font-semibold text-slate-900">{value}</span>
+        <TrendIcon className={`h-3.5 w-3.5 shrink-0 ${trendColor}`} aria-hidden />
+      </div>
       {delta && <div className="mt-0.5 text-[10px] text-slate-500">{delta}</div>}
     </div>
   );
-  return href ? <Link href={href}>{content}</Link> : content;
+  return href ? (
+    <Link
+      href={href}
+      className="focus-visible:ring-navy-500 block rounded focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+    >
+      {content}
+    </Link>
+  ) : (
+    content
+  );
 }

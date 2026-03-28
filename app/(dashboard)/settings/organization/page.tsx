@@ -10,6 +10,7 @@ import {
   ALL_VERTICAL_KEYS,
   type VerticalKey
 } from "@/lib/vertical-regulations";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { ClientVerticalsForm } from "./ClientVerticalsForm";
 import { ResetOnboardingForm } from "./ResetOnboardingForm";
 
@@ -34,15 +35,13 @@ export default async function OrganizationSettingsPage() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-6 px-6 py-10">
-      <div>
-        <Link href="/settings" className="text-navy-600 text-sm hover:underline">
-          ← Settings
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Organization</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Configure your organization&apos;s client verticals and regulatory scope.
-        </p>
-      </div>
+      <Link href="/settings" className="text-navy-600 text-sm hover:underline">
+        ← Settings
+      </Link>
+      <PageHeader
+        title="Organization"
+        subtitle="Configure your organization's client verticals and regulatory scope."
+      />
 
       <ClientVerticalsForm
         currentVerticals={clientVerticals as VerticalKey[]}

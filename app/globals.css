@@ -11,6 +11,8 @@
 }
 
 @theme {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
   --color-navy-50: #eef3ff;
   --color-navy-100: #dbe7ff;
   --color-navy-200: #bcd2ff;
@@ -41,9 +43,25 @@ body {
 }
 
 body {
-  @apply antialiased;
+  @apply font-sans antialiased;
   background-color: #ffffff;
   color: #0f172a;
+}
+
+/* Numeric / metric values — DM Mono + tabular figures */
+.data-value {
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Keyboard focus — dashboard shell (light backgrounds) */
+.dashboard-content button:focus-visible,
+.dashboard-content a:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4px var(--color-navy-500);
 }
 
 /* NProgress – thin blue bar (matches navy theme) */

@@ -10,7 +10,9 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     aIAsset: {
       findMany: vi.fn(),
-      findFirst: vi.fn()
+      findFirst: vi.fn(),
+      count: vi.fn(),
+      groupBy: vi.fn()
     }
   }
 }));
@@ -56,6 +58,10 @@ describe("Tenant isolation", () => {
     const { prisma } = await import("@/lib/prisma");
     (prisma.aIAsset.findMany as ReturnType<typeof vi.fn>).mockResolvedValue([
       { id: "asset-a1", name: "Asset A1", orgId: "org-a" }
+    ]);
+    (prisma.aIAsset.count as ReturnType<typeof vi.fn>).mockResolvedValue(1);
+    (prisma.aIAsset.groupBy as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { euRiskLevel: null, _count: { id: 1 } }
     ]);
 
     const ctx = mockContext(mockSession("org-a", "user-a", "MEMBER"));

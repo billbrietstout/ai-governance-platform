@@ -109,6 +109,8 @@ export const PERSONA_CONFIGS: Record<PersonaId, PersonaConfig> = {
     visibleLayers: ["L1", "L2", "L3", "L4", "L5"],
     visibleSections: [
       "READINESS OVERVIEW",
+      "COMPLIANCE",
+      "PLANNING TOOLS",
       "LAYER 1: BUSINESS",
       "LAYER 2: INFORMATION",
       "LAYER 3: APPLICATION",

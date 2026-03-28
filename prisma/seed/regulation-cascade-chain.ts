@@ -104,4 +104,33 @@ export async function seedRegulationCascadeChain(prisma: PrismaClient, orgId: st
       layerImpactSummary: "L5: additional vendor checkpoint."
     }
   });
+
+  const existingVra = await prisma.vraRegulationLink.findFirst({
+    where: { frameworkCode: "EU_AI_ACT", controlId: l5[0].id }
+  });
+  if (!existingVra) {
+    await prisma.vraRegulationLink.createMany({
+      data: [
+        {
+          questionId: "INFRA_DATA_HANDLING",
+          riskArea: "Data handling & isolation",
+          frameworkCode: "EU_AI_ACT",
+          controlId: l5[0].id
+        },
+        {
+          questionId: "INFRA_ENCRYPTION",
+          riskArea: "Encryption (at rest / in transit)",
+          frameworkCode: "EU_AI_ACT",
+          controlId: l5[0].id
+        },
+        {
+          questionId: "MODEL_INTEGRITY",
+          riskArea: "Model integrity & benchmark evidence",
+          frameworkCode: "EU_AI_ACT",
+          controlId: l5[1].id
+        }
+      ],
+      skipDuplicates: true
+    });
+  }
 }

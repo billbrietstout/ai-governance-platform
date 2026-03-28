@@ -47,9 +47,11 @@ export function ComplianceRing({ percentage, size = 40, strokeWidth = 4, label }
         />
       </svg>
       {label !== undefined ? (
-        <span className="absolute text-xs font-medium text-gray-900">{label}</span>
+        <span className="data-value absolute text-xs font-medium text-gray-900">{label}</span>
       ) : (
-        <span className={`absolute text-xs font-medium ${complianceTextClass(percentage)}`}>
+        <span
+          className={`data-value absolute text-xs font-medium ${complianceTextClass(percentage)}`}
+        >
           {percentage}%
         </span>
       )}

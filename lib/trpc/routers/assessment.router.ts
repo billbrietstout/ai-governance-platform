@@ -10,18 +10,43 @@ const statusSchema = z.enum(["DRAFT", "IN_PROGRESS", "PENDING_REVIEW", "APPROVED
 
 export const assessmentRouter = createTRPCRouter({
   list: protectedProcedure
-    .input(z.object({ assetId: z.string().optional(), status: statusSchema.optional() }).optional())
+    .input(
+      z
+        .object({
+          assetId: z.string().optional(),
+          status: statusSchema.optional(),
+          cursor: z.string().optional(),
+          limit: z.number().min(1).max(100).default(25)
+        })
+        .optional()
+    )
     .query(async ({ ctx, input }) => {
       const where: Record<string, unknown> = { orgId: ctx.orgId };
       if (input?.assetId) where.assetId = input.assetId;
       if (input?.status) where.status = input.status;
 
-      const list = await prisma.assessment.findMany({
-        where,
-        include: { asset: { select: { id: true, name: true } } },
-        orderBy: { createdAt: "desc" }
-      });
-      return { data: list, meta: {} };
+      const limit = input?.limit ?? 25;
+      const [list, totalCount] = await Promise.all([
+        prisma.assessment.findMany({
+          where,
+          include: { asset: { select: { id: true, name: true } } },
+          orderBy: { createdAt: "desc" },
+          take: limit + 1,
+          ...(input?.cursor ? { cursor: { id: input.cursor }, skip: 1 } : {})
+        }),
+        prisma.assessment.count({ where })
+      ]);
+
+      const hasNextPage = list.length > limit;
+      const page = hasNextPage ? list.slice(0, limit) : list;
+
+      return {
+        data: page,
+        meta: {
+          nextCursor: hasNextPage ? page[page.length - 1]?.id ?? null : null,
+          totalCount
+        }
+      };
     }),
 
   get: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {

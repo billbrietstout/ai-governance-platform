@@ -30,7 +30,10 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 shadow-sm">
-      <Link href={personaDashboardPath ?? "/dashboard"} className="flex items-center gap-2">
+      <Link
+        href={personaDashboardPath ?? "/dashboard"}
+        className="focus-visible:ring-navy-500 flex items-center gap-2 rounded focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+      >
         <ShieldLogo className="text-navy-500 h-8 w-8 shrink-0" />
         <span className="text-lg font-semibold text-slate-900">AI Readiness</span>
       </Link>
@@ -41,7 +44,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
             <button
               type="button"
               onClick={() => setViewDropdownOpen((o) => !o)}
-              className="hover:text-navy-600 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
+              className="hover:text-navy-600 focus-visible:ring-navy-500 flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               Viewing as: {personaConfig?.label ?? persona} <ChevronDown className="h-4 w-4" />
             </button>
@@ -55,7 +58,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
                 <div className="absolute top-full right-0 z-50 mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-xl">
                   <Link
                     href="/persona-select"
-                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    className="focus-visible:ring-navy-500 flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                     onClick={() => setViewDropdownOpen(false)}
                   >
                     Switch view →
@@ -67,7 +70,7 @@ export function TopBar({ userEmail, orgName, persona }: TopBarProps) {
         ) : (
           <Link
             href="/persona-select"
-            className="hover:text-navy-600 text-sm font-medium text-slate-600 hover:underline"
+            className="hover:text-navy-600 focus-visible:ring-navy-500 rounded text-sm font-medium text-slate-600 hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
           >
             Choose view →
           </Link>

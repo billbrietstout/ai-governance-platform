@@ -66,7 +66,9 @@ export const assetsRouter = createTRPCRouter({
           cosaiLayer: cosaiLayerSchema.optional(),
           verticalMarket: verticalSchema.optional(),
           operatingModel: operatingModelSchema.optional(),
-          status: statusSchema.optional()
+          status: statusSchema.optional(),
+          cursor: z.string().optional(),
+          limit: z.number().min(1).max(100).default(25)
         })
         .optional()
     )
@@ -79,20 +81,47 @@ export const assetsRouter = createTRPCRouter({
       if (input?.operatingModel != null) where.operatingModel = input.operatingModel;
       if (input?.status) where.status = input.status;
 
-      const list = await prisma.aIAsset.findMany({
-        where,
-        include: { owner: { select: { id: true, email: true } } },
-        orderBy: { name: "asc" }
-      });
+      const limit = input?.limit ?? 25;
+      const [list, totalCount, riskGroups] = await Promise.all([
+        prisma.aIAsset.findMany({
+          where,
+          include: { owner: { select: { id: true, email: true } } },
+          orderBy: [{ name: "asc" }, { id: "asc" }],
+          take: limit + 1,
+          ...(input?.cursor ? { cursor: { id: input.cursor }, skip: 1 } : {})
+        }),
+        prisma.aIAsset.count({ where }),
+        prisma.aIAsset.groupBy({
+          by: ["euRiskLevel"],
+          where,
+          _count: { id: true }
+        })
+      ]);
+
+      const hasNextPage = list.length > limit;
+      const page = hasNextPage ? list.slice(0, limit) : list;
 
       const withCompliance = await Promise.all(
-        list.map(async (a) => {
+        page.map(async (a) => {
           const score = await engine.calculateComplianceScore(prisma, a.id);
           return { ...a, compliancePercentage: score.percentage };
         })
       );
 
-      return { data: withCompliance, meta: {} };
+      const euRiskCounts: Record<string, number> = {};
+      for (const g of riskGroups) {
+        const k = g.euRiskLevel ?? "UNSET";
+        euRiskCounts[k] = g._count.id;
+      }
+
+      return {
+        data: withCompliance,
+        meta: {
+          nextCursor: hasNextPage ? page[page.length - 1]?.id ?? null : null,
+          totalCount,
+          euRiskCounts
+        }
+      };
     }),
 
   get: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {

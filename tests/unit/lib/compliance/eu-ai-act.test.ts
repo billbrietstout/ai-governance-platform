@@ -59,7 +59,7 @@ describe("checkProhibitedPractices", () => {
       description: "Uses subliminal messaging"
     });
     expect(r.prohibited).toBe(true);
-    expect(r.reasons.some((x) => x.toLowerCase().includes("subliminal"))).toBe(true);
+    expect(r.reasons.some((x) => x.toLowerCase().includes("art. 5"))).toBe(true);
   });
 });
 
