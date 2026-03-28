@@ -170,7 +170,7 @@ export function BillingContent({
             </ul>
             <div className="mt-6">
               <a
-                href="mailto:hello@aiposture.io?subject=Consultant%20plan%20inquiry"
+                href="mailto:bill@vstout.com?subject=Consultant%20plan%20inquiry"
                 className="block w-full rounded-lg border border-gray-300 py-2.5 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50"
               >
                 Contact sales
@@ -185,13 +185,13 @@ export function BillingContent({
         <h2 className="text-lg font-semibold text-gray-900">Need help choosing?</h2>
         <div className="mt-4 flex flex-wrap gap-4 text-sm">
           <a
-            href="mailto:hello@aiposture.io?subject=Free%2030-min%20assessment%20call"
+            href="mailto:bill@vstout.com?subject=Free%2030-min%20assessment%20call"
             className="text-navy-600 hover:underline"
           >
             Book a free 30-min assessment call
           </a>
           <a
-            href="mailto:hello@aiposture.io?subject=Talk%20to%20our%20team"
+            href="mailto:bill@vstout.com?subject=Talk%20to%20our%20team"
             className="text-navy-600 hover:underline"
           >
             Talk to our team
@@ -220,10 +220,10 @@ export function BillingContent({
             <p className="mt-2 text-sm text-gray-600">
               Payment processing coming soon. Contact us at{" "}
               <a
-                href="mailto:hello@aiposture.io?subject=Upgrade%20to%20Pro"
+                href="mailto:bill@vstout.com?subject=Upgrade%20to%20Pro"
                 className="text-navy-600 font-medium hover:underline"
               >
-                hello@aiposture.io
+                bill@vstout.com
               </a>{" "}
               to upgrade.
             </p>

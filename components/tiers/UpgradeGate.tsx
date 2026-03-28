@@ -62,7 +62,7 @@ export function UpgradeGate({
             Upgrade to {tierLabel}
           </Link>
           <a
-            href="mailto:contact@aiposture.com?subject=Consultant%20inquiry"
+            href="mailto:bill@vstout.com?subject=Consultant%20inquiry"
             className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             Talk to a consultant

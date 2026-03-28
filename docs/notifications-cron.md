@@ -7,7 +7,7 @@ The AI Readiness Platform sends weekly digests and daily alerts via email. These
 Add to Railway (or your deployment) and `.env.local`:
 
 - `RESEND_API_KEY` — Get from [resend.com](https://resend.com). Free tier: 3,000 emails/month, 100/day.
-- `RESEND_FROM_EMAIL` — Sender address (e.g. `notifications@aiposture.io`). Must be verified in Resend.
+- `RESEND_FROM_EMAIL` — Sender address (e.g. `aireadiness@vstout.com`). Must be verified in Resend.
 - `CRON_SECRET` — A secret string for authenticating cron requests. Generate with `openssl rand -base64 32`.
 
 ## Endpoints

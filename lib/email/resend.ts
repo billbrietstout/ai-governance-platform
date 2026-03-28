@@ -14,6 +14,8 @@ function readRuntimeEnv(name: string): string | undefined {
  * Read Resend credentials at send time (not only from @/env snapshot).
  * On Railway, `RESEND_API_KEY` must be the **token value** (`re_...`) in the
  * web service Variables — the "Name" column in Resend's UI is unrelated.
+ * Default `from` uses aireadiness@vstout.com — verify vstout.com in Resend, or set
+ * `RESEND_FROM_EMAIL` (e.g. onboarding@resend.dev for testing without a domain).
  */
 function resendCredentials(): { apiKey: string | undefined; from: string } {
   const apiKey =
@@ -21,7 +23,7 @@ function resendCredentials(): { apiKey: string | undefined; from: string } {
   const from =
     readRuntimeEnv("RESEND_FROM_EMAIL") ||
     env.RESEND_FROM_EMAIL?.trim() ||
-    "AI Governance Platform <onboarding@resend.dev>";
+    "AI Governance Platform <aireadiness@vstout.com>";
   return { apiKey, from };
 }
 

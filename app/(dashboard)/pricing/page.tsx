@@ -53,7 +53,7 @@ const TIERS = [
       "Unlimited users"
     ],
     cta: "Contact sales",
-    ctaHref: "mailto:contact@aiposture.com?subject=Consultant%20plan%20inquiry",
+    ctaHref: "mailto:bill@vstout.com?subject=Consultant%20plan%20inquiry",
     highlighted: false
   }
 ];
@@ -126,7 +126,7 @@ export default function PricingPage() {
       <p className="text-center text-sm text-slate-500">
         Need help deciding?{" "}
         <a
-          href="mailto:contact@aiposture.com?subject=Free%2030-min%20assessment"
+          href="mailto:bill@vstout.com?subject=Free%2030-min%20assessment"
           className="text-navy-600 hover:underline"
         >
           Book a free 30-min assessment call
