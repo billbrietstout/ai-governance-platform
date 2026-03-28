@@ -36,7 +36,7 @@ const AI_ACCESS_COLORS: Record<string, string> = {
 const NAV_CARDS = [
   { href: "/layer2-information/master-data", label: "Master Data Registry", icon: Database },
   { href: "/layer2-information/lineage", label: "Data Lineage & ETL", icon: GitBranch },
-  { href: "/layer2-information/governance", label: "Data Governance", icon: FileText },
+  { href: "/layer2-information/governance", label: "Data policies", icon: FileText },
   { href: "/layer2-information/classification", label: "Data Classification", icon: Shield },
   { href: "/layer2-information/prompts", label: "Prompt Governance", icon: MessageSquareWarning },
   { href: "/layer2-information/shadow-ai", label: "Shadow AI Detection", icon: Eye }
@@ -99,7 +99,7 @@ export default async function Layer2InformationPage() {
           <div className="flex items-center gap-2">
             <FileText className="text-navy-600 h-5 w-5" />
             <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
-              Governance Policies
+              Policy library
             </span>
           </div>
           <p className="mt-2 text-2xl font-bold text-slate-900">{data.totalPolicies}</p>
@@ -111,7 +111,7 @@ export default async function Layer2InformationPage() {
           <div className="flex items-center gap-2">
             <Shield className="text-navy-600 h-5 w-5" />
             <span className="text-xs font-medium tracking-wide text-slate-500 uppercase">
-              Governance Coverage
+              Policy coverage
             </span>
           </div>
           <p

@@ -195,7 +195,7 @@ async function SankeySection({ orgId }: { orgId: string }) {
   ]);
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className={SECTION_HEADING}>Governance dependency flow</h3>
+      <h3 className={SECTION_HEADING}>Policy dependency flow</h3>
       <div className="overflow-x-auto pb-1">
       <LayerSankeyDiagram
         layerData={sankeyRes.data.nodes.map((n, i) => {

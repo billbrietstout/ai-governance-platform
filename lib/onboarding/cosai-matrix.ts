@@ -3,7 +3,7 @@
  */
 
 export const COSAI_LAYERS = [
-  { id: "L1", label: "L1: Business", desc: "Governance, policy, accountability" },
+  { id: "L1", label: "L1: Business", desc: "Policy, accountability, oversight" },
   { id: "L2", label: "L2: Information", desc: "Data, lineage, classification" },
   { id: "L3", label: "L3: Application", desc: "Models, agents, applications" },
   { id: "L4", label: "L4: Platform", desc: "Infra, MLOps, monitoring" },

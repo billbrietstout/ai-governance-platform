@@ -15,7 +15,7 @@ const LAYER_PAGES: Record<MaturityLayer, ControlItem[]> = {
   L1: [
     {
       id: "L1-1",
-      title: "AI Governance Policy",
+      title: "AI policy",
       href: "/layer1-business",
       description: "Document governance principles and scope"
     },
@@ -129,7 +129,7 @@ const LAYER_PAGES: Record<MaturityLayer, ControlItem[]> = {
     },
     {
       id: "L4-4",
-      title: "MLOps Governance",
+      title: "MLOps oversight",
       href: "/layer5-supply-chain",
       description: "Model registry and approval"
     },

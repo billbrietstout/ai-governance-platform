@@ -26,7 +26,7 @@ export const LAYER_META: Record<
     border: "border-[var(--layer-1-border)]",
     text: "text-[var(--layer-1-text)]",
     accent: "bg-[var(--layer-1-accent)]",
-    accentHex: "#2d9a7a"
+    accentHex: "#1a7a42" /* green */
   },
   LAYER_2_INFORMATION: {
     label: "Information & Data",
@@ -36,7 +36,7 @@ export const LAYER_META: Record<
     border: "border-[var(--layer-2-border)]",
     text: "text-[var(--layer-2-text)]",
     accent: "bg-[var(--layer-2-accent)]",
-    accentHex: "#c07a1a"
+    accentHex: "#2563eb" /* blue */
   },
   LAYER_3_APPLICATION: {
     label: "Application & Assets",
@@ -46,7 +46,7 @@ export const LAYER_META: Record<
     border: "border-[var(--layer-3-border)]",
     text: "text-[var(--layer-3-text)]",
     accent: "bg-[var(--layer-3-accent)]",
-    accentHex: "#2a52c9"
+    accentHex: "#c2410c" /* orange */
   },
   LAYER_4_PLATFORM: {
     label: "Platform & Operations",
@@ -56,7 +56,7 @@ export const LAYER_META: Record<
     border: "border-[var(--layer-4-border)]",
     text: "text-[var(--layer-4-text)]",
     accent: "bg-[var(--layer-4-accent)]",
-    accentHex: "#4a6fa5"
+    accentHex: "#be185d" /* pink */
   },
   LAYER_5_SUPPLY_CHAIN: {
     label: "Supply Chain",
@@ -66,7 +66,7 @@ export const LAYER_META: Record<
     border: "border-[var(--layer-5-border)]",
     text: "text-[var(--layer-5-text)]",
     accent: "bg-[var(--layer-5-accent)]",
-    accentHex: "#2d7a4a"
+    accentHex: "#7c3aed" /* purple */
   }
 };
 

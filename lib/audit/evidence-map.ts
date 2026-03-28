@@ -6,7 +6,7 @@
 export type CosaiLayer = "L1" | "L2" | "L3" | "L4" | "L5";
 
 export type EvidenceCategory =
-  | "Governance"
+  | "Oversight"
   | "Technical"
   | "Operational"
   | "Assessment"
@@ -29,7 +29,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l1-ai-policy",
     layer: "L1",
     name: "AI Policy",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "ISO_42001", "COSAI_SRF"],
     howToCollect: "Organization settings, regulatory profile",
     prismaModel: "Organization",
@@ -69,7 +69,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l1-regulatory-mapping",
     layer: "L1",
     name: "Regulatory Mapping",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "COSAI_SRF"],
     howToCollect: "Regulatory Cascade, Compliance frameworks",
     prismaModel: "ComplianceFramework",
@@ -120,7 +120,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l2-consent-records",
     layer: "L2",
     name: "Consent Records",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["EU_AI_ACT", "GDPR"],
     howToCollect: "Data & Privacy settings, Master Data",
     prismaModel: "MasterDataEntity",
@@ -130,9 +130,9 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l2-classification-policies",
     layer: "L2",
     name: "Classification Policies",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "COSAI_SRF"],
-    howToCollect: "Data Governance policies",
+    howToCollect: "Data policy documents",
     prismaModel: "DataGovernancePolicy",
     prismaQuery: "dataGovernancePolicy.findMany"
   },
@@ -140,7 +140,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l2-stewardship",
     layer: "L2",
     name: "Stewardship Assignments",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["NIST_AI_RMF", "COSAI_SRF"],
     howToCollect: "Master Data entities with steward",
     prismaModel: "MasterDataEntity",
@@ -211,7 +211,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l3-accountability",
     layer: "L3",
     name: "Accountability Assignments",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["EU_AI_ACT", "NIST_AI_RMF", "COSAI_SRF"],
     howToCollect: "Accountability Matrix",
     prismaModel: "AccountabilityAssignment",
@@ -333,7 +333,7 @@ export const EVIDENCE_ITEMS: EvidenceItem[] = [
     id: "l5-license-records",
     layer: "L5",
     name: "License Records",
-    category: "Governance",
+    category: "Oversight",
     requiredFor: ["EU_AI_ACT", "NIST_AI_RMF"],
     howToCollect: "Artifact Cards, Scan Records (LICENSE)",
     prismaModel: "ScanRecord",

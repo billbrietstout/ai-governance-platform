@@ -1005,12 +1005,12 @@ export function DiscoveryWizardClient({
         </div>
       )}
 
-      <div className="flex justify-between border-t border-slate-200 pt-4">
+      <div className="relative z-20 flex shrink-0 justify-between border-t border-slate-200 pt-4">
         <button
           type="button"
           onClick={() => setStep((s) => Math.max(1, s - 1))}
           disabled={step === 1}
-          className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+          className="shrink-0 rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
         >
           Back
         </button>
@@ -1023,7 +1023,7 @@ export function DiscoveryWizardClient({
               setMaxStepReached((m) => Math.max(m, next));
               if (next === 4) setValidationErrors([]);
             }}
-            className="bg-navy-600 hover:bg-navy-500 rounded px-4 py-2 text-sm font-medium text-white"
+            className="bg-navy-600 hover:bg-navy-500 relative z-10 shrink-0 cursor-pointer rounded px-4 py-2 text-sm font-medium text-white"
           >
             Next
           </button>

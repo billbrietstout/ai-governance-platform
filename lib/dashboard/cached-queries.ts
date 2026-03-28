@@ -120,6 +120,28 @@ export async function getLayerPostureSummary(orgId: string): Promise<LayerPostur
   });
 }
 
+export type LayerReadinessStatus = "ready" | "in-review" | "gap-found" | "not-started";
+
+export type LayerStatusMap = Partial<Record<CosaiLayerKey, LayerReadinessStatus>>;
+
+/**
+ * Per-layer readiness for sidebar chips — derived from `getLayerPostureSummary` only
+ * (no additional Prisma queries).
+ */
+export async function getLayerReadinessSummary(orgId: string): Promise<LayerStatusMap> {
+  const postures = await getLayerPostureSummary(orgId);
+  const result: LayerStatusMap = {};
+  for (const p of postures) {
+    const level = p.maturityLevel ?? 0;
+    const gaps = p.gapCount ?? 0;
+    if (level >= 3 && gaps === 0) result[p.layer] = "ready";
+    else if (level >= 2 && gaps > 0) result[p.layer] = "gap-found";
+    else if (level >= 1) result[p.layer] = "in-review";
+    else result[p.layer] = "not-started";
+  }
+  return result;
+}
+
 // ─── Compliance heatmap ───────────────────────────────────────────────────────
 
 export function getCachedHeatmap(orgId: string) {

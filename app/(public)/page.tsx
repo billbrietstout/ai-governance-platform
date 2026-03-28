@@ -57,8 +57,8 @@ export default async function PublicLandingPage() {
   return (
     <div className="relative">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20 sm:px-6 lg:py-28">
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="public-hero-section relative overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20 sm:px-6 lg:py-28">
+        <div className="public-hero-inner mx-auto max-w-4xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             Is your company prepared to deploy AI?
           </h1>
@@ -66,34 +66,25 @@ export default async function PublicLandingPage() {
             The only platform built on the CoSAI Shared Responsibility Framework — assess readiness,
             discover regulations, and build governance that satisfies auditors
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center space-y-4">
-            <div className="flex flex-wrap items-center justify-center [&>a]:m-2">
-              <Link
-                href="/discover/wizard"
-                className="bg-navy-600 hover:bg-navy-500 rounded-lg px-6 py-3 text-base font-medium text-white shadow-sm"
-              >
+          <div className="public-hero-cta-stack mt-10 flex flex-col items-center justify-center space-y-4">
+            <div className="public-hero-cta-row">
+              <Link href="/discover/wizard" className="public-btn-primary">
                 Assess my AI readiness →
               </Link>
-              <Link
-                href="#framework"
-                className="rounded-lg border border-slate-300 px-6 py-3 text-base font-medium text-slate-700 hover:bg-slate-50"
-              >
+              <Link href="#framework" className="public-btn-secondary">
                 See the framework
               </Link>
             </div>
-            <p className="text-sm text-slate-500">
+            <p className="public-signin-hint text-sm text-slate-500">
               Already have an account?{" "}
               <Link href="/login" className="text-navy-600 font-medium hover:underline">
                 Sign in
               </Link>
             </p>
           </div>
-          <div className="mt-12 flex flex-wrap items-center justify-center [&>span]:m-3">
+          <div className="public-trust-badge-row mt-12">
             {TRUST_BADGES.map((badge) => (
-              <span
-                key={badge}
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm"
-              >
+              <span key={badge} className="public-trust-badge">
                 {badge}
               </span>
             ))}
@@ -102,73 +93,57 @@ export default async function PublicLandingPage() {
       </section>
 
       {/* Persona cards */}
-      <section className="border-t border-slate-200 bg-white px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-5xl">
+      <section className="public-section-pad border-t border-slate-200 bg-white px-4 py-16 sm:px-6">
+        <div className="public-max-w-5xl mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">
             How are you approaching AI readiness?
           </h2>
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            <Link
-              href="/discover/wizard"
-              className="group hover:border-navy-300 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
-            >
+          <div className="public-persona-grid mt-10 grid gap-6 sm:grid-cols-3">
+            <Link href="/discover/wizard" className="public-persona-card group">
               <Search className="text-navy-600 h-10 w-10" />
-              <h3 className="mt-4 font-semibold text-slate-900">I&apos;m evaluating AI adoption</h3>
-              <p className="mt-2 text-sm text-slate-600">
+              <h3>I&apos;m evaluating AI adoption</h3>
+              <p>
                 Start the regulation discovery wizard — no login required for the first 3 steps.
                 Identify which regulations apply to your planned AI system.
               </p>
-              <span className="text-navy-600 mt-4 inline-block text-sm font-medium group-hover:underline">
-                Start free →
-              </span>
+              <span className="public-persona-more group-hover:underline">Start free →</span>
             </Link>
             <Link
               href="/login?callbackUrl=/onboarding&consultant=1"
-              className="group hover:border-navy-300 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+              className="public-persona-card group"
             >
               <Briefcase className="text-navy-600 h-10 w-10" />
-              <h3 className="mt-4 font-semibold text-slate-900">
-                I&apos;m a consultant or advisor
-              </h3>
-              <p className="mt-2 text-sm text-slate-600">
+              <h3>I&apos;m a consultant or advisor</h3>
+              <p>
                 Access the consultant workspace with multiple client workspaces and white-label
                 branding.
               </p>
-              <span className="text-navy-600 mt-4 inline-block text-sm font-medium group-hover:underline">
-                Consultant signup →
-              </span>
+              <span className="public-persona-more group-hover:underline">Consultant signup →</span>
             </Link>
             <Link
               href="/login?callbackUrl=/onboarding&vendor=1"
-              className="group hover:border-navy-300 rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+              className="public-persona-card group"
             >
               <Building2 className="text-navy-600 h-10 w-10" />
-              <h3 className="mt-4 font-semibold text-slate-900">
-                I&apos;m a vendor or platform provider
-              </h3>
-              <p className="mt-2 text-sm text-slate-600">
+              <h3>I&apos;m a vendor or platform provider</h3>
+              <p>
                 Partner inquiry — manage your AI assurance posture and compliance documentation.
               </p>
-              <span className="text-navy-600 mt-4 inline-block text-sm font-medium group-hover:underline">
-                Partner inquiry →
-              </span>
+              <span className="public-persona-more group-hover:underline">Partner inquiry →</span>
             </Link>
           </div>
         </div>
       </section>
 
       {/* What you get free */}
-      <section className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-5xl">
+      <section className="public-section-pad border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
+        <div className="public-max-w-5xl mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">What you get free</h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="public-feature-grid mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FREE_FEATURES.map(({ label, icon: Icon }) => (
-              <div
-                key={label}
-                className="flex items-start space-x-3 rounded-lg border border-slate-200 bg-white p-4"
-              >
+              <div key={label} className="public-feature-row">
                 <Icon className="h-5 w-5 shrink-0 text-emerald-600" />
-                <span className="text-sm font-medium text-slate-900">{label}</span>
+                <span>{label}</span>
               </div>
             ))}
           </div>
@@ -176,17 +151,14 @@ export default async function PublicLandingPage() {
       </section>
 
       {/* What's in Pro */}
-      <section className="border-t border-slate-200 bg-white px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-5xl">
+      <section className="public-section-pad border-t border-slate-200 bg-white px-4 py-16 sm:px-6">
+        <div className="public-max-w-5xl mx-auto max-w-5xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">What&apos;s in Pro</h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="public-feature-grid mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {PRO_FEATURES.map(({ label, icon: Icon }) => (
-              <div
-                key={label}
-                className="border-navy-200 bg-navy-50/30 flex items-start space-x-3 rounded-lg border p-4"
-              >
+              <div key={label} className="public-feature-row public-feature-pro">
                 <Icon className="text-navy-600 h-5 w-5 shrink-0" />
-                <span className="text-sm font-medium text-slate-900">{label}</span>
+                <span>{label}</span>
               </div>
             ))}
           </div>
@@ -194,8 +166,11 @@ export default async function PublicLandingPage() {
       </section>
 
       {/* CoSAI framework */}
-      <section id="framework" className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-3xl">
+      <section
+        id="framework"
+        className="public-section-pad border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6"
+      >
+        <div className="public-max-w-3xl mx-auto max-w-3xl">
           <h2 className="text-center text-2xl font-semibold text-slate-900">
             The CoSAI five-layer model
           </h2>
@@ -205,34 +180,34 @@ export default async function PublicLandingPage() {
           </p>
 
           {/* Vertical stack — each layer slightly narrower than the one above */}
-          <div className="mt-10 flex flex-col items-center gap-0">
+          <div className="public-framework-stack mt-10 flex w-full flex-col items-stretch gap-0">
             {COSAI_LAYERS.map((layer, i) => {
               const widthPct = 100 - i * 6; // 100%, 94%, 88%, 82%, 76%
+              const layerTone = `public-layer-l${i + 1}` as const;
               return (
-                <div key={layer.id} className="flex w-full flex-col items-center">
+                <div
+                  key={layer.id}
+                  className="public-framework-layer-row flex w-full flex-col items-center"
+                >
                   {i > 0 && (
                     // Connector arrow between layers
-                    <div className="flex h-5 w-px flex-col items-center justify-center">
+                    <div className="public-framework-connector flex h-5 w-px flex-col items-center justify-center">
                       <div className="h-4 w-px bg-slate-300" />
                       <div className="h-0 w-0 border-x-4 border-t-4 border-x-transparent border-t-slate-300" />
                     </div>
                   )}
                   <div
-                    className="rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm"
-                    style={{ width: `${widthPct}%` }}
+                    className={`public-layer-card ${layerTone} box-border w-full max-w-full px-5 py-4`}
+                    style={{ maxWidth: `${widthPct}%` }}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="public-framework-layer-card-inner flex items-center justify-between">
                       <div>
-                        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
-                          {layer.id}
-                        </span>
-                        <div className="mt-0.5 font-semibold text-slate-900">{layer.name}</div>
-                        <div className="mt-1 text-sm text-slate-500">{layer.desc}</div>
+                        <span className="public-layer-id">{layer.id}</span>
+                        <div className="public-layer-title">{layer.name}</div>
+                        <div className="public-layer-desc">{layer.desc}</div>
                       </div>
                       {i > 0 && (
-                        <div className="ml-4 shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500">
-                          governed by L{i}
-                        </div>
+                        <div className="public-layer-governed ml-4">governed by L{i}</div>
                       )}
                     </div>
                   </div>
@@ -241,12 +216,12 @@ export default async function PublicLandingPage() {
             })}
           </div>
 
-          <div className="mt-8 flex justify-center">
+          <div className="public-cta-row-wrap mt-8 flex justify-center">
             <a
               href="https://coalitionforsecureai.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-navy-600 inline-flex items-center space-x-2 text-sm font-medium hover:underline"
+              className="public-coai-footer-link text-navy-600 inline-flex items-center space-x-2 text-sm font-medium hover:underline"
             >
               <Shield className="h-4 w-4 shrink-0" />
               <span>Learn more about CoSAI</span>

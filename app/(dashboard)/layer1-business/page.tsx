@@ -1,5 +1,5 @@
 /**
- * Layer 1 – Business & Governance Layer. Strategy, compliance, and accountability oversight.
+ * Layer 1 – Business & accountability. Strategy, compliance, and oversight.
  */
 import Link from "next/link";
 import { getLayerMeta } from "@/lib/ui/layer-colors";
@@ -39,7 +39,7 @@ export default async function Layer1BusinessPage() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-              Business & Governance Layer
+              Business & accountability layer
             </h1>
             <span
               className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}

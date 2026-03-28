@@ -1,5 +1,5 @@
 /**
- * Executive Governance Report – lighter PDF for board/executive reporting.
+ * Executive readiness report – lighter PDF for board/executive reporting.
  */
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 

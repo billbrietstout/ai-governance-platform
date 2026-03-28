@@ -386,7 +386,7 @@ export function runDiscovery(inputs: DiscoveryInputs): RegulationDiscoveryResult
   if (autonomyL3Plus) {
     likelyApplicable.push({
       code: "AGENTIC_GOVERNANCE",
-      name: "Agentic AI Governance",
+      name: "Agentic AI oversight",
       jurisdiction: "INTERNATIONAL",
       applicability: "LIKELY_APPLICABLE",
       keyRequirements: "Human-in-the-loop, audit trails, kill switches, scope boundaries",

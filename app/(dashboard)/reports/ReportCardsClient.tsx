@@ -74,7 +74,7 @@ export function ReportCardsClient({ maturityLevel, scores, snapshots, gaps }: Pr
   const reports = [
     {
       id: "audit-package",
-      name: "AI Governance Audit Package",
+      name: "AI Readiness Audit Package",
       description: "Full audit-ready evidence package for regulators and auditors",
       icon: Package,
       exportUrl: "/api/v1/export/audit-package",

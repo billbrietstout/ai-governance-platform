@@ -42,12 +42,12 @@ export type LayerSecurityProfile = {
 export const LAYER_SECURITY_MAP: Record<CosaiLayer, LayerSecurityProfile> = {
   LAYER_1_BUSINESS: {
     layer: "LAYER_1_BUSINESS",
-    label: "Business & Governance",
-    focus: "Governance, policy, risk appetite, and accountability",
+    label: "Business & accountability",
+    focus: "Policy, risk appetite, and accountability",
     categories: [
       {
         id: "governance",
-        title: "Governance Structures",
+        title: "Accountability structures",
         description: "Roles, responsibilities, and oversight for AI security",
         standards: ["NIST_AI_RMF", "ISO_42001", "CSA_AICM"],
         keyControls: [

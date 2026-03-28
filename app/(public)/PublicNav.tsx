@@ -6,11 +6,17 @@ import { signOut } from "next-auth/react";
 export function PublicNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   if (isLoggedIn) {
     return (
-      <nav className="flex items-center space-x-4">
-        <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+      <nav className="public-site-nav">
+        <Link
+          href="/dashboard"
+          className="text-sm font-medium text-slate-600 hover:text-slate-900"
+        >
           Dashboard
         </Link>
-        <Link href="/discover" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+        <Link
+          href="/discover"
+          className="text-sm font-medium text-slate-600 hover:text-slate-900"
+        >
           Discovery
         </Link>
         <button
@@ -25,14 +31,14 @@ export function PublicNav({ isLoggedIn }: { isLoggedIn: boolean }) {
   }
 
   return (
-    <nav className="flex items-center space-x-4">
-      <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900">
+    <nav className="public-site-nav">
+      <Link
+        href="/login"
+        className="text-sm font-medium text-slate-600 hover:text-slate-900"
+      >
         Sign in
       </Link>
-      <Link
-        href="/register"
-        className="bg-navy-600 hover:bg-navy-500 rounded-lg px-4 py-2 text-sm font-medium text-white"
-      >
+      <Link href="/register" className="public-nav-cta">
         Start free
       </Link>
     </nav>

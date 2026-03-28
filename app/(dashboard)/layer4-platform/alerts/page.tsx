@@ -7,7 +7,7 @@ import { createServerCaller } from "@/lib/trpc/server-caller";
 const CATEGORY_LABELS: Record<string, string> = {
   SCAN_POLICY: "Scan Policy",
   CRITICAL_FINDINGS: "Critical Findings",
-  GOVERNANCE: "Governance",
+  GOVERNANCE: "Policy",
   SECURITY: "Security"
 };
 

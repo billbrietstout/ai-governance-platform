@@ -31,7 +31,7 @@ const TIERS = [
       "Compliance snapshots & trends",
       "Audit packages & evidence workbook",
       "ISO 42001 & EU AI Act tracking",
-      "Governance reports",
+      "Compliance reports",
       "Team collaboration (up to 25 users)"
     ],
     cta: "Upgrade to Pro",

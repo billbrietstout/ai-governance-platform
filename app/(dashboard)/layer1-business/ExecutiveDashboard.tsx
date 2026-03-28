@@ -230,7 +230,7 @@ function CEOView({ data: d }: { data: CEOData }) {
         <MetricCard label="Regulatory Exposure" value={d.regulatoryExposure} />
         <MetricCard label="AI Incidents (90d)" value={d.aiIncidents} />
         <MetricCard
-          label="Governance Coverage"
+          label="Policy coverage"
           value={`${d.governanceCoverage}%`}
           valueClassName={complianceTextClass(d.governanceCoverage)}
         />
@@ -285,7 +285,7 @@ function CFOView({
         </div>
         <MetricCard label="Audit Risk" value={d.auditRisk} sub="HIGH risk, no attestation" />
         <MetricCard
-          label="AI Spend Governance"
+          label="AI spend oversight"
           value={`${d.aiSpendGovernance}%`}
           sub="contracts aligned"
           valueClassName={complianceTextClass(d.aiSpendGovernance)}

@@ -6,7 +6,7 @@ const TERM_DEFINITIONS: Record<string, string> = {
   "EU AI Act":
     "EU regulation on AI systems. Classifies AI by risk (prohibited, high-risk, limited, minimal). High-risk systems require conformity assessments.",
   "NIST AI RMF":
-    "NIST AI Risk Management Framework. Voluntary governance framework for trustworthy AI systems.",
+    "NIST AI Risk Management Framework. Voluntary framework for trustworthy AI systems.",
   "CoSAI SRF":
     "CoSAI Security Reference Framework. Five-layer model: Business, Information, Application, Platform, Supply Chain.",
   "OWASP AIVSS":

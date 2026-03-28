@@ -79,7 +79,7 @@ export const AIVSS_FACTORS: AivssFactor[] = [
   {
     id: "AIVSS-A9",
     name: "Scoring methodology & review cadence",
-    description: "Governance for 0–10 scores, calibration, and reassessment.",
+    description: "Oversight for 0–10 scores, calibration, and reassessment.",
     cosaiLayer: "LAYER_1_BUSINESS"
   }
 ];

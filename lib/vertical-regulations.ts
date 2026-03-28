@@ -85,7 +85,7 @@ export const VERTICAL_REGULATIONS: Record<VerticalKey, VerticalProfile> = {
       },
       {
         code: "HIPAA_AI",
-        name: "HIPAA AI Data Governance",
+        name: "HIPAA AI data policy",
         jurisdiction: "US",
         mandatory: true,
         applies_to: ["MODEL", "AGENT", "APPLICATION"]

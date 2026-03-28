@@ -1,5 +1,5 @@
 /**
- * Security & Governance Overview – for CISO.
+ * Security & oversight overview – for CISO.
  */
 import Link from "next/link";
 import { Shield, AlertTriangle, Server, Building } from "lucide-react";
@@ -38,7 +38,7 @@ export default async function CISODashboardPage() {
 
   return (
     <PersonaDashboardShell
-      title="Security & Governance Overview"
+      title="Security & oversight overview"
       subtitle="Layer compliance, security posture, and priority actions."
     >
       <div className="flex flex-col gap-6">

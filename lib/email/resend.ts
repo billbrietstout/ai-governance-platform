@@ -23,7 +23,7 @@ function resendCredentials(): { apiKey: string | undefined; from: string } {
   const from =
     readRuntimeEnv("RESEND_FROM_EMAIL") ||
     env.RESEND_FROM_EMAIL?.trim() ||
-    "AI Governance Platform <aireadiness@vstout.com>";
+    "AI Readiness Platform <aireadiness@vstout.com>";
   return { apiKey, from };
 }
 

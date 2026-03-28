@@ -4,11 +4,14 @@
 export function ShieldLogo({ className = "h-8 w-8" }: { className?: string }) {
   return (
     <svg
+      width={32}
+      height={32}
       viewBox="0 0 32 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden
+      preserveAspectRatio="xMidYMid meet"
     >
       <defs>
         <linearGradient id="shieldGrad" x1="0" y1="0" x2="1" y2="1">

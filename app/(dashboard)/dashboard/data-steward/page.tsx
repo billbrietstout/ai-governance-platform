@@ -1,5 +1,5 @@
 /**
- * Data Governance Summary – for DATA_OWNER.
+ * Data policy summary – for DATA_OWNER.
  */
 import Link from "next/link";
 import { Database, Shield, GitBranch } from "lucide-react";
@@ -31,7 +31,7 @@ export default async function DataStewardDashboardPage() {
 
   return (
     <PersonaDashboardShell
-      title="Data Governance Summary"
+      title="Data policy summary"
       subtitle="Data exposure, lineage, and governance gaps."
     >
       <div className="flex flex-col gap-6">
@@ -88,7 +88,7 @@ export default async function DataStewardDashboardPage() {
 
         {/* Section 3 – Governance gaps */}
         <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 className={SECTION_HEADING_CLASS}>Governance gaps</h3>
+          <h3 className={SECTION_HEADING_CLASS}>Policy gaps</h3>
           <ul className="space-y-2">
             <li className="flex items-center justify-between rounded border border-slate-200 bg-slate-50 px-3 py-2">
               <span className="text-sm text-slate-700">Entities without data steward assigned</span>

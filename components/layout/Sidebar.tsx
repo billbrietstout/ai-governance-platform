@@ -49,15 +49,8 @@ import { getLayerMeta, type CosaiLayerKey } from "@/lib/ui/layer-colors";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { WorkspaceContextBanner } from "./WorkspaceContextBanner";
 import { GlobalSearch } from "@/app/(dashboard)/components/GlobalSearch";
-
-const SIDEBAR_TITLE_TO_LAYER: Record<string, CosaiLayerKey> = {
-  "LAYER 1: BUSINESS": "LAYER_1_BUSINESS",
-  "LAYER 2: INFORMATION": "LAYER_2_INFORMATION",
-  "LAYER 3: APPLICATION": "LAYER_3_APPLICATION",
-  "LAYER 4: PLATFORM": "LAYER_4_PLATFORM",
-  "LAYER 5: SUPPLY CHAIN": "LAYER_5_SUPPLY_CHAIN"
-};
 import { Tooltip } from "@/components/ui/Tooltip";
+import type { LayerStatusMap } from "@/lib/dashboard/cached-queries";
 import { getPersonaConfig, type PersonaId } from "@/lib/personas/config";
 import { getPersonaSidebarConfig } from "@/lib/personas/sidebar-config";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
@@ -86,11 +79,11 @@ const GATED_SECTIONS: GatedSection[] = [
     items: [
       { href: "/layer2-information/master-data", label: "Master Data", icon: Database },
       { href: "/layer2-information/lineage", label: "Data Lineage", icon: GitBranch },
-      { href: "/layer2-information/governance", label: "Data Governance", icon: FileText },
+      { href: "/layer2-information/governance", label: "Data policies", icon: FileText },
       { href: "/layer2-information/classification", label: "Data Classification", icon: Shield },
       {
         href: "/layer2-information/prompts",
-        label: "Prompt Governance",
+        label: "Prompt policies",
         icon: MessageSquareWarning
       },
       { href: "/layer2-information/data-catalog", label: "Data Catalog", icon: BookOpen },
@@ -164,13 +157,13 @@ const PERSONA_FIRST_ITEM: Record<
     label: "Compliance Status",
     icon: LayoutDashboard
   },
-  DATA_OWNER: { href: "/dashboard/data-steward", label: "Data Governance", icon: LayoutDashboard },
+  DATA_OWNER: { href: "/dashboard/data-steward", label: "Data policies", icon: LayoutDashboard },
   DEV_LEAD: { href: "/dashboard/developer", label: "Developer Checklist", icon: LayoutDashboard },
   PLATFORM_ENG: { href: "/dashboard/platform", label: "Platform & Ops", icon: LayoutDashboard },
   VENDOR_MGR: { href: "/dashboard/supply-chain", label: "Supply Chain", icon: LayoutDashboard }
 };
 
-function getGovernanceOverviewItems(
+function getReadinessOverviewItems(
   persona: string | null,
   consultantOrgId?: string | null
 ): NavItem[] {
@@ -243,6 +236,24 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
   }
 ];
 
+const SIDEBAR_TITLE_TO_LAYER: Record<string, CosaiLayerKey> = {
+  "LAYER 1: BUSINESS": "LAYER_1_BUSINESS",
+  "LAYER 2: INFORMATION": "LAYER_2_INFORMATION",
+  "LAYER 3: APPLICATION": "LAYER_3_APPLICATION",
+  "LAYER 4: PLATFORM": "LAYER_4_PLATFORM",
+  "LAYER 5: SUPPLY CHAIN": "LAYER_5_SUPPLY_CHAIN"
+};
+
+const MAIN_NAV_SECTIONS = ALL_SECTIONS.filter((s) => s.title !== "SETTINGS");
+const SETTINGS_SECTION = ALL_SECTIONS.find((s) => s.title === "SETTINGS")!;
+
+const STATUS_CHIP: Record<string, { label: string; className: string }> = {
+  ready: { label: "Ready", className: "bg-green-100 text-green-700" },
+  "in-review": { label: "In review", className: "bg-blue-100 text-blue-700" },
+  "gap-found": { label: "Gap found", className: "bg-rose-100 text-rose-700" },
+  "not-started": { label: "Not started", className: "bg-slate-100 text-slate-500" }
+};
+
 /** Sidebar items gated by tier (FREE cannot access) */
 const TIER_GATED_HREFS: Record<string, GatedFeature> = {
   "/compliance/snapshots": "compliance_snapshots",
@@ -272,7 +283,7 @@ function getSectionForPath(
   for (const section of ALL_SECTIONS) {
     const items =
       section.title === "READINESS OVERVIEW"
-        ? getGovernanceOverviewItems(persona, consultantOrgId)
+        ? getReadinessOverviewItems(persona, consultantOrgId)
         : section.items;
     for (const item of items) {
       if (pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))) {
@@ -329,6 +340,7 @@ export type SidebarProps = {
   sidebarMode?: "full" | "focused";
   onExpandToFull?: () => void;
   onResetToPersonaView?: () => void;
+  layerStatus?: LayerStatusMap;
 };
 
 export function Sidebar({
@@ -348,7 +360,8 @@ export function Sidebar({
   isSuperAdmin = false,
   sidebarMode = "full",
   onExpandToFull,
-  onResetToPersonaView
+  onResetToPersonaView,
+  layerStatus
 }: SidebarProps) {
   const pathname = usePathname();
   const currentSection = getSectionForPath(pathname, persona ?? null, consultantOrgId);
@@ -471,6 +484,143 @@ export function Sidebar({
     const flag = "flag" in s ? (s as GatedSection).flag : undefined;
     return !flag || (featureFlags[flag] ?? false);
   });
+
+  const renderSectionBlock = (section: (typeof ALL_SECTIONS)[number]) => {
+    const isExpanded = expandedSections.has(section.title);
+    const flag = "flag" in section ? section.flag : undefined;
+    const enabled = !flag || (featureFlags[flag] ?? false);
+    const isPrimary = isSectionPrimary(section.title);
+    const sectionOpacity = isPrimary ? "opacity-100" : "opacity-60";
+
+    const layerKey = SIDEBAR_TITLE_TO_LAYER[section.title];
+    const layerMeta = layerKey ? getLayerMeta(layerKey) : null;
+    const hasLayerStatus =
+      layerStatus !== undefined && layerStatus !== null && Object.keys(layerStatus).length > 0;
+    const statusKey =
+      layerKey && hasLayerStatus && layerStatus[layerKey] ? layerStatus[layerKey] : undefined;
+    const chip = statusKey ? STATUS_CHIP[statusKey] : undefined;
+
+    return (
+      <div key={section.title} className={`mb-1 ${sectionOpacity}`}>
+        <button
+          type="button"
+          onClick={() => toggleSection(section.title)}
+          className={`text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-300 focus-visible:ring-navy-400 flex w-full items-center px-3 py-2 text-left text-[11px] font-semibold tracking-widest uppercase focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none ${
+            collapsed ? "" : "justify-between gap-2"
+          }`}
+        >
+          {collapsed ? (
+            <span className="text-slatePro-500 mx-auto">•••</span>
+          ) : (
+            <>
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                {isExpanded ? (
+                  <ChevronDown className="h-3.5 w-3.5 shrink-0" />
+                ) : (
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0" />
+                )}
+                <div
+                  className={layerMeta ? "min-w-0 border-l-2 pl-2" : "min-w-0"}
+                  style={layerMeta ? { borderColor: layerMeta.accentHex } : undefined}
+                >
+                  <span className="truncate">{section.title}</span>
+                </div>
+              </div>
+              {chip && (
+                <span
+                  className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${chip.className}`}
+                >
+                  {chip.label}
+                </span>
+              )}
+            </>
+          )}
+        </button>
+        {(collapsed || isExpanded) &&
+          (section.title === "READINESS OVERVIEW"
+            ? getReadinessOverviewItems(persona ?? null, consultantOrgId)
+            : section.items
+          ).map((item) => {
+            const gatedFeature = TIER_GATED_HREFS[item.href];
+            const tierEnabled = !gatedFeature || canAccessFeature(tier, gatedFeature);
+            const active = enabled && tierEnabled && isActive(item.href, pathname);
+            const Icon = item.icon;
+            const isTierLocked = !!gatedFeature && !tierEnabled;
+            if (!enabled) {
+              const showLock = showFullOpacity;
+              return (
+                <div
+                  key={item.href}
+                  className={`flex items-center gap-2 px-3 py-2 text-sm ${
+                    collapsed ? "justify-center pl-2" : "pl-6"
+                  } text-slatePro-600 cursor-not-allowed`}
+                  title="Available via module"
+                >
+                  {showLock && <LockKeyhole className="h-4 w-4 shrink-0 text-amber-500/70" />}
+                  {!collapsed && (
+                    <>
+                      <span className="truncate">{item.label}</span>
+                      {showLock && (
+                        <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
+                          Module
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            }
+            const hasSubtitle = !collapsed && item.subtitle && item.changeHref;
+            return (
+              <div key={item.href} className={hasSubtitle ? "flex flex-col gap-0.5" : ""}>
+                <Link
+                  href={item.href}
+                  title={collapsed ? item.label : isTierLocked ? "Upgrade to Pro" : undefined}
+                  className={`flex items-center gap-2 px-3 py-2 text-sm ${
+                    collapsed ? "justify-center pl-2" : "pl-6"
+                  } focus-visible:ring-navy-400 focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none ${
+                    active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
+                  }`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {isTierLocked ? (
+                    <Lock className="h-4 w-4 shrink-0 text-amber-500/70" />
+                  ) : (
+                    <Icon className="h-4 w-4 shrink-0" />
+                  )}
+                  {!collapsed && (
+                    <>
+                      <span className="truncate">{item.label}</span>
+                      {item.href === "/consultant" && consultantWorkspaces.length > 0 && (
+                        <span className="bg-navy-500/30 text-navy-300 shrink-0 rounded px-1.5 py-0.5 text-[10px]">
+                          {consultantWorkspaces.length}
+                        </span>
+                      )}
+                      {isTierLocked && (
+                        <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
+                          Pro
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Link>
+                {hasSubtitle && (
+                  <div className="text-slatePro-500 px-3 pl-6 text-[10px]">
+                    {item.subtitle}
+                    <Link
+                      href={item.changeHref!}
+                      className="text-navy-400 hover:text-navy-300 hover:underline"
+                    >
+                      Change →
+                    </Link>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+      </div>
+    );
+  };
 
   if (isFocused) {
     return (
@@ -615,7 +765,7 @@ export function Sidebar({
 
   return (
     <aside
-      className={`border-slatePro-800 bg-slatePro-800 relative flex shrink-0 flex-col overflow-hidden border-r transition-[width] ${
+      className={`border-slatePro-800 bg-slatePro-800 relative flex min-h-0 shrink-0 flex-col overflow-hidden border-r transition-[width] ${
         collapsed ? "w-16" : "w-64"
       }`}
       role="navigation"
@@ -633,7 +783,7 @@ export function Sidebar({
               <span className="text-slatePro-100 block truncate text-sm font-semibold">
                 AI Readiness
               </span>
-              <span className="text-slatePro-500 block text-[10px]">Governance Platform</span>
+              <span className="text-slatePro-500 block text-[10px]">Readiness Platform</span>
             </div>
           </Link>
         )}
@@ -687,128 +837,21 @@ export function Sidebar({
         </div>
       )}
 
-      {/* Scrollable nav */}
-      <div className="flex-1 overflow-y-auto py-2">
-        {ALL_SECTIONS.map((section) => {
-          const isExpanded = expandedSections.has(section.title);
-          const flag = "flag" in section ? section.flag : undefined;
-          const enabled = !flag || (featureFlags[flag] ?? false);
-          const isPrimary = isSectionPrimary(section.title);
-          const sectionOpacity = isPrimary ? "opacity-100" : "opacity-60";
-
-          const layerKey = SIDEBAR_TITLE_TO_LAYER[section.title];
-          const layerMeta = layerKey ? getLayerMeta(layerKey) : null;
-
-          return (
-            <div key={section.title} className={`mb-1 ${sectionOpacity}`}>
-              <button
-                type="button"
-                onClick={() => toggleSection(section.title)}
-                className="text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-300 focus-visible:ring-navy-400 flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] font-semibold tracking-widest uppercase focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none"
-              >
-                {collapsed ? (
-                  <span className="text-slatePro-500 mx-auto">•••</span>
-                ) : (
-                  <>
-                    {isExpanded ? (
-                      <ChevronDown className="h-3.5 w-3.5 shrink-0" />
-                    ) : (
-                      <ChevronRight className="h-3.5 w-3.5 shrink-0" />
-                    )}
-                    <div
-                      className={layerMeta ? "min-w-0 border-l-2 pl-2" : "min-w-0"}
-                      style={layerMeta ? { borderColor: layerMeta.accentHex } : undefined}
-                    >
-                      <span className="truncate">{section.title}</span>
-                    </div>
-                  </>
-                )}
-              </button>
-              {(collapsed || isExpanded) &&
-                (section.title === "READINESS OVERVIEW"
-                  ? getGovernanceOverviewItems(persona ?? null, consultantOrgId)
-                  : section.items
-                ).map((item) => {
-                  const gatedFeature = TIER_GATED_HREFS[item.href];
-                  const tierEnabled = !gatedFeature || canAccessFeature(tier, gatedFeature);
-                  const active = enabled && tierEnabled && isActive(item.href, pathname);
-                  const Icon = item.icon;
-                  const isTierLocked = !!gatedFeature && !tierEnabled;
-                  if (!enabled) {
-                    const showLock = showFullOpacity;
-                    return (
-                      <div
-                        key={item.href}
-                        className={`flex items-center gap-2 px-3 py-2 text-sm ${
-                          collapsed ? "justify-center pl-2" : "pl-6"
-                        } text-slatePro-600 cursor-not-allowed`}
-                        title="Available via module"
-                      >
-                        {showLock && <LockKeyhole className="h-4 w-4 shrink-0 text-amber-500/70" />}
-                        {!collapsed && (
-                          <>
-                            <span className="truncate">{item.label}</span>
-                            {showLock && (
-                              <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
-                                Module
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    );
-                  }
-                  const hasSubtitle = !collapsed && item.subtitle && item.changeHref;
-                  return (
-                    <div key={item.href} className={hasSubtitle ? "flex flex-col gap-0.5" : ""}>
-                      <Link
-                        href={item.href}
-                        title={collapsed ? item.label : isTierLocked ? "Upgrade to Pro" : undefined}
-                        className={`flex items-center gap-2 px-3 py-2 text-sm ${
-                          collapsed ? "justify-center pl-2" : "pl-6"
-                        } focus-visible:ring-navy-400 focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none ${
-                          active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
-                        }`}
-                        aria-current={active ? "page" : undefined}
-                      >
-                        {isTierLocked ? (
-                          <Lock className="h-4 w-4 shrink-0 text-amber-500/70" />
-                        ) : (
-                          <Icon className="h-4 w-4 shrink-0" />
-                        )}
-                        {!collapsed && (
-                          <>
-                            <span className="truncate">{item.label}</span>
-                            {item.href === "/consultant" && consultantWorkspaces.length > 0 && (
-                              <span className="bg-navy-500/30 text-navy-300 shrink-0 rounded px-1.5 py-0.5 text-[10px]">
-                                {consultantWorkspaces.length}
-                              </span>
-                            )}
-                            {isTierLocked && (
-                              <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
-                                Pro
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Link>
-                      {hasSubtitle && (
-                        <div className="text-slatePro-500 px-3 pl-6 text-[10px]">
-                          {item.subtitle}
-                          <Link
-                            href={item.changeHref!}
-                            className="text-navy-400 hover:text-navy-300 hover:underline"
-                          >
-                            Change →
-                          </Link>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+      {/* Main nav (scroll) + Account / Settings footer */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="min-h-0 flex-1 overflow-y-auto py-2">
+          {MAIN_NAV_SECTIONS.map((section) => renderSectionBlock(section))}
+        </div>
+        <div className="border-slatePro-800 shrink-0 border-t py-2">
+          {!collapsed && (
+            <div className="px-3 pb-1 pt-2">
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-slatePro-600">
+                Account
+              </span>
             </div>
-          );
-        })}
+          )}
+          {renderSectionBlock(SETTINGS_SECTION)}
+        </div>
       </div>
 
       {/* Tier indicator */}

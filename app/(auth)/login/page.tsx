@@ -15,7 +15,7 @@ function LoginForm() {
         <h1 className="text-slatePro-50 text-2xl font-semibold tracking-tight">
           AI Readiness Platform
         </h1>
-        <p className="text-slatePro-400 mt-1 text-sm">Readiness & Governance</p>
+        <p className="text-slatePro-400 mt-1 text-sm">Readiness & oversight</p>
 
         <button
           type="button"

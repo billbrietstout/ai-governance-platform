@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @source inline("bg-red-500 bg-amber-500 bg-blue-500 bg-emerald-500");
+/* Ensure all app/components are scanned for class names (Tailwind v4). */
+@source "./**/*.{js,ts,jsx,tsx,mdx}";
+@source "../components/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../lib/**/*.{js,ts,jsx,tsx,mdx}";
 
 :root {
   --color-text-primary: #0f172a;
@@ -9,37 +13,33 @@
   --color-border-secondary: #cbd5e1;
   --border-radius-md: 6px;
 
-  /* CoSAI layer color tokens */
-  --layer-1-hue: 168; /* teal */
-  --layer-2-hue: 38; /* amber */
-  --layer-3-hue: 220; /* navy (brand) */
-  --layer-4-hue: 215; /* steel blue */
-  --layer-5-hue: 142; /* sage green */
+  /* CoSAI layer color tokens
+     Palette: green (L1) / blue (L2) / orange (L3) / pink (L4) / purple (L5)
+     Matches the CoSAI-aligned palette from prior design review */
+  --layer-1-bg: hsl(142 50% 94%);
+  --layer-1-border: hsl(142 45% 70%);
+  --layer-1-text: hsl(142 55% 24%);
+  --layer-1-accent: hsl(142 55% 36%);
 
-  --layer-1-bg: hsl(168 40% 94%);
-  --layer-1-border: hsl(168 35% 72%);
-  --layer-1-text: hsl(168 55% 28%);
-  --layer-1-accent: hsl(168 50% 38%);
+  --layer-2-bg: hsl(217 70% 95%);
+  --layer-2-border: hsl(217 55% 70%);
+  --layer-2-text: hsl(217 65% 26%);
+  --layer-2-accent: hsl(217 80% 46%);
 
-  --layer-2-bg: hsl(38 80% 94%);
-  --layer-2-border: hsl(38 60% 72%);
-  --layer-2-text: hsl(38 70% 30%);
-  --layer-2-accent: hsl(38 65% 44%);
+  --layer-3-bg: hsl(21 80% 95%);
+  --layer-3-border: hsl(21 60% 70%);
+  --layer-3-text: hsl(21 70% 26%);
+  --layer-3-accent: hsl(21 85% 44%);
 
-  --layer-3-bg: hsl(220 60% 95%);
-  --layer-3-border: hsl(220 50% 72%);
-  --layer-3-text: hsl(220 60% 28%);
-  --layer-3-accent: hsl(220 75% 46%);
+  --layer-4-bg: hsl(330 55% 95%);
+  --layer-4-border: hsl(330 45% 70%);
+  --layer-4-text: hsl(330 55% 26%);
+  --layer-4-accent: hsl(330 65% 44%);
 
-  --layer-4-bg: hsl(215 25% 93%);
-  --layer-4-border: hsl(215 20% 68%);
-  --layer-4-text: hsl(215 30% 32%);
-  --layer-4-accent: hsl(215 35% 46%);
-
-  --layer-5-bg: hsl(142 35% 93%);
-  --layer-5-border: hsl(142 30% 65%);
-  --layer-5-text: hsl(142 45% 26%);
-  --layer-5-accent: hsl(142 42% 38%);
+  --layer-5-bg: hsl(270 55% 95%);
+  --layer-5-border: hsl(270 45% 70%);
+  --layer-5-text: hsl(270 55% 26%);
+  --layer-5-accent: hsl(270 60% 46%);
 }
 
 @theme {
@@ -78,6 +78,104 @@ body {
   @apply font-sans antialiased;
   background-color: #ffffff;
   color: #0f172a;
+}
+
+/* Public marketing routes — plain CSS layout/spacing for WebKit (Safari).
+   Avoids reliance on Tailwind output order; solid header avoids backdrop-filter bugs. */
+.public-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #ffffff;
+}
+
+.public-site-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 3.5rem;
+  max-width: 72rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .public-site-header-bar {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+.public-site-logo-link {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.public-site-logo-link > span {
+  margin-left: 0.5rem;
+}
+
+.public-site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  /* gap shorthand — more reliable in WebKit than separate row/column-gap in some builds */
+  gap: 0.25rem 1rem;
+}
+
+.public-site-nav a,
+.public-site-nav button {
+  flex-shrink: 0;
+}
+
+/* Flex column shell: Safari needs min-height: 0 on flex children or main can size wrong */
+.public-site-main {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari — slightly larger tap spacing between nav CTAs */
+  .public-site-nav {
+    gap: 0.35rem 1rem;
+  }
+
+  .public-hero-cta-row {
+    gap: 0.75rem;
+  }
+
+  .public-trust-badge-row {
+    gap: 0.75rem;
+  }
+
+  /* Avoid iOS font scaling that breaks marketing layouts */
+  .public-site-header,
+  .public-site-main {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+.public-hero-cta-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.public-trust-badge-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
 }
 
 /* Numeric / metric values — DM Mono + tabular figures */
@@ -167,4 +265,191 @@ body {
 /* Step 4 helper paragraph */
 .discovery-wizard p.text-slate-600 {
   color: var(--color-text-secondary) !important;
+}
+
+/*
+ * Public marketing — layout fallbacks (same file as Tailwind so WebKit always loads them).
+ * When utility classes fail, !important keeps grid/flex from collapsing to stacked blocks.
+ */
+.public-site-shell {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.public-site-logo-link svg {
+  width: 2rem;
+  height: 2rem;
+  max-width: 2rem;
+  max-height: 2rem;
+  flex-shrink: 0;
+}
+
+.public-hero-section {
+  padding: 5rem 1rem;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+}
+
+@media (min-width: 640px) {
+  .public-hero-section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .public-hero-section {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+.public-hero-inner {
+  max-width: 56rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.public-hero-cta-stack {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.public-section-pad {
+  padding: 4rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .public-section-pad {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+.public-max-w-5xl {
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.public-max-w-5xl > h2,
+.public-max-w-3xl > h2 {
+  text-align: center;
+}
+
+.public-max-w-3xl {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.public-max-w-3xl > p {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 36rem;
+}
+
+.public-persona-grid {
+  display: grid !important;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .public-persona-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.public-feature-grid {
+  display: grid !important;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .public-feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .public-feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+.public-feature-row {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.public-framework-stack {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.public-framework-layer-row {
+  display: flex !important;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.public-framework-layer-card-inner {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.public-framework-connector {
+  display: flex !important;
+  height: 1.25rem;
+  width: 1px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.public-cta-row-wrap {
+  display: flex !important;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.public-coai-footer-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.public-footer-bar {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .public-footer-bar {
+    flex-direction: row !important;
+    gap: 0;
+  }
+}
+
+.public-footer-link-row {
+  display: flex !important;
 }

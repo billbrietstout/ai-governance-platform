@@ -7,10 +7,10 @@ export function FrameworkWelcomeBanner() {
   return (
     <div className="mb-6 rounded-xl border border-navy-200 bg-navy-50 p-6">
       <h2 className="text-lg font-semibold text-navy-900">
-        Welcome to your AI governance platform
+        Welcome to your AI readiness platform
       </h2>
       <p className="mt-1 max-w-2xl text-sm text-navy-700">
-        Your governance posture is organized across five CoSAI layers. Accountability flows from
+        Your readiness posture is organized across five CoSAI layers. Accountability flows from
         business strategy downward — set your Layer 1 policy first.
       </p>
 

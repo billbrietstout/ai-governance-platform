@@ -37,7 +37,7 @@ const LAYER_LABELS: Record<CosaiLayer, string> = {
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Governance: "bg-slate-100 text-slate-700",
+  Oversight: "bg-slate-100 text-slate-700",
   Technical: "bg-blue-100 text-blue-700",
   Operational: "bg-amber-100 text-amber-700",
   Assessment: "bg-purple-100 text-purple-700",

@@ -29,7 +29,7 @@ export function Tooltip({ content, children, side = "top" }: Props) {
       {children}
       {visible && (
         <div
-          className={`absolute z-50 ${position} border-slatePro-700 bg-slatePro-900 text-slatePro-200 max-w-xs rounded-lg border px-3 py-2 text-xs shadow-xl`}
+          className={`pointer-events-none absolute z-50 ${position} border-slatePro-700 bg-slatePro-900 text-slatePro-200 max-w-xs rounded-lg border px-3 py-2 text-xs shadow-xl`}
         >
           {content}
         </div>

@@ -30,7 +30,7 @@ export default async function ReportsPage() {
       </div>
 
       <UpgradeGate
-        feature="Governance Reports"
+        feature="Compliance reports"
         requiredTier="PRO"
         description="Generate executive and board-ready governance reports across all framework layers"
         unlockedBy={[

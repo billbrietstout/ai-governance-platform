@@ -259,7 +259,7 @@ export function AIRiskBriefingClient({ data }: Props) {
           <div className="mt-4 space-y-3 border-t border-slate-200 pt-4 text-sm text-slate-600">
             <p>Current: {maturityLabel}</p>
             <p>
-              Target: Governance implemented — controls and accountability assigned — by August 2026
+              Target: Controls implemented — accountability assigned — by August 2026
             </p>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((i) => (

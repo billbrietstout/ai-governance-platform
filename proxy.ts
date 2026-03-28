@@ -105,7 +105,10 @@ const proxy = withAuth(
     }
 
     const nonce = generateNonce();
-    const cspHeader = [
+    /* upgrade-insecure-requests forces http→https for subresources. Next.js `next dev` serves HTTP
+     * only; Safari then loads https://localhost:3000/_next/... and TLS fails (chunks/scripts break).
+     * Keep this for production HTTPS only. */
+    const cspDirectives = [
       "default-src 'self'",
       `script-src 'self' 'nonce-${nonce}'`,
       `style-src 'self' 'nonce-${nonce}'`,
@@ -115,11 +118,21 @@ const proxy = withAuth(
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "object-src 'none'",
-      "upgrade-insecure-requests"
-    ].join("; ");
+      "object-src 'none'"
+    ];
+    if (isProd) {
+      cspDirectives.push("upgrade-insecure-requests");
+    }
+    const cspHeader = cspDirectives.join("; ");
 
-    const response = NextResponse.next();
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-nonce", nonce);
+
+    const response = NextResponse.next({
+      request: {
+        headers: requestHeaders
+      }
+    });
     response.headers.set("Content-Security-Policy", cspHeader);
     response.headers.set("x-nonce", nonce);
 

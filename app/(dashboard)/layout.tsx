@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 import { PersonaModal } from "@/components/PersonaModal";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { prisma } from "@/lib/prisma";
+import { getLayerReadinessSummary } from "@/lib/dashboard/cached-queries";
 
 const MODULE_FLAGS = [
   "MODULE_SHADOW_AI",
@@ -56,6 +57,7 @@ export default async function DashboardLayout({
   let consultantOrgName: string | null = null;
   let consultantData: string | null = null;
   let isSuperAdmin = false;
+  let layerStatus: Awaited<ReturnType<typeof getLayerReadinessSummary>> | undefined;
 
   if (effectiveOrgId) {
     const [org, flags, fws, dbUser, assetCnt, consultantTier] = await Promise.all([
@@ -124,6 +126,8 @@ export default async function DashboardLayout({
       consultantWorkspaces = workspaces;
       consultantOrgName = consultantOrg?.name ?? null;
     }
+
+    layerStatus = await getLayerReadinessSummary(effectiveOrgId).catch(() => undefined);
   }
 
   if (consultantOrgId && effectiveOrgId === consultantOrgId && !onboardingComplete) {
@@ -149,6 +153,7 @@ export default async function DashboardLayout({
         activeWorkspaceOrgId={activeWorkspaceOrgId}
         activeWorkspaceName={activeWorkspaceName}
         isSuperAdmin={isSuperAdmin}
+        layerStatus={layerStatus}
       >
         {children}
       </DashboardShell>

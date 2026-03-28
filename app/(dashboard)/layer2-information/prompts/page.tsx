@@ -1,5 +1,5 @@
 /**
- * Prompt Governance – Layer 2: Information.
+ * Prompt policies – Layer 2: Information.
  */
 import Link from "next/link";
 import { FileText, Shield, AlertTriangle, CheckCircle } from "lucide-react";
@@ -58,7 +58,7 @@ export default async function PromptGovernancePage() {
         <Link href="/layer2-information" className="text-navy-400 text-sm hover:underline">
           ← Layer 2: Information
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Prompt Governance</h1>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Prompt policies</h1>
         <p className="mt-1 text-gray-600">Registry of prompt templates and governance policies.</p>
       </div>
 

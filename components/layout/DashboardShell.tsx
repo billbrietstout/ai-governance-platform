@@ -14,6 +14,7 @@ import { SessionExpiryWarning } from "@/components/auth/SessionExpiryWarning";
 import { LayerContextStrip } from "./LayerContextStrip";
 import { getPersonaDashboardPath } from "@/lib/personas/dashboard-routes";
 import { getPersonaConfig } from "@/lib/personas/config";
+import type { LayerStatusMap } from "@/lib/dashboard/cached-queries";
 
 const STORAGE_KEY = "sidebar-mode";
 
@@ -34,6 +35,7 @@ type DashboardShellProps = {
   activeWorkspaceOrgId?: string | null;
   activeWorkspaceName?: string | null;
   isSuperAdmin?: boolean;
+  layerStatus?: LayerStatusMap;
   children: React.ReactNode;
 };
 
@@ -63,6 +65,7 @@ export function DashboardShell({
   activeWorkspaceOrgId = null,
   activeWorkspaceName = null,
   isSuperAdmin = false,
+  layerStatus,
   children
 }: DashboardShellProps) {
   const pathname = usePathname();
@@ -161,6 +164,7 @@ export function DashboardShell({
         onExpandToFull={expandToFull}
         onResetToPersonaView={persona ? resetToPersonaView : undefined}
         isSuperAdmin={isSuperAdmin}
+        layerStatus={layerStatus}
       />
       <div className="flex min-h-dvh min-w-0 flex-1 flex-col">
         <TopBar userEmail={userEmail} orgName={orgName} persona={persona} />

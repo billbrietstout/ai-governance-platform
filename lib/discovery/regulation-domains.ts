@@ -4,7 +4,7 @@
  */
 
 export const CONTROL_DOMAINS = [
-  "Data Governance",
+  "Data policy",
   "Risk Management",
   "Human Oversight",
   "Documentation",
@@ -20,7 +20,7 @@ export type ControlDomain = (typeof CONTROL_DOMAINS)[number];
 const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
   // EU AI Act variants
   EU_AI_ACT: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -30,7 +30,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Bias & Fairness"
   ],
   EU_AI_ACT_ANNEX_III: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -42,7 +42,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
   EU_AI_ACT_LIMITED: ["Documentation", "Human Oversight", "Bias & Fairness"],
   EU_AI_ACT_MINIMAL: ["Documentation"],
   EU_AI_ACT_CREDIT: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -52,7 +52,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Bias & Fairness"
   ],
   EU_AI_ACT_MEDICAL: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -62,7 +62,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Bias & Fairness"
   ],
   EU_AI_ACT_INSURANCE: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -72,7 +72,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Bias & Fairness"
   ],
   EU_AI_ACT_PUBLIC: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -82,7 +82,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Bias & Fairness"
   ],
   EU_AI_ACT_CRITICAL: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -92,7 +92,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
     "Bias & Fairness"
   ],
   EU_AI_ACT_EMPLOYMENT: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Human Oversight",
     "Documentation",
@@ -104,7 +104,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
 
   // ISO 42001
   ISO_42001: [
-    "Data Governance",
+    "Data policy",
     "Risk Management",
     "Documentation",
     "Monitoring",
@@ -152,13 +152,13 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
   AGENTIC_GOVERNANCE: ["Human Oversight", "Documentation", "Monitoring", "Incident Response"],
 
   // US financial
-  SR_11_7: ["Data Governance", "Documentation"],
+  SR_11_7: ["Data policy", "Documentation"],
   SEC_AI: ["Documentation", "Risk Management"],
   DORA: ["Risk Management", "Incident Response", "Documentation", "Monitoring"],
 
   // US healthcare
   FDA_SAMD: ["Documentation", "Risk Management", "Human Oversight", "Monitoring"],
-  HIPAA_AI: ["Data Governance", "Documentation", "Incident Response"],
+  HIPAA_AI: ["Data policy", "Documentation", "Incident Response"],
   EMA_AI: ["Documentation", "Risk Management"],
 
   // US state/local
@@ -174,7 +174,7 @@ const REGULATION_TO_DOMAINS: Record<string, ControlDomain[]> = {
   NERC_CIP: ["Risk Management", "Incident Response", "Monitoring"],
 
   // GDPR
-  GDPR_AI: ["Data Governance", "Documentation", "Incident Response"],
+  GDPR_AI: ["Data policy", "Documentation", "Incident Response"],
 
   // Other
   VULNERABLE_POP: ["Human Oversight", "Documentation", "Monitoring"]

@@ -16,34 +16,34 @@ export default async function PublicLayout({
   const isLoggedIn = !!session?.user;
 
   return (
-    <div className="flex min-h-screen min-h-dvh flex-col">
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href={isLoggedIn ? "/dashboard" : "/"} className="flex items-center space-x-2">
-            <ShieldLogo className="h-8 w-8" />
+    <div className="public-site-shell flex min-h-dvh min-h-screen flex-col">
+      <header className="public-site-header">
+        <div className="public-site-header-bar">
+          <Link href={isLoggedIn ? "/dashboard" : "/"} className="public-site-logo-link">
+            <ShieldLogo className="h-8 w-8 shrink-0" />
             <span className="font-semibold text-slate-900">AI Readiness</span>
           </Link>
           <PublicNav isLoggedIn={isLoggedIn} />
         </div>
       </header>
 
-      <main className="flex-1">{children}</main>
+      <main className="public-site-main flex-1">{children}</main>
 
-      <footer className="border-t border-slate-200 bg-slate-50 py-8">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
+      <footer className="public-site-footer border-t border-slate-200 bg-slate-50 py-8">
+        <div className="public-footer-inner">
+          <div className="public-footer-bar flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <p className="text-sm text-slate-600">
               Built on the{" "}
               <a
                 href="https://coalitionforsecureai.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-navy-600 font-medium hover:underline"
+                className="public-footer-navy font-medium hover:underline"
               >
                 CoSAI Shared Responsibility Framework
               </a>
             </p>
-            <div className="flex space-x-6 text-sm text-slate-600">
+            <div className="public-footer-link-row flex text-sm text-slate-600">
               <Link href="/privacy" className="hover:text-slate-900">
                 Privacy Policy
               </Link>

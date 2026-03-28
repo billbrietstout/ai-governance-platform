@@ -1,5 +1,5 @@
 /**
- * AI Governance Audit Package – PDF document for @react-pdf/renderer.
+ * AI Readiness Audit Package – PDF document for @react-pdf/renderer.
  */
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
@@ -230,7 +230,7 @@ export function AuditPackagePDF({
       {/* Page 1 – Cover */}
       <Page size="A4" style={styles.page}>
         <Text style={styles.coverTitle}>AI Readiness Platform</Text>
-        <Text style={styles.coverSubtitle}>AI Governance Audit Package</Text>
+        <Text style={styles.coverSubtitle}>AI Readiness Audit Package</Text>
         <Text style={styles.coverOrg}>{org.name}</Text>
         <Text style={styles.coverDate}>Generated {dateStr}</Text>
         <Text style={styles.coverNote}>
