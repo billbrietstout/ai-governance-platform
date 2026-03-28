@@ -2,6 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import {
+  AI_ACCESS_POLICY_LABELS,
+  DATA_CLASSIFICATION_LABELS,
+  MASTER_DATA_ENTITY_TYPE_LABELS
+} from "@/lib/ui/select-labels";
 
 const ENTITY_TYPES = [
   "ALL",
@@ -44,7 +49,7 @@ export function MasterDataFilters() {
       >
         {ENTITY_TYPES.map((t) => (
           <option key={t} value={t}>
-            {t}
+            {MASTER_DATA_ENTITY_TYPE_LABELS[t] ?? t}
           </option>
         ))}
       </select>
@@ -56,7 +61,7 @@ export function MasterDataFilters() {
       >
         {CLASSIFICATIONS.map((c) => (
           <option key={c} value={c}>
-            {c}
+            {DATA_CLASSIFICATION_LABELS[c] ?? c}
           </option>
         ))}
       </select>
@@ -68,7 +73,7 @@ export function MasterDataFilters() {
       >
         {AI_ACCESS.map((a) => (
           <option key={a} value={a}>
-            {a}
+            {AI_ACCESS_POLICY_LABELS[a] ?? a}
           </option>
         ))}
       </select>

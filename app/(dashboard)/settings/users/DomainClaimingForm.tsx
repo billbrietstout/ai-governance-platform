@@ -83,8 +83,8 @@ export function DomainClaimingForm({ claimedDomain, autoJoinRole }: DomainClaimi
           defaultValue={autoJoinRole}
           className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-1 focus:outline-none"
         >
-          <option value="VIEWER">VIEWER</option>
-          <option value="ANALYST">ANALYST</option>
+          <option value="VIEWER">Viewer</option>
+          <option value="ANALYST">Analyst</option>
         </select>
         <p className="mt-1 text-xs text-gray-500">ADMIN and CAIO cannot be auto-assigned.</p>
       </div>

@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { orgRoleLabel } from "@/lib/ui/select-labels";
 
 const ROLES = ["ADMIN", "CAIO", "ANALYST", "MEMBER", "VIEWER", "AUDITOR"] as const;
 
@@ -80,11 +81,12 @@ export function InviteForm() {
         <select
           id="invite-role"
           name="role"
+          defaultValue="MEMBER"
           className="focus:border-navy-500 focus:ring-navy-500 mt-1 w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:ring-1 focus:outline-none"
         >
           {ROLES.map((r) => (
             <option key={r} value={r}>
-              {r}
+              {orgRoleLabel(r)}
             </option>
           ))}
         </select>

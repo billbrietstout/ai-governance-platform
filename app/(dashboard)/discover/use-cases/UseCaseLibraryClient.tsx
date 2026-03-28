@@ -8,6 +8,7 @@ import {
   useCaseMatchesVerticalFilter,
   type VerticalFilterSelectValue
 } from "@/lib/use-cases/org-vertical-filter";
+import { ASSET_TYPE_SHORT_LABELS, EU_RISK_LEVEL_SHORT_LABELS } from "@/lib/ui/select-labels";
 
 const VERTICAL_COLORS: Record<string, string> = {
   MANUFACTURING: "bg-slate-100 text-slate-700",
@@ -104,10 +105,10 @@ export function UseCaseLibraryClient({ useCases, verticalFilterOptions }: Props)
               className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
             >
               <option value="ALL">All Risk Levels</option>
-              <option value="MINIMAL">MINIMAL</option>
-              <option value="LIMITED">LIMITED</option>
-              <option value="HIGH">HIGH</option>
-              <option value="UNACCEPTABLE">UNACCEPTABLE</option>
+              <option value="MINIMAL">{EU_RISK_LEVEL_SHORT_LABELS.MINIMAL}</option>
+              <option value="LIMITED">{EU_RISK_LEVEL_SHORT_LABELS.LIMITED}</option>
+              <option value="HIGH">{EU_RISK_LEVEL_SHORT_LABELS.HIGH}</option>
+              <option value="UNACCEPTABLE">{EU_RISK_LEVEL_SHORT_LABELS.UNACCEPTABLE}</option>
             </select>
           </div>
           <div className="flex items-center gap-2">
@@ -121,10 +122,10 @@ export function UseCaseLibraryClient({ useCases, verticalFilterOptions }: Props)
               className="min-w-[140px] rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
             >
               <option value="ALL">All Types</option>
-              <option value="MODEL">MODEL</option>
-              <option value="AGENT">AGENT</option>
-              <option value="APPLICATION">APPLICATION</option>
-              <option value="PIPELINE">PIPELINE</option>
+              <option value="MODEL">{ASSET_TYPE_SHORT_LABELS.MODEL}</option>
+              <option value="AGENT">{ASSET_TYPE_SHORT_LABELS.AGENT}</option>
+              <option value="APPLICATION">{ASSET_TYPE_SHORT_LABELS.APPLICATION}</option>
+              <option value="PIPELINE">{ASSET_TYPE_SHORT_LABELS.PIPELINE}</option>
             </select>
           </div>
           <div className="flex items-center gap-2">

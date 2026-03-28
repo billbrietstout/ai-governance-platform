@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AI_ACCESS_POLICY_LABELS, DATA_CLASSIFICATION_LABELS } from "@/lib/ui/select-labels";
 import { updateMasterDataEntity } from "./actions";
 
 type Entity = {
@@ -67,10 +68,10 @@ export function MasterDataEditModal({ entity, users = [], onClose, onSaved }: Pr
               onChange={(e) => setClassification(e.target.value)}
               className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
             >
-              <option value="PUBLIC">PUBLIC</option>
-              <option value="INTERNAL">INTERNAL</option>
-              <option value="CONFIDENTIAL">CONFIDENTIAL</option>
-              <option value="RESTRICTED">RESTRICTED</option>
+              <option value="PUBLIC">{DATA_CLASSIFICATION_LABELS.PUBLIC}</option>
+              <option value="INTERNAL">{DATA_CLASSIFICATION_LABELS.INTERNAL}</option>
+              <option value="CONFIDENTIAL">{DATA_CLASSIFICATION_LABELS.CONFIDENTIAL}</option>
+              <option value="RESTRICTED">{DATA_CLASSIFICATION_LABELS.RESTRICTED}</option>
             </select>
           </div>
           <div>
@@ -80,10 +81,10 @@ export function MasterDataEditModal({ entity, users = [], onClose, onSaved }: Pr
               onChange={(e) => setAiAccessPolicy(e.target.value)}
               className="mt-1 w-full rounded border border-slate-200 px-3 py-2 text-sm"
             >
-              <option value="OPEN">OPEN</option>
-              <option value="GOVERNED">GOVERNED</option>
-              <option value="RESTRICTED">RESTRICTED</option>
-              <option value="PROHIBITED">PROHIBITED</option>
+              <option value="OPEN">{AI_ACCESS_POLICY_LABELS.OPEN}</option>
+              <option value="GOVERNED">{AI_ACCESS_POLICY_LABELS.GOVERNED}</option>
+              <option value="RESTRICTED">{AI_ACCESS_POLICY_LABELS.RESTRICTED}</option>
+              <option value="PROHIBITED">{AI_ACCESS_POLICY_LABELS.PROHIBITED}</option>
             </select>
           </div>
         </div>

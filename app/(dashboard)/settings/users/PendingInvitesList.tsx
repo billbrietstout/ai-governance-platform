@@ -15,7 +15,7 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
   const router = useRouter();
   const [revoking, setRevoking] = useState<string | null>(null);
 
-  async function revoke(id: string) {
+  async function removeInvite(id: string) {
     setRevoking(id);
     try {
       const res = await fetch(`/api/v1/invites?id=${encodeURIComponent(id)}`, { method: "DELETE" });
@@ -49,16 +49,20 @@ export function PendingInvitesList({ invites }: { invites: Invite[] }) {
               </span>
               {expired && <span className="ml-2 text-xs text-amber-600">(expired)</span>}
             </div>
-            {!expired && (
-              <button
-                type="button"
-                onClick={() => revoke(inv.id)}
-                disabled={revoking === inv.id}
-                className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
-              >
-                {revoking === inv.id ? "Revoking…" : "Revoke"}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => removeInvite(inv.id)}
+              disabled={revoking === inv.id}
+              className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+            >
+              {revoking === inv.id
+                ? expired
+                  ? "Deleting…"
+                  : "Revoking…"
+                : expired
+                  ? "Delete"
+                  : "Revoke"}
+            </button>
           </li>
         );
       })}

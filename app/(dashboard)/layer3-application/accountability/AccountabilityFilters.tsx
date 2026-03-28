@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { ACCOUNTABILITY_LAYER_LABELS } from "@/lib/ui/select-labels";
 
 const LAYERS = [
   "LAYER_1_BUSINESS",
@@ -31,7 +32,7 @@ export function AccountabilityFilters() {
         <option value="">All layers</option>
         {LAYERS.map((l) => (
           <option key={l} value={l}>
-            {l.replace("LAYER_", "L")}
+            {ACCOUNTABILITY_LAYER_LABELS[l] ?? l}
           </option>
         ))}
       </select>

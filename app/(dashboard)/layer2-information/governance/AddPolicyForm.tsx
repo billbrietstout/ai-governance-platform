@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { DATA_CLASSIFICATION_LABELS, GOVERNANCE_POLICY_TYPE_LABELS } from "@/lib/ui/select-labels";
 import { createGovernancePolicy } from "./actions";
 
 const POLICY_TYPES = ["CLASSIFICATION", "RETENTION", "ACCESS", "QUALITY", "PRIVACY"] as const;
@@ -128,7 +129,7 @@ export function AddPolicyForm({ users = [] }: { users?: User[] }) {
                     onChange={() => toggleClassification(c)}
                     className="rounded border-slate-300"
                   />
-                  <span className="text-sm">{c}</span>
+                  <span className="text-sm">{DATA_CLASSIFICATION_LABELS[c] ?? c}</span>
                 </label>
               ))}
             </div>

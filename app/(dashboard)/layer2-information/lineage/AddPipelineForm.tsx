@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  DATA_CLASSIFICATION_LABELS,
+  PIPELINE_TYPE_LABELS,
+  REFRESH_FREQUENCY_LABELS
+} from "@/lib/ui/select-labels";
 import { createLineageRecord } from "./actions";
 
 type Entity = { id: string; name: string };
@@ -138,7 +143,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
           <option value="">— None —</option>
           {["REALTIME", "HOURLY", "DAILY", "WEEKLY", "MONTHLY"].map((f) => (
             <option key={f} value={f}>
-              {f}
+              {REFRESH_FREQUENCY_LABELS[f] ?? f}
             </option>
           ))}
         </select>
@@ -156,7 +161,7 @@ export function AddPipelineForm({ entities, assets }: Props) {
         >
           {["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"].map((c) => (
             <option key={c} value={c}>
-              {c}
+              {DATA_CLASSIFICATION_LABELS[c] ?? c}
             </option>
           ))}
         </select>

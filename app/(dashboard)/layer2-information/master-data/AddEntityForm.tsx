@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  AI_ACCESS_POLICY_LABELS,
+  DATA_CLASSIFICATION_LABELS,
+  MASTER_DATA_ENTITY_TYPE_LABELS
+} from "@/lib/ui/select-labels";
 import { createMasterDataEntity } from "./actions";
 
 type User = { id: string; email: string };
@@ -117,7 +122,7 @@ export function AddEntityForm({ users }: Props) {
         >
           {["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"].map((c) => (
             <option key={c} value={c}>
-              {c}
+              {DATA_CLASSIFICATION_LABELS[c] ?? c}
             </option>
           ))}
         </select>
@@ -133,7 +138,7 @@ export function AddEntityForm({ users }: Props) {
         >
           {["OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"].map((a) => (
             <option key={a} value={a}>
-              {a}
+              {AI_ACCESS_POLICY_LABELS[a] ?? a}
             </option>
           ))}
         </select>
