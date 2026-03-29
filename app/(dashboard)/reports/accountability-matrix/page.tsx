@@ -51,7 +51,6 @@ export default async function AccountabilityMatrixReportPage() {
                 >
                   {asset.name}
                 </Link>
-                <span className="ml-2 font-mono text-xs text-slate-500">{asset.id.slice(0, 8)}…</span>
                 <div className="mt-3 overflow-x-auto rounded-lg border border-slate-100">
                   <table className="min-w-full text-sm">
                     <thead>

@@ -10,7 +10,8 @@ import {
   Eye,
   Users,
   Shield,
-  AlertTriangle
+  AlertTriangle,
+  ChevronRight
 } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { LayerStackContext } from "@/components/layers/LayerStackContext";
@@ -38,7 +39,7 @@ const NAV_CARDS = [
   { href: "/layer2-information/lineage", label: "Data Lineage & ETL", icon: GitBranch },
   { href: "/layer2-information/governance", label: "Data policies", icon: FileText },
   { href: "/layer2-information/classification", label: "Data Classification", icon: Shield },
-  { href: "/layer2-information/prompts", label: "Prompt Governance", icon: MessageSquareWarning },
+  { href: "/layer2-information/prompts", label: "Prompt Policies", icon: MessageSquareWarning },
   { href: "/layer2-information/shadow-ai", label: "Shadow AI Detection", icon: Eye }
 ] as const;
 
@@ -50,19 +51,21 @@ export default async function Layer2InformationPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Layer 2: Information
-          </h1>
-          <span
-            className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
-          >
-            Layer {meta.number} — {meta.shortLabel}
-          </span>
+        <div className="border-l-[3px] pl-4" style={{ borderLeftColor: meta.accentHex }}>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+              Layer 2: Information
+            </h1>
+            <span
+              className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
+            >
+              Layer {meta.number} — {meta.shortLabel}
+            </span>
+          </div>
+          <p className="mt-1 text-slate-600">
+            Master data, lineage, data policies, and AI-ready data assets.
+          </p>
         </div>
-        <p className="mt-1 text-slate-600">
-          Master data, lineage, governance policies, and AI-ready data assets.
-        </p>
         <LayerStackContext activeLayer="LAYER_2_INFORMATION" />
       </div>
 
@@ -150,60 +153,57 @@ export default async function Layer2InformationPage() {
         </div>
       </div>
 
-      {/* Classification breakdown (pie-style counts) */}
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className={SECTION_HEADING_CLASS}>Classification Breakdown</h3>
-        <div className="flex flex-wrap gap-3">
-          {(["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] as const).map((c) => {
-            const count = data.byClassification[c] ?? 0;
-            return (
-              <span
-                key={c}
-                className={`rounded-full px-3 py-1 text-sm font-medium ${CLASSIFICATION_COLORS[c] ?? "bg-gray-100 text-gray-700"}`}
-              >
-                {c}: {count}
-              </span>
-            );
-          })}
+      {/* Classification + AI Access — two rows in one panel */}
+      <div className="rounded-lg border border-slate-200 bg-white divide-y divide-slate-100">
+        <div className="p-4">
+          <h3 className={SECTION_HEADING_CLASS}>Classification</h3>
+          <div className="flex flex-wrap gap-2">
+            {(["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"] as const).map((c) => {
+              const count = data.byClassification[c] ?? 0;
+              return (
+                <span
+                  key={c}
+                  className={`rounded px-2.5 py-1 text-xs font-medium ${CLASSIFICATION_COLORS[c] ?? "bg-gray-100 text-gray-700"}`}
+                >
+                  {c} <span className="opacity-70">{count}</span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+        <div className="p-4">
+          <h3 className={SECTION_HEADING_CLASS}>AI access policy</h3>
+          <div className="flex flex-wrap gap-2">
+            {(["OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"] as const).map((p) => {
+              const count = data.byAiAccess[p] ?? 0;
+              return (
+                <span
+                  key={p}
+                  className={`rounded px-2.5 py-1 text-xs font-medium ${AI_ACCESS_COLORS[p] ?? "bg-gray-100 text-gray-700"}`}
+                >
+                  {p} <span className="opacity-70">{count}</span>
+                </span>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* AI Access Policy summary */}
-      <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className={`${SECTION_HEADING_CLASS} flex items-center gap-2`}>
-          <Shield className="text-navy-600 h-4 w-4" />
-          AI Access Policy Summary
-        </h3>
-        <div className="flex flex-wrap gap-3">
-          {(["OPEN", "GOVERNED", "RESTRICTED", "PROHIBITED"] as const).map((p) => {
-            const count = data.byAiAccess[p] ?? 0;
-            return (
-              <span
-                key={p}
-                className={`rounded-full px-3 py-1 text-sm font-medium ${AI_ACCESS_COLORS[p] ?? "bg-gray-100 text-gray-700"}`}
-              >
-                {p}: {count}
-              </span>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Navigation cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {NAV_CARDS.map(({ href, label, icon: Icon }) => (
+      {/* Navigation */}
+      <div className="rounded-lg border border-slate-200 bg-white">
+        {NAV_CARDS.map(({ href, label, icon: Icon }, i) => (
           <Link
             key={href}
             href={href}
-            className="hover:border-navy-300 flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow"
+            className={`group flex items-center justify-between px-4 py-3 transition hover:bg-slate-50 ${i < NAV_CARDS.length - 1 ? "border-b border-slate-100" : ""}`}
           >
-            <div className="bg-navy-100 flex h-12 w-12 shrink-0 items-center justify-center rounded-lg">
-              <Icon className="text-navy-600 h-6 w-6" />
+            <div className="flex items-center gap-3">
+              <Icon className="h-4 w-4 shrink-0 text-slate-400 transition-colors group-hover:text-navy-500" />
+              <span className="text-sm font-medium text-slate-800 transition-colors group-hover:text-navy-600">
+                {label}
+              </span>
             </div>
-            <div>
-              <h3 className="font-medium text-slate-900">{label}</h3>
-              <span className="text-navy-600 text-sm">View →</span>
-            </div>
+            <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-slate-400" />
           </Link>
         ))}
       </div>

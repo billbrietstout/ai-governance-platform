@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { DM_Sans, DM_Mono } from "next/font/google";
+import { Outfit, Fraunces, DM_Mono } from "next/font/google";
 import { readFile } from "fs/promises";
 import path from "path";
 import { headers } from "next/headers";
@@ -24,9 +24,16 @@ async function getMarketingCriticalCss(): Promise<string> {
   return css;
 }
 
-const dmSans = DM_Sans({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-dm-sans",
+  variable: "--font-outfit",
+  display: "swap"
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-fraunces",
   display: "swap"
 });
 
@@ -38,7 +45,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Readiness | AI Readiness Platform",
+  title: "AI Readiness Platform",
   description: "Assess, plan, and oversee your AI systems across the CoSAI five-layer framework"
 };
 
@@ -72,7 +79,7 @@ export default async function RootLayout({
   const inlinedCss = [bundledAppCss, marketingCriticalCss].filter(Boolean).join("\n\n");
 
   return (
-    <html lang="en" className={`${dmSans.variable} ${dmMono.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${fraunces.variable} ${dmMono.variable}`}>
       <head>
         {inlinedCss ? (
           // Browsers hide nonce from JS; hydration sees nonce="" and mismatches SSR.

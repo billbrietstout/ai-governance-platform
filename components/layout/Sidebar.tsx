@@ -42,7 +42,15 @@ import {
   RotateCcw,
   Newspaper,
   UserCircle,
-  User
+  User,
+  Workflow,
+  Share2,
+  RefreshCw,
+  Activity,
+  Gauge,
+  BellDot,
+  Fingerprint,
+  ShieldAlert
 } from "lucide-react";
 import { ShieldLogo } from "@/components/ui/ShieldLogo";
 import { getLayerMeta, type CosaiLayerKey } from "@/lib/ui/layer-colors";
@@ -65,6 +73,7 @@ type NavItem = {
   icon: React.ComponentType<{ className?: string }>;
   subtitle?: string;
   changeHref?: string;
+  isSetupCta?: boolean;
 };
 type GatedSection = {
   title: string;
@@ -95,9 +104,9 @@ const GATED_SECTIONS: GatedSection[] = [
     flag: "",
     items: [
       { href: "/layer3-application/assets", label: "AI Assets", icon: Bot },
-      { href: "/layer3-application/agents", label: "Agentic Registry", icon: Bot },
-      { href: "/layer3-application/topology", label: "Integration Topology", icon: GitBranch },
-      { href: "/layer3-application/lifecycle", label: "Lifecycle", icon: GitBranch },
+      { href: "/layer3-application/agents", label: "Agentic Registry", icon: Workflow },
+      { href: "/layer3-application/topology", label: "Integration Topology", icon: Share2 },
+      { href: "/layer3-application/lifecycle", label: "Lifecycle", icon: RefreshCw },
       { href: "/layer3-application/accountability", label: "Accountability Matrix", icon: Users },
       { href: "/layer3-application/gaps", label: "Gap Analysis", icon: AlertTriangle },
       { href: "/assessments", label: "Assessments", icon: ClipboardCheck }
@@ -107,9 +116,9 @@ const GATED_SECTIONS: GatedSection[] = [
     title: "LAYER 4: PLATFORM",
     flag: "MODULE_OPS_INTEL",
     items: [
-      { href: "/layer4-platform/telemetry", label: "Telemetry & Monitoring", icon: Server },
-      { href: "/layer4-platform/drift", label: "Drift Detection", icon: Server },
-      { href: "/layer4-platform/alerts", label: "Alert Engine", icon: Server }
+      { href: "/layer4-platform/telemetry", label: "Telemetry & Monitoring", icon: Activity },
+      { href: "/layer4-platform/drift", label: "Drift Detection", icon: Gauge },
+      { href: "/layer4-platform/alerts", label: "Alert Engine", icon: BellDot }
     ]
   },
   {
@@ -119,7 +128,7 @@ const GATED_SECTIONS: GatedSection[] = [
       { href: "/layer5-supply-chain", label: "Model Registry", icon: Archive },
       { href: "/layer5-supply-chain/cards", label: "Artifact Cards", icon: CreditCard },
       { href: "/layer5-supply-chain/vendors", label: "Vendors", icon: Building },
-      { href: "/layer5-supply-chain/provenance", label: "Model Provenance", icon: Layers },
+      { href: "/layer5-supply-chain/provenance", label: "Model Provenance", icon: Fingerprint },
       { href: "/layer5-supply-chain/risk-score", label: "Risk Scoring", icon: Shield },
       { href: "/layer5-supply-chain/scanning", label: "Scan Coverage", icon: ScanLine }
     ]
@@ -191,7 +200,7 @@ function getReadinessOverviewItems(
       ...base
     ];
   }
-  return [{ href: "/persona-select", label: "Choose my view", icon: UserCircle }, ...base];
+  return [{ href: "/persona-select", label: "Choose my view", icon: UserCircle, isSetupCta: true }, ...base];
 }
 
 const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = [
@@ -210,7 +219,7 @@ const ALL_SECTIONS: Array<{ title: string; items: NavItem[]; flag?: string }> = 
     items: [
       { href: "/compliance/iso42001", label: "ISO 42001", icon: FileText },
       { href: "/compliance/eu-ai-act", label: "EU AI Act Conformity", icon: Shield },
-      { href: "/compliance/aivss", label: "OWASP AIVSS", icon: Bot }
+      { href: "/compliance/aivss", label: "OWASP AIVSS", icon: ShieldAlert }
     ]
   },
   {
@@ -488,12 +497,23 @@ export function Sidebar({
     return !flag || (featureFlags[flag] ?? false);
   });
 
+  function getSectionDisplayTitle(title: string): string {
+    const SHORT: Record<string, string> = {
+      "LAYER 1: BUSINESS": "L1 · Business",
+      "LAYER 2: INFORMATION": "L2 · Information",
+      "LAYER 3: APPLICATION": "L3 · Application",
+      "LAYER 4: PLATFORM": "L4 · Platform",
+      "LAYER 5: SUPPLY CHAIN": "L5 · Supply Chain"
+    };
+    return SHORT[title] ?? title;
+  }
+
   const renderSectionBlock = (section: (typeof ALL_SECTIONS)[number]) => {
     const isExpanded = expandedSections.has(section.title);
     const flag = "flag" in section ? section.flag : undefined;
     const enabled = !flag || (featureFlags[flag] ?? false);
     const isPrimary = isSectionPrimary(section.title);
-    const sectionOpacity = isPrimary ? "opacity-100" : "opacity-60";
+    const sectionOpacity = isPrimary ? "opacity-100" : "opacity-80";
 
     const layerKey = SIDEBAR_TITLE_TO_LAYER[section.title];
     const layerMeta = layerKey ? getLayerMeta(layerKey) : null;
@@ -526,7 +546,7 @@ export function Sidebar({
                   className={layerMeta ? "min-w-0 border-l-2 pl-2" : "min-w-0"}
                   style={layerMeta ? { borderColor: layerMeta.accentHex } : undefined}
                 >
-                  <span className="truncate">{section.title}</span>
+                  <span className="truncate">{getSectionDisplayTitle(section.title)}</span>
                 </div>
               </div>
               {chip && (
@@ -565,7 +585,7 @@ export function Sidebar({
                       <span className="truncate">{item.label}</span>
                       {showLock && (
                         <span className="shrink-0 rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] text-amber-400">
-                          Module
+                          Add-on
                         </span>
                       )}
                     </>
@@ -574,6 +594,7 @@ export function Sidebar({
               );
             }
             const hasSubtitle = !collapsed && item.subtitle && item.changeHref;
+            const isSetupCta = !!item.isSetupCta;
             return (
               <div key={item.href} className={hasSubtitle ? "flex flex-col gap-0.5" : ""}>
                 <Link
@@ -582,7 +603,11 @@ export function Sidebar({
                   className={`flex items-center gap-2 px-3 py-2 text-sm ${
                     collapsed ? "justify-center pl-2" : "pl-6"
                   } focus-visible:ring-navy-400 focus-visible:ring-1 focus-visible:ring-inset focus-visible:outline-none ${
-                    active ? "bg-navy-500/20 text-navy-300" : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
+                    active
+                      ? "border-l-2 border-navy-400 bg-navy-500/30 text-navy-300"
+                      : isSetupCta
+                        ? "bg-navy-500/10 text-navy-300 ring-1 ring-inset ring-navy-500/30"
+                        : "text-slatePro-400 hover:bg-slatePro-800/50 hover:text-slatePro-200"
                   }`}
                   aria-current={active ? "page" : undefined}
                 >
@@ -594,6 +619,12 @@ export function Sidebar({
                   {!collapsed && (
                     <>
                       <span className="truncate">{item.label}</span>
+                      {isSetupCta && (
+                        <span className="relative ml-auto flex h-2 w-2 shrink-0">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-navy-400 opacity-75" />
+                          <span className="relative inline-flex h-2 w-2 rounded-full bg-navy-400" />
+                        </span>
+                      )}
                       {item.href === "/consultant" && consultantWorkspaces.length > 0 && (
                         <span className="bg-navy-500/30 text-navy-300 shrink-0 rounded px-1.5 py-0.5 text-[10px]">
                           {consultantWorkspaces.length}
@@ -668,7 +699,7 @@ export function Sidebar({
                   href={mainHref}
                   className={`flex h-10 w-full items-center justify-center ${
                     active
-                      ? "bg-navy-500/20 text-navy-300"
+                      ? "border-l-2 border-navy-400 bg-navy-500/30 text-navy-300"
                       : "text-slatePro-400 hover:bg-slatePro-800 hover:text-slatePro-200"
                   }`}
                   aria-current={active ? "page" : undefined}
@@ -724,40 +755,56 @@ export function Sidebar({
                     Reset to my view
                   </button>
                 )}
-                <Link
-                  href="/settings/billing"
-                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex items-center gap-2 px-3 py-2 text-sm"
-                  onClick={() => setUserMenuOpen(false)}
-                >
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </Link>
-                {role === "ADMIN" && (
-                  <Link
-                    href="/settings/admin"
-                    className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex items-center gap-2 px-3 py-2 text-sm"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    Admin
-                  </Link>
-                )}
+                <div className="border-slatePro-700 border-t py-1">
+                  <div className="text-slatePro-500 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest">
+                    Settings
+                  </div>
+                  {SETTINGS_SECTION.items.map((settingsItem) => {
+                    const SettingsIcon = settingsItem.icon;
+                    return (
+                      <Link
+                        key={settingsItem.href}
+                        href={settingsItem.href}
+                        className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <SettingsIcon className="h-4 w-4" />
+                        {settingsItem.label}
+                      </Link>
+                    );
+                  })}
+                  {role === "ADMIN" && (
+                    <Link
+                      href="/settings/admin"
+                      className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Admin
+                    </Link>
+                  )}
+                </div>
                 {isSuperAdmin && (
-                  <Link
-                    href="/super-admin"
-                    className="hover:bg-slatePro-800 flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:text-amber-300"
-                    onClick={() => setUserMenuOpen(false)}
-                  >
-                    <Shield className="h-4 w-4" />
-                    Super Admin
-                  </Link>
+                  <div className="border-slatePro-700 border-t py-1">
+                    <Link
+                      href="/super-admin"
+                      className="hover:bg-slatePro-800 flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:text-amber-300"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Shield className="h-4 w-4" />
+                      Super Admin
+                    </Link>
+                  </div>
                 )}
-                <button
-                  type="button"
-                  onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 w-full px-3 py-2 text-left text-sm"
-                >
-                  Sign out
-                </button>
+                <div className="border-slatePro-700 border-t py-1">
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: "/login" })}
+                    className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 w-full px-3 py-2 text-left text-sm"
+                  >
+                    Sign out
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -840,113 +887,69 @@ export function Sidebar({
         </div>
       )}
 
-      {/* Main nav (scroll) + Account / Settings footer */}
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="min-h-0 flex-1 overflow-y-auto py-2">
-          {MAIN_NAV_SECTIONS.map((section) => renderSectionBlock(section))}
-        </div>
-        <div className="border-slatePro-800 shrink-0 border-t py-2">
-          {!collapsed && (
-            <div className="px-3 pb-1 pt-2">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-slatePro-600">
-                Account
-              </span>
-            </div>
-          )}
-          {renderSectionBlock(SETTINGS_SECTION)}
-        </div>
+      {/* Main nav (scroll) */}
+      <div className="min-h-0 flex-1 overflow-y-auto py-2">
+        {MAIN_NAV_SECTIONS.map((section) => renderSectionBlock(section))}
       </div>
 
-      {/* Tier indicator */}
-      {!collapsed && tier === "FREE" && (
-        <div className="border-slatePro-800 border-t p-3">
-          <div className="bg-slatePro-800 rounded-lg p-3">
-            <div className="mb-1 flex items-center justify-between">
-              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-400">
-                Free Plan
-              </span>
-              <span className="text-xs text-amber-400">
-                {assetCount}/{getAssetLimit(tier)} assets
-              </span>
-            </div>
-            <div className="bg-slatePro-700 h-1.5 rounded-full">
-              <div
-                className="h-1.5 rounded-full bg-amber-400 transition-all"
-                style={{ width: `${Math.min(100, (assetCount / getAssetLimit(tier)) * 100)}%` }}
-              />
-            </div>
-            <Link
-              href="/pricing"
-              className="bg-navy-600 hover:bg-navy-500 mt-2 flex w-full items-center justify-center rounded-md py-1.5 text-xs font-medium text-white transition-colors"
-            >
-              Upgrade to Pro →
-            </Link>
-          </div>
-        </div>
-      )}
-      {!collapsed && tier !== "FREE" && (
-        <div className="border-slatePro-800 border-t p-3">
-          <div className="flex flex-col gap-1.5">
+      {/* Context: tier + persona (consolidated) */}
+      {!collapsed && (
+        <div className="border-slatePro-800 shrink-0 border-t px-3 py-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span
-              className={`inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-medium ${
-                tier === "PRO"
-                  ? "bg-blue-500/20 text-blue-400"
-                  : tier === "CONSULTANT"
-                    ? "bg-purple-500/20 text-purple-400"
-                    : "bg-green-500/20 text-green-400"
+              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                tier === "FREE"
+                  ? "bg-amber-500/20 text-amber-400"
+                  : tier === "PRO"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : tier === "CONSULTANT"
+                      ? "bg-purple-500/20 text-purple-400"
+                      : "bg-green-500/20 text-green-400"
               }`}
             >
-              {tier === "PRO"
-                ? "Pro Plan"
-                : tier === "CONSULTANT"
-                  ? "Consultant Plan"
-                  : "Enterprise Plan"}
+              {tier === "FREE"
+                ? "Free"
+                : tier === "PRO"
+                  ? "Pro"
+                  : tier === "CONSULTANT"
+                    ? "Consultant"
+                    : "Enterprise"}
             </span>
-            <span className="text-slatePro-400 text-xs">
-              {(TIER_LIMITS[tier?.toUpperCase() as keyof typeof TIER_LIMITS]?.assetLimit ?? 0) === 0
-                ? "No asset limit"
-                : `Up to ${TIER_LIMITS[tier?.toUpperCase() as keyof typeof TIER_LIMITS]?.assetLimit ?? 0} assets`}
-            </span>
+            {persona && (
+              <>
+                <span className="bg-navy-500/30 text-navy-300 rounded px-2 py-0.5 text-xs font-medium">
+                  {personaConfig?.label ?? persona}
+                </span>
+                <Link
+                  href="/persona-select"
+                  className="text-slatePro-500 hover:text-navy-400 ml-auto text-xs hover:underline"
+                >
+                  Switch view
+                </Link>
+              </>
+            )}
           </div>
-        </div>
-      )}
-
-      {/* Persona indicator */}
-      {!collapsed && persona && (
-        <div className="border-slatePro-800 border-t px-3 py-2">
-          <div className="flex items-center justify-between gap-2">
-            <span className="bg-navy-500/30 text-navy-300 rounded px-2 py-0.5 text-xs font-medium">
-              {personaConfig?.label ?? persona}
-            </span>
-            <Link
-              href="/persona-select"
-              className="text-navy-400 hover:text-navy-300 text-xs hover:underline"
-            >
-              Switch view
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* Active frameworks */}
-      {!collapsed && frameworks.length > 0 && (
-        <div className="border-slatePro-800 border-t px-3 py-2">
-          <div className="text-slatePro-500 mb-1.5 text-[10px] font-medium tracking-wider uppercase">
-            Active Frameworks
-          </div>
-          <div className="flex flex-wrap gap-1">
-            {frameworks.map((f) => (
-              <span
-                key={f.code}
-                className={`rounded border px-1.5 py-0.5 text-[10px] font-medium ${
-                  FRAMEWORK_COLORS[f.code] ??
-                  "bg-slatePro-700/50 text-slatePro-400 border-slatePro-600"
-                }`}
+          {tier === "FREE" && (
+            <div className="mt-2">
+              <div className="mb-1 flex items-center justify-between">
+                <span className="text-slatePro-500 text-xs">
+                  {assetCount}/{getAssetLimit(tier)} assets
+                </span>
+              </div>
+              <div className="bg-slatePro-700 h-1 rounded-full">
+                <div
+                  className="h-1 rounded-full bg-amber-400 transition-all"
+                  style={{ width: `${Math.min(100, (assetCount / getAssetLimit(tier)) * 100)}%` }}
+                />
+              </div>
+              <Link
+                href="/pricing"
+                className="bg-navy-600 hover:bg-navy-500 mt-2 flex w-full items-center justify-center rounded-md py-1.5 text-xs font-medium text-white transition-colors"
               >
-                {f.code.replace(/_/g, " ")}
-              </span>
-            ))}
-          </div>
+                Upgrade to Pro →
+              </Link>
+            </div>
+          )}
         </div>
       )}
 
@@ -1003,50 +1006,58 @@ export function Sidebar({
                   Reset to my view
                 </button>
               )}
-              <Link
-                href="/settings/billing"
-                className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex items-center gap-2 px-3 py-2 text-sm"
-                onClick={() => setUserMenuOpen(false)}
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
+              <div className="border-slatePro-700 border-t py-1">
+                <div className="text-slatePro-500 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest">
+                  Settings
+                </div>
+                {SETTINGS_SECTION.items.map((settingsItem) => {
+                  const SettingsIcon = settingsItem.icon;
+                  return (
+                    <Link
+                      key={settingsItem.href}
+                      href={settingsItem.href}
+                      className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <SettingsIcon className="h-4 w-4" />
+                      {settingsItem.label}
+                    </Link>
+                  );
+                })}
+                {role === "ADMIN" && (
+                  <Link
+                    href="/settings/admin"
+                    className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 flex w-full items-center gap-2 px-3 py-2 text-sm"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <Settings className="h-4 w-4" />
+                    Admin
+                  </Link>
+                )}
+              </div>
               {isSuperAdmin && (
-                <Link
-                  href="/super-admin"
-                  className="hover:bg-slatePro-800 flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:text-amber-300"
-                  onClick={() => setUserMenuOpen(false)}
-                >
-                  <Shield className="h-4 w-4" />
-                  Super Admin
-                </Link>
+                <div className="border-slatePro-700 border-t py-1">
+                  <Link
+                    href="/super-admin"
+                    className="hover:bg-slatePro-800 flex items-center gap-2 px-3 py-2 text-sm text-amber-400 hover:text-amber-300"
+                    onClick={() => setUserMenuOpen(false)}
+                  >
+                    <Shield className="h-4 w-4" />
+                    Super Admin
+                  </Link>
+                </div>
               )}
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: "/login" })}
-                className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 w-full px-3 py-2 text-left text-sm"
-              >
-                Sign out
-              </button>
+              <div className="border-slatePro-700 border-t py-1">
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  className="text-slatePro-300 hover:bg-slatePro-800 hover:text-slatePro-100 w-full px-3 py-2 text-left text-sm"
+                >
+                  Sign out
+                </button>
+              </div>
             </div>
           </>
-        )}
-        {!collapsed && role === "ADMIN" && (
-          <Link
-            href="/settings/admin"
-            className="text-slatePro-600 hover:text-slatePro-400 mt-2 flex justify-center px-3 py-1 text-xs"
-          >
-            Admin
-          </Link>
-        )}
-        {!collapsed && isSuperAdmin && (
-          <Link
-            href="/super-admin"
-            className="mt-1 flex items-center justify-center gap-1 px-3 py-1 text-xs text-amber-500 hover:text-amber-400"
-          >
-            <Shield className="h-3 w-3" />
-            Super Admin
-          </Link>
         )}
       </div>
     </aside>

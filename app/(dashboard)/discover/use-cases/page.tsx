@@ -31,7 +31,7 @@ export default async function UseCaseLibraryPage() {
           AI Use Case Library
         </h1>
         <p className="mt-1 text-slate-600">
-          Common AI use cases with pre-built governance templates.
+          Common AI use cases with pre-built compliance templates.
         </p>
       </div>
 

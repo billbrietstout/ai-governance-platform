@@ -72,7 +72,7 @@ export default async function DeveloperDashboardPage() {
                           {a.name}
                         </Link>
                         <span className="text-xs text-slate-500">
-                          {assetType} · {a.id.slice(0, 8)}…
+                          {assetType}
                         </span>
                       </div>
                     </div>

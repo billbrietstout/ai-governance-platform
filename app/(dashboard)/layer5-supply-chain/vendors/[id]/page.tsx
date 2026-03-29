@@ -8,6 +8,16 @@ import { VendorAssuranceScore } from "@/components/supply-chain/VendorAssuranceS
 import { VraQuestionnaireSection } from "@/components/supply-chain/VraQuestionnaireSection";
 import { getQuestionsForVendorType } from "@/lib/supply-chain/vra-questions";
 
+const VENDOR_TYPE_LABELS: Record<string, string> = {
+  MODEL_PROVIDER: "Model Provider",
+  DATA_PROVIDER: "Data Provider",
+  INFRASTRUCTURE: "Infrastructure",
+  TOOLING: "Tooling",
+  CONSULTING: "Consulting",
+  RESELLER: "Reseller",
+  OTHER: "Other"
+};
+
 export default async function VendorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const caller = await createServerCaller();
@@ -28,7 +38,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ i
             total={v.assuranceScore.total}
             breakdown={v.assuranceScore.breakdown}
           />
-          <span className="text-sm text-gray-600">{v.vendorType ?? "—"}</span>
+          <span className="text-sm text-gray-600">{v.vendorType ? (VENDOR_TYPE_LABELS[v.vendorType] ?? v.vendorType) : "—"}</span>
         </div>
       </div>
 

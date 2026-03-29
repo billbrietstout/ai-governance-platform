@@ -335,7 +335,7 @@ async function DashboardMainCharts({ orgId }: { orgId: string }) {
         <Bot className="text-navy-400 mx-auto mb-3 h-10 w-10" />
         <h2 className="text-navy-900 mb-1 text-lg font-semibold">Register your first AI asset</h2>
         <p className="text-navy-700 mx-auto mb-4 max-w-md text-sm">
-          Your governance posture will appear here once you have at least one AI asset registered.
+          Your readiness posture will appear here once you have at least one AI asset registered.
           Start by adding a model, application, or data pipeline.
         </p>
         <Link

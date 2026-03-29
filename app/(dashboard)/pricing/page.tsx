@@ -23,10 +23,10 @@ const TIERS = [
     name: "Pro",
     price: 49,
     period: "mo",
-    description: "Full governance for growing teams",
+    description: "Full controls for growing teams",
     features: [
       "Everything in Free, plus:",
-      "Full governance (M3–M5)",
+      "Full controls (M3–M5)",
       "Up to 500 AI assets",
       "Compliance snapshots & trends",
       "Audit packages & evidence workbook",
@@ -63,7 +63,7 @@ export default function PricingPage() {
     <main className="mx-auto flex min-h-dvh max-w-5xl flex-col gap-10 px-6 py-12">
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Plans & Pricing</h1>
-        <p className="mt-2 text-slate-600">Choose the plan that fits your AI governance needs.</p>
+        <p className="mt-2 text-slate-600">Choose the plan that fits your AI readiness needs.</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">

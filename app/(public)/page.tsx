@@ -41,7 +41,7 @@ const PRO_FEATURES = [
 ];
 
 const COSAI_LAYERS = [
-  { id: "L1", name: "Business", desc: "Strategy, governance, accountability" },
+  { id: "L1", name: "Business", desc: "Strategy, oversight, accountability" },
   { id: "L2", name: "Information", desc: "Data, lineage, classification" },
   { id: "L3", name: "Application", desc: "AI assets, lifecycle, controls" },
   { id: "L4", name: "Platform", desc: "Infrastructure, monitoring, ops" },
@@ -57,14 +57,14 @@ export default async function PublicLandingPage() {
   return (
     <div className="relative">
       {/* Hero */}
-      <section className="public-hero-section relative overflow-hidden bg-gradient-to-b from-slate-50 to-white px-4 py-20 sm:px-6 lg:py-28">
+      <section className="public-hero-section relative overflow-hidden px-4 py-20 sm:px-6 lg:py-28">
         <div className="public-hero-inner mx-auto max-w-4xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             Is your company prepared to deploy AI?
           </h1>
           <p className="mt-6 text-xl text-slate-600">
             The only platform built on the CoSAI Shared Responsibility Framework — assess readiness,
-            discover regulations, and build governance that satisfies auditors
+            discover regulations, and build the controls that satisfy auditors
           </p>
           <div className="public-hero-cta-stack mt-10 flex flex-col items-center justify-center space-y-4">
             <div className="public-hero-cta-row">
@@ -85,6 +85,7 @@ export default async function PublicLandingPage() {
           <div className="public-trust-badge-row mt-12">
             {TRUST_BADGES.map((badge) => (
               <span key={badge} className="public-trust-badge">
+                <span className="public-trust-badge-dot" aria-hidden="true" />
                 {badge}
               </span>
             ))}
@@ -168,7 +169,7 @@ export default async function PublicLandingPage() {
       {/* CoSAI framework — vertical stack (Track 4) */}
       <section id="framework" className="border-t border-slate-200 bg-slate-50 px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-center text-2xl font-semibold text-slate-900">
+          <h2 className="font-display text-center text-2xl font-semibold text-slate-900">
             The CoSAI five-layer model
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-center text-slate-600">
@@ -180,6 +181,7 @@ export default async function PublicLandingPage() {
           <div className="mt-10 flex flex-col items-center gap-0">
             {COSAI_LAYERS.map((layer, i) => {
               const widthPct = 100 - i * 6; // 100%, 94%, 88%, 82%, 76%
+              const layerN = i + 1;
               return (
                 <div key={layer.id} className="flex w-full flex-col items-center">
                   {i > 0 && (
@@ -190,20 +192,43 @@ export default async function PublicLandingPage() {
                     </div>
                   )}
                   <div
-                    className="rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm"
-                    style={{ width: `${widthPct}%` }}
+                    className="rounded-lg px-5 py-4 shadow-sm"
+                    style={{
+                      width: `${widthPct}%`,
+                      background: `var(--layer-${layerN}-bg)`,
+                      border: `1px solid var(--layer-${layerN}-border)`
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                        <span
+                          className="text-xs font-semibold uppercase tracking-widest opacity-60"
+                          style={{ color: `var(--layer-${layerN}-text)` }}
+                        >
                           {layer.id}
                         </span>
-                        <div className="mt-0.5 font-semibold text-slate-900">{layer.name}</div>
-                        <div className="mt-1 text-sm text-slate-500">{layer.desc}</div>
+                        <div
+                          className="mt-0.5 font-semibold"
+                          style={{ color: `var(--layer-${layerN}-text)` }}
+                        >
+                          {layer.name}
+                        </div>
+                        <div
+                          className="mt-1 text-sm opacity-80"
+                          style={{ color: `var(--layer-${layerN}-text)` }}
+                        >
+                          {layer.desc}
+                        </div>
                       </div>
                       {i > 0 && (
-                        <div className="ml-4 shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-500">
-                          governed by L{i}
+                        <div
+                          className="ml-4 shrink-0 rounded-full px-2 py-1 text-xs opacity-70"
+                          style={{
+                            background: `var(--layer-${layerN}-border)`,
+                            color: `var(--layer-${layerN}-text)`
+                          }}
+                        >
+                          follows L{i} policy
                         </div>
                       )}
                     </div>

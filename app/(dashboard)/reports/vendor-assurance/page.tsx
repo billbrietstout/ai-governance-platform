@@ -76,9 +76,6 @@ export default async function VendorAssuranceReportPage() {
                         >
                           {v.name}
                         </Link>
-                        <span className="mt-0.5 block font-mono text-xs text-slate-500">
-                          {v.id.slice(0, 8)}…
-                        </span>
                       </td>
                       <td className={`px-4 py-3 font-semibold tabular-nums ${complianceTextClass(pct)}`}>
                         {pct}%

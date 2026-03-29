@@ -32,7 +32,7 @@ export default async function DataStewardDashboardPage() {
   return (
     <PersonaDashboardShell
       title="Data policy summary"
-      subtitle="Data exposure, lineage, and governance gaps."
+      subtitle="Data exposure, lineage, and policy gaps."
     >
       <div className="flex flex-col gap-6">
         {/* Section 1 – Data exposure */}

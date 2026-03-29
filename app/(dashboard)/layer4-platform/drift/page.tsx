@@ -39,7 +39,7 @@ export default async function DriftDetectionPage() {
           Drift Detection
         </h1>
         <p className="mt-1 text-slate-600">
-          Monitor AI assets for governance drift — stale scans, policy failures, and rising
+          Monitor AI assets for policy drift — stale scans, policy failures, and rising
           findings.
         </p>
       </div>

@@ -58,7 +58,7 @@ export function OnboardingWizardShell({
           Let&apos;s assess your AI readiness
         </h1>
         <p className="mt-1 text-slate-600">
-          We&apos;ll help you understand where you stand across governance, data, applications,
+          We&apos;ll help you understand where you stand across oversight, data, applications,
           platform, and supply chain — and what to do next.
         </p>
       </div>

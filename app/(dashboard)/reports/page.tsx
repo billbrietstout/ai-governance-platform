@@ -25,14 +25,14 @@ export default async function ReportsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Reports</h1>
         <p className="mt-1 text-sm text-slate-600">
-          Generate governance reports for board presentations and compliance tracking.
+          Generate readiness reports for board presentations and compliance tracking.
         </p>
       </div>
 
       <UpgradeGate
         feature="Compliance reports"
         requiredTier="PRO"
-        description="Generate executive and board-ready governance reports across all framework layers"
+        description="Generate executive and board-ready readiness reports across all framework layers"
         unlockedBy={[
           "Executive summary reports",
           "Compliance gap analysis",

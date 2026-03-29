@@ -66,7 +66,7 @@ export default async function CAIODashboardPage() {
   return (
     <PersonaDashboardShell
       title="CAIO Unified View"
-      subtitle="Cross-layer governance summary across all CoSAI layers."
+      subtitle="Cross-layer readiness summary across all CoSAI layers."
     >
       <div className="flex flex-col gap-6">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

@@ -196,7 +196,7 @@ export function Step4FirstAsset({ onNext, isPending }: Props) {
           <p className="mt-2 text-sm text-amber-700">
             The EU AI Act classifies AI systems by risk. <strong>Minimal</strong> and{" "}
             <strong>Limited</strong> have lighter obligations. <strong>High-risk</strong> systems
-            (Annex III) require conformity assessment, risk management, data governance, and human
+            (Annex III) require conformity assessment, risk management, data management, and human
             oversight.
             <strong> Unacceptable</strong> systems are prohibited.
           </p>

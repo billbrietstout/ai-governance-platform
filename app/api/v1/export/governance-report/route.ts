@@ -28,7 +28,7 @@ export async function GET() {
   const tier = (org.tier ?? "FREE").toUpperCase();
   if (tier !== "PRO" && tier !== "CONSULTANT" && tier !== "ENTERPRISE") {
     return NextResponse.json(
-      { error: "PRO tier or above required for governance report export" },
+      { error: "PRO tier or above required for readiness report export" },
       { status: 403 }
     );
   }

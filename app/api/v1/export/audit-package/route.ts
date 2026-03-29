@@ -192,7 +192,7 @@ export async function GET() {
     keyFindings.push("High-risk AI assets require additional documentation and oversight");
   }
   if (evidenceRequirements.some((e) => e.status === "Missing")) {
-    keyFindings.push("Evidence gaps in data governance and model provenance");
+    keyFindings.push("Evidence gaps in data management and model provenance");
   }
   if (regulations.some((r) => r.applicability === "MANDATORY")) {
     keyFindings.push("Mandatory regulations require compliance evidence collection");

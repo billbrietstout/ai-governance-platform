@@ -43,7 +43,8 @@
 }
 
 @theme {
-  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-mono: var(--font-dm-mono), ui-monospace, monospace;
   --color-navy-50: #eef3ff;
   --color-navy-100: #dbe7ff;
@@ -76,7 +77,7 @@ body {
 
 body {
   @apply font-sans antialiased;
-  background-color: #ffffff;
+  background-color: #fafaf9;
   color: #0f172a;
 }
 
@@ -87,7 +88,7 @@ body {
   top: 0;
   z-index: 40;
   border-bottom: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  background-color: #fafaf9;
 }
 
 .public-site-header-bar {
@@ -288,7 +289,9 @@ body {
 
 .public-hero-section {
   padding: 5rem 1rem;
-  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -5%, hsl(217 70% 93% / 0.7), transparent),
+    #fafaf9;
 }
 
 @media (min-width: 640px) {

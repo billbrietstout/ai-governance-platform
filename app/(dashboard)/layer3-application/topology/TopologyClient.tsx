@@ -31,5 +31,5 @@ export function TopologyClient({ initialData }: { initialData: TopologyData }) {
     );
   }
 
-  return <ForceTopologyGraph nodes={initialData.nodes} edges={initialData.edges} height={500} />;
+  return <ForceTopologyGraph nodes={initialData.nodes} edges={initialData.edges} height={600} />;
 }

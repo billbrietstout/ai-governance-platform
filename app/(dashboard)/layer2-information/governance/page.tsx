@@ -35,7 +35,7 @@ export default async function DataGovernancePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            Data Governance Policies
+            Data Policies
           </h1>
           <p className="mt-1 text-slate-600">
             Classification, retention, access, quality, and privacy policies.
@@ -60,8 +60,8 @@ export default async function DataGovernancePage() {
 
       {policies.length === 0 ? (
         <EmptyState
-          title="No governance policies"
-          description="Define data governance policies for classification, retention, access, quality, and privacy."
+          title="No data policies"
+          description="Define data policies for classification, retention, access, quality, and privacy."
           ctaLabel="View Layer 2"
           ctaHref="/layer2-information"
           icon={<FileText className="h-8 w-8" />}

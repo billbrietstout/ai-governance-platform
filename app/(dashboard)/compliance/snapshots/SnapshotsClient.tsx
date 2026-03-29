@@ -170,7 +170,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
             <option value="">— Select snapshot 1 —</option>
             {snapshots.map((s) => (
               <option key={s.id} value={s.id}>
-                {new Date(s.createdAt).toLocaleString()} · {s.overallScore}% · {s.id.slice(0, 8)}…
+                {new Date(s.createdAt).toLocaleString()} · {s.overallScore}% · {s.snapshotType}
               </option>
             ))}
           </select>
@@ -183,7 +183,7 @@ export function SnapshotsClient({ initialSnapshots }: Props) {
             <option value="">— Select snapshot 2 —</option>
             {snapshots.map((s) => (
               <option key={s.id} value={s.id}>
-                {new Date(s.createdAt).toLocaleString()} · {s.overallScore}% · {s.id.slice(0, 8)}…
+                {new Date(s.createdAt).toLocaleString()} · {s.overallScore}% · {s.snapshotType}
               </option>
             ))}
           </select>

@@ -29,7 +29,7 @@ export default async function AivssPage() {
         requiredTier="PRO"
         description="Agentic scoring dimensions and alignment with OWASP LLM Top 10"
         unlockedBy={[
-          "Nine AIVSS amplification and governance dimensions",
+          "Nine AIVSS amplification and oversight dimensions",
           "Cross-links to OWASP LLM items where applicable",
           "CoSAI layer mapping for secure-by-design reviews"
         ]}

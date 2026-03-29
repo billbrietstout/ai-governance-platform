@@ -6,6 +6,16 @@ import { Building } from "lucide-react";
 import { createServerCaller } from "@/lib/trpc/server-caller";
 import { EmptyState } from "@/components/EmptyState";
 
+const VENDOR_TYPE_LABELS: Record<string, string> = {
+  MODEL_PROVIDER: "Model Provider",
+  DATA_PROVIDER: "Data Provider",
+  INFRASTRUCTURE: "Infrastructure",
+  TOOLING: "Tooling",
+  CONSULTING: "Consulting",
+  RESELLER: "Reseller",
+  OTHER: "Other"
+};
+
 function daysUntil(date: Date | null): number | null {
   if (!date) return null;
   const now = new Date();
@@ -89,7 +99,7 @@ export default async function VendorsPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="font-medium text-gray-900">{v.vendorName}</h3>
-                    <p className="text-xs text-gray-500">{v.vendorType ?? "—"}</p>
+                    <p className="text-xs text-gray-500">{v.vendorType ? (VENDOR_TYPE_LABELS[v.vendorType] ?? v.vendorType) : "—"}</p>
                   </div>
                 </div>
 

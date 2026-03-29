@@ -250,7 +250,7 @@ export function AuditPackageClient({ assets, regulations }: Props) {
               </p>
             </div>
             <div className="rounded border border-slate-200 px-3 py-2">
-              <span className="text-xs text-slate-500">Governance policies</span>
+              <span className="text-xs text-slate-500">Data policies</span>
               <p className="text-lg font-semibold text-slate-900">
                 {preview.evidenceCounts.governancePolicies}
               </p>

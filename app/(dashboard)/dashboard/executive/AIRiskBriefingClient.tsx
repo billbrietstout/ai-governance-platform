@@ -9,11 +9,11 @@ import { complianceBarBgClass, complianceTextClass } from "@/lib/ui/compliance-s
 import { SECTION_HEADING_CLASS } from "@/lib/ui/section-heading";
 
 const MATURITY_PLAIN: Record<number, string> = {
-  1: "aware of AI risks but no formal governance yet",
-  2: "basic governance in place — policies and documentation",
-  3: "governance implemented — controls and accountability assigned",
+  1: "aware of AI risks but no formal controls yet",
+  2: "basic controls in place — policies and documentation",
+  3: "controls implemented — controls and accountability assigned",
   4: "measuring and monitoring — continuous improvement",
-  5: "optimised — mature AI governance program"
+  5: "optimised — mature AI readiness program"
 };
 
 const EU_DEADLINE = new Date("2026-08-02");
@@ -92,7 +92,7 @@ function getPriorityDecision(data: BriefingData): {
   if (data.gapCount > 0) {
     return {
       type: "GOVERNANCE_GAPS",
-      title: "Address governance gaps before the EU high-risk AI rules deadline",
+      title: "Address control gaps before the EU high-risk AI rules deadline",
       cta: "Review and decide →",
       count: data.gapCount
     };
@@ -100,7 +100,7 @@ function getPriorityDecision(data: BriefingData): {
   if (data.maturityLevel < 3) {
     return {
       type: "MATURITY_ASSESSMENT",
-      title: "Complete your governance assessment to meet regulatory requirements",
+      title: "Complete your readiness assessment to meet regulatory requirements",
       cta: "Review and decide →"
     };
   }
@@ -170,14 +170,14 @@ export function AIRiskBriefingClient({ data }: Props) {
 
   const safetySummary =
     data.totalAssets > 0
-      ? `${data.totalAssets} AI systems are active. ${data.gapCount > 0 ? `${data.gapCount} have unresolved governance gaps.` : "All systems have governance in place."} No critical incidents this month.`
+      ? `${data.totalAssets} AI systems are active. ${data.gapCount > 0 ? `${data.gapCount} have unresolved control gaps.` : "All systems have controls in place."} No critical incidents this month.`
       : "No AI systems in production yet.";
 
-  const maturityLabel = MATURITY_PLAIN[data.maturityLevel] ?? "basic governance in place";
+  const maturityLabel = MATURITY_PLAIN[data.maturityLevel] ?? "basic controls in place";
   const readinessSummary =
     data.maturityLevel < 5
-      ? `Your AI governance: ${maturityLabel}. You need implemented governance to meet regulatory requirements by August 2026.`
-      : "Your AI governance program is mature. Keep up the good work.";
+      ? `Your AI readiness: ${maturityLabel}. You need implemented controls to meet regulatory requirements by August 2026.`
+      : "Your AI readiness program is mature. Keep up the good work.";
 
   return (
     <div className="flex flex-col gap-6">
@@ -316,7 +316,7 @@ export function AIRiskBriefingClient({ data }: Props) {
           href="/dashboard?view=full"
           className="bg-navy-600 hover:bg-navy-500 inline-flex items-center rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-sm transition"
         >
-          Full governance dashboard →
+          Full readiness dashboard →
         </Link>
         <a
           href="/api/v1/export/governance-report"

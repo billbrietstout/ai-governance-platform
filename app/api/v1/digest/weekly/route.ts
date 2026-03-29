@@ -13,11 +13,11 @@ import { getExecutiveBriefingData } from "@/lib/executive-briefing";
 const BASE_URL = env.AUTH_URL ?? "https://app.example.com";
 
 const MATURITY_PLAIN: Record<number, string> = {
-  1: "aware of AI risks but no formal governance yet",
-  2: "basic governance in place — policies and documentation",
-  3: "governance implemented — controls and accountability assigned",
+  1: "aware of AI risks but no formal controls yet",
+  2: "basic controls in place — policies and documentation",
+  3: "controls implemented — controls and accountability assigned",
   4: "measuring and monitoring — continuous improvement",
-  5: "optimised — mature AI governance program"
+  5: "optimised — mature AI readiness program"
 };
 
 function getLegalStatus(data: {
@@ -60,7 +60,7 @@ function getPriorityDecision(data: {
     return "Address accountability gaps before the EU high-risk AI rules deadline";
   }
   if (data.maturityLevel < 3) {
-    return "Complete your governance assessment to meet regulatory requirements";
+    return "Complete your readiness assessment to meet regulatory requirements";
   }
   if (data.withoutAccountability > 0) {
     return `Assign owners for ${data.withoutAccountability} AI system${data.withoutAccountability === 1 ? "" : "s"} with no one responsible`;
@@ -88,7 +88,7 @@ function renderDigestHtml(
       ? `${data.totalAssets} AI systems are active. ${data.gapCount > 0 ? `${data.gapCount} have unresolved accountability gaps.` : "All systems have accountability owners."} No critical incidents this month.`
       : "No AI systems in production yet.";
 
-  const maturityLabel = MATURITY_PLAIN[data.maturityLevel] ?? "basic governance in place";
+  const maturityLabel = MATURITY_PLAIN[data.maturityLevel] ?? "basic controls in place";
   const readinessSummary =
     data.maturityLevel < 5
       ? `Your AI readiness: ${maturityLabel}. You need implemented controls to meet regulatory requirements by August 2026.`
@@ -135,7 +135,7 @@ function renderDigestHtml(
   </div>
 
   <p style="margin:24px 0 0 0;font-size:0.75rem;color:#94a3b8;">
-    <a href="${process.env.AUTH_URL ?? "https://app.example.com"}/dashboard?view=full" style="color:#64748b;">Full governance dashboard</a> ·
+    <a href="${process.env.AUTH_URL ?? "https://app.example.com"}/dashboard?view=full" style="color:#64748b;">Full readiness dashboard</a> ·
     <a href="${BASE_URL}/api/v1/export/governance-report" style="color:#64748b;">Export board briefing</a>
   </p>
 </body>

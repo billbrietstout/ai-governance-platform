@@ -12,7 +12,7 @@ export function PageHeader({ title, subtitle, actions, badge }: Props) {
     <div className="mb-6 flex items-start justify-between gap-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <h1 className="truncate text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
+          <h1 className="font-display truncate text-2xl font-semibold tracking-tight text-slate-900">{title}</h1>
           {badge}
         </div>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}

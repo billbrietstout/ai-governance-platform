@@ -215,8 +215,9 @@ function drawNodeShape(
   }
 }
 
-export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightProp = 500 }: Props) {
+export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightProp = 600 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const svgContainerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const height = heightProp;
   const [width, setWidth] = useState(800);
@@ -461,7 +462,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
   );
 
   useEffect(() => {
-    const container = containerRef.current;
+    const container = svgContainerRef.current;
     if (!container) return;
 
     const ro = new ResizeObserver((entries) => {
@@ -495,8 +496,7 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
       className="flex flex-col"
       style={{
         width: "100%",
-        height: "500px",
-        minHeight: "500px",
+        minHeight: `${heightProp + 56}px`,
         position: "relative"
       }}
     >
@@ -551,11 +551,15 @@ export function ForceTopologyGraph({ nodes, edges, onNodeClick, height: heightPr
         </button>
       </div>
 
-      <div className="relative flex-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+      <div
+        ref={svgContainerRef}
+        className="relative flex-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
+        style={{ minHeight: heightProp }}
+      >
         <svg
           ref={svgRef}
           width="100%"
-          height={height}
+          height="100%"
           viewBox={`0 0 ${width} ${height}`}
           preserveAspectRatio="xMidYMid meet"
         />

@@ -7,7 +7,7 @@ const ARTICLES = [
   { id: "art9", label: "Article 9 — Risk Management", evidenceLink: "/layer3-application/gaps" },
   {
     id: "art10",
-    label: "Article 10 — Data Governance",
+    label: "Article 10 — Data Management",
     evidenceLink: "/layer2-information/governance"
   },
   {

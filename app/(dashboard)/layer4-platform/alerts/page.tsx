@@ -51,7 +51,7 @@ export default async function AlertEnginePage() {
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-900">Alert Engine</h1>
         <p className="mt-1 text-slate-600">
-          Active alerts across scan policies, critical findings, governance gaps, and security
+          Active alerts across scan policies, critical findings, control gaps, and security
           events.
         </p>
       </div>

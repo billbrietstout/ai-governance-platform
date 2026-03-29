@@ -290,7 +290,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
               {displayCount === 1 ? "s" : ""} an owner
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              High-risk AI systems must have a named person responsible for their governance. This
+              High-risk AI systems must have a named person responsible for their oversight. This
               takes 2 minutes.
             </p>
 
@@ -444,13 +444,13 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
           onClick={(e) => e.stopPropagation()}
         >
           <div className="p-6">
-            <h2 className="text-lg font-semibold text-slate-900">Quick governance check</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Quick readiness check</h2>
             <p className="mt-1 text-sm text-slate-600">
               Answer 5 questions to get your baseline. Takes about 2 minutes.
             </p>
             <div className="mt-4 space-y-2">
               <p className="text-sm text-slate-600">
-                1. Do you have a policy for AI governance? (Yes/No)
+                1. Do you have an AI oversight policy? (Yes/No)
               </p>
               <p className="text-sm text-slate-600">2. Are AI systems documented? (Yes/No)</p>
               <p className="text-sm text-slate-600">
@@ -458,7 +458,7 @@ export function DecisionModal({ decisionType, count = 0, onClose, onSuccess }: P
               </p>
               <p className="text-sm text-slate-600">4. Do you monitor AI risks? (Yes/No)</p>
               <p className="text-sm text-slate-600">
-                5. Do you review AI governance regularly? (Yes/No)
+                5. Do you review AI controls regularly? (Yes/No)
               </p>
             </div>
             <div className="mt-4 flex gap-2">

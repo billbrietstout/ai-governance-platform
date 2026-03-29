@@ -111,7 +111,7 @@ export default async function DiscoverPage() {
           <div>
             <h3 className="font-medium text-slate-900">AI Use Case Library</h3>
             <p className="text-sm text-slate-600">
-              Common use cases with pre-built governance templates.
+              Common use cases with pre-built compliance templates.
             </p>
             <span className="text-navy-600 mt-1 inline-block text-sm font-medium">Browse →</span>
           </div>

@@ -54,7 +54,7 @@ export default async function MaturityPage() {
           AI Readiness Assessment
         </h1>
         <p className="mt-1 text-slate-600">
-          Measure your organization&apos;s AI governance maturity across the five CoSAI layers.
+          Measure your organization&apos;s AI readiness maturity across the five CoSAI layers.
         </p>
       </div>
 

@@ -679,7 +679,7 @@ export function DiscoveryWizardClient({
             <label className="block text-sm font-medium text-slate-700">
               <LabelWithTooltip
                 label="Autonomy level?"
-                tooltip="L0: human-only. L1: AI suggests, human decides. L2: partial automation. L3: conditional automation. L4: high automation. L5: full autonomy. Higher autonomy may trigger additional governance."
+                tooltip="L0: human-only. L1: AI suggests, human decides. L2: partial automation. L3: conditional automation. L4: high automation. L5: full autonomy. Higher autonomy may trigger additional oversight requirements."
               />
             </label>
             <select
@@ -948,7 +948,7 @@ export function DiscoveryWizardClient({
                 <h3 className="text-navy-900 font-medium">Save your results</h3>
                 <p className="text-navy-700 mt-1 text-sm">
                   Create a free account to save your assessment, get your full maturity score, and
-                  see your personalized governance roadmap.
+                  see your personalized readiness roadmap.
                 </p>
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                   <Link

@@ -36,13 +36,13 @@ body {
 body {
   margin: 0;
   font-family:
-    var(--font-dm-sans, ui-sans-serif),
+    var(--font-outfit, ui-sans-serif),
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  background-color: #ffffff;
+  background-color: #fafaf9;
   color: #0f172a;
   -webkit-font-smoothing: antialiased;
 }
@@ -52,7 +52,7 @@ body {
   top: 0;
   z-index: 40;
   border-bottom: 1px solid #e2e8f0;
-  background-color: #ffffff;
+  background-color: #fafaf9;
 }
 
 .public-site-header-bar {
@@ -147,7 +147,9 @@ body {
 
 .public-hero-section {
   padding: 5rem 1rem;
-  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -5%, hsl(217 70% 93% / 0.7), transparent),
+    #fafaf9;
 }
 
 @media (min-width: 640px) {
@@ -269,15 +271,23 @@ body {
 }
 
 .public-trust-badge {
-  display: inline-block;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  border-radius: 9999px;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--mc-slate-700);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  color: var(--mc-slate-600);
+  letter-spacing: 0.01em;
+}
+
+.public-trust-badge-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mc-navy-600);
+  opacity: 0.5;
+  flex-shrink: 0;
 }
 
 .public-section-pad {

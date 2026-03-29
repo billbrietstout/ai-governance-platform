@@ -84,7 +84,7 @@ export function ReportCardsClient({ maturityLevel, scores, snapshots, gaps }: Pr
     {
       id: "executive",
       name: "Executive Readiness Report",
-      description: "Overall governance posture for board presentations",
+      description: "Overall AI posture for board presentations",
       icon: FileBarChart,
       exportUrl: "/api/v1/export/governance-report",
       exportFilename: `ai-readiness-governance-report-${date}.pdf`,
@@ -93,7 +93,7 @@ export function ReportCardsClient({ maturityLevel, scores, snapshots, gaps }: Pr
     {
       id: "board",
       name: "Board Presentation",
-      description: "Slide deck for board-level AI governance briefing",
+      description: "Slide deck for board-level AI risk briefing",
       icon: Shield,
       hasExport: false
     },

@@ -77,7 +77,6 @@ export default async function SupplyChainDashboardPage() {
                       >
                         {v.name}
                       </Link>
-                      <span className="text-xs text-slate-500">Vendor ID · {v.id.slice(0, 8)}…</span>
                     </div>
                     <span className="flex shrink-0 items-center gap-1">
                       <span className={`font-medium ${complianceTextClass(pct)}`}>{pct}%</span>

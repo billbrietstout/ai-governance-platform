@@ -62,7 +62,7 @@ export default async function Layer4PlatformPage() {
       href: "/layer4-platform/alerts",
       icon: Bell,
       title: "Alert Engine",
-      description: "Active alerts across policies, findings, governance, and security.",
+      description: "Active alerts across policies, findings, controls, and security.",
       stats: [
         {
           label: "Critical",
@@ -82,18 +82,20 @@ export default async function Layer4PlatformPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-6xl flex-col gap-6 px-6 py-10">
       <div>
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 4: Platform</h1>
-          <span
-            className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
-          >
-            Layer {meta.number} — {meta.shortLabel}
-          </span>
+        <div className="border-l-[3px] pl-4" style={{ borderLeftColor: meta.accentHex }}>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Layer 4: Platform</h1>
+            <span
+              className={`rounded-full border px-3 py-1 text-sm font-medium ${meta.bg} ${meta.border} ${meta.text}`}
+            >
+              Layer {meta.number} — {meta.shortLabel}
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-slate-600">
+            Operational intelligence — telemetry, drift detection, and alert management for your AI
+            platform.
+          </p>
         </div>
-        <p className="mt-1 text-sm text-slate-600">
-          Operational intelligence — telemetry, drift detection, and alert management for your AI
-          platform.
-        </p>
         <LayerStackContext activeLayer="LAYER_4_PLATFORM" />
       </div>
 
@@ -131,7 +133,6 @@ export default async function Layer4PlatformPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-navy-600 mt-3 text-sm font-medium">View Details →</p>
             </Link>
           );
         })}
